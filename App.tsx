@@ -73,8 +73,6 @@ import { VisualStage } from './components/VisualStage';
 import { TeacherStageActor } from './components/TeacherStageActor';
 import { EmojiUstoz } from './components/EmojiUstoz';
 import { MirvoLogo } from './components/MirvoLogo';
-import { GoogleAuthButton, GoogleGIcon } from './components/GoogleAuthButton';
-import { useFirebaseAuth } from './contexts/FirebaseAuthContext';
 import { resolveStepBeats } from './lib/teacherChoreography';
 import { KaTeXBlock } from './components/KaTeXBlock';
 
@@ -199,20 +197,6 @@ export default function App() {
   const [activeBeatIndex, setActiveBeatIndex] = useState(0);
   const [beatProgress, setBeatProgress] = useState(0);
   const [stageAnchors, setStageAnchors] = useState<StageAnchorsMap>({});
-
-  // Firebase Google/Gmail Auth + Cloud Sync
-  const {
-    user: authUser,
-    isSigningIn,
-    authError,
-    clearAuthError,
-    cloudLessons,
-    signInWithGoogle,
-    saveLessonToCloud,
-    removeCloudLesson,
-    syncVoiceSettingsToCloud,
-    syncTokenStatsToCloud,
-  } = useFirebaseAuth();
 
   // Local query history, saved lessons & live token/cost telemetry
   const [savedLessons, setSavedLessons] = useState<SavedLessonEntry[]>(() =>
@@ -517,10 +501,6 @@ export default function App() {
       voiceSettingsRef.current = next;
       setVoiceSettings(next);
 
-      if (authUser && (patch.rate !== undefined || patch.pitch !== undefined)) {
-        void syncVoiceSettingsToCloud(next.rate, next.pitch).catch(() => {});
-      }
-
       if (!applyLiveNow) return;
       if (isPreviewingVoice) {
         startVoicePreview(next);
@@ -529,8 +509,6 @@ export default function App() {
       }
     },
     [
-      authUser,
-      syncVoiceSettingsToCloud,
       isPreviewingVoice,
       startVoicePreview,
       isPlaying,
@@ -650,31 +628,15 @@ export default function App() {
 
       if (nextLesson) {
         setSavedLessons((prev) => saveLessonEntry(prev, cleanQ, nextLesson));
-        if (authUser) {
-          void saveLessonToCloud(cleanQ, nextLesson, 0, false).catch(() => {});
-        }
       }
     },
-    [authUser, saveLessonToCloud]
+    []
   );
 
-  const mergedSavedLessons = useMemo(() => {
-    const byKey = new Map<string, SavedLessonEntry & { fromCloud?: boolean }>();
-    for (const entry of savedLessons) {
-      byKey.set(normalizeLessonKey(entry.lesson.topic_title || entry.key), {
-        ...entry,
-        fromCloud: false,
-      });
-    }
-    for (const cEntry of cloudLessons) {
-      const norm = normalizeLessonKey(cEntry.lesson.topic_title || cEntry.key);
-      const prev = byKey.get(norm);
-      if (!prev || cEntry.savedAt >= prev.savedAt) {
-        byKey.set(norm, { ...cEntry, fromCloud: true });
-      }
-    }
-    return Array.from(byKey.values()).sort((a, b) => b.savedAt - a.savedAt);
-  }, [savedLessons, cloudLessons]);
+  const mergedSavedLessons = useMemo(
+    () => [...savedLessons].sort((a, b) => b.savedAt - a.savedAt),
+    [savedLessons]
+  );
 
   const legacyOnlyHistory = useMemo(() => {
     const savedKeys = new Set<string>();
@@ -748,13 +710,7 @@ export default function App() {
 
       const usage = payload.token_usage ?? payload.lesson.token_usage ?? ZERO_TOKEN_USAGE;
       const lessonWithUsage = { ...payload.lesson, token_usage: usage };
-      setSessionTokenStats((prev) => {
-        const nextStats = recordSessionTokenStats(prev, usage);
-        if (authUser) {
-          void syncTokenStatsToCloud(nextStats.total_tokens, nextStats.cost_usd).catch(() => {});
-        }
-        return nextStats;
-      });
+      setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));
       saveLessonToCache(q || payload.lesson.topic_title, lessonWithUsage);
       setQueryText('');
       setImagePreview(null);
@@ -1082,10 +1038,9 @@ export default function App() {
 
   const isSpeakingNow = isPlaying && !isMuted;
 
-  const activeDisplayError = errorMsg || authError;
+  const activeDisplayError = errorMsg;
   const dismissDisplayError = () => {
     setErrorMsg(null);
-    clearAuthError();
   };
 
   return (
@@ -1144,7 +1099,7 @@ export default function App() {
               </button>
             </nav>
 
-            {/* Zone 3: Firebase Gmail Auth + Mobile Library Trigger */}
+            {/* Mobile library trigger */}
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
@@ -1157,7 +1112,6 @@ export default function App() {
               >
                 <BookOpen className="w-4 h-4 text-blue-600" />
               </button>
-              <GoogleAuthButton />
             </div>
           </header>
 
@@ -1339,31 +1293,11 @@ export default function App() {
               })}
             </div>
 
-            {/* Quiet Gmail Cloud Sync + Token Cost Metadata Strip */}
+            {/* Local lesson storage + token cost metadata */}
             <div className="mt-6 w-full max-w-2xl flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs text-slate-500 text-center">
-              {authUser ? (
-                <div className="inline-flex flex-wrap items-center justify-center gap-2">
-                  <span className="font-medium text-emerald-700">
-                    Bulutga ulangan ({authUser.email})
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span>{cloudLessons.length} ta saqlangan dars</span>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void signInWithGoogle()}
-                  disabled={isSigningIn}
-                  className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-700 font-medium transition-colors cursor-pointer"
-                >
-                  <GoogleGIcon className="w-3.5 h-3.5 shrink-0" />
-                  <span>
-                    {isSigningIn
-                      ? 'Gmail ulanmoqda...'
-                      : 'Darslar saqlanishi uchun Gmail bilan kiring'}
-                  </span>
-                </button>
-              )}
+              <span className="font-medium text-slate-600">
+                Darslar ushbu qurilmada saqlanadi
+              </span>
 
               <span className="hidden sm:inline text-slate-300" aria-hidden="true">
                 ·
@@ -1474,7 +1408,6 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
-              <GoogleAuthButton compact />
               <button
                 type="button"
                 onClick={() => {
@@ -2511,7 +2444,7 @@ export default function App() {
                               </span>
                               <span>·</span>
                               <span className="text-emerald-700 font-medium">
-                                {entry.fromCloud ? 'Bulutda saqlangan' : 'Saqlangan'}
+                                Saqlangan
                               </span>
                             </div>
                           </button>
@@ -2520,9 +2453,6 @@ export default function App() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setSavedLessons((prev) => removeSavedLessonEntry(prev, entry.key));
-                              if (authUser) {
-                                void removeCloudLesson(entry.key).catch(() => {});
-                              }
                             }}
                             aria-label={`${entry.lesson.topic_title} darsini o‘chirish`}
                             title="O‘chirish"

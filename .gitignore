@@ -6,7 +6,6 @@ dist/
 
 credentials*.json
 *credential*.json
-firebase-adminsdk*.json
 serviceAccount*.json
 
 artifacts/

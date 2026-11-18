@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import express, { type Request, type Response, type Router } from 'express';
 import { ThinkingLevel, Type, type GoogleGenAI, type GenerateContentResponse } from '@google/genai';
-import { CACHED_LESSONS } from '../../src/data/cachedLessons.ts';
+import { CACHED_LESSONS } from '../data/cachedLessons.ts';
 import {
   extractObjectIntent,
   generateProceduralObjectSvg,
@@ -12,23 +12,23 @@ import {
   sanitizeSvgString,
   shouldTreatAsObjectDrawing,
   type ObjectIntent,
-} from '../../src/lib/objectCatalog.ts';
+} from '../lib/objectCatalog.ts';
 import {
   findBuiltInCachedLesson,
   normalizeCacheSearchText,
-} from '../../src/lib/lessonMatch.ts';
+} from '../lib/lessonMatch.ts';
 import {
   mergeTokenUsage,
   usageFromGeminiMetadata,
   ZERO_TOKEN_USAGE,
-} from '../../src/lib/tokenUsage.ts';
+} from '../lib/tokenUsage.ts';
 import type {
   FlowType,
   Primitive3DItem,
   ResolvedObjectPayload,
   TokenUsageInfo,
   TutorLesson,
-} from '../../src/types/tutor.ts';
+} from '../types/tutor.ts';
 
 // Gemini Flash & Flash-Lite model aliases per @google/genai guidelines
 const GEMINI_FLASH_MODEL = 'gemini-4-hydrogen';

@@ -100,17 +100,11 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 
 
-- Google orqali tizimga kirish
-
-- Saqlangan darslar va faoliyatingizni saqlash
+- Saqlangan darslar va faoliyatingizni ushbu qurilmada saqlash
 
 - AI va bepul so‘rovlar statistikasi
 
 - Token sarfi va taxminiy xarajatlar ko‘rsatkichi
-
-- Firebase orqali dars ma’lumotlarini sinxronlash
-
-
 
 
 ## Texnik ustunliklar
@@ -118,10 +112,6 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 
 - **React va TypeScript** — komponentlar va UI holatini boshqarish
-
-- **Firebase Authentication** — Google va boshqa autentifikatsiya usullari
-
-- **Firestore** — dars, foydalanuvchi va statistika ma’lumotlari
 
 - **Google Gemini** — tabiiy tildagi tushuntirish va dars yaratish
 
@@ -144,6 +134,22 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 ## Foydalanish
 
+
+### Lokal ishga tushirish
+
+```bash
+npm install
+npm run dev
+```
+
+Production build va lokal preview:
+
+```bash
+npm run build
+npm run preview
+```
+
+Vercel’da repository’ni import qiling. Dars generatsiyasi uchun Vercel Project Settings → Environment Variables bo‘limida `GEMINI_API_KEY` ni saqlang; secretni `.env` fayliga yoki repository’ga qo‘shmang. Ilova API kalitisiz ham keshdagi darslar va lokal saqlash bilan ishlaydi.
 
 
 1. O‘zbek tilida mavzu yoki savol kiriting.
@@ -181,11 +187,7 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 ## Xavfsizlik siyosati
 
-
-Loyihada private Firebase service account kalitlari, Firebase Admin SDK credentials yoki boshqa server sirlarini GitHubga qo‘yish maqsad qilinmagan.
-
-
-Environment variables faqat server yoki deployment muhitida saqlanadi. Firebase Auth va Firestore uchun Security Rules alohida talab qilinadi.
+API kalitlari faqat server yoki deployment muhitida environment variable sifatida saqlanishi kerak; secretlarni GitHub’ga yubormang.
 
 
 
