@@ -1,10 +1,9 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import type { LessonBeat, LessonStep, StageAnchorsMap } from '../types/tutor';
+import type { LessonBeat, StageAnchorsMap } from '../types/tutor';
 import { computeBeatPlacement } from '../lib/teacherChoreography';
-import { EmojiUstoz } from './EmojiUstoz';
+import { MirvoMentor } from './MirvoMentor';
 
 interface TeacherStageActorProps {
-  step: LessonStep;
   activeBeat: LessonBeat;
   anchors: StageAnchorsMap;
   isSpeaking: boolean;
@@ -14,7 +13,6 @@ interface TeacherStageActorProps {
 }
 
 export const TeacherStageActor: React.FC<TeacherStageActorProps> = ({
-  step,
   activeBeat,
   anchors,
   isSpeaking,
@@ -79,12 +77,12 @@ export const TeacherStageActor: React.FC<TeacherStageActorProps> = ({
     !isDrawingTip;
 
   // Start the laser ray cleanly from the mentor sphere's facing outer perimeter (with 4px gap)
-  const dx = placement.targetX - placement.emojiX;
-  const dy = placement.targetY - placement.emojiY;
+  const dx = placement.targetX - placement.actorX;
+  const dy = placement.targetY - placement.actorY;
   const dist = Math.hypot(dx, dy) || 1;
   const startOffset = Math.min(dist * 0.45, mentorRadius + 4);
-  const laserX1 = placement.emojiX + (dx / dist) * startOffset;
-  const laserY1 = placement.emojiY + (dy / dist) * startOffset;
+  const laserX1 = placement.actorX + (dx / dist) * startOffset;
+  const laserY1 = placement.actorY + (dy / dist) * startOffset;
 
   return (
     <div
@@ -172,11 +170,11 @@ export const TeacherStageActor: React.FC<TeacherStageActorProps> = ({
         </svg>
       )}
 
-      {/* Glossy Sphere Mascot Gliding Alongside Zoomed Detail or Drawing Tip */}
+      {/* Mirvo Mentor accompanies each highlighted detail and drawing tip. */}
       <div
         className="pointer-events-none absolute left-0 top-0"
         style={{
-          transform: `translate3d(${placement.emojiX.toFixed(1)}px, ${placement.emojiY.toFixed(
+          transform: `translate3d(${placement.actorX.toFixed(1)}px, ${placement.actorY.toFixed(
             1
           )}px, 0) translate(-50%, -50%) scale(${(
             placement.scale *
@@ -194,20 +192,17 @@ export const TeacherStageActor: React.FC<TeacherStageActorProps> = ({
               : 'transform 0.68s cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
-        <EmojiUstoz
-          emotion={step.emoji_emotion}
+        <MirvoMentor
           isSpeaking={isSpeaking}
           isDrawing={isDrawingNow}
           isListening={isListening}
           isNodding={placement.isNodding}
-          mouthOpen={mouthOpen}
+          voiceActivity={mouthOpen}
           size={sphereSize}
           tiltDeg={placement.tiltDeg}
-          lookVector={placement.lookVector}
-          showPointer={placement.showPointer}
           pose={placement.pose}
           depth={placement.depth}
-          showOrangeCompanion={!isDrawingTip}
+          calloutNote={placement.note}
         />
       </div>
     </div>

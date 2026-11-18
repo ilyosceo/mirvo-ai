@@ -257,7 +257,7 @@ export const MermaidStage: React.FC<MermaidStageProps> = ({
       const edgeAnchorOf = (el: Element | undefined) => {
         if (!el) return { x: wrapRect.width * 0.5, y: wrapRect.height * 0.45 };
         const r = el.getBoundingClientRect();
-        // Position EmojiUstoz just to the right edge of the box so it points cleanly without hiding node text
+        // Position the mentor just to the right edge of the box without hiding node text.
         return {
           x: Math.min(wrapRect.width - 36, r.right - wrapRect.left + 14),
           y: Math.max(44, Math.min(wrapRect.height - 86, r.top - wrapRect.top + r.height * 0.45)),

@@ -16,8 +16,8 @@ export interface ProjectedTarget {
 }
 
 export interface BeatPlacement {
-  emojiX: number;
-  emojiY: number;
+  actorX: number;
+  actorY: number;
   targetX: number;
   targetY: number;
   scale: number;
@@ -759,14 +759,14 @@ export function computeBeatPlacement(options: {
   const targetY = clamp(target.y, padTargetTop, H - padTargetBottom);
 
   if (beat.tutor_pose === 'step_back') {
-    const emojiX = W - (isCompact ? 38 : 54);
-    const emojiY = H - (isCompact ? 76 : 84);
-    const dx = targetX - emojiX;
-    const dy = targetY - emojiY;
+    const actorX = W - (isCompact ? 38 : 54);
+    const actorY = H - (isCompact ? 76 : 84);
+    const dx = targetX - actorX;
+    const dy = targetY - actorY;
     const dist = Math.hypot(dx, dy) || 1;
     return {
-      emojiX,
-      emojiY,
+      actorX,
+      actorY,
       targetX,
       targetY,
       scale: isCompact ? 0.84 : 0.88,
@@ -782,12 +782,12 @@ export function computeBeatPlacement(options: {
 
   if (beat.tutor_pose === 'formula_check') {
     if (isMobileStacked) {
-      const emojiX = clamp(Math.round(W * 0.78), 64, W - 40);
-      const emojiY = H - (isCompact ? 76 : 82);
+      const actorX = clamp(Math.round(W * 0.78), 64, W - 40);
+      const actorY = H - (isCompact ? 76 : 82);
       return {
-        emojiX,
-        emojiY,
-        targetX: emojiX,
+        actorX,
+        actorY,
+        targetX: actorX,
         targetY: H - 20,
         scale: isCompact ? 0.94 : 1.0,
         tiltDeg: 3,
@@ -800,13 +800,13 @@ export function computeBeatPlacement(options: {
       };
     }
 
-    const emojiX = W - 52;
-    const emojiY = clamp(Math.round(H * 0.34), 84, H - 90);
+    const actorX = W - 52;
+    const actorY = clamp(Math.round(H * 0.34), 84, H - 90);
     return {
-      emojiX,
-      emojiY,
+      actorX,
+      actorY,
       targetX: W - 6,
-      targetY: emojiY,
+      targetY: actorY,
       scale: 1.02,
       tiltDeg: 4,
       lookVector: { x: 2.2, y: -0.15 },
@@ -823,16 +823,16 @@ export function computeBeatPlacement(options: {
   const topSafeY = isCompact ? 50 : 64;
   const bottomSafeY = H - (isCompact ? 78 : 86);
 
-  let emojiX: number;
-  let emojiY: number;
+  let actorX: number;
+  let actorY: number;
 
   if (isFollowingTip) {
     const sideOffset = isCompact ? 40 : 48;
     const placeOnLeft = targetX > W * 0.52;
-    emojiX = clamp(placeOnLeft ? targetX - sideOffset : targetX + sideOffset, edgePadX, W - edgePadX);
-    emojiY = clamp(targetY - (isCompact ? 30 : 36), topSafeY, bottomSafeY);
-    if (Math.hypot(emojiX - targetX, emojiY - targetY) < 38) {
-      emojiX = clamp(placeOnLeft ? targetX + sideOffset : targetX - sideOffset, edgePadX, W - edgePadX);
+    actorX = clamp(placeOnLeft ? targetX - sideOffset : targetX + sideOffset, edgePadX, W - edgePadX);
+    actorY = clamp(targetY - (isCompact ? 30 : 36), topSafeY, bottomSafeY);
+    if (Math.hypot(actorX - targetX, actorY - targetY) < 38) {
+      actorX = clamp(placeOnLeft ? targetX + sideOffset : targetX - sideOffset, edgePadX, W - edgePadX);
     }
   } else {
     // Macro-to-Micro open-edge positioning with 24px strict clearance outside active detail bounding box
@@ -890,17 +890,17 @@ export function computeBeatPlacement(options: {
       }
     }
 
-    emojiX = best.x;
-    emojiY = best.y;
+    actorX = best.x;
+    actorY = best.y;
   }
 
-  const dx = targetX - emojiX;
-  const dy = targetY - emojiY;
+  const dx = targetX - actorX;
+  const dy = targetY - actorY;
   const dist = Math.hypot(dx, dy) || 1;
 
   return {
-    emojiX,
-    emojiY,
+    actorX,
+    actorY,
     targetX,
     targetY,
     scale: isFollowingTip ? 1.0 : isCompact ? 1.02 : 1.08,

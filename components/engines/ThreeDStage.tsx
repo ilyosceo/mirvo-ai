@@ -235,7 +235,7 @@ const CameraRigController: React.FC<CameraRigControllerProps> = ({
       controls.azimuthAngle += 0.62 * Math.min(delta, 0.08);
     }
 
-    // Project named 3D anchors & Box3 corners into screen coordinates for EmojiUstoz pointer + 24px clearance
+    // Project named 3D anchors & Box3 corners for mentor placement with 24px clearance
     const cb = onAnchorsChangeRef.current;
     if (!cb || size.width <= 0 || size.height <= 0) return;
 

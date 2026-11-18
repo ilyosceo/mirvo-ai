@@ -71,7 +71,7 @@ import {
 } from './types/tutor';
 import { VisualStage } from './components/VisualStage';
 import { TeacherStageActor } from './components/TeacherStageActor';
-import { EmojiUstoz } from './components/EmojiUstoz';
+import { MirvoMentor } from './components/MirvoMentor';
 import { MirvoLogo } from './components/MirvoLogo';
 import { resolveStepBeats } from './lib/teacherChoreography';
 import { KaTeXBlock } from './components/KaTeXBlock';
@@ -170,7 +170,7 @@ export default function App() {
   const [drawerTab, setDrawerTab] = useState<'library' | 'history' | 'settings'>('library');
   const [isMobileTyping, setIsMobileTyping] = useState(false);
 
-  // EmojiUstoz voice settings (rate, pitch, gender) persisted in localStorage
+  // Mirvo Mentor voice settings (rate, pitch, gender) persisted in localStorage
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>(() => loadVoiceSettings());
   const [isPreviewingVoice, setIsPreviewingVoice] = useState(false);
   const [previewMouthOpen, setPreviewMouthOpen] = useState(0);
@@ -1120,10 +1120,8 @@ export default function App() {
             {/* Mascot + Welcoming Headline */}
             <div className="flex flex-col items-center text-center max-w-2xl">
               <div className="mb-3 sm:mb-4 transition-transform duration-300 hover:scale-105">
-                <EmojiUstoz
-                  emotion="happy"
+                <MirvoMentor
                   isSpeaking={false}
-                  mouthOpen={0}
                   size={94}
                   depth="mid"
                 />
@@ -1552,7 +1550,6 @@ export default function App() {
 
                 {/* Single Living Mirvo Mascot Moving & Drawing Across the Board */}
                 <TeacherStageActor
-                  step={currentStep}
                   activeBeat={activeBeat}
                   anchors={stageAnchors}
                   isSpeaking={isSpeakingNow}
@@ -2493,17 +2490,14 @@ export default function App() {
                 )
               ) : (
                 <div className="space-y-6">
-                  {/* Live EmojiUstoz Voice Preview Strip */}
+                  {/* Live Mirvo Mentor voice preview */}
                   <div className="pb-5 border-b border-slate-100 flex items-center gap-3.5">
                     <div className="shrink-0">
-                      <EmojiUstoz
-                        emotion={
-                          isPreviewingVoice || sliderPreviewTarget !== null ? 'explaining' : 'happy'
-                        }
+                      <MirvoMentor
                         isSpeaking={
                           isPreviewingVoice || sliderPreviewTarget !== null || isSpeakingNow
                         }
-                        mouthOpen={
+                        voiceActivity={
                           isPreviewingVoice
                             ? previewMouthOpen
                             : sliderPreviewTarget !== null
