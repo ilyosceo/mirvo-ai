@@ -1,0 +1,1560 @@
+[
+  {
+    "normalizedKey": "v9:gidravlik press qanday ishlaydi",
+    "query": "Gidravlik press qanday ishlaydi?",
+    "lesson": {
+      "topic_title": "Gidravlik pressning ishlash printsipi",
+      "subject": "physics",
+      "engine": "svg2d",
+      "sliders": [
+        {
+          "id": "force_ratio",
+          "label": "Kuch nisbati",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 5,
+          "unit": "x"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "step_title": "Gidravlik press nima?",
+          "speech_text": "Gidravlik press suyuqlik bosimi orqali katta kuch hosil qiluvchi oddiy mexanizmdir.",
+          "katex_formulas": [
+            "P = \\frac{F}{A}"
+          ],
+          "explanation_uz": "Bosim hamma yo'nalishda bir xil tarqaladi.",
+          "emoji_emotion": "explaining",
+          "beats": [
+            {
+              "sentence": "Kichik kuch yordamida juda og'ir narsalarni ko'tarish mumkin.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Bu tizim Paskal qonuniga asoslangan.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_en": "hydraulic press",
+            "object_name_uz": "gidravlik press",
+            "svg_data": "<svg viewBox=\"0 0 620 410\"\n   xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n   xmlns:cc=\"http://creativecommons.org/ns#\"\n   xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n   xmlns:svg=\"http://www.w3.org/2000/svg\"\n   xmlns=\"http://www.w3.org/2000/svg\"\n   xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n   version=\"1.1\"\n   width=\"620\"\n   height=\"410\"\n   id=\"svg2\"\n   sodipodi:docname=\"Hydraulic_press.svg\"\n   inkscape:version=\"1.0.1 (c497b03c, 2020-09-10)\">\n  <sodipodi:namedview\n     pagecolor=\"#ffffff\"\n     bordercolor=\"#666666\"\n     borderopacity=\"1\"\n     objecttolerance=\"10\"\n     gridtolerance=\"10\"\n     guidetolerance=\"10\"\n     inkscape:pageopacity=\"0\"\n     inkscape:pageshadow=\"2\"\n     inkscape:window-width=\"1280\"\n     inkscape:window-height=\"685\"\n     id=\"namedview883\"\n     showgrid=\"false\"\n     inkscape:zoom=\"1.1483871\"\n     inkscape:cx=\"275.16854\"\n     inkscape:cy=\"189.32584\"\n     inkscape:window-x=\"0\"\n     inkscape:window-y=\"23\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"layer2\" />\n  <defs\n     id=\"defs4\">\n    <marker\n       refX=\"0\"\n       refY=\"0\"\n       orient=\"auto\"\n       id=\"Arrow2Lstart\"\n       style=\"overflow:visible\">\n      <path\n         d=\"M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z\"\n         transform=\"matrix(1.1,0,0,1.1,-5.5,0)\"\n         id=\"path4422\"\n         style=\"font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round\" />\n    </marker>\n    <marker\n       refX=\"0\"\n       refY=\"0\"\n       orient=\"auto\"\n       id=\"Arrow2Lend\"\n       style=\"overflow:visible\">\n      <path\n         d=\"M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z\"\n         transform=\"matrix(-1.1,0,0,-1.1,5.5,0)\"\n         id=\"path4431\"\n         style=\"font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round\" />\n    </marker>\n  </defs>\n  <metadata\n     id=\"metadata7\">\n    <rdf:RDF>\n      <cc:Work\n         rdf:about=\"\">\n        <dc:format>image/svg+xml</dc:format>\n        <dc:type\n           rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />\n        <dc:title />\n      </cc:Work>\n    </rdf:RDF>\n  </metadata>\n  <rect\n     width=\"620\"\n     height=\"410\"\n     x=\"0\"\n     y=\"0\"\n     id=\"rect3030\"\n     style=\"fill:#ffffff;stroke:none\" />\n  <g\n     transform=\"translate(-60,-54.409424)\"\n     id=\"layer1\"\n     style=\"display:inline\">\n    <path\n       d=\"m 297.74326,255.98705 22.38379,0 0,-117.26291 22.38383,0 0,117.26291 22.38379,0 0,39.08764 -67.15141,0 0,-39.08764 z\"\n       id=\"path1310\"\n       style=\"fill:#191970;fill-opacity:1;fill-rule:evenodd;stroke:#0000ca;stroke-width:1.17964351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n    <path\n       d=\"m 344.30808,382.89045 38.17611,0\"\n       id=\"path4316\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.8356626;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#Arrow2Lend)\" />\n    <text\n       x=\"311.42825\"\n       y=\"287.30991\"\n       transform=\"scale(1.038053,0.963342)\"\n       id=\"text8215\"\n       xml:space=\"preserve\"\n       style=\"font-size:16.22024727px;font-style:normal;font-weight:normal;fill:#fffffa;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans\"><tspan\n         x=\"311.42825\"\n         y=\"287.30991\"\n         id=\"tspan8217\">2)</tspan></text>\n  </g>\n  <g\n     transform=\"translate(-60,-54.409424)\"\n     id=\"layer2\"\n     style=\"display:inline\">\n    <path\n       d=\"m 300.74915,195.90674 64.14552,0 0,97.71909 -64.14552,0 0,-97.71909 z\"\n       id=\"path1313\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.15384758px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n    <path\n       d=\"m 331.37696,314.23154 0,35.17887\"\n       id=\"path8971\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.87068105;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend)\" />\n    <path\n       d=\"m 560.43463,311.1219 0,35.17888\"\n       id=\"path5967\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.87068105;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow2Lstart)\" />\n    <path\n       d=\"m 70.343,276.42945 135.28744,0 0,78.25459 23.099,0 0,19.56366 34.64852,0 0,-19.56366 38.49834,0 0,-58.69094 61.59734,0 0,58.69094 34.64851,0 0,19.56366 38.49834,0 0,-19.56366 38.49835,0 0,-78.25459 173.24252,0 0.0209,140.7155 -211.94772,0 0.18597,-23.33362 -38.49834,0 -0.22359,23.33362 -134.87581,0 0.35521,-23.33362 -38.49834,0 0,23.47637 -153.99337,0 L 70.343,276.42945 z\"\n       id=\"path2832\"\n       style=\"fill:#ff7f50;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1.095348px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n    <g\n       transform=\"matrix(1.08757,0,0,1.10314,-24.95213,-106.642)\"\n       id=\"g3560\"\n       style=\"display:inline\">\n      <path\n         d=\"m 148.8189,449.99997 a 3.54331,3.54331 0 1 1 -7.08662,0 3.54331,3.54331 0 1 1 7.08662,0 z\"\n         transform=\"translate(120.0157,-17.43306)\"\n         id=\"path3562\"\n         style=\"fill:#ff7f50;fill-opacity:1;stroke:#0000ca;stroke-width:3.83385825;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n      <path\n         d=\"m 265.74803,436.56691 0,24.80315\"\n         id=\"path3564\"\n         style=\"fill:#ff0000;fill-opacity:0.75;fill-rule:evenodd;stroke:#0000d1;stroke-width:3.83385825;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n    </g>\n    <g\n       transform=\"matrix(0.769028,-0.780038,0.769028,0.780038,-97.3625,237.8979)\"\n       id=\"g2818\">\n      <path\n         d=\"m 148.8189,449.99997 a 3.54331,3.54331 0 1 1 -7.08662,0 3.54331,3.54331 0 1 1 7.08662,0 z\"\n         transform=\"translate(120.0157,-17.43306)\"\n         id=\"path2820\"\n         style=\"fill:#ff7f50;fill-opacity:1;stroke:#0000ca;stroke-width:3.83385825;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n      <path\n         d=\"m 265.74803,436.56691 0,24.80315\"\n         id=\"path2822\"\n         style=\"fill:#ff0000;fill-opacity:0.75;fill-rule:evenodd;stroke:#0000d1;stroke-width:3.83385825;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n    </g>\n    <path\n       d=\"m 330.709,77.016903 0,35.549707\"\n       id=\"path4455\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.45540559;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow2Lstart);marker-end:url(#Arrow2Lend)\" />\n    <path\n       d=\"m 561.42801,137.12069 0,39.08764\"\n       id=\"path4467\"\n       style=\"fill:none;stroke:#000000;stroke-width:3.03500557;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow2Lstart);marker-end:none\" />\n    <path\n       d=\"m 474.97047,284.24698 0,-48.51898 -19.26798,0 0,-14.55569 19.26798,0 0,-33.96329 173.41177,0 0,33.96329 19.26797,0 0,14.55569 -15.41438,0 -3.85359,0 0,48.51898 -173.41177,0 z\"\n       id=\"path4473\"\n       style=\"fill:#000083;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.22033787px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n    <path\n       d=\"m 471.11687,354.60473 0,-97.63293\"\n       id=\"path5221\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.28403282;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n    <path\n       d=\"m 652.30435,413.23618 0,-154.1054\"\n       id=\"path5961\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.21873522;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline\" />\n    <path\n       d=\"m 471.11687,211.49186 0,-39.08764\"\n       id=\"path5963\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.19932985;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none\" />\n    <path\n       d=\"m 651.43087,211.04018 0,-39.08764\"\n       id=\"path5965\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.19932985;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline\" />\n    <path\n       d=\"m 365.83666,353.80818 0,-156.30598\"\n       id=\"path6709\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.25754642;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline\" />\n    <path\n       d=\"m 297.8935,353.42598 0,-156.30597\"\n       id=\"path6711\"\n       style=\"fill:none;stroke:#000000;stroke-width:4.25754642;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline\" />\n    <path\n       d=\"m 472.79533,172.40422 177.26536,0\"\n       id=\"path7451\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.09532738px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n    <text\n       x=\"120.73872\"\n       y=\"365.47293\"\n       transform=\"scale(1.073772,0.931296)\"\n       id=\"text7457\"\n       xml:space=\"preserve\"\n       style=\"font-size:17.81228447px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\"><tspan\n         x=\"120.73872\"\n         y=\"365.47293\"\n         id=\"tspan7459\">1)</tspan></text>\n    <text\n       x=\"236.46339\"\n       y=\"453.93927\"\n       transform=\"scale(1.15416,0.866431)\"\n       id=\"text7461\"\n       xml:space=\"preserve\"\n       style=\"font-size:18.3045063px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\"><tspan\n         x=\"236.46339\"\n         y=\"453.93927\"\n         id=\"tspan7463\">4)</tspan></text>\n    <text\n       x=\"411.59564\"\n       y=\"418.38806\"\n       transform=\"scale(1.109524,0.901287)\"\n       id=\"text7465\"\n       xml:space=\"preserve\"\n       style=\"font-size:17.27487373px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\"><tspan\n         x=\"411.59564\"\n         y=\"418.38806\"\n         id=\"tspan7467\">5)</tspan></text>\n    <text\n       x=\"533.71619\"\n       y=\"252.39226\"\n       transform=\"scale(1.032704,0.968332)\"\n       id=\"text7469\"\n       xml:space=\"preserve\"\n       style=\"font-size:18.64486885px;font-style:normal;font-weight:normal;fill:#fffffa;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans\"><tspan\n         x=\"533.71619\"\n         y=\"252.39226\"\n         id=\"tspan7471\">3)</tspan></text>\n    <text\n       x=\"70.927032\"\n       y=\"447.81049\"\n       transform=\"scale(0.990535,1.009556)\"\n       id=\"text2115\"\n       xml:space=\"preserve\"\n       style=\"font-style:normal;font-weight:normal;font-size:27.2963px;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:none\"><tspan\n         x=\"70.927032\"\n         y=\"447.81049\"\n         id=\"tspan2117\">Prinzipzeichnung einer hydraulischen Presse</tspan></text>\n    <text\n       x=\"67.838982\"\n       y=\"99.815331\"\n       transform=\"scale(0.99291772,1.0071328)\"\n       id=\"text1352\"\n       xml:space=\"preserve\"\n       style=\"font-size:15px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Bitstream Vera Sans\"><tspan\n         x=\"67.838982\"\n         y=\"99.815331\"\n         id=\"tspan1354\">1) Vorratsbehälter für Hydrauliköl</tspan><tspan\n         x=\"67.838982\"\n         y=\"116.24557\"\n         id=\"tspan1356\">2) Pumpkolben</tspan><tspan\n         x=\"67.838982\"\n         y=\"132.67586\"\n         id=\"tspan1358\">3) Presskolben</tspan><tspan\n         x=\"67.838982\"\n         y=\"149.10614\"\n         id=\"tspan1360\">4) Ventil 1</tspan><tspan\n         x=\"67.838982\"\n         y=\"165.53645\"\n         id=\"tspan1362\">5) Ventil 2</tspan></text>\n  </g>\n</svg>",
+            "svg_viewbox": "0 0 620 410",
+            "object_source": "wikimedia"
+          },
+          "cameraZoom": 1,
+          "dimInactiveParts": false,
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 2,
+          "step_title": "Asosiy qismlar",
+          "speech_text": "Tizim ikkita turli o'lchamdagi porshen va ular orasidagi suyuqlikdan iborat.",
+          "katex_formulas": [
+            "A_1 < A_2"
+          ],
+          "explanation_uz": "Kichik va katta porshenlar bosimni uzatadi.",
+          "emoji_emotion": "pointing",
+          "beats": [
+            {
+              "sentence": "Kichik porshen kuch kiritish uchun xizmat qiladi.",
+              "focus_target": "cylinder",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.72,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Katta porshen esa ish bajaradigan qismdir.",
+              "focus_target": "cylinder",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1.72,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_en": "hydraulic cylinder",
+            "object_name_uz": "gidravlik silindr",
+            "svg_data": "<svg viewBox=\"0 0 800 600\" xmlns=\"http://www.w3.org/2000/svg\"\n\t xmlns:svg=\"http://www.w3.org/2000/svg\"\n\t xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n\t xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\t xmlns:cc=\"http://web.resource.org/cc/\"\n\t xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n\t width=\"800\" height=\"600\" version=\"1.0\">\n\n\t<metadata>\n\t\t<rdf:RDF>\n\t\t\t<cc:Work rdf:about=\"Hydraulic_Cylinder.svg\">\n\t\t\t\t<dc:format>image/svg+xml</dc:format>\n\t\t\t\t<dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />\n\t\t\t</cc:Work>\n\t\t</rdf:RDF>\n\t</metadata>\n\n\t<style>\n\t\t.fluid {fill:#CCFFFF; stroke: none}\n\t\t.cylinder {fill:none; stroke:black; stroke-width: 3}\n\t</style>\n\n\t<animateMotion xlink:href=\"#rod\"\n\t\t path=\"m0,0 h-90z\"\n\t\t dur=\"3s\" repeatCount=\"indefinite\"/>\n\n\t<animate xlink:href=\"#flu1\"\n\t\t attributeName=\"width\"\n\t\t values=\"280;190;280\"\n\t\tbegin=\"0s\" dur=\"3s\" repeatCount=\"indefinite\"/>\n\n\t<animate xlink:href=\"#flu2\"\n\t\t attributeName=\"width\"\n\t\t values=\"180;210;180\"\n\t\tbegin=\"0s\" dur=\"3s\" repeatCount=\"indefinite\"/>\n\n\t<animateMotion xlink:href=\"#piston\"\n\t\t path=\"m0,0 h30z\"\n\t\t dur=\"3s\" repeatCount=\"indefinite\"/>\n\n\t<animateMotion xlink:href=\"#weight\"\n\t\t dur=\"3s\" repeatCount=\"indefinite\"\n\t\t path=\"m0,0 v-30z\"/>\n\n\t<rect style=\"fill:none; stroke:blue; stroke-width: 2\" width=\"800\" height=\"600\"/>\n\n\t<g>\n\t\t<g transform=\"translate(150,500) rotate(-90)\">\n\t\t\t<rect id=\"flu1\" class=\"fluid\"\n\t\t\t\t width=\"280\" height=\"80\"/>\n\n\t\t\t<g id=\"rod\" style=\"fill:red; stroke:none\">\n\t\t\t\t<rect x=\"280\" y=\"0\" width=\"20\" height=\"80\" />\n\t\t\t\t<rect x=\"300\" y=\"35\" width=\"150\" height=\"10\" />\n\t\t\t</g>\n\n\t\t\t<path class=\"cylinder\" d=\"M350,0 H0 V80 H350\"/>\n\t\t</g>\n\n\t\t<g transform=\"translate(450,500) rotate(-90)\">\n\t\t\t<rect id=\"flu2\" class=\"fluid\"\n\t\t\t\t width=\"180\" height=\"200\"/>\n\n\t\t\t<rect id=\"piston\" style=\"fill:red; stroke:none\"\n\t\t\t\t x=\"180\" width=\"20\" height=\"200\"/>\n\n\t\t\t<path class=\"cylinder\" d=\"M350,0 H0 V200 H350\"/>\n\t\t</g>\n\n\t\t<path id=\"weight\" style=\"fill:gray;stroke:none\"\n\t\t\t d=\"M505,200 h90 l30,100 h-150 z\"/>\n\n\t\t<rect class=\"fluid\" x=\"220\" y=\"450\" width=\"240\" height=\"30\"/>\n\t\t<path class=\"cylinder\" d=\"M220,450 H460 m0,30 H220\"/>\n\t</g>\n</svg>",
+            "svg_viewbox": "0 0 800 600",
+            "object_source": "wikimedia"
+          },
+          "cameraZoom": 1.72,
+          "dimInactiveParts": true,
+          "focusPart": "cylinder",
+          "quiz": {
+            "question": "Gidravlik press qaysi qonunga asoslanadi?",
+            "options": [
+              "Nyuton qonuni",
+              "Paskal qonuni",
+              "Arximed qonuni"
+            ],
+            "correct_index": 1,
+            "explanation_uz": "Paskal qonuni suyuqliklardagi bosimning bir xil tarqalishini ifodalaydi."
+          },
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 3,
+          "step_title": "Kuchning kuchayishi",
+          "speech_text": "Kichik porshendagi bosim suyuqlik orqali katta porshenga uzatiladi.",
+          "katex_formulas": [
+            "\\frac{F_1}{A_1} = \\frac{F_2}{A_2}"
+          ],
+          "explanation_uz": "Yuza oshgani sari ko'taruvchi kuch ham ortadi.",
+          "emoji_emotion": "happy",
+          "beats": [
+            {
+              "sentence": "Maydon qanchalik katta bo'lsa, kuch shunchalik ortadi.",
+              "focus_target": "base_plane",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1.78,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Bu bizga kam harakat bilan katta natija beradi.",
+              "focus_target": "base_plane",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.78,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_en": "hydraulic lift",
+            "object_name_uz": "gidravlik lift",
+            "svg_data": "<svg\n   width=\"53.710411mm\"\n   height=\"53.710419mm\"\n   viewBox=\"0 0 53.710411 53.710419\"\n   version=\"1.1\"\n   id=\"svg1\"\n   inkscape:version=\"1.4.2 (f4327f4, 2025-05-13)\"\n   sodipodi:docname=\"ISO_7000_-_Ref-No_1312.svg\"\n   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n   xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n   xmlns=\"http://www.w3.org/2000/svg\"\n   xmlns:svg=\"http://www.w3.org/2000/svg\">\n  <sodipodi:namedview\n     id=\"namedview1\"\n     pagecolor=\"#505050\"\n     bordercolor=\"#eeeeee\"\n     borderopacity=\"1\"\n     inkscape:showpageshadow=\"0\"\n     inkscape:pageopacity=\"0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#505050\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"0.73851712\"\n     inkscape:cx=\"205.81784\"\n     inkscape:cy=\"169.93513\"\n     inkscape:window-width=\"1920\"\n     inkscape:window-height=\"1009\"\n     inkscape:window-x=\"1912\"\n     inkscape:window-y=\"-8\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"layer1\" />\n  <defs\n     id=\"defs1\" />\n  <g\n     inkscape:label=\"Ebene 1\"\n     inkscape:groupmode=\"layer\"\n     id=\"layer1\"\n     transform=\"translate(-50.535415,-103.45209)\">\n    <path\n       d=\"m 103.84895,152.53229 v 4.23334 h -4.23332 m -48.68334,-4.23334 v 4.23334 h 4.23334 m -4.23334,-48.68334 v -4.23333 h 4.23334 m 48.68332,4.23333 v -4.23333 h -4.23332\"\n       style=\"fill:none;stroke:#999999;stroke-width:0.79375\"\n       id=\"path1-8\" />\n    <path\n       d=\"m 77.49602,138.48753 4.1566,-7.19945 m 4.49372,7.46478 c 0,4.83565 -3.92007,8.75572 -8.75572,8.75572 -4.83565,0 -8.75572,-3.92007 -8.75572,-8.75572 -1e-5,-4.83565 3.92007,-8.75573 8.75572,-8.75573 4.83566,0 8.75573,3.92007 8.75572,8.75573 z m -13.08866,-7.50488 8.66588,15.00976 m -18.99933,-37.7504 h 29.33278 m -14.66639,13.65878 v -13.614 m 3.02167,7.70891 h 11.0832 v 35.84622 H 63.28575 v -35.84622 h 11.0832\"\n       style=\"fill:none;stroke:#000000;stroke-width:1.265;paint-order:stroke fill markers\"\n       id=\"path1-20\" />\n  </g>\n</svg>",
+            "svg_viewbox": "0 0 53.710411 53.710419",
+            "object_source": "wikimedia"
+          },
+          "cameraZoom": 1.78,
+          "dimInactiveParts": true,
+          "focusPart": "base_plane",
+          "quiz": {
+            "question": "Kichik porshen yuzasi katta porshendan kichik bo'lsa nima bo'ladi?",
+            "options": [
+              "Kuch kamayadi",
+              "Kuch kuchayadi",
+              "Kuch o'zgarmaydi"
+            ],
+            "correct_index": 1,
+            "explanation_uz": "Yuza kattalashgani sari olingan kuch ham ortadi."
+          },
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 4,
+          "step_title": "Xulosa",
+          "speech_text": "Gidravlik presslar mashinasozlikda og'ir yuklarni ko'tarish uchun ishlatiladi.",
+          "katex_formulas": [
+            "F_2 = F_1 \\cdot \\frac{A_2}{A_1}"
+          ],
+          "explanation_uz": "Fizika qonunlari texnikani osonlashtiradi.",
+          "emoji_emotion": "encouraging",
+          "beats": [
+            {
+              "sentence": "Bugun siz gidravlik kuchaytirishni o'rgandingiz.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Kelgusi darsda boshqa mexanizmlarni ko'rib chiqamiz.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_en": "factory press",
+            "object_name_uz": "zavod pressi",
+            "svg_data": "<svg\n   xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n   xmlns:cc=\"http://creativecommons.org/ns#\"\n   xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n   xmlns:svg=\"http://www.w3.org/2000/svg\"\n   xmlns=\"http://www.w3.org/2000/svg\"\n   xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n   xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n   width=\"76.873367mm\"\n   height=\"35.332321mm\"\n   viewBox=\"0 0 272.38595 125.19326\"\n   id=\"svg2\"\n   version=\"1.1\"\n   inkscape:version=\"0.91 r\"\n   sodipodi:docname=\"20200924-giga-press-fremont-die-casting-machine-2-traced-diagram-closed.svg\"\n   style=\"enable-background:new\">\n  <defs\n     id=\"defs4\">\n    <filter\n       inkscape:collect=\"always\"\n       style=\"color-interpolation-filters:sRGB\"\n       id=\"filter4586\">\n      <feBlend\n         inkscape:collect=\"always\"\n         mode=\"multiply\"\n         in2=\"BackgroundImage\"\n         id=\"feBlend4588\" />\n    </filter>\n  </defs>\n  <sodipodi:namedview\n     id=\"base\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"#666666\"\n     borderopacity=\"1.0\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pageshadow=\"2\"\n     inkscape:zoom=\"0.81484375\"\n     inkscape:cx=\"213.45327\"\n     inkscape:cy=\"195.28981\"\n     inkscape:document-units=\"px\"\n     inkscape:current-layer=\"layer7\"\n     showgrid=\"false\"\n     showguides=\"true\"\n     inkscape:guide-bbox=\"true\"\n     inkscape:window-width=\"1301\"\n     inkscape:window-height=\"744\"\n     inkscape:window-x=\"65\"\n     inkscape:window-y=\"24\"\n     inkscape:window-maximized=\"1\"\n     fit-margin-top=\"0\"\n     fit-margin-left=\"0\"\n     fit-margin-right=\"0\"\n     fit-margin-bottom=\"0\">\n    <sodipodi:guide\n       position=\"443.75803,6.0280703e-06\"\n       orientation=\"0,1\"\n       id=\"guide4537\" />\n    <sodipodi:guide\n       position=\"256.42954,120.74581\"\n       orientation=\"0,1\"\n       id=\"guide4539\" />\n  </sodipodi:namedview>\n  <metadata\n     id=\"metadata7\">\n    <rdf:RDF>\n      <cc:Work\n         rdf:about=\"\">\n        <dc:format>image/svg+xml</dc:format>\n        <dc:type\n           rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" />\n        <dc:title></dc:title>\n      </cc:Work>\n    </rdf:RDF>\n  </metadata>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer7\"\n     inkscape:label=\"base\"\n     style=\"display:none\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <rect\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:#ffeeaa;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"rect5080\"\n       width=\"87.212097\"\n       height=\"53.368595\"\n       x=\"784.90887\"\n       y=\"454.89426\"\n       rx=\"3.0680699\"\n       ry=\"3.0680699\" />\n    <rect\n       ry=\"6.1582742\"\n       rx=\"6.1582742\"\n       y=\"428.01746\"\n       x=\"855.96936\"\n       height=\"107.12219\"\n       width=\"214.97131\"\n       id=\"rect5082\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:#ffeeaa;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer8\"\n     inkscape:label=\"base2\"\n     style=\"display:inline\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <rect\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"rect5106\"\n       width=\"188.35338\"\n       height=\"79.969902\"\n       x=\"867.19073\"\n       y=\"441.33832\"\n       rx=\"0\"\n       ry=\"0\" />\n    <rect\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"rect5149\"\n       width=\"80.052917\"\n       height=\"32.975723\"\n       x=\"788.38\"\n       y=\"464.22293\" />\n    <rect\n       ry=\"0\"\n       rx=\"0\"\n       y=\"291.61636\"\n       x=\"867.19073\"\n       height=\"79.969902\"\n       width=\"188.35338\"\n       id=\"rect5324\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    <rect\n       y=\"314.50098\"\n       x=\"788.38\"\n       height=\"32.975723\"\n       width=\"80.052917\"\n       id=\"rect5326\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#fff6d5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.55608845;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer5\"\n     inkscape:label=\"lower mid\"\n     style=\"display:inline\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <g\n       style=\"display:inline;filter:url(#filter4586)\"\n       id=\"g4827\"\n       transform=\"translate(0,3.1835337)\">\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"rect4685\"\n         d=\"m 880.0386,461.14453 0,32.98242 16.26172,0 0,-5.42383 a 5.5421023,11.084205 0 0 1 -0.15429,0.0156 5.5421023,11.084205 0 0 1 -3.44532,-2.41602 l -8.21289,0 0,-3.98828 6.64258,0 a 5.5421023,11.084205 0 0 1 -0.52539,-4.67968 5.5421023,11.084205 0 0 1 0.52539,-4.67774 l -6.64258,0 0,-3.98828 8.20508,0 a 5.5421023,11.084205 0 0 1 3.45313,-2.41797 5.5421023,11.084205 0 0 1 0.15429,0.0117 l 0,-5.41797 -16.26172,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:#008080;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <path\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#800000;fill-opacity:1;fill-rule:nonzero;stroke:#008080;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 898.3418,464.32812 0,5.45118 a 5.5421023,11.084205 0 0 1 2.21484,1.35156 l 0,1.80859 a 4.0496407,8.0992817 0 0 0 -0.91602,-0.2207 4.0496407,8.0992817 0 0 0 -4.05078,8.09961 4.0496407,8.0992817 0 0 0 4.05078,8.09961 4.0496407,8.0992817 0 0 0 0.91602,-0.2207 l 0,1.80273 a 5.5421023,11.084205 0 0 1 -2.21484,1.35742 l 0,5.45313 16.26172,0 0,-32.98243 -16.26172,0 z\"\n         transform=\"translate(0,-3.1835337)\"\n         id=\"rect4717\"\n         inkscape:connector-curvature=\"0\" />\n    </g>\n    <g\n       transform=\"translate(0,-146.53842)\"\n       id=\"g5328\"\n       style=\"display:inline;filter:url(#filter4586)\">\n      <path\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:#008080;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 880.0386,461.14453 0,32.98242 16.26172,0 0,-5.42383 a 5.5421023,11.084205 0 0 1 -0.15429,0.0156 5.5421023,11.084205 0 0 1 -3.44532,-2.41602 l -8.21289,0 0,-3.98828 6.64258,0 a 5.5421023,11.084205 0 0 1 -0.52539,-4.67968 5.5421023,11.084205 0 0 1 0.52539,-4.67774 l -6.64258,0 0,-3.98828 8.20508,0 a 5.5421023,11.084205 0 0 1 3.45313,-2.41797 5.5421023,11.084205 0 0 1 0.15429,0.0117 l 0,-5.41797 -16.26172,0 z\"\n         id=\"path5330\"\n         inkscape:connector-curvature=\"0\" />\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path5332\"\n         d=\"m 917.21045,461.14459 0,5.45118 a 5.5421023,11.084205 0 0 1 2.21484,1.35156 l 0,1.80859 a 4.0496407,8.0992817 0 0 0 -0.91602,-0.2207 4.0496407,8.0992817 0 0 0 -4.05078,8.09961 4.0496407,8.0992817 0 0 0 4.05078,8.09961 4.0496407,8.0992817 0 0 0 0.91602,-0.2207 l 0,1.80273 a 5.5421023,11.084205 0 0 1 -2.21484,1.35742 l 0,5.45313 16.26172,0 0,-32.98243 -16.26172,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#800000;fill-opacity:1;fill-rule:nonzero;stroke:#008080;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer9\"\n     inkscape:label=\"robot\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <g\n       transform=\"translate(-1.8408437,-149.72196)\"\n       id=\"g5424\">\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n         d=\"m 889.74113,522.81283 0,41.11217\"\n         id=\"path5426\"\n         inkscape:connector-curvature=\"0\" />\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path5428\"\n         d=\"m 906.00192,522.81283 0,41.11217\"\n         style=\"fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n    </g>\n    <rect\n       ry=\"2.7612655\"\n       rx=\"2.7612655\"\n       y=\"378.03064\"\n       x=\"888.82074\"\n       height=\"14.113135\"\n       width=\"14.113135\"\n       id=\"rect5430\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    <g\n       transform=\"matrix(0.1238053,0.99230653,0.99230653,-0.1238053,250.19504,-522.72829)\"\n       id=\"g5432\">\n      <path\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#808000;stroke-width:2.00017381;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 959.83892,529.19148 a 5.5421023,11.084205 17.186185 0 0 -4.0134,1.28968 l -7.83872,-2.42442 -1.17845,3.81021 6.34598,1.96274 a 5.5421023,11.084205 17.186185 0 0 -1.88409,4.31362 5.5421023,11.084205 17.186185 0 0 -0.88082,4.62598 l -6.34598,-1.96273 -1.17844,3.8102 7.84617,2.42673 a 5.5421023,11.084205 17.186185 0 0 2.57761,3.32615 5.5421023,11.084205 17.186185 0 0 1.78134,-0.0154 5.5421023,11.084205 17.186185 0 1 -0.55691,-11.20797 5.5421023,11.084205 17.186185 0 1 6.78617,-8.93275 5.5421023,11.084205 17.186185 0 0 -1.46044,-1.02211 z\"\n         id=\"path5434\"\n         inkscape:connector-curvature=\"0\"\n         inkscape:transform-center-x=\"0.33749964\"\n         inkscape:transform-center-y=\"-3.4019746\" />\n      <g\n         id=\"g5436\">\n        <ellipse\n           ry=\"2.147651\"\n           rx=\"8.5906038\"\n           cy=\"539.68726\"\n           cx=\"964.29529\"\n           id=\"ellipse5438\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           inkscape:transform-center-x=\"0.92042186\"\n           inkscape:transform-center-y=\"-6.1361457\" />\n        <ellipse\n           transform=\"matrix(0.71499945,-0.69912502,0.69912502,0.71499945,0,0)\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"ellipse5440\"\n           cx=\"323.92477\"\n           cy=\"1064.2462\"\n           rx=\"8.5906038\"\n           ry=\"2.147651\"\n           inkscape:transform-center-x=\"-4.755513\"\n           inkscape:transform-center-y=\"-4.9089166\" />\n      </g>\n    </g>\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer3\"\n     inkscape:label=\"middle\"\n     style=\"display:inline\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <g\n       id=\"g4785\"\n       transform=\"translate(0,5.5321064)\">\n      <rect\n         y=\"485.70053\"\n         x=\"991.22406\"\n         height=\"4.7728014\"\n         width=\"42.955212\"\n         id=\"rect4580\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4582\"\n         width=\"42.955212\"\n         height=\"4.7728014\"\n         x=\"991.22406\"\n         y=\"460.10095\" />\n    </g>\n    <g\n       id=\"g4781\"\n       transform=\"translate(0,5.561543)\">\n      <rect\n         y=\"452.55396\"\n         x=\"863.04889\"\n         height=\"6.4429626\"\n         width=\"137.4496\"\n         id=\"rect4560\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4564\"\n         width=\"137.4496\"\n         height=\"6.4429626\"\n         x=\"863.04889\"\n         y=\"491.51849\" />\n    </g>\n    <g\n       transform=\"translate(0,-144.18985)\"\n       id=\"g5334\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5336\"\n         width=\"42.955212\"\n         height=\"4.7728014\"\n         x=\"991.22406\"\n         y=\"485.70053\" />\n      <rect\n         y=\"460.10095\"\n         x=\"991.22406\"\n         height=\"4.7728014\"\n         width=\"42.955212\"\n         id=\"rect5338\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f2f2f2;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n    <g\n       transform=\"translate(0,-144.16041)\"\n       id=\"g5340\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5342\"\n         width=\"137.4496\"\n         height=\"6.4429626\"\n         x=\"863.04889\"\n         y=\"452.55396\" />\n      <rect\n         y=\"491.51849\"\n         x=\"863.04889\"\n         height=\"6.4429626\"\n         width=\"137.4496\"\n         id=\"rect5344\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer4\"\n     inkscape:label=\"walls\"\n     transform=\"translate(-788.38,-438.73174)\" />\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer2\"\n     inkscape:label=\"press\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <g\n       id=\"g4795\"\n       transform=\"translate(-1.3016731,-0.59827161)\">\n      <rect\n         y=\"-904.36981\"\n         x=\"714.23944\"\n         height=\"3.0680728\"\n         width=\"13.49952\"\n         id=\"rect4660\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         inkscape:transform-center-x=\"-1.5010084\"\n         inkscape:transform-center-y=\"4.7635931\"\n         transform=\"matrix(0.25881905,0.96592583,-0.96592583,0.25881905,0,0)\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4793\"\n         width=\"13.49952\"\n         height=\"3.0680728\"\n         x=\"-215.94861\"\n         y=\"1150.7113\"\n         inkscape:transform-center-x=\"-1.4448162\"\n         inkscape:transform-center-y=\"-4.5540236\"\n         transform=\"matrix(0.25881905,-0.96592583,0.96592583,0.25881905,0,0)\" />\n    </g>\n    <g\n       id=\"g4777\"\n       transform=\"translate(0,4.1809278)\">\n      <circle\n         r=\"3.9884946\"\n         cy=\"489.98444\"\n         cx=\"792.48322\"\n         id=\"path4552\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <circle\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"circle4558\"\n         cx=\"792.48322\"\n         cy=\"463.29221\"\n         r=\"3.9884946\" />\n      <g\n         id=\"g5171\"\n         transform=\"translate(0,-0.10847478)\">\n        <circle\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"circle5165\"\n           cx=\"792.48322\"\n           cy=\"470.01752\"\n           r=\"3.9884946\" />\n        <circle\n           r=\"3.9884946\"\n           cy=\"483.47607\"\n           cx=\"792.48322\"\n           id=\"circle5167\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      </g>\n      <circle\n         r=\"3.9884946\"\n         cy=\"476.63831\"\n         cx=\"802.67963\"\n         id=\"circle5169\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n    <g\n       id=\"g4799\"\n       transform=\"translate(0,1.7264829)\">\n      <rect\n         y=\"455.62201\"\n         x=\"868.26465\"\n         height=\"46.941513\"\n         width=\"11.35187\"\n         id=\"rect4574\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f9f9f9;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ececec;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5133\"\n         width=\"11.351868\"\n         height=\"28.392687\"\n         x=\"977.55536\"\n         y=\"464.89642\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ececec;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4576\"\n         width=\"11.35187\"\n         height=\"46.941513\"\n         x=\"979.9425\"\n         y=\"455.62201\" />\n      <rect\n         y=\"464.89642\"\n         x=\"924.29523\"\n         height=\"28.392687\"\n         width=\"11.351868\"\n         id=\"rect5117\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#de8787;fill-opacity:1;fill-rule:nonzero;stroke:#aa0000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#de8787;fill-opacity:1;fill-rule:nonzero;stroke:#aa0000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4578\"\n         width=\"11.35187\"\n         height=\"46.941513\"\n         x=\"914.20752\"\n         y=\"455.62201\" />\n    </g>\n    <g\n       id=\"g4789\"\n       transform=\"translate(0,2.4948823)\">\n      <rect\n         y=\"460.75177\"\n         x=\"1032.2268\"\n         height=\"3.9050193\"\n         width=\"21.477606\"\n         id=\"rect4656\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4658\"\n         width=\"21.477606\"\n         height=\"3.9050193\"\n         x=\"1032.2268\"\n         y=\"491.99194\" />\n    </g>\n    <g\n       id=\"g4804\"\n       transform=\"translate(0,4.5558387)\">\n      <path\n         sodipodi:nodetypes=\"cccccccccccccccccscc\"\n         inkscape:connector-curvature=\"0\"\n         d=\"m 954.12634,477.32101 21.66372,0 0,3.03724 -21.66372,0 z m 0,5.15247 21.66372,0 0,3.03724 -21.66372,0 z m 0,-15.45737 21.66372,0 0,3.03724 -21.66372,0 z m 0,5.15247 21.66372,0 0,3.03724 -21.66372,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4600\" />\n      <path\n         d=\"m 937.45235,469.59235 21.66372,0 0,3.03723 -21.66372,0 z m 0,-5.15247 21.66372,0 0,3.03724 -21.66372,0 z m 0,15.45737 21.66372,0 0,3.03723 -21.66372,0 z m 0,-5.15241 21.66372,0 0,3.03724 -21.66372,0 z m 0,10.30487 21.66372,0 0,3.03724 -21.66372,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4612\"\n         inkscape:connector-curvature=\"0\" />\n      <path\n         sodipodi:nodetypes=\"ccccccccccccccccccccccccc\"\n         inkscape:connector-curvature=\"0\"\n         id=\"path4638\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 968.74669,469.59235 9.23802,0 0,3.03723 -9.23802,0 z m 0,-5.15247 9.23802,0 0,3.03724 -9.23802,0 z m 0,15.45737 9.23802,0 0,3.03723 -9.23802,0 z m 0,-5.15241 9.23802,0 0,3.03724 -9.23802,0 z m 0,10.30487 9.23802,0 0,3.03724 -9.23802,0 z\" />\n      <path\n         d=\"m 935.25769,487.57169 8.1642,0 0,3.03724 -8.1642,0 z m 0,-25.6538 8.1642,0 0,3.03724 -8.1642,0 z m 0,15.40312 8.1642,0 0,3.03724 -8.1642,0 z m 0,5.15247 8.1642,0 0,3.03724 -8.1642,0 z m 0,-15.45737 8.1642,0 0,3.03724 -8.1642,0 z m 0,5.15247 8.1642,0 0,3.03724 -8.1642,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"path4680\"\n         inkscape:connector-curvature=\"0\" />\n    </g>\n    <rect\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:#999999;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"rect4734\"\n       width=\"56.188889\"\n       height=\"4.5558558\"\n       x=\"811.59314\"\n       y=\"478.54132\" />\n    <path\n       id=\"rect4740\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 820.32056,466.06299 21.05493,0 0,2.82029 -21.05493,0 z m 0,26.69223 21.05493,0 0,2.82029 -21.05493,0 z\"\n       inkscape:connector-curvature=\"0\"\n       sodipodi:nodetypes=\"cccccccccc\" />\n    <g\n       id=\"g4903\"\n       style=\"fill:#999999\">\n      <g\n         style=\"fill:#999999\"\n         transform=\"translate(0,-1.4100901)\"\n         id=\"g4822\">\n        <rect\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"rect4542\"\n           width=\"125.8284\"\n           height=\"2.6033461\"\n           x=\"931.56403\"\n           y=\"521.7135\"\n           rx=\"0\"\n           ry=\"0\" />\n        <rect\n           ry=\"0\"\n           rx=\"0\"\n           y=\"440.142\"\n           x=\"931.56403\"\n           height=\"2.6033461\"\n           width=\"125.8284\"\n           id=\"rect4544\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n        <rect\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"rect4546\"\n           width=\"84.175003\"\n           height=\"2.6033936\"\n           x=\"-524.31683\"\n           y=\"1054.7891\"\n           rx=\"0\"\n           ry=\"0\"\n           transform=\"matrix(0,-1,1,0,0,0)\" />\n      </g>\n      <g\n         transform=\"translate(0,-1.4101748)\"\n         id=\"g4814\"\n         style=\"fill:#999999\">\n        <g\n           id=\"g4810\"\n           style=\"fill:#999999\">\n          <rect\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n             id=\"rect4570\"\n             width=\"15.070999\"\n             height=\"2.6033325\"\n             x=\"864.37323\"\n             y=\"521.7135\"\n             rx=\"0\"\n             ry=\"0\" />\n          <rect\n             transform=\"matrix(0,1,-1,0,0,0)\"\n             ry=\"0\"\n             rx=\"0\"\n             y=\"-866.97656\"\n             x=\"509.24585\"\n             height=\"2.6033325\"\n             width=\"15.070999\"\n             id=\"rect4745\"\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n        </g>\n        <g\n           id=\"g4749\"\n           transform=\"translate(0,0.34603882)\"\n           style=\"fill:#999999\">\n          <rect\n             ry=\"0\"\n             rx=\"0\"\n             y=\"439.79596\"\n             x=\"864.37323\"\n             height=\"2.6033325\"\n             width=\"15.070999\"\n             id=\"rect4572\"\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n          <rect\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n             id=\"rect4747\"\n             width=\"15.070999\"\n             height=\"2.6033325\"\n             x=\"439.79596\"\n             y=\"-866.97656\"\n             rx=\"0\"\n             ry=\"0\"\n             transform=\"matrix(0,1,-1,0,0,0)\" />\n        </g>\n      </g>\n    </g>\n    <path\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:#808080;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 726.33414,464.54874 c -2.64413,0 -4.77344,2.1293 -4.77344,4.77343 l 0,22.9961 c 0,2.64413 2.12931,4.77148 4.77344,4.77148 l 25.59961,0 c 2.64413,0 4.77149,-2.12735 4.77149,-4.77148 l 0,-22.9961 c 0,-2.64413 -2.12736,-4.77343 -4.77149,-4.77343 l -25.59961,0 z m 12.79883,11.06445 a 5.2066922,5.2066922 0 0 1 5.20703,5.20703 5.2066922,5.2066922 0 0 1 -5.20703,5.20508 5.2066922,5.2066922 0 0 1 -5.20703,-5.20508 5.2066922,5.2066922 0 0 1 5.20703,-5.20703 z\"\n       id=\"rect4753\"\n       inkscape:connector-curvature=\"0\" />\n    <path\n       id=\"rect4862\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 879.28027,441.43234 58.79224,0 0,2.82029 -58.79224,0 z m 0,75.93094 58.79224,0 0,2.82029 -58.79224,0 z\"\n       inkscape:connector-curvature=\"0\" />\n    <g\n       id=\"g4871\"\n       transform=\"translate(-1.8408437,0)\">\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path4867\"\n         d=\"m 889.74113,522.81283 0,41.11217\"\n         style=\"fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n         d=\"m 906.00192,522.81283 0,41.11217\"\n         id=\"path4869\"\n         inkscape:connector-curvature=\"0\" />\n    </g>\n    <rect\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"rect4879\"\n       width=\"14.113135\"\n       height=\"14.113135\"\n       x=\"888.82074\"\n       y=\"528.02856\"\n       rx=\"2.7612655\"\n       ry=\"2.7612655\" />\n    <g\n       id=\"g4885\"\n       transform=\"translate(-83.451582,4.6021093)\">\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path4719\"\n         d=\"m 956.8652,528.59954 a 5.5421023,11.084205 0 0 0 -3.45313,2.41796 l -8.20508,0 0,3.98829 6.64258,0 a 5.5421023,11.084205 0 0 0 -0.52539,4.67773 5.5421023,11.084205 0 0 0 0.52539,4.67969 l -6.64258,0 10e-6,3.98828 8.21288,0 a 5.5421023,11.084205 0 0 0 3.44532,2.41601 5.5421023,11.084205 0 0 0 1.69727,-0.54101 5.5421023,11.084205 0 0 1 -3.84375,-10.54297 5.5421023,11.084205 0 0 1 3.84374,-10.53906 5.5421023,11.084205 0 0 0 -1.69725,-0.54495 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#808000;stroke-width:2.00017381;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <g\n         id=\"g4881\">\n        <ellipse\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"path4875\"\n           cx=\"964.29529\"\n           cy=\"539.68726\"\n           rx=\"8.5906038\"\n           ry=\"2.147651\" />\n        <ellipse\n           ry=\"2.147651\"\n           rx=\"8.5906038\"\n           cy=\"1064.2462\"\n           cx=\"323.92477\"\n           id=\"ellipse4877\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           transform=\"matrix(0.71499945,-0.69912502,0.69912502,0.71499945,0,0)\" />\n      </g>\n    </g>\n    <path\n       id=\"rect4931\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 838.17877,495.12573 23.35477,0 0,2.60335 -23.35477,0 z m 0,-31.60116 23.35477,0 0,2.60334 -23.35477,0 z\"\n       inkscape:connector-curvature=\"0\"\n       sodipodi:nodetypes=\"cccccccccc\" />\n    <path\n       sodipodi:nodetypes=\"cccccccccc\"\n       inkscape:connector-curvature=\"0\"\n       d=\"m 805.96401,495.12573 16.91182,0 0,2.60335 -16.91182,0 z m 0,-31.60116 16.91182,0 0,2.60334 -16.91182,0 z\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"path4936\" />\n    <g\n       transform=\"translate(-1.3016731,-150.32023)\"\n       id=\"g5346\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5348\"\n         width=\"13.49952\"\n         height=\"3.0680728\"\n         x=\"713.82178\"\n         y=\"-904.1734\"\n         inkscape:transform-center-x=\"-1.1223603\"\n         inkscape:transform-center-y=\"4.7813452\"\n         transform=\"matrix(0.25881905,0.96592583,-0.96592583,0.25881905,0,0)\" />\n      <rect\n         y=\"1150.6241\"\n         x=\"-216.09689\"\n         height=\"3.0680728\"\n         width=\"13.49952\"\n         id=\"rect5350\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         inkscape:transform-center-x=\"-1.3049606\"\n         inkscape:transform-center-y=\"-4.5735932\"\n         transform=\"matrix(0.25881905,-0.96592583,0.96592583,0.25881905,0,0)\" />\n    </g>\n    <g\n       transform=\"translate(0,-145.54103)\"\n       id=\"g5352\">\n      <circle\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"circle5354\"\n         cx=\"792.48322\"\n         cy=\"489.98444\"\n         r=\"3.9884946\" />\n      <circle\n         r=\"3.9884946\"\n         cy=\"463.29221\"\n         cx=\"792.48322\"\n         id=\"circle5356\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <g\n         transform=\"translate(0,-0.10847478)\"\n         id=\"g5358\">\n        <circle\n           r=\"3.9884946\"\n           cy=\"470.01752\"\n           cx=\"792.48322\"\n           id=\"circle5360\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n        <circle\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"circle5362\"\n           cx=\"792.48322\"\n           cy=\"483.47607\"\n           r=\"3.9884946\" />\n      </g>\n      <circle\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"circle5364\"\n         cx=\"802.67963\"\n         cy=\"476.63831\"\n         r=\"3.9884946\" />\n    </g>\n    <g\n       transform=\"translate(0,-147.99547)\"\n       id=\"g5366\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f9f9f9;fill-opacity:1;fill-rule:nonzero;stroke:#b3b3b3;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5368\"\n         width=\"11.35187\"\n         height=\"46.941513\"\n         x=\"868.26465\"\n         y=\"455.62201\" />\n      <rect\n         y=\"464.89642\"\n         x=\"977.55536\"\n         height=\"28.392687\"\n         width=\"11.351868\"\n         id=\"rect5370\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ececec;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         y=\"455.62201\"\n         x=\"979.9425\"\n         height=\"46.941513\"\n         width=\"11.35187\"\n         id=\"rect5372\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ececec;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#de8787;fill-opacity:1;fill-rule:nonzero;stroke:#aa0000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5374\"\n         width=\"11.351868\"\n         height=\"28.392687\"\n         x=\"943.16394\"\n         y=\"464.89642\" />\n      <rect\n         y=\"455.62201\"\n         x=\"933.07623\"\n         height=\"46.941513\"\n         width=\"11.35187\"\n         id=\"rect5376\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#de8787;fill-opacity:1;fill-rule:nonzero;stroke:#aa0000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n    <g\n       transform=\"translate(0,-147.22707)\"\n       id=\"g5378\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect5380\"\n         width=\"21.477606\"\n         height=\"3.9050193\"\n         x=\"1032.2268\"\n         y=\"460.75177\" />\n      <rect\n         y=\"491.99194\"\n         x=\"1032.2268\"\n         height=\"3.9050193\"\n         width=\"21.477606\"\n         id=\"rect5382\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n    <g\n       transform=\"translate(0,-145.16612)\"\n       id=\"g5384\">\n      <path\n         id=\"path5386\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 962.79365,477.32101 12.99641,0 0,3.03724 -12.99641,0 z m 0,5.15247 12.99641,0 0,3.03724 -12.99641,0 z m 0,-15.45737 12.99641,0 0,3.03724 -12.99641,0 z m 0,5.15247 12.99641,0 0,3.03724 -12.99641,0 z\"\n         inkscape:connector-curvature=\"0\"\n         sodipodi:nodetypes=\"cccccccccccccccccscc\" />\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path5388\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 956.23885,469.59235 11.92672,0 0,3.03723 -11.92672,0 z m 0,-5.15247 11.92672,0 0,3.03724 -11.92672,0 z m 0,15.45737 11.92672,0 0,3.03723 -11.92672,0 z m 0,-5.15241 11.92672,0 0,3.03724 -11.92672,0 z m 0,10.30487 11.92672,0 0,3.03724 -11.92672,0 z\"\n         sodipodi:nodetypes=\"ccccccccccccccccccccccccc\" />\n      <path\n         d=\"m 968.74669,469.59235 9.23802,0 0,3.03723 -9.23802,0 z m 0,-5.15247 9.23802,0 0,3.03724 -9.23802,0 z m 0,15.45737 9.23802,0 0,3.03723 -9.23802,0 z m 0,-5.15241 9.23802,0 0,3.03724 -9.23802,0 z m 0,10.30487 9.23802,0 0,3.03724 -9.23802,0 z\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"path5390\"\n         inkscape:connector-curvature=\"0\"\n         sodipodi:nodetypes=\"ccccccccccccccccccccccccc\" />\n      <path\n         inkscape:connector-curvature=\"0\"\n         id=\"path5392\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         d=\"m 954.27974,487.57169 8.1642,0 0,3.03724 -8.1642,0 z m 0,-25.6538 8.1642,0 0,3.03724 -8.1642,0 z m 0,15.40312 8.1642,0 0,3.03724 -8.1642,0 z m 0,5.15247 8.1642,0 0,3.03724 -8.1642,0 z m 0,-15.45737 8.1642,0 0,3.03724 -8.1642,0 z m 0,5.15247 8.1642,0 0,3.03724 -8.1642,0 z\" />\n    </g>\n    <rect\n       y=\"328.81937\"\n       x=\"811.59314\"\n       height=\"4.5558558\"\n       width=\"56.188889\"\n       id=\"rect5394\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:#999999;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    <path\n       sodipodi:nodetypes=\"cccccccccc\"\n       inkscape:connector-curvature=\"0\"\n       d=\"m 820.32056,316.34103 21.05493,0 0,2.82029 -21.05493,0 z m 0,26.69223 21.05493,0 0,2.82029 -21.05493,0 z\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"path5396\" />\n    <g\n       style=\"fill:#999999\"\n       id=\"g5398\"\n       transform=\"translate(0,-149.72196)\">\n      <g\n         id=\"g5400\"\n         transform=\"translate(0,-1.4100901)\"\n         style=\"fill:#999999\">\n        <rect\n           ry=\"0\"\n           rx=\"0\"\n           y=\"521.7135\"\n           x=\"931.56403\"\n           height=\"2.6033461\"\n           width=\"125.8284\"\n           id=\"rect5402\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n        <rect\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"rect5404\"\n           width=\"125.8284\"\n           height=\"2.6033461\"\n           x=\"931.56403\"\n           y=\"440.142\"\n           rx=\"0\"\n           ry=\"0\" />\n        <rect\n           transform=\"matrix(0,-1,1,0,0,0)\"\n           ry=\"0\"\n           rx=\"0\"\n           y=\"1054.7891\"\n           x=\"-524.31683\"\n           height=\"2.6033936\"\n           width=\"84.175003\"\n           id=\"rect5406\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      </g>\n      <g\n         style=\"fill:#999999\"\n         id=\"g5408\"\n         transform=\"translate(0,-1.4101748)\">\n        <g\n           style=\"fill:#999999\"\n           id=\"g5410\">\n          <rect\n             ry=\"0\"\n             rx=\"0\"\n             y=\"521.7135\"\n             x=\"864.37323\"\n             height=\"2.6033325\"\n             width=\"15.070999\"\n             id=\"rect5412\"\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n          <rect\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n             id=\"rect5414\"\n             width=\"15.070999\"\n             height=\"2.6033325\"\n             x=\"509.24585\"\n             y=\"-866.97656\"\n             rx=\"0\"\n             ry=\"0\"\n             transform=\"matrix(0,1,-1,0,0,0)\" />\n        </g>\n        <g\n           style=\"fill:#999999\"\n           transform=\"translate(0,0.34603882)\"\n           id=\"g5416\">\n          <rect\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n             id=\"rect5418\"\n             width=\"15.070999\"\n             height=\"2.6033325\"\n             x=\"864.37323\"\n             y=\"439.79596\"\n             rx=\"0\"\n             ry=\"0\" />\n          <rect\n             transform=\"matrix(0,1,-1,0,0,0)\"\n             ry=\"0\"\n             rx=\"0\"\n             y=\"-866.97656\"\n             x=\"439.79596\"\n             height=\"2.6033325\"\n             width=\"15.070999\"\n             id=\"rect5420\"\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n        </g>\n      </g>\n    </g>\n    <path\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 879.28027,291.71038 58.79224,0 0,2.82029 -58.79224,0 z\"\n       id=\"path5448\"\n       inkscape:connector-curvature=\"0\" />\n    <path\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#aa0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 922.8469,367.64132 58.79224,0 0,2.82029 -58.79224,0 z\"\n       id=\"path5422\"\n       inkscape:connector-curvature=\"0\" />\n    <path\n       sodipodi:nodetypes=\"cccccccccc\"\n       inkscape:connector-curvature=\"0\"\n       d=\"m 838.17877,345.40377 23.35477,0 0,2.60335 -23.35477,0 z m 0,-31.60116 23.35477,0 0,2.60334 -23.35477,0 z\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       id=\"path5442\" />\n    <path\n       id=\"path5444\"\n       style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n       d=\"m 805.96401,345.40377 16.91182,0 0,2.60335 -16.91182,0 z m 0,-31.60116 16.91182,0 0,2.60334 -16.91182,0 z\"\n       inkscape:connector-curvature=\"0\"\n       sodipodi:nodetypes=\"cccccccccc\" />\n  </g>\n  <g\n     inkscape:groupmode=\"layer\"\n     id=\"layer6\"\n     inkscape:label=\"crane\"\n     style=\"display:inline\"\n     transform=\"translate(-788.38,-438.73174)\">\n    <g\n       id=\"g4946\"\n       transform=\"translate(0,-33.808656)\">\n      <rect\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:#999999;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n         id=\"rect4941\"\n         width=\"304.35287\"\n         height=\"15.953959\"\n         x=\"1105.7335\"\n         y=\"505.63162\" />\n      <rect\n         y=\"586.01514\"\n         x=\"1105.7335\"\n         height=\"15.953959\"\n         width=\"304.35287\"\n         id=\"rect4943\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#999999;fill-opacity:1;fill-rule:nonzero;stroke:#999999;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n    </g>\n    <g\n       id=\"g5051\">\n      <rect\n         y=\"492.64279\"\n         x=\"1193.6342\"\n         height=\"58.141388\"\n         width=\"105.00164\"\n         id=\"rect4979\"\n         style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ac9393;fill-opacity:1;fill-rule:nonzero;stroke:#552200;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      <g\n         transform=\"translate(0,-26.033462)\"\n         id=\"g4975\">\n        <rect\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#666666;fill-opacity:1;fill-rule:nonzero;stroke:#4d4d4d;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"rect4950\"\n           width=\"155.85811\"\n           height=\"20.862896\"\n           x=\"1168.3221\"\n           y=\"581.1062\" />\n        <rect\n           y=\"493.97293\"\n           x=\"1168.3221\"\n           height=\"20.862896\"\n           width=\"155.85811\"\n           id=\"rect4952\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#666666;fill-opacity:1;fill-rule:nonzero;stroke:#4d4d4d;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      </g>\n    </g>\n    <g\n       id=\"g5065\"\n       inkscape:transform-center-x=\"108.4121\"\n       inkscape:transform-center-y=\"13.714718\"\n       transform=\"matrix(0.93003677,-0.36746647,0.36746647,0.93003677,-104.50293,493.96432)\">\n      <g\n         transform=\"matrix(0.9998499,0.01732589,-0.01732589,0.9998499,8.9739621,-18.166369)\"\n         id=\"g4966\">\n        <path\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffaaaa;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           d=\"m 1083.3177,494.83672 -1.9782,23.21894 138.1925,11.85364 2.5937,-24.10479 z\"\n           id=\"rect4960\"\n           inkscape:connector-curvature=\"0\"\n           sodipodi:nodetypes=\"ccccc\" />\n        <path\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#d4aa00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           d=\"m 904.22918,489.22366 -1.84961,5.13068 196.07843,24.28879 1.5429,-21.87271 z\"\n           id=\"rect4962\"\n           inkscape:connector-curvature=\"0\"\n           sodipodi:nodetypes=\"ccccc\" />\n      </g>\n      <g\n         id=\"g5057\">\n        <g\n           id=\"g4970\"\n           transform=\"matrix(0.99838734,-0.056769,0.056769,0.99838734,-28.175976,73.261685)\">\n          <rect\n             transform=\"matrix(0.98876689,0.14946585,-0.14946585,0.98876689,0,0)\"\n             y=\"304.69455\"\n             x=\"1261.3308\"\n             height=\"51.24136\"\n             width=\"156.96884\"\n             id=\"rect4958\"\n             style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ff5555;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n          <path\n             inkscape:connector-curvature=\"0\"\n             id=\"path4954\"\n             d=\"m 1291.6587,545.51657 c 2.4544,1.22723 50.1493,9.38957 50.1493,9.38957 l -16.4879,27.55208 -26.6843,-4.98974 z\"\n             style=\"fill:#ff5555;fill-rule:evenodd;stroke:#800000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\" />\n          <path\n             style=\"fill:#ff5555;fill-rule:evenodd;stroke:#800000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n             d=\"m 1298.4531,510.76205 c 2.7162,-0.39049 50.5512,6.90646 50.5512,6.90646 l -6.9566,-31.34603 -26.8961,-3.681 z\"\n             id=\"path4956\"\n             inkscape:connector-curvature=\"0\" />\n        </g>\n        <rect\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ac9393;fill-opacity:1;fill-rule:nonzero;stroke:#552200;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\"\n           id=\"rect4981\"\n           width=\"31.294344\"\n           height=\"14.113135\"\n           x=\"1231.0852\"\n           y=\"416.40729\"\n           rx=\"3.0680728\"\n           ry=\"3.0680728\"\n           transform=\"matrix(0.99525561,0.09729476,-0.09729476,0.99525561,0,0)\" />\n        <path\n           sodipodi:nodetypes=\"ccccc\"\n           inkscape:connector-curvature=\"0\"\n           id=\"rect4960-4\"\n           d=\"m 1220.4719,509.00612 -2.3802,23.18118 129.2886,13.37839 3.0109,-24.05623 z\"\n           style=\"color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ff2a2a;fill-opacity:1;fill-rule:nonzero;stroke:#800000;stroke-width:1.77165353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate\" />\n      </g>\n    </g>\n    <path\n       style=\"display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1\"\n       d=\"M 916.37785,616.73561 1224.4405,529.08963\"\n       id=\"path5189\"\n       inkscape:connector-curvature=\"0\" />\n  </g>\n</svg>",
+            "svg_viewbox": "0 0 272.38595 125.19326",
+            "object_source": "wikimedia"
+          },
+          "cameraZoom": 1,
+          "dimInactiveParts": false,
+          "quiz": {
+            "question": "Gidravlik pressning asosiy vazifasi nima?",
+            "options": [
+              "Suyuqlikni sovutish",
+              "Kuchni ko'paytirish",
+              "Gazni siqish"
+            ],
+            "correct_index": 1,
+            "explanation_uz": "Pressning asosiy vazifasi bosim yordamida kuchni uzatish va oshirishdir."
+          },
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        }
+      ],
+      "id": "ai-1794969065173",
+      "source": "gemini-director",
+      "latency_ms": 8440,
+      "token_usage": {
+        "prompt_tokens": 789,
+        "cached_tokens": 0,
+        "output_tokens": 1811,
+        "thoughts_tokens": 0,
+        "total_tokens": 2600,
+        "cost_usd": 0.007383,
+        "llm_calls": 1
+      }
+    },
+    "createdAt": "2026-11-18T02:31:05.173Z"
+  },
+  {
+    "normalizedKey": "v8:nyutonning ikkinchi qonuni nima",
+    "query": "Nyutonning ikkinchi qonuni nima?",
+    "lesson": {
+      "topic_title": "Nyutonning ikkinchi qonuni",
+      "subject": "physics",
+      "engine": "svg2d",
+      "sliders": [
+        {
+          "id": "f_force",
+          "label": "Kuch (F)",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 5,
+          "unit": "N"
+        },
+        {
+          "id": "m_mass",
+          "label": "Massa (m)",
+          "min": 1,
+          "max": 5,
+          "step": 0.5,
+          "default": 2,
+          "unit": "kg"
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "step_title": "Hayotiy misol",
+          "speech_text": "Keling, savatchani itarib ko'ramiz. Siz qancha ko'p kuch ishlatsangiz, savatcha shuncha tezroq harakatlanadi.",
+          "katex_formulas": [
+            "F = m \\cdot a"
+          ],
+          "explanation_uz": "Kuch massa va tezlanishga bog'liq.",
+          "emoji_emotion": "explaining",
+          "beats": [
+            {
+              "sentence": "Tasavvur qiling, bo'sh savatni itaryapsiz.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Og'ir yuk bilan esa uni qo'zg'atish qiyinlashadi.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "savatcha",
+            "style": "cart",
+            "template": "illustration",
+            "x_range": [
+              -5,
+              5
+            ],
+            "object_name_en": "basket",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><g fill=\"#a57939\"><path d=\"m36 35.129l-18.787-.045L22.09 58.34h27.82l4.877-23.256z\"/><path d=\"M15.092 27.478v7.672h41.516l.749-7.672z\"/><path d=\"m31.675 32.298l-9.19-14.738c-1.116-1.79-.83-3.983.638-4.898c1.468-.916 3.563-.207 4.68 1.582l11.133 18.054Z\"/></g><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"m36 35.129l-18.787-.045L22.09 58.34h27.82l4.877-23.256zm-4.325-2.831l-9.19-14.738c-1.116-1.79-.83-3.983.638-4.898c1.468-.916 3.563-.207 4.68 1.582l11.133 18.054Zm7.501 5.494l8.713 9.578m-18.974-9.72l15.82 17.614m-20.89-13.762L36.383 55.7m-11.1-1.601l1.384 1.378m-2.103-9.012l8.011-8.673m-5.699 17.56l16.518-17.56M36.383 55.7l12.062-12.484m-3.71 12.048l2.161-1.822\"/><circle cx=\"33.874\" cy=\"29.837\" r=\".886\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M36.383 27.427h20.974v7.665H14.643v-7.665h13.206\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          },
+          "cameraZoom": 1,
+          "dimInactiveParts": false,
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 2,
+          "step_title": "Asosiy qismlar",
+          "speech_text": "Qonun uchta asosiy qismdan iborat: kuch, massa va tezlanish.",
+          "katex_formulas": [
+            "a = F / m"
+          ],
+          "explanation_uz": "Kuch va massa o'rtasidagi bog'liqlik.",
+          "emoji_emotion": "pointing",
+          "beats": [
+            {
+              "sentence": "Kuch tezlanishni yuzaga keltiradi.",
+              "focus_target": "vector_A",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1.7,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Massa esa bu harakatga qarshilik qiladi.",
+              "focus_target": "base_plane",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1.7,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "vektorlar",
+            "style": "vectors",
+            "object_name_en": "vector",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\"><path d=\"M17.055 4.533a24 24 0 0 0-10.11 0m12.522 12.522a24 24 0 0 0 0-10.11m-14.934 0a24 24 0 0 0 0 10.11m2.412 2.412a24 24 0 0 0 10.11 0\"/><circle cx=\"19\" cy=\"19\" r=\"2\"/><circle cx=\"19\" cy=\"5\" r=\"2\"/><circle cx=\"5\" cy=\"19\" r=\"2\"/><circle cx=\"5\" cy=\"5\" r=\"2\"/></g></svg>",
+            "svg_viewbox": "0 0 24 24",
+            "object_source": "iconify"
+          },
+          "focusPart": "vector_A",
+          "quiz": {
+            "question": "Nyutonning ikkinchi qonuni nimani ifodalaydi?",
+            "options": [
+              "Kuch, massa va tezlanish bog'liqligini",
+              "Faqat tezlikni",
+              "Ishqalanish kuchini"
+            ],
+            "correct_index": 0,
+            "explanation_uz": "Bu qonun kuch, massa va tezlanish o'rtasidagi asosiy bog'liqlikdir."
+          },
+          "cameraZoom": 1.72,
+          "dimInactiveParts": true,
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 3,
+          "step_title": "Formula va o'zgarish",
+          "speech_text": "Kuchni oshirsak tezlanish ortadi, massani oshirsak esa kamayadi.",
+          "katex_formulas": [
+            "a = \\frac{F}{m}"
+          ],
+          "explanation_uz": "Formula yordamida tezlanishni hisoblash.",
+          "emoji_emotion": "happy",
+          "beats": [
+            {
+              "sentence": "Mana, slayderlar yordamida qiymatlarni o'zgartirib ko'ring.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.2,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Matematik bog'liqlikni vizual kuzating.",
+              "focus_target": "overview",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.2,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "grafik",
+            "style": "chart",
+            "object_name_en": "chart",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#fff\" d=\"M12.05 12.05h47.9v47.9h-47.9z\"/><path fill=\"#b1cc33\" d=\"M18.32 37.6h8v21.41h-8z\"/><path fill=\"#92d3f5\" d=\"M46.25 44.38h8V59h-8z\"/><path fill=\"#d22f27\" d=\"M32.28 21.69h8v37.32h-8z\"/><g fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-miterlimit=\"10\" stroke-width=\"2\"><path d=\"M18.03 59.01V37.6h8v21.41m19.94 0V44.39h8v14.62M12.75 31.28h15.74m15.02 9.54h15.94m-1.97 9.55h1.69\"/><path d=\"M12.05 12.05h47.9v47.9h-47.9z\"/><path d=\"M32 59.01V21.73h8v37.28M12.39 40.82h2.13m-2.13 9.55h2.13m28.99-19.09h15.94m-15.94-9.54h15.94m-46.7 0h15.74\"/></g></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          },
+          "cameraZoom": 1.2,
+          "dimInactiveParts": true,
+          "focusPart": "detail_left",
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        },
+        {
+          "step_number": 4,
+          "step_title": "Mini-test",
+          "speech_text": "Keling, bilimizni qisqacha tekshirib olamiz.",
+          "katex_formulas": [
+            "F = ma"
+          ],
+          "explanation_uz": "O'rganganlaringizni mustahkamlang.",
+          "emoji_emotion": "encouraging",
+          "beats": [
+            {
+              "sentence": "To'g'ri javobni tanlang.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            },
+            {
+              "sentence": "Siz qoyilmaqom ishlayapsiz!",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 1,
+              "flowType": "none",
+              "flowSpeed": 1,
+              "flowReverse": false
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "bajarildi",
+            "object_name_en": "done",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#fff\" d=\"M35.442 37.836h1.017c7.624 0 13.814 6.19 13.814 13.814v6.458H21.945v-6.775c0-7.45 6.048-13.497 13.497-13.497m1.16-3.97h-1.017c-7.624 0-13.814-6.19-13.814-13.815v-6.458h28.328v6.775c0 7.45-6.048 13.498-13.497 13.498\"/><path fill=\"#fff\" d=\"M39.257 33.55s-2.822 2.018-.17 4.547c0 0-2.035-.555-6.388.071c0 0 2.756-2.098-.094-4.73z\"/><path fill=\"#9b9b9a\" d=\"M44.045 43H27.956C25.136 45.584 24 49.665 24 52.318V59h24v-6.682c0-2.653-1.136-6.734-3.955-9.318\"/><path fill=\"#a57939\" d=\"M55 11c0 1.1-.9 2-2 2H19c-1.1 0-2-.9-2-2v-1c0-1.1.9-2 2-2h34c1.1 0 2 .9 2 2zm0 51c0 1.1-.9 2-2 2H19c-1.1 0-2-.9-2-2v-1c0-1.1.9-2 2-2h34c1.1 0 2 .9 2 2z\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M31 34c-7.272-1.91-10-9.545-10-14.318V13m0 46v-6.682C21 47.546 23.728 39.91 31 38m0 0c1-.271 2-.894 2-2c0-1.104-1-1.728-2-2m10 0c7.273-1.91 10-9.545 10-14.318V13m0 46v-6.682C51 47.546 48.273 39.91 41 38m0 0c-1-.271-2-.894-2-2c0-1.104 1-1.728 2-2m14-23c0 1.1-.9 2-2 2H19c-1.1 0-2-.9-2-2v-1c0-1.1.9-2 2-2h34c1.1 0 2 .9 2 2zm0 51c0 1.1-.9 2-2 2H19c-1.1 0-2-.9-2-2v-1c0-1.1.9-2 2-2h34c1.1 0 2 .9 2 2zM29 43h14\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          },
+          "cameraZoom": 1,
+          "dimInactiveParts": false,
+          "quiz": {
+            "question": "Massa o'zgarmas bo'lganda, kuch 2 barobar ortsa, tezlanish nima bo'ladi?",
+            "options": [
+              "2 barobar ortadi",
+              "2 barobar kamayadi",
+              "O'zgarmaydi"
+            ],
+            "correct_index": 0,
+            "explanation_uz": "F va a to'g'ri proporsional bo'lgani uchun tezlanish ham 2 barobar ortadi."
+          },
+          "flowType": "none",
+          "flowSpeed": 1,
+          "flowReverse": false
+        }
+      ],
+      "id": "ai-1794932265163",
+      "source": "gemini-director",
+      "latency_ms": 12459,
+      "token_usage": {
+        "prompt_tokens": 2776,
+        "cached_tokens": 908,
+        "output_tokens": 1676,
+        "thoughts_tokens": 0,
+        "total_tokens": 4452,
+        "cost_usd": 0.007756,
+        "llm_calls": 5
+      }
+    },
+    "createdAt": "2026-11-17T16:17:45.163Z"
+  },
+  {
+    "normalizedKey": "v8:kaktus qanday o simlik",
+    "query": "Kaktus qanday o'simlik?",
+    "lesson": {
+      "topic_title": "Kaktus qanday o'simlik?",
+      "subject": "biology",
+      "engine": "svg2d",
+      "sliders": [],
+      "steps": [
+        {
+          "step_number": 1,
+          "step_title": "Cho'lning sabrli o'simligi",
+          "speech_text": "Kaktus issiq va suvsiz cho'llarda yashashga moslashgan ajoyib o'simlikdir. U uzoq vaqt yomg'irsiz ham qurib qolmaydi, chunki tanasida suvni xuddi idishdek saqlay oladi.",
+          "katex_formulas": [],
+          "explanation_uz": "Kaktus — qurg'oqchil va issiq hududlarda o'sadigan, suvni tanasida saqlovchi o'simlik.",
+          "emoji_emotion": "happy",
+          "beats": [
+            {
+              "sentence": "Kaktus issiq va suvsiz cho'llarda yashashga moslashgan ajoyib o'simlikdir.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.15,
+              "note": "Kaktus ko'rinishi"
+            },
+            {
+              "sentence": "U uzoq vaqt yomg'irsiz ham qurib qolmaydi, chunki tanasida suvni xuddi idishdek saqlay oladi.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.95,
+              "note": "Suv saqlash xususiyati"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "kaktus",
+            "shape": "illustration",
+            "style": "cartoon",
+            "surface_color": "#2ecc71",
+            "x_range": [
+              -5,
+              5
+            ],
+            "y_range": [
+              -5,
+              5
+            ],
+            "object_name_en": "cactus",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#b1cc33\" d=\"M35.487 7.054c-3.627 0-6.566 3.265-6.566 7.292v19.193h-2.978c-3.961 0-3.795-1.031-3.795-4.77l-1.61-3.252c0-2.792-.382-3.682-3.4-3.41c-2.631.237-5.176 1.555-5.176 4.05l-.206 11.283c0 2.637 4.38 7.58 7.174 7.58l7.013.069h2.978v19.086h13.132V14.346c0-4.027-2.94-7.292-6.566-7.292m19.037 18.93a4.777 4.777 0 0 0-5.245 4.753v6.365c0 3.738.157 4.769-3.582 4.769h-3.39l.078 11.55h11.67a4.776 4.776 0 0 0 4.775-4.775V30.943a4.914 4.914 0 0 0-4.306-4.959\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M42.054 63.148v-48.95c0-3.956-2.94-7.163-6.567-7.163s-6.566 3.207-6.566 7.163v48.95m-3.859-19.103h-6.365a6.77 6.77 0 0 1-6.768-6.768v-11.14a4.777 4.777 0 0 1 5.244-4.753a4.914 4.914 0 0 1 4.307 4.958v4.768a3.384 3.384 0 0 0 3.384 3.384h.198m20.764 17.909h8.357a4.776 4.776 0 0 0 4.776-4.776V29.924a4.914 4.914 0 0 0-4.307-4.958a4.777 4.777 0 0 0-5.245 4.753v6.364c0 3.738.157 6.768-3.581 6.768m-5.73-24.502l4.069-4.069m6.969 33.803l4.069-4.068m-35.05-13.646l4.068-4.068m8.925-14.598L29.668 7m1.549 48.233l-4.593-3.623m29.281-23.614l4.069-4.068m-8.942 11.644l-4.405-3.848m-10.453-6.146l-2.937-4.217m-18.543 4.601l-2.938-5.25\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          }
+        },
+        {
+          "step_number": 2,
+          "step_title": "Kaktusning tuzilishi va tikanlari",
+          "speech_text": "Kaktusning oddiy daraxtlar kabi keng barglari yo'q, ularning o'rnini o'tkir tikanlar egallagan. Tikanlar suvning bug'lanib ketishini kamaytiradi va kaktusni hayvonlardan himoya qiladi.",
+          "katex_formulas": [],
+          "explanation_uz": "Kaktus barglari o'rnidagi tikanlar namlikni asraydi va uni yirtqich hamda o'txo'r hayvonlardan himoyalaydi.",
+          "emoji_emotion": "pointing",
+          "beats": [
+            {
+              "sentence": "Kaktusning oddiy daraxtlar kabi keng barglari yo'q, ularning o'rnini o'tkir tikanlar egallagan.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.25,
+              "note": "Tikanlar vazifasi"
+            },
+            {
+              "sentence": "Tikanlar suvning bug'lanib ketishini kamaytiradi va kaktusni hayvonlardan himoya qiladi.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.94,
+              "note": "Himoya va tejash"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "kaktus",
+            "shape": "illustration",
+            "style": "cartoon",
+            "surface_color": "#27ae60",
+            "x_range": [
+              -5,
+              5
+            ],
+            "y_range": [
+              -5,
+              5
+            ],
+            "object_name_en": "cactus",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#b1cc33\" d=\"M35.487 7.054c-3.627 0-6.566 3.265-6.566 7.292v19.193h-2.978c-3.961 0-3.795-1.031-3.795-4.77l-1.61-3.252c0-2.792-.382-3.682-3.4-3.41c-2.631.237-5.176 1.555-5.176 4.05l-.206 11.283c0 2.637 4.38 7.58 7.174 7.58l7.013.069h2.978v19.086h13.132V14.346c0-4.027-2.94-7.292-6.566-7.292m19.037 18.93a4.777 4.777 0 0 0-5.245 4.753v6.365c0 3.738.157 4.769-3.582 4.769h-3.39l.078 11.55h11.67a4.776 4.776 0 0 0 4.775-4.775V30.943a4.914 4.914 0 0 0-4.306-4.959\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M42.054 63.148v-48.95c0-3.956-2.94-7.163-6.567-7.163s-6.566 3.207-6.566 7.163v48.95m-3.859-19.103h-6.365a6.77 6.77 0 0 1-6.768-6.768v-11.14a4.777 4.777 0 0 1 5.244-4.753a4.914 4.914 0 0 1 4.307 4.958v4.768a3.384 3.384 0 0 0 3.384 3.384h.198m20.764 17.909h8.357a4.776 4.776 0 0 0 4.776-4.776V29.924a4.914 4.914 0 0 0-4.307-4.958a4.777 4.777 0 0 0-5.245 4.753v6.364c0 3.738.157 6.768-3.581 6.768m-5.73-24.502l4.069-4.069m6.969 33.803l4.069-4.068m-35.05-13.646l4.068-4.068m8.925-14.598L29.668 7m1.549 48.233l-4.593-3.623m29.281-23.614l4.069-4.068m-8.942 11.644l-4.405-3.848m-10.453-6.146l-2.937-4.217m-18.543 4.601l-2.938-5.25\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          }
+        },
+        {
+          "step_number": 3,
+          "step_title": "Poyadagi suv zaxirasi va fotosintez",
+          "speech_text": "Kaktusning qalin va etli yashil poyasi suvni o'zida to'plab saqlaydi. Barglari bo'lmagani uchun quyosh nuri yordamida oziqa tayyorlash jarayoni ham aynan poyasida kechadi.",
+          "katex_formulas": [
+            "CO_2 + H_2O \\rightarrow \\text{Oziqa} + O_2"
+          ],
+          "explanation_uz": "Qalin yashil poya ham suv ombori, ham fotosintez markazi vazifasini bajaradi.",
+          "emoji_emotion": "explaining",
+          "beats": [
+            {
+              "sentence": "Kaktusning qalin va etli yashil poyasi suvni o'zida to'plab saqlaydi.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.2,
+              "note": "Suv ombori"
+            },
+            {
+              "sentence": "Barglari bo'lmagani uchun quyosh nuri yordamida oziqa tayyorlash jarayoni ham aynan poyasida kechadi.",
+              "focus_target": "overview",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1,
+              "note": "Poyada fotosintez"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "kaktus",
+            "shape": "illustration",
+            "style": "cartoon",
+            "surface_color": "#16a085",
+            "x_range": [
+              -5,
+              5
+            ],
+            "y_range": [
+              -5,
+              5
+            ],
+            "object_name_en": "cactus",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#b1cc33\" d=\"M35.487 7.054c-3.627 0-6.566 3.265-6.566 7.292v19.193h-2.978c-3.961 0-3.795-1.031-3.795-4.77l-1.61-3.252c0-2.792-.382-3.682-3.4-3.41c-2.631.237-5.176 1.555-5.176 4.05l-.206 11.283c0 2.637 4.38 7.58 7.174 7.58l7.013.069h2.978v19.086h13.132V14.346c0-4.027-2.94-7.292-6.566-7.292m19.037 18.93a4.777 4.777 0 0 0-5.245 4.753v6.365c0 3.738.157 4.769-3.582 4.769h-3.39l.078 11.55h11.67a4.776 4.776 0 0 0 4.775-4.775V30.943a4.914 4.914 0 0 0-4.306-4.959\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M42.054 63.148v-48.95c0-3.956-2.94-7.163-6.567-7.163s-6.566 3.207-6.566 7.163v48.95m-3.859-19.103h-6.365a6.77 6.77 0 0 1-6.768-6.768v-11.14a4.777 4.777 0 0 1 5.244-4.753a4.914 4.914 0 0 1 4.307 4.958v4.768a3.384 3.384 0 0 0 3.384 3.384h.198m20.764 17.909h8.357a4.776 4.776 0 0 0 4.776-4.776V29.924a4.914 4.914 0 0 0-4.307-4.958a4.777 4.777 0 0 0-5.245 4.753v6.364c0 3.738.157 6.768-3.581 6.768m-5.73-24.502l4.069-4.069m6.969 33.803l4.069-4.068m-35.05-13.646l4.068-4.068m8.925-14.598L29.668 7m1.549 48.233l-4.593-3.623m29.281-23.614l4.069-4.068m-8.942 11.644l-4.405-3.848m-10.453-6.146l-2.937-4.217m-18.543 4.601l-2.938-5.25\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          }
+        },
+        {
+          "step_number": 4,
+          "step_title": "Mini-tekshiruv",
+          "speech_text": "Keling, kaktus haqida bilib olganlarimizni tekshirib ko'ramiz. Quyidagi savolga to'g'ri javobni tanlang!",
+          "katex_formulas": [],
+          "explanation_uz": "O'rgangan bilimlaringizni mustahkamlash uchun to'g'ri javobni belgilang.",
+          "emoji_emotion": "encouraging",
+          "beats": [
+            {
+              "sentence": "Keling, kaktus haqida bilib olganlarimizni tekshirib ko'ramiz.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.92,
+              "note": "Takrorlash"
+            },
+            {
+              "sentence": "Quyidagi savolga to'g'ri javobni tanlang!",
+              "focus_target": "overview",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1,
+              "note": "Savolga javob bering"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "kaktus",
+            "shape": "illustration",
+            "style": "cartoon",
+            "surface_color": "#2ecc71",
+            "x_range": [
+              -5,
+              5
+            ],
+            "y_range": [
+              -5,
+              5
+            ],
+            "object_name_en": "cactus",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 72 72\"><path fill=\"#b1cc33\" d=\"M35.487 7.054c-3.627 0-6.566 3.265-6.566 7.292v19.193h-2.978c-3.961 0-3.795-1.031-3.795-4.77l-1.61-3.252c0-2.792-.382-3.682-3.4-3.41c-2.631.237-5.176 1.555-5.176 4.05l-.206 11.283c0 2.637 4.38 7.58 7.174 7.58l7.013.069h2.978v19.086h13.132V14.346c0-4.027-2.94-7.292-6.566-7.292m19.037 18.93a4.777 4.777 0 0 0-5.245 4.753v6.365c0 3.738.157 4.769-3.582 4.769h-3.39l.078 11.55h11.67a4.776 4.776 0 0 0 4.775-4.775V30.943a4.914 4.914 0 0 0-4.306-4.959\"/><path fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M42.054 63.148v-48.95c0-3.956-2.94-7.163-6.567-7.163s-6.566 3.207-6.566 7.163v48.95m-3.859-19.103h-6.365a6.77 6.77 0 0 1-6.768-6.768v-11.14a4.777 4.777 0 0 1 5.244-4.753a4.914 4.914 0 0 1 4.307 4.958v4.768a3.384 3.384 0 0 0 3.384 3.384h.198m20.764 17.909h8.357a4.776 4.776 0 0 0 4.776-4.776V29.924a4.914 4.914 0 0 0-4.307-4.958a4.777 4.777 0 0 0-5.245 4.753v6.364c0 3.738.157 6.768-3.581 6.768m-5.73-24.502l4.069-4.069m6.969 33.803l4.069-4.068m-35.05-13.646l4.068-4.068m8.925-14.598L29.668 7m1.549 48.233l-4.593-3.623m29.281-23.614l4.069-4.068m-8.942 11.644l-4.405-3.848m-10.453-6.146l-2.937-4.217m-18.543 4.601l-2.938-5.25\"/></svg>",
+            "svg_viewbox": "0 0 72 72",
+            "object_source": "iconify"
+          },
+          "quiz": {
+            "question": "Nima uchun kaktusning barglari tikanlarga aylangan?",
+            "options": [
+              "Suvni tejash va hayvonlardan himoyalanish uchun",
+              "Faqat chiroyli ko'rinish uchun",
+              "Qishda sovuqdan isinish uchun"
+            ],
+            "correct_index": 0,
+            "explanation_uz": "Barakalla! Tikanlar issiq cho'lda suvning bug'lanishini kamaytiradi va kaktusni chanqoq hayvonlardan asraydi."
+          }
+        }
+      ],
+      "id": "ai-1794834846357",
+      "source": "gemini-director",
+      "latency_ms": 15675,
+      "token_usage": {
+        "prompt_tokens": 4813,
+        "cached_tokens": 0,
+        "output_tokens": 3443,
+        "thoughts_tokens": 1448,
+        "total_tokens": 8256,
+        "cost_usd": 0.016521,
+        "llm_calls": 1
+      }
+    },
+    "createdAt": "2026-11-16T13:14:06.357Z"
+  },
+  {
+    "normalizedKey": "v8:eng vahshiy òsimlik haqida malumot ber",
+    "query": "Eng vahshiy òsimlik haqida malumot ber",
+    "lesson": {
+      "topic_title": "Eng vahshiy o'simlik — Venera chivinqopari",
+      "subject": "biology",
+      "engine": "svg2d",
+      "sliders": [],
+      "steps": [
+        {
+          "step_number": 1,
+          "step_title": "Hasharotxo'r o'simlik bilan tanishuv",
+          "speech_text": "Tabiatda ko'pchilik o'simliklar ozuqani tuproqdan oladi, lekin Venera chivinqopari haqiqiy ovchidir. U botqoqli va ozuqasi kam tuproqlarda o'sgani uchun yetishmaydigan moddalarni hasharotlarni tutib qoplashga moslashgan.",
+          "katex_formulas": [],
+          "explanation_uz": "Venera chivinqopari (Dionaea muscipula) dunyodagi eng mashhur yirtqich o'simlik bo'lib, pashsha va mayda hasharotlar bilan oziqlanadi.",
+          "emoji_emotion": "surprised",
+          "beats": [
+            {
+              "sentence": "Tabiatda ko'pchilik o'simliklar ozuqani tuproqdan oladi, lekin Venera chivinqopari haqiqiy ovchidir.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.15,
+              "note": "Yirtqich o'simlik"
+            },
+            {
+              "sentence": "U botqoqli va ozuqasi kam tuproqlarda o'sgani uchun yetishmaydigan moddalarni hasharotlarni tutib qoplashga moslashgan.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.95,
+              "note": "Yashash muhiti"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "Venera chivinqopari",
+            "style": "cartoon",
+            "surface_color": "#22c55e",
+            "x_range": [
+              0,
+              10
+            ],
+            "y_range": [
+              0,
+              10
+            ],
+            "object_name_en": "venus flytrap",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <polygon points=\"72,150 128,150 120,184 80,184\" fill=\"#D97706\" stroke=\"#92400E\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <rect x=\"66\" y=\"142\" width=\"68\" height=\"10\" rx=\"4\" fill=\"#F59E0B\" stroke=\"#92400E\" stroke-width=\"2.5\"/>\n  <path d=\"M 100 142 Q 94 114 98 86\" fill=\"none\" stroke=\"#15803D\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n  <path d=\"M 100 142 Q 70 122 52 104 Q 78 112 96 136 Z\" fill=\"#22C55E\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 100 142 Q 130 124 148 106 Q 122 114 104 136 Z\" fill=\"#16A34A\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 52 72 48 40 Q 82 54 98 88 Z\" fill=\"#22C55E\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 144 72 148 40 Q 114 54 98 88 Z\" fill=\"#4ADE80\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 96 82 Q 64 68 58 46 Q 82 58 96 82 Z\" fill=\"#FB7185\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <path d=\"M 100 82 Q 132 68 138 46 Q 114 58 100 82 Z\" fill=\"#F43F5E\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <line x1=\"50\" y1=\"44\" x2=\"40\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"60\" y1=\"50\" x2=\"52\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"72\" y1=\"56\" x2=\"66\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"146\" y1=\"44\" x2=\"156\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"136\" y1=\"50\" x2=\"144\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"124\" y1=\"56\" x2=\"130\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"76\" y1=\"68\" x2=\"72\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n  <line x1=\"120\" y1=\"68\" x2=\"124\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n</svg>",
+            "svg_viewbox": "0 0 200 200",
+            "object_source": "cache",
+            "primitives_3d": [
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  0.55,
+                  0
+                ],
+                "args": [
+                  0.95,
+                  0.72,
+                  1.1,
+                  24
+                ],
+                "color": "#d97706",
+                "label": "Tuvak"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.08,
+                  0
+                ],
+                "args": [
+                  1.02,
+                  0.98,
+                  0.18,
+                  24
+                ],
+                "color": "#f59e0b"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.75,
+                  0
+                ],
+                "args": [
+                  0.1,
+                  0.14,
+                  1.35,
+                  12
+                ],
+                "color": "#15803d",
+                "label": "Poya"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#22c55e",
+                "label": "Chap qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#16a34a",
+                "label": "O‘ng qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#f43f5e",
+                "label": "Nektar hududi"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#fb7185"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  -0.85,
+                  1.55,
+                  0.25
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#22c55e"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  0.85,
+                  1.6,
+                  -0.2
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#4ade80"
+              }
+            ],
+            "object_parts": [
+              {
+                "label": "Qizil qopqon barg"
+              },
+              {
+                "label": "Tishli chetlar"
+              },
+              {
+                "label": "Sezgir tukchalar"
+              }
+            ]
+          }
+        },
+        {
+          "step_number": 2,
+          "step_title": "Qopqonning tuzilishi",
+          "speech_text": "O'simlikning barglari ikkita yarim palladan iborat og'izga o'xshash qopqon hosil qiladi. Chetidagi tikanlar panjara vazifasini bajaradi, ichki qismida esa sezgir tukchalar joylashgan.",
+          "katex_formulas": [],
+          "explanation_uz": "Qopqonning ichki yuzasida mayda sezgir tukchalar va hasharotlarni jalb qiluvchi shirin nektar bezlari mavjud.",
+          "emoji_emotion": "pointing",
+          "beats": [
+            {
+              "sentence": "O'simlikning barglari ikkita yarim palladan iborat og'izga o'xshash qopqon hosil qiladi.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.25,
+              "note": "Qopqon pallalari"
+            },
+            {
+              "sentence": "Chetidagi tikanlar panjara vazifasini bajaradi, ichki qismida esa sezgir tukchalar joylashgan.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.96,
+              "note": "Sezgir tukchalar"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "Venera chivinqopari",
+            "style": "cartoon",
+            "surface_color": "#ef4444",
+            "x_range": [
+              0,
+              10
+            ],
+            "y_range": [
+              0,
+              10
+            ],
+            "object_name_en": "venus flytrap",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <polygon points=\"72,150 128,150 120,184 80,184\" fill=\"#D97706\" stroke=\"#92400E\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <rect x=\"66\" y=\"142\" width=\"68\" height=\"10\" rx=\"4\" fill=\"#F59E0B\" stroke=\"#92400E\" stroke-width=\"2.5\"/>\n  <path d=\"M 100 142 Q 94 114 98 86\" fill=\"none\" stroke=\"#15803D\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n  <path d=\"M 100 142 Q 70 122 52 104 Q 78 112 96 136 Z\" fill=\"#22C55E\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 100 142 Q 130 124 148 106 Q 122 114 104 136 Z\" fill=\"#16A34A\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 52 72 48 40 Q 82 54 98 88 Z\" fill=\"#22C55E\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 144 72 148 40 Q 114 54 98 88 Z\" fill=\"#4ADE80\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 96 82 Q 64 68 58 46 Q 82 58 96 82 Z\" fill=\"#FB7185\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <path d=\"M 100 82 Q 132 68 138 46 Q 114 58 100 82 Z\" fill=\"#F43F5E\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <line x1=\"50\" y1=\"44\" x2=\"40\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"60\" y1=\"50\" x2=\"52\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"72\" y1=\"56\" x2=\"66\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"146\" y1=\"44\" x2=\"156\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"136\" y1=\"50\" x2=\"144\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"124\" y1=\"56\" x2=\"130\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"76\" y1=\"68\" x2=\"72\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n  <line x1=\"120\" y1=\"68\" x2=\"124\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n</svg>",
+            "svg_viewbox": "0 0 200 200",
+            "object_source": "cache",
+            "primitives_3d": [
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  0.55,
+                  0
+                ],
+                "args": [
+                  0.95,
+                  0.72,
+                  1.1,
+                  24
+                ],
+                "color": "#d97706",
+                "label": "Tuvak"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.08,
+                  0
+                ],
+                "args": [
+                  1.02,
+                  0.98,
+                  0.18,
+                  24
+                ],
+                "color": "#f59e0b"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.75,
+                  0
+                ],
+                "args": [
+                  0.1,
+                  0.14,
+                  1.35,
+                  12
+                ],
+                "color": "#15803d",
+                "label": "Poya"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#22c55e",
+                "label": "Chap qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#16a34a",
+                "label": "O‘ng qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#f43f5e",
+                "label": "Nektar hududi"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#fb7185"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  -0.85,
+                  1.55,
+                  0.25
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#22c55e"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  0.85,
+                  1.6,
+                  -0.2
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#4ade80"
+              }
+            ],
+            "object_parts": [
+              {
+                "label": "Qizil qopqon barg"
+              },
+              {
+                "label": "Tishli chetlar"
+              },
+              {
+                "label": "Sezgir tukchalar"
+              }
+            ]
+          }
+        },
+        {
+          "step_number": 3,
+          "step_title": "Qopqon qanday ishlaydi?",
+          "speech_text": "Hasharot shirin hidga aldanib qopqon ichiga qo'nganda, sezgir tukchalarga ikki marta ketma-ket tegadi. Shunda qopqon soniyaning o'ndan bir qismidan ham tezroq yopiladi va o'ljani qamab oladi.",
+          "katex_formulas": [
+            "t < 0.1\\text{ s}"
+          ],
+          "explanation_uz": "Qopqon yomg'ir tomchisi tushganda bekorga yopilib qolmasligi uchun tukchalarga kamida ikki marta tegish talab etiladi. Hazm qilish 5-10 kun davom etadi.",
+          "emoji_emotion": "explaining",
+          "beats": [
+            {
+              "sentence": "Hasharot shirin hidga aldanib qopqon ichiga qo'nganda, sezgir tukchalarga ikki marta ketma-ket tegadi.",
+              "focus_target": "drawing_tip",
+              "tutor_pose": "approach",
+              "camera_zoom": 1.2,
+              "note": "Ikki marta teginish"
+            },
+            {
+              "sentence": "Shunda qopqon soniyaning o'ndan bir qismidan ham tezroq yopiladi va o'ljani qamab oladi.",
+              "focus_target": "overview",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1,
+              "note": "Tezkor yopilish"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "Venera chivinqopari",
+            "style": "cartoon",
+            "surface_color": "#16a34a",
+            "x_range": [
+              0,
+              10
+            ],
+            "y_range": [
+              0,
+              10
+            ],
+            "object_name_en": "venus flytrap",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <polygon points=\"72,150 128,150 120,184 80,184\" fill=\"#D97706\" stroke=\"#92400E\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <rect x=\"66\" y=\"142\" width=\"68\" height=\"10\" rx=\"4\" fill=\"#F59E0B\" stroke=\"#92400E\" stroke-width=\"2.5\"/>\n  <path d=\"M 100 142 Q 94 114 98 86\" fill=\"none\" stroke=\"#15803D\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n  <path d=\"M 100 142 Q 70 122 52 104 Q 78 112 96 136 Z\" fill=\"#22C55E\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 100 142 Q 130 124 148 106 Q 122 114 104 136 Z\" fill=\"#16A34A\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 52 72 48 40 Q 82 54 98 88 Z\" fill=\"#22C55E\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 144 72 148 40 Q 114 54 98 88 Z\" fill=\"#4ADE80\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 96 82 Q 64 68 58 46 Q 82 58 96 82 Z\" fill=\"#FB7185\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <path d=\"M 100 82 Q 132 68 138 46 Q 114 58 100 82 Z\" fill=\"#F43F5E\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <line x1=\"50\" y1=\"44\" x2=\"40\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"60\" y1=\"50\" x2=\"52\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"72\" y1=\"56\" x2=\"66\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"146\" y1=\"44\" x2=\"156\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"136\" y1=\"50\" x2=\"144\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"124\" y1=\"56\" x2=\"130\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"76\" y1=\"68\" x2=\"72\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n  <line x1=\"120\" y1=\"68\" x2=\"124\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n</svg>",
+            "svg_viewbox": "0 0 200 200",
+            "object_source": "cache",
+            "primitives_3d": [
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  0.55,
+                  0
+                ],
+                "args": [
+                  0.95,
+                  0.72,
+                  1.1,
+                  24
+                ],
+                "color": "#d97706",
+                "label": "Tuvak"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.08,
+                  0
+                ],
+                "args": [
+                  1.02,
+                  0.98,
+                  0.18,
+                  24
+                ],
+                "color": "#f59e0b"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.75,
+                  0
+                ],
+                "args": [
+                  0.1,
+                  0.14,
+                  1.35,
+                  12
+                ],
+                "color": "#15803d",
+                "label": "Poya"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#22c55e",
+                "label": "Chap qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#16a34a",
+                "label": "O‘ng qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#f43f5e",
+                "label": "Nektar hududi"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#fb7185"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  -0.85,
+                  1.55,
+                  0.25
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#22c55e"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  0.85,
+                  1.6,
+                  -0.2
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#4ade80"
+              }
+            ],
+            "object_parts": [
+              {
+                "label": "Qizil qopqon barg"
+              },
+              {
+                "label": "Tishli chetlar"
+              },
+              {
+                "label": "Sezgir tukchalar"
+              }
+            ]
+          }
+        },
+        {
+          "step_number": 4,
+          "step_title": "Bilimingizni sinab ko'ring",
+          "speech_text": "Ajoyib, endi bu vahshiy va aqlli o'simlik haqidagi bilimingizni tekshirib ko'ramiz. Savolni diqqat bilan o'qib, to'g'ri javobni tanlang!",
+          "katex_formulas": [],
+          "explanation_uz": "Venera chivinqopari energiyani tejash uchun bekorga yopilmaydi va har bir qopqon hayoti davomida cheklangan marta ochilib-yopiladi.",
+          "emoji_emotion": "encouraging",
+          "beats": [
+            {
+              "sentence": "Ajoyib, endi bu vahshiy va aqlli o'simlik haqidagi bilimingizni tekshirib ko'ramiz.",
+              "focus_target": "overview",
+              "tutor_pose": "step_back",
+              "camera_zoom": 0.92,
+              "note": "Xulosa"
+            },
+            {
+              "sentence": "Savolni diqqat bilan o'qib, to'g'ri javobni tanlang!",
+              "focus_target": "overview",
+              "tutor_pose": "formula_check",
+              "camera_zoom": 1,
+              "note": "Mini-test"
+            }
+          ],
+          "render_params": {
+            "kind": "illustration",
+            "object_name_uz": "Venera chivinqopari",
+            "style": "cartoon",
+            "surface_color": "#22c55e",
+            "x_range": [
+              0,
+              10
+            ],
+            "y_range": [
+              0,
+              10
+            ],
+            "object_name_en": "venus flytrap",
+            "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <polygon points=\"72,150 128,150 120,184 80,184\" fill=\"#D97706\" stroke=\"#92400E\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <rect x=\"66\" y=\"142\" width=\"68\" height=\"10\" rx=\"4\" fill=\"#F59E0B\" stroke=\"#92400E\" stroke-width=\"2.5\"/>\n  <path d=\"M 100 142 Q 94 114 98 86\" fill=\"none\" stroke=\"#15803D\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n  <path d=\"M 100 142 Q 70 122 52 104 Q 78 112 96 136 Z\" fill=\"#22C55E\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 100 142 Q 130 124 148 106 Q 122 114 104 136 Z\" fill=\"#16A34A\" stroke=\"#15803D\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 52 72 48 40 Q 82 54 98 88 Z\" fill=\"#22C55E\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 98 88 Q 144 72 148 40 Q 114 54 98 88 Z\" fill=\"#4ADE80\" stroke=\"#14532D\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n  <path d=\"M 96 82 Q 64 68 58 46 Q 82 58 96 82 Z\" fill=\"#FB7185\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <path d=\"M 100 82 Q 132 68 138 46 Q 114 58 100 82 Z\" fill=\"#F43F5E\" stroke=\"#BE123C\" stroke-width=\"1.8\"/>\n  <line x1=\"50\" y1=\"44\" x2=\"40\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"60\" y1=\"50\" x2=\"52\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"72\" y1=\"56\" x2=\"66\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"146\" y1=\"44\" x2=\"156\" y2=\"34\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"136\" y1=\"50\" x2=\"144\" y2=\"38\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"124\" y1=\"56\" x2=\"130\" y2=\"44\" stroke=\"#14532D\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>\n  <line x1=\"76\" y1=\"68\" x2=\"72\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n  <line x1=\"120\" y1=\"68\" x2=\"124\" y2=\"60\" stroke=\"#9F1239\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n</svg>",
+            "svg_viewbox": "0 0 200 200",
+            "object_source": "cache",
+            "primitives_3d": [
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  0.55,
+                  0
+                ],
+                "args": [
+                  0.95,
+                  0.72,
+                  1.1,
+                  24
+                ],
+                "color": "#d97706",
+                "label": "Tuvak"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.08,
+                  0
+                ],
+                "args": [
+                  1.02,
+                  0.98,
+                  0.18,
+                  24
+                ],
+                "color": "#f59e0b"
+              },
+              {
+                "type": "cylinder",
+                "position": [
+                  0,
+                  1.75,
+                  0
+                ],
+                "args": [
+                  0.1,
+                  0.14,
+                  1.35,
+                  12
+                ],
+                "color": "#15803d",
+                "label": "Poya"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#22c55e",
+                "label": "Chap qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.45,
+                  2.55,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  1.15,
+                  0.14,
+                  1.25
+                ],
+                "color": "#16a34a",
+                "label": "O‘ng qopqon"
+              },
+              {
+                "type": "box",
+                "position": [
+                  -0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#f43f5e",
+                "label": "Nektar hududi"
+              },
+              {
+                "type": "box",
+                "position": [
+                  0.36,
+                  2.6,
+                  0
+                ],
+                "rotation": [
+                  0,
+                  0,
+                  -0.52
+                ],
+                "args": [
+                  0.82,
+                  0.06,
+                  0.95
+                ],
+                "color": "#fb7185"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  -0.85,
+                  1.55,
+                  0.25
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#22c55e"
+              },
+              {
+                "type": "sphere",
+                "position": [
+                  0.85,
+                  1.6,
+                  -0.2
+                ],
+                "args": [
+                  0.42,
+                  14,
+                  12
+                ],
+                "color": "#4ade80"
+              }
+            ],
+            "object_parts": [
+              {
+                "label": "Qizil qopqon barg"
+              },
+              {
+                "label": "Tishli chetlar"
+              },
+              {
+                "label": "Sezgir tukchalar"
+              }
+            ]
+          },
+          "quiz": {
+            "question": "Nima uchun Venera chivinqopari hasharotlarni ovlaydi?",
+            "options": [
+              "Ozuqasi kam tuproqdagi yetishmaydigan moddalarni qoplash uchun",
+              "Quyosh nuridan himoyalanish uchun",
+              "Boshqa o'simliklarga joy bo'shatish uchun"
+            ],
+            "correct_index": 0,
+            "explanation_uz": "To'g'ri! Bu o'simlik azot va minerallarga kambag'al botqoq tuproqlarda o'sgani uchun hasharotlar orqali ozuqa oladi."
+          }
+        }
+      ],
+      "id": "ai-1794833025907",
+      "source": "gemini-director",
+      "latency_ms": 15468
+    },
+    "createdAt": "2026-11-16T12:43:45.907Z"
+  }
+]
