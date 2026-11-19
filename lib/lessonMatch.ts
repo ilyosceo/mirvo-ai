@@ -1,6 +1,6 @@
-import { CACHED_LESSONS } from '../data/cachedLessons';
-import type { TutorLesson } from '../types/tutor';
-import { normalizeUzToken } from './objectCatalog';
+import { CACHED_LESSONS } from '../data/cachedLessons.js';
+import type { TutorLesson } from '../types/tutor.js';
+import { normalizeUzToken } from './objectCatalog.js';
 
 export function normalizeCacheSearchText(raw: string): string {
   return normalizeUzToken(raw)

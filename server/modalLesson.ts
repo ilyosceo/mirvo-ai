@@ -3,7 +3,7 @@ import type {
   RenderParams,
   SubjectType,
   TutorLesson,
-} from '../types/tutor';
+} from '../types/tutor.js';
 
 const ENGINE_ALIASES: Record<string, EngineType> = {
   '3d': 'threejs',
