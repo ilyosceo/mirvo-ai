@@ -291,20 +291,20 @@ export const LESSON_DEPTH_OPTIONS: Array<{
   {
     id: 'overview',
     label: 'Umumiy',
-    rangeLabel: '4 dars',
+    rangeLabel: '(4)',
     shortDesc: 'Mavzuni tezkor va umumiy tushuntirish (4 ta qadam)',
   },
   {
     id: 'standard',
     label: 'Standart',
-    rangeLabel: '6–8 dars',
-    shortDesc: 'Savolga qarab 6 tadan 8 tagacha muvozanatli dars',
+    rangeLabel: '(6–8)',
+    shortDesc: 'Savolga qarab 6 tadan 8 tagacha muvozanatli qadam',
   },
   {
     id: 'deep',
     label: 'Chuqur',
-    rangeLabel: '10–12+ dars',
-    shortDesc: '10–12+ qadamli o‘ta chuqur va 99% to‘liq akademik tahlil',
+    rangeLabel: '(10–12)',
+    shortDesc: 'Mavzuni 10–12 qadamda batafsil tahlil qilish',
   },
 ];
 
@@ -314,7 +314,7 @@ export interface TutorLesson {
   subject: SubjectType;
   engine: EngineType;
   depth_mode?: LessonDepthMode;
-  source?: 'local-parser' | 'cache' | 'gemini-director';
+  source?: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-director';
   latency_ms?: number;
   token_usage?: TokenUsageInfo;
   keywords?: string[];
@@ -324,7 +324,7 @@ export interface TutorLesson {
 
 export interface ResolveResponse {
   lesson: TutorLesson;
-  stage: 'local-parser' | 'cache' | 'gemini-director';
+  stage: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-director';
   latency_ms: number;
   token_usage?: TokenUsageInfo;
 }

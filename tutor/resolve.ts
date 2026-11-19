@@ -24,6 +24,7 @@ import {
 } from '../lib/tokenUsage.ts';
 import type {
   FlowType,
+  LessonDepthMode,
   Primitive3DItem,
   ResolvedObjectPayload,
   TokenUsageInfo,
@@ -33,6 +34,27 @@ import type {
 // Gemini Flash & Flash-Lite model aliases per @google/genai guidelines
 const GEMINI_FLASH_MODEL = 'gemini-4-hydrogen';
 const GEMINI_LITE_MODEL = 'gemini-3.1-flash-lite';
+
+function normalizeLessonDepthMode(value: unknown): LessonDepthMode {
+  return value === 'overview' || value === 'deep' ? value : 'standard';
+}
+
+function getLessonStepRange(mode: LessonDepthMode): { min: number; max: number } {
+  if (mode === 'overview') return { min: 4, max: 4 };
+  if (mode === 'deep') return { min: 10, max: 12 };
+  return { min: 6, max: 8 };
+}
+
+function buildDirectorSystemInstruction(mode: LessonDepthMode): string {
+  const countInstruction =
+    mode === 'overview'
+      ? 'Ushbu dars aynan 4 ta bosqichdan iborat bo‘lsin.'
+      : mode === 'deep'
+      ? 'Ushbu dars 10–12 ta mazmunan farqli bosqichdan iborat bo‘lsin.'
+      : 'Ushbu dars 6–8 ta mazmunan farqli bosqichdan iborat bo‘lsin.';
+
+  return `${DIRECTOR_SYSTEM_INSTRUCTION}\n\nDARS CHUQURLIGI: ${countInstruction} Mini-test faqat oxirgi bosqichda bo‘lsin. Bir xil mazmunni takrorlab bosqich sonini to‘ldirma.`;
+}
 
 export interface CachedVisualObjectEntry {
   id: string;
@@ -337,11 +359,11 @@ export const LESSON_RESPONSE_SCHEMA = {
 export const DIRECTOR_SYSTEM_INSTRUCTION = `Sen "Mirvo AI" — o'zbek tilidagi interaktiv 2D/3D vizual AI repetitorsan.
 Hech qachon SVG/Three.js kodi yozma; faqat JSON retsept qaytar.
 
-4 QADAM TUZILISHI:
-1. Sodda tushuncha (hayotiy misol; boshlang'ich savolga hosila/integral qo'shma). cameraZoom: 1.0, dimInactiveParts: false.
-2. Asosiy qismlar va fokus (focusPart + cameraZoom: 1.72, dimInactiveParts: true).
-3. Formula/ishlash printsipi va detallar (focusPart + cameraZoom: 1.78, dimInactiveParts: true).
-4. Xulosa va 3 variantli "quiz" (cameraZoom: 1.0, dimInactiveParts: false).
+BOSQICH TUZILISHI:
+1. Sodda tushuncha va hayotiy misol.
+2. Asosiy qismlar va fokus.
+Keyingi bosqichlarda formulalar, sabab-oqibatlar, misollar yoki amaliy qo‘llanishni izchil yorit.
+Oxirgi bosqichda xulosa va 3 variantli "quiz" bo‘lsin.
 
 QISQA MAYDONLAR:
 - speech_text: 1-2 tabiiy o'zbekcha gap (formula belgilarisiz).
@@ -1197,13 +1219,25 @@ export class SmartObjectResolver {
 export interface TutorResolveRouterDeps {
   dataDir: string;
   getGeminiClient: (apiVersion?: string) => GoogleGenAI | null;
+  generateLesson?: (input: {
+    query: string;
+    userPrompt: string;
+    systemInstruction: string;
+    depthMode: LessonDepthMode;
+    imageBase64?: string;
+    imageMimeType?: string;
+  }) => Promise<{
+    text: string;
+    usageMetadata?: GenerateContentResponse['usageMetadata'];
+    cacheHit: boolean;
+  }>;
 }
 
 export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
   router: Router;
   objectResolver: SmartObjectResolver;
 } {
-  const { dataDir, getGeminiClient } = deps;
+  const { dataDir, getGeminiClient, generateLesson } = deps;
   const topicCacheFile = path.join(dataDir, 'topic-cache.json');
   const objectResolver = new SmartObjectResolver(dataDir, () => getGeminiClient());
 
@@ -1234,7 +1268,10 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
 
   let dynamicCache: DynamicCacheEntry[] = loadDynamicCache();
 
-  function findCachedLesson(query: string): TutorLesson | null {
+  function findCachedLesson(
+    query: string,
+    depthMode: LessonDepthMode
+  ): TutorLesson | null {
     const builtIn = findBuiltInCachedLesson(query);
     if (builtIn) {
       return builtIn;
@@ -1252,8 +1289,9 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
 
     for (const entry of dynamicCache) {
       const entryKeyRaw = entry.normalizedKey.replace(/^v\d+:/, '');
+      if (entry.lesson?.depth_mode !== depthMode) continue;
       if (
-        entry.normalizedKey === `v9:${norm}` ||
+        entry.normalizedKey === `v10:${depthMode}:${norm}` ||
         (canonical &&
           (normalizeCacheSearchText(entry.query) === canonical ||
             normalizeCacheSearchText(entryKeyRaw) === canonical))
@@ -1328,7 +1366,9 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     trimmedQuery: string,
     imageBase64: string | undefined,
     t0: number,
-    prewarmedCache?: Map<string, ReturnType<SmartObjectResolver['resolveObject']>>
+    depthMode: LessonDepthMode,
+    prewarmedCache?: Map<string, ReturnType<SmartObjectResolver['resolveObject']>>,
+    directorSource: TutorLesson['source'] = 'gemini-director'
   ): Promise<{ lesson: TutorLesson; token_usage: TokenUsageInfo; latency_ms: number }> => {
     const cleanText = rawText.trim();
     if (!cleanText) {
@@ -1339,6 +1379,13 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     if (!parsed.steps || !Array.isArray(parsed.steps) || parsed.steps.length === 0) {
       throw new Error('Dars bosqichlari topilmadi.');
     }
+    const stepRange = getLessonStepRange(depthMode);
+    if (parsed.steps.length < stepRange.min || parsed.steps.length > stepRange.max) {
+      throw new Error(
+        `Tanlangan dars chuqurligi uchun ${stepRange.min}–${stepRange.max} bosqich kerak, AI esa ${parsed.steps.length} ta qaytardi. Qayta urinib ko‘ring.`
+      );
+    }
+    parsed.depth_mode = depthMode;
 
     const normalizedForFlowCheck = normalizeUzToken(trimmedQuery);
     const isStrictlyAbstractFlow =
@@ -1472,7 +1519,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
         const defaultZoom =
           typeof s.cameraZoom === 'number'
             ? s.cameraZoom
-            : idx === 0 || idx >= 3
+            : idx === 0 || idx === parsed.steps.length - 1
             ? 1.0
             : defaultFocusPart
             ? 1.72
@@ -1505,7 +1552,8 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
           ...s,
           step_number: s.step_number || idx + 1,
           emoji_emotion: emotion,
-          focusPart: idx === 0 || idx >= 3 ? undefined : defaultFocusPart,
+          focusPart:
+            idx === 0 || idx === parsed.steps.length - 1 ? undefined : defaultFocusPart,
           cameraZoom: defaultZoom,
           dimInactiveParts: defaultDim,
           flowType: stepFlowType,
@@ -1526,16 +1574,17 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     const latency_ms = Date.now() - t0;
     const lesson: TutorLesson = {
       ...parsed,
+      depth_mode: depthMode,
       steps: normalizedSteps,
       id: `ai-${Date.now()}`,
       sliders: Array.isArray(parsed.sliders) ? parsed.sliders : [],
-      source: 'gemini-director',
+      source: directorSource,
       latency_ms,
       token_usage,
     };
 
     if (!imageBase64 && trimmedQuery) {
-      const normalizedKey = `v9:${normalizeQuery(trimmedQuery)}`;
+      const normalizedKey = `v10:${depthMode}:${normalizeQuery(trimmedQuery)}`;
       dynamicCache = [
         {
           normalizedKey,
@@ -1553,9 +1602,16 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
 
   const buildDirectorParts = (
     trimmedQuery: string,
+    depthMode: LessonDepthMode,
     imageBase64?: string,
     imageMimeType?: string
   ) => {
+    const depthDescription =
+      depthMode === 'overview'
+        ? 'aynan 4 bosqichli'
+        : depthMode === 'deep'
+        ? '10–12 bosqichli'
+        : '6–8 bosqichli';
     const parts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = [];
     if (imageBase64) {
       parts.push({
@@ -1567,8 +1623,8 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     }
     parts.push({
       text: trimmedQuery
-        ? `O'quvchining savoli: "${trimmedQuery}". Uning bilim darajasiga mos, o'zbek tilida ixcham va aniq 4 qadamli interaktiv dars hamda 4-qadamda 3 variantli mini-tekshiruv JSON retseptini yarat.`
-        : "Yuklangan rasmdagi masala yoki mavzuni tahlil qilib, o'zbek tilida ixcham 4 qadamli interaktiv dars va mini-tekshiruv JSON retseptini yarat.",
+        ? `O'quvchining savoli: "${trimmedQuery}". Uning bilim darajasiga mos, o'zbek tilida ${depthDescription} interaktiv dars yarat. 3 variantli mini-tekshiruvni faqat oxirgi bosqichga joyla.`
+        : `Yuklangan rasmdagi masala yoki mavzuni tahlil qilib, o'zbek tilida ${depthDescription} interaktiv dars yarat. 3 variantli mini-tekshiruvni faqat oxirgi bosqichga joyla.`,
     });
     return parts;
   };
@@ -1597,6 +1653,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
   const generateDirectorStreamWithFallback = async (
     ai: GoogleGenAI,
     parts: ReturnType<typeof buildDirectorParts>,
+    depthMode: LessonDepthMode,
     onProgress: (rawBuffer: string) => void
   ): Promise<{ rawBuffer: string; usageMeta?: GenerateContentResponse['usageMetadata'] }> => {
     const attempts: Array<{ model: string; thinkingLevel: ThinkingLevel }> = [
@@ -1612,7 +1669,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
           model: attempt.model,
           contents: { parts },
           config: {
-            systemInstruction: DIRECTOR_SYSTEM_INSTRUCTION,
+            systemInstruction: buildDirectorSystemInstruction(depthMode),
             responseMimeType: 'application/json',
             responseSchema: LESSON_RESPONSE_SCHEMA,
             thinkingConfig: { thinkingLevel: attempt.thinkingLevel },
@@ -1651,11 +1708,13 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
   // Fast SSE Streaming Lesson Resolver
   router.post('/api/tutor/resolve-stream', async (req: Request, res: Response) => {
     const t0 = Date.now();
-    const { query = '', imageBase64, imageMimeType } = req.body as {
+    const { query = '', imageBase64, imageMimeType, depthMode: requestedDepthMode } = req.body as {
       query?: string;
       imageBase64?: string;
       imageMimeType?: string;
+      depthMode?: unknown;
     };
+    const depthMode = normalizeLessonDepthMode(requestedDepthMode);
 
     const trimmedQuery = String(query || '').trim();
     if (!trimmedQuery && !imageBase64) {
@@ -1675,7 +1734,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
 
     try {
       if (!imageBase64 && trimmedQuery) {
-        const cached = findCachedLesson(trimmedQuery);
+        const cached = findCachedLesson(trimmedQuery, depthMode);
         if (cached) {
           const latency_ms = Math.max(2, Date.now() - t0);
           sendEvent('complete', {
@@ -1726,7 +1785,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
       }
 
       sendEvent('status', { message: 'Mirvo AI mavzuni tahlil qilmoqda...' });
-      const parts = buildDirectorParts(trimmedQuery, imageBase64, imageMimeType);
+      const parts = buildDirectorParts(trimmedQuery, depthMode, imageBase64, imageMimeType);
 
       let lastNotifiedSteps = -1;
       let detectedTitle = '';
@@ -1736,6 +1795,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
       const { rawBuffer, usageMeta } = await generateDirectorStreamWithFallback(
         ai,
         parts,
+        depthMode,
         (currentBuf) => {
           if (!detectedTitle) {
             const titleMatch = currentBuf.match(/"topic_title"\s*:\s*"([^"]+)"/);
@@ -1759,7 +1819,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
           }
 
           const stepMatches = currentBuf.match(/"step_number"\s*:\s*\d+/g);
-          const stepCount = stepMatches ? Math.min(4, stepMatches.length) : 0;
+          const stepCount = stepMatches ? stepMatches.length : 0;
           if (stepCount !== lastNotifiedSteps) {
             lastNotifiedSteps = stepCount;
             sendEvent('progress', {
@@ -1769,9 +1829,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
               message:
                 stepCount === 0
                   ? 'Vizual dvigatel tanlanmoqda...'
-                  : stepCount < 4
-                  ? `${stepCount}/4-qadam va chizma tuzilmoqda...`
-                  : '4/4-qadam va mini-test yakunlanmoqda...',
+                  : `${stepCount}-bosqich va chizma tuzilmoqda...`,
             });
           }
         }
@@ -1785,6 +1843,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
         trimmedQuery,
         imageBase64,
         t0,
+        depthMode,
         prewarmedIllustrations
       );
 
@@ -1800,11 +1859,13 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
   // Main lesson resolver: Cache -> 5-Step Smart Object Fallback -> Gemini Flash Director (Low-latency)
   router.post('/api/tutor/resolve', async (req: Request, res: Response) => {
     const t0 = Date.now();
-    const { query = '', imageBase64, imageMimeType } = req.body as {
+    const { query = '', imageBase64, imageMimeType, depthMode: requestedDepthMode } = req.body as {
       query?: string;
       imageBase64?: string;
       imageMimeType?: string;
+      depthMode?: unknown;
     };
+    const depthMode = normalizeLessonDepthMode(requestedDepthMode);
 
     const trimmedQuery = String(query || '').trim();
     if (!trimmedQuery && !imageBase64) {
@@ -1813,7 +1874,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     }
 
     if (!imageBase64 && trimmedQuery) {
-      const cached = findCachedLesson(trimmedQuery);
+      const cached = findCachedLesson(trimmedQuery, depthMode);
       if (cached) {
         const latency_ms = Math.max(2, Date.now() - t0);
         res.json({
@@ -1850,56 +1911,85 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
       }
     }
 
-    const ai = getGeminiClient();
-    if (!ai) {
+    const ai = generateLesson ? null : getGeminiClient();
+    if (!generateLesson && !ai) {
       res.status(503).json({
-        error:
-          "Gemini API kaliti sozlanmagan. Iltimos, AI Studio Settings > Secrets bo'limida GEMINI_API_KEY ni kiriting.",
+        error: 'AI lesson service is not configured.',
       });
       return;
     }
 
     try {
-      const parts = buildDirectorParts(trimmedQuery, imageBase64, imageMimeType);
-
-      let response;
-      try {
-        response = await ai.models.generateContent({
-          model: GEMINI_LITE_MODEL,
-          contents: { parts },
-          config: {
-            systemInstruction: DIRECTOR_SYSTEM_INSTRUCTION,
-            responseMimeType: 'application/json',
-            responseSchema: LESSON_RESPONSE_SCHEMA,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-          },
+      const parts = buildDirectorParts(trimmedQuery, depthMode, imageBase64, imageMimeType);
+      let rawText: string;
+      let directorUsage: TokenUsageInfo;
+      let sharedCacheHit = false;
+      if (generateLesson) {
+        const generated = await generateLesson({
+          query: trimmedQuery,
+          userPrompt: parts
+            .map((part) => part.text)
+            .filter((text): text is string => Boolean(text))
+            .join('\n'),
+          systemInstruction: buildDirectorSystemInstruction(depthMode),
+          depthMode,
+          imageBase64,
+          imageMimeType: imageBase64 ? imageMimeType || 'image/jpeg' : undefined,
         });
-      } catch (primaryErr) {
-        if (!isTransientOrUnavailableError(primaryErr)) throw primaryErr;
-        response = await ai.models.generateContent({
-          model: GEMINI_FLASH_MODEL,
-          contents: { parts },
-          config: {
-            systemInstruction: DIRECTOR_SYSTEM_INSTRUCTION,
-            responseMimeType: 'application/json',
-            responseSchema: LESSON_RESPONSE_SCHEMA,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-          },
-        });
+        rawText = generated.text;
+        sharedCacheHit = generated.cacheHit;
+        directorUsage = sharedCacheHit
+          ? ZERO_TOKEN_USAGE
+          : usageFromGeminiMetadata(generated.usageMetadata);
+      } else {
+        let response;
+        try {
+          response = await ai!.models.generateContent({
+            model: GEMINI_LITE_MODEL,
+            contents: { parts },
+            config: {
+              systemInstruction: buildDirectorSystemInstruction(depthMode),
+              responseMimeType: 'application/json',
+              responseSchema: LESSON_RESPONSE_SCHEMA,
+              thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+            },
+          });
+        } catch (primaryErr) {
+          if (!isTransientOrUnavailableError(primaryErr)) throw primaryErr;
+          response = await ai!.models.generateContent({
+            model: GEMINI_FLASH_MODEL,
+            contents: { parts },
+            config: {
+              systemInstruction: buildDirectorSystemInstruction(depthMode),
+              responseMimeType: 'application/json',
+              responseSchema: LESSON_RESPONSE_SCHEMA,
+              thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+            },
+          });
+        }
+        rawText = response.text ?? '';
+        directorUsage = usageFromGeminiMetadata(response.usageMetadata);
       }
 
-      const directorUsage = usageFromGeminiMetadata(response.usageMetadata);
       const { lesson, token_usage, latency_ms } = await finalizeDirectorLesson(
-        response.text ?? '',
+        rawText,
         directorUsage,
         trimmedQuery,
         imageBase64,
-        t0
+        t0,
+        depthMode,
+        undefined,
+        sharedCacheHit ? 'cache' : generateLesson ? 'qwen-director' : 'gemini-director'
       );
 
-      res.json({ stage: 'gemini-director', latency_ms, token_usage, lesson });
+      res.json({
+        stage: sharedCacheHit ? 'cache' : generateLesson ? 'qwen-director' : 'gemini-director',
+        latency_ms,
+        token_usage,
+        lesson,
+      });
     } catch (err) {
-      console.error('Gemini Director error:', err);
+      console.error(generateLesson ? 'Qwen Director error' : 'Gemini Director error');
       res.status(500).json({ error: formatFriendlyGeminiError(err) });
     }
   });

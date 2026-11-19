@@ -113,7 +113,7 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 - **React va TypeScript** — komponentlar va UI holatini boshqarish
 
-- **Google Gemini** — tabiiy tildagi tushuntirish va dars yaratish
+- **Modal backend** — server-side dars yaratish va TTS; credentials faqat Vercel server environment’da
 
 - **Three.js / React Three Fiber** — kuchli 3D sahnalar
 
@@ -149,7 +149,18 @@ npm run build
 npm run preview
 ```
 
-Vercel’da repository’ni import qiling. Dars generatsiyasi uchun Vercel Project Settings → Environment Variables bo‘limida `GEMINI_API_KEY` ni saqlang; secretni `.env` fayliga yoki repository’ga qo‘shmang. Ilova API kalitisiz ham keshdagi darslar va lokal saqlash bilan ishlaydi.
+Vercel’da repository’ni import qiling. Dars va TTS so‘rovlari server tomonidagi Vercel proxy orqali alohida deploy qilingan Modal backend’ga yuboriladi. Brauzer Modal manzili yoki maxfiy kalitni olmaydi.
+
+### Modal backend ulanishi
+
+Modal FastAPI backend alohida deploy qilingan; ushbu repository backend’ni yaratmaydi yoki deploy qilmaydi. Vercel Project → **Settings → Environment Variables** bo‘limida server-only `MODAL_BACKEND_URL` (masalan, `https://<workspace>--mirvo-ai-backend-fastapi-app.us-east.modal.run`) va `MIRVO_INTERNAL_SECRET` (Modal backend’dagi qiymat bilan bir xil maxfiy kalit) ni sozlang. `VITE_` prefix ishlatmang; `.env` fayllari `.gitignore` tomonidan e’tiborsiz qoldiriladi. Sozlagandan keyin Vercel deployment’ni qayta deploy qiling.
+
+- Vercel uchun faqat `MODAL_BACKEND_URL` va `MIRVO_INTERNAL_SECRET` kerak. Ikkala qiymatni ham server-side environment sifatida kiriting; maxfiy kalitni repozitoriyga yoki frontend fayllariga qo‘shmang.
+- Frontend darsni Vercel `/api/tutor` endpointiga, ovozli ijroni `/api/tts` endpointiga yuboradi. Vercel Modal’ga faqat serverdan POST va `Authorization: Bearer ...` bilan murojaат qiladi. TTS `audio/mpeg` oqimi browser’ga bevosita uzatiladi; u Modal Volume’ga MP3 saqlamaydi. Avvalgi `/api/speech/tts` route moslik uchun saqlangan, ammo frontend oqimida ishlatilmaydi. Foydalanuvchi tarixi qurilmada qoladi.
+
+`/api/tutor` Modal `/tutor` endpoint’iga `{ topic, depth, thinking, image_base64 }` yuboradi va lesson’ni Mirvo `TutorLesson` formatiga moslaydi. `/api/tts` Modal `/tts` endpoint’iga `{ text, voice }` yuboradi va xom `audio/mpeg` bytes qaytaradi. `visual_type` yoki `visual_data` joriy renderer’ga mos kelmasa, route schema mismatch xatosini qaytaradi. Ommaviy endpointlar uchun abuse/rate himoyasini deployment darajasida sozlang; shared secret foydalanuvchini autentifikatsiya qilmaydi. Kerakli Vercel sozlamalari bo‘lmasa, proxy 500 xatosini qaytaradi.
+
+Tutor route JSON so‘rovlarni 6 MiB gacha qabul qiladi. Modal lesson javobida `title` va 1–20 ta `steps` bo‘lishi kerak; har bir step uchun `visual_type` `plotly3d`, `plotly2d`, `threejs`, `pdb`, `pubchem`, `mermaid`, `svg2d` yoki tanilgan alias bo‘lishi, `visual_data` esa `RenderParams` kalitlaridan foydalanadigan obyekt bo‘lishi kerak. Proxy ularni UI kutadigan `topic_title`, `step_title`, `katex_formulas`, `render_params` va boshqa `TutorLesson` maydonlariga o‘giradi.
 
 
 1. O‘zbek tilida mavzu yoki savol kiriting.
