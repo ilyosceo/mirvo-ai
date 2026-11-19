@@ -90,7 +90,10 @@ async function handleRequest(
   } catch (error) {
     const status = getRequestErrorStatus(error);
     sendJson(res, status, {
-      error: status === 413 ? 'Tutor request exceeds the 6 MB limit.' : 'Invalid tutor request body.',
+      error:
+        status === 413
+          ? 'Tutor request exceeds the 6 MB limit.'
+          : `Invalid tutor request body (${req.body === undefined ? 'stream' : typeof req.body}).`,
     });
     return;
   }
