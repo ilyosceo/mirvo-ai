@@ -1,4 +1,4 @@
-import type { TokenUsageInfo } from '../types/tutor';
+import type { TokenUsageInfo } from '../types/tutor.js';
 
 // Gemini Flash API rates (USD per 1M tokens)
 export const GEMINI_INPUT_RATE_PER_1M = 0.75;
