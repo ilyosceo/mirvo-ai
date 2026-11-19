@@ -92,20 +92,31 @@ function mapRenderParams(data: Record<string, unknown>): RenderParams | null {
   const source = nested === undefined ? data : nested;
   if (!isRecord(source)) return null;
 
-  const keys = Object.keys(source);
-  if (keys.some((key) => !RENDER_PARAM_KEYS.has(key as keyof RenderParams))) return null;
-  if (JSON.stringify(source).length > 100_000) return null;
+  const filtered: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (RENDER_PARAM_KEYS.has(key as keyof RenderParams)) {
+      filtered[key] = value;
+    }
+  }
+  if (Object.keys(filtered).length === 0) return null;
+  if (JSON.stringify(filtered).length > 100_000) return null;
 
-  return source as RenderParams;
+  return filtered as RenderParams;
 }
 
 export function mapModalLesson(value: unknown, topic: string): {
   source: 'modal_cache' | 'qwen';
   lesson: TutorLesson;
 } | null {
-  if (!isRecord(value) || (value.source !== 'modal_cache' && value.source !== 'qwen')) return null;
+  if (!isRecord(value)) return null;
+  if (value.source !== undefined && value.source !== 'modal_cache' && value.source !== 'qwen') return null;
   const rawLesson = value.lesson;
-  if (!isRecord(rawLesson) || !boundedString(rawLesson.title, 1, 200)) return null;
+  const source = value.source === 'modal_cache' ? 'modal_cache' : 'qwen';
+  if (!isRecord(rawLesson)) return null;
+  const lessonTitle = typeof rawLesson.title === 'string'
+    ? rawLesson.title
+    : rawLesson.topic_title;
+  if (!boundedString(lessonTitle, 1, 200)) return null;
   if (!Array.isArray(rawLesson.steps) || rawLesson.steps.length < 1 || rawLesson.steps.length > 20) {
     return null;
   }
@@ -113,42 +124,59 @@ export function mapModalLesson(value: unknown, topic: string): {
   const steps: TutorLesson['steps'] = [];
   let engine: EngineType | null = null;
   for (const rawStep of rawLesson.steps) {
+    if (!isRecord(rawStep)) return null;
+    const stepTitle = typeof rawStep.board_title === 'string'
+      ? rawStep.board_title
+      : rawStep.step_title;
+    const visualData = isRecord(rawStep.visual_data)
+      ? rawStep.visual_data
+      : isRecord(rawStep.render_params)
+        ? rawStep.render_params
+        : null;
+    const speechText = typeof rawStep.speech_text === 'string'
+      ? rawStep.speech_text
+      : rawStep.explanation_uz;
+    const latexText = typeof rawStep.latex === 'string'
+      ? rawStep.latex
+      : Array.isArray(rawStep.katex_formulas) &&
+          typeof rawStep.katex_formulas[0] === 'string'
+        ? rawStep.katex_formulas[0]
+        : undefined;
     if (
-      !isRecord(rawStep) ||
       !Number.isSafeInteger(rawStep.step_number) ||
       Number(rawStep.step_number) < 1 ||
-      !boundedString(rawStep.board_title, 1, 200) ||
+      !boundedString(stepTitle, 1, 200) ||
       !boundedString(rawStep.visual_type, 1, 80) ||
-      !isRecord(rawStep.visual_data) ||
-      !boundedString(rawStep.speech_text, 1, 4000) ||
-      (rawStep.latex !== undefined && !boundedString(rawStep.latex, 1, 4000))
+      !visualData ||
+      !boundedString(speechText, 1, 4000) ||
+      (latexText !== undefined && !boundedString(latexText, 1, 4000))
     ) {
       return null;
     }
 
-    const currentEngine = resolveEngine(rawStep.visual_type, rawStep.visual_data);
-    const renderParams = mapRenderParams(rawStep.visual_data);
+    const currentEngine = resolveEngine(rawStep.visual_type, visualData);
+    const renderParams = mapRenderParams(visualData);
     if (!currentEngine || !renderParams || (engine && engine !== currentEngine)) return null;
     engine = currentEngine;
 
     steps.push({
       step_number: Number(rawStep.step_number),
-      step_title: rawStep.board_title,
-      speech_text: rawStep.speech_text,
-      katex_formulas: rawStep.latex ? [rawStep.latex] : [],
-      explanation_uz: rawStep.speech_text,
+      step_title: stepTitle,
+      speech_text: speechText,
+      katex_formulas: latexText ? [latexText] : [],
+      explanation_uz: speechText,
       emoji_emotion: 'explaining',
       render_params: renderParams,
     });
   }
 
   return {
-    source: value.source,
+    source,
     lesson: {
-      topic_title: rawLesson.title,
+      topic_title: lessonTitle,
       subject: mapSubject(topic),
       engine: engine || 'svg2d',
-      source: value.source === 'qwen' ? 'qwen-director' : 'cache',
+      source: source === 'qwen' ? 'qwen-director' : 'cache',
       sliders: [],
       steps,
     },

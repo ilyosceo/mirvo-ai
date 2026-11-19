@@ -127,6 +127,42 @@ test('proxy handlers accept string and Buffer bodies supplied by Vercel', async 
   assert.equal(ttsResponse.statusCode, 200);
 });
 
+test('tutor mapper accepts compatible Modal field aliases and ignores additive fields', async (t) => {
+  t.after(restoreEnvironment);
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
+  process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
+
+  globalThis.fetch = async () => Response.json({
+    lesson: {
+      topic_title: 'Parabola',
+      steps: [{
+        step_number: 1,
+        step_title: 'Kvadrat funksiya',
+        visual_type: 'plotly2d',
+        render_params: {
+          expression: 'x^2',
+          backend_extra_field: 'ignored',
+        },
+        explanation_uz: 'Bu parabola.',
+        katex_formulas: ['y=x^2'],
+      }],
+    },
+  });
+
+  const response = createResponse();
+  await tutorHandler(createRequest('POST', {
+    topic: 'Parabola',
+    depth: 'overview',
+    thinking: false,
+  }), response);
+
+  assert.equal(response.statusCode, 200);
+  const payload = JSON.parse(response.body.toString());
+  assert.equal(payload.lesson.topic_title, 'Parabola');
+  assert.equal(payload.lesson.steps[0].step_title, 'Kvadrat funksiya');
+  assert.deepEqual(payload.lesson.steps[0].render_params, { expression: 'x^2' });
+});
+
 test('tutor proxy authenticates and maps the Modal lesson to the UI contract', async (t) => {
   t.after(restoreEnvironment);
   process.env.MODAL_BACKEND_URL = 'https://workspace--mirvo-ai-backend-fastapi-app.us-east.modal.run/';
