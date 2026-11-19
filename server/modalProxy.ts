@@ -106,3 +106,7 @@ export function getRequestErrorStatus(error: unknown): number {
   }
   return 400;
 }
+
+export function getUpstreamErrorStatus(error: unknown): 502 | 504 {
+  return error instanceof Error && error.name === 'TimeoutError' ? 504 : 502;
+}

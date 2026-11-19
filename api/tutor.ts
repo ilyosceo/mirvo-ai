@@ -1,14 +1,15 @@
 import type { ServerResponse } from 'node:http';
-import { mapModalLesson } from './lib/modalLesson.ts';
+import { mapModalLesson } from '../server/modalLesson';
 import {
   getModalProxyConfig,
   getRequestErrorStatus,
+  getUpstreamErrorStatus,
   MAX_TUTOR_BODY_BYTES,
   parseJsonBody,
   readRequestBody,
   sendJson,
   type RequestWithOptionalBody,
-} from './lib/modalProxy.ts';
+} from '../server/modalProxy';
 
 const MAX_TUTOR_RESPONSE_BYTES = 6 * 1024 * 1024;
 const MAX_IMAGE_BASE64_CHARS = 5_900_000;
@@ -63,7 +64,7 @@ function validTutorInput(
   );
 }
 
-export default async function handler(
+async function handleRequest(
   req: RequestWithOptionalBody,
   res: ServerResponse
 ): Promise<void> {
@@ -114,8 +115,11 @@ export default async function handler(
       }),
       signal: AbortSignal.timeout(55_000),
     });
-  } catch {
-    sendJson(res, 502, { error: 'Tutor service is temporarily unavailable.' });
+  } catch (error) {
+    const status = getUpstreamErrorStatus(error);
+    sendJson(res, status, {
+      error: status === 504 ? 'Tutor service timed out.' : 'Tutor service is temporarily unavailable.',
+    });
     return;
   }
 
@@ -160,4 +164,19 @@ export default async function handler(
   }
 
   sendJson(res, 200, mapped);
+}
+
+export default async function handler(
+  req: RequestWithOptionalBody,
+  res: ServerResponse
+): Promise<void> {
+  try {
+    await handleRequest(req, res);
+  } catch {
+    if (res.headersSent || res.writableEnded) {
+      res.destroy();
+      return;
+    }
+    sendJson(res, 500, { error: 'Tutor service encountered an unexpected error.' });
+  }
 }
