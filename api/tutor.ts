@@ -74,10 +74,13 @@ async function handleRequest(
     return;
   }
 
-  const proxyConfig = getModalProxyConfig();
+  const { config: proxyConfig, error: configError } = getModalProxyConfig();
   if (!proxyConfig) {
     sendJson(res, 500, {
-      error: 'Tutor service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
+      error:
+        configError === 'invalid_url'
+          ? 'Invalid MODAL_BACKEND_URL. Use an HTTPS root URL on a *.modal.run host, without a path, query, or fragment.'
+          : 'Tutor service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
     });
     return;
   }
