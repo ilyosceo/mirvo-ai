@@ -157,8 +157,20 @@ test('tutor proxy returns clear configuration and schema errors', async (t) => {
     error: 'Tutor service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
   });
 
-  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run/tutor';
   process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
+  const invalidConfig = createResponse();
+  await tutorHandler(createRequest('POST', {
+    topic: 'Math',
+    depth: 'standard',
+    thinking: false,
+  }), invalidConfig);
+  assert.equal(invalidConfig.statusCode, 500);
+  assert.deepEqual(JSON.parse(invalidConfig.body.toString()), {
+    error: 'Invalid MODAL_BACKEND_URL. Use an HTTPS root URL on a *.modal.run host, without a path, query, or fragment.',
+  });
+
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
   globalThis.fetch = async () => Response.json({
     source: 'qwen',
     lesson: {
@@ -226,8 +238,19 @@ test('TTS proxy rejects invalid input and missing configuration', async (t) => {
     error: 'TTS service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
   });
 
-  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run/tts';
   process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
+  const invalidConfig = createResponse();
+  await ttsHandler(createRequest('POST', {
+    text: 'Salom',
+    voice: 'uz-UZ-SardorNeural',
+  }), invalidConfig);
+  assert.equal(invalidConfig.statusCode, 500);
+  assert.deepEqual(JSON.parse(invalidConfig.body.toString()), {
+    error: 'Invalid MODAL_BACKEND_URL. Use an HTTPS root URL on a *.modal.run host, without a path, query, or fragment.',
+  });
+
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
   const invalid = createResponse();
   await ttsHandler(createRequest('POST', { text: 'Salom', voice: 'en-US-AriaNeural' }), invalid);
   assert.equal(invalid.statusCode, 400);

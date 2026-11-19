@@ -13,10 +13,14 @@ export interface ModalProxyConfig {
   secret: string;
 }
 
-export function getModalProxyConfig(): ModalProxyConfig | null {
+export type ModalProxyConfigResult =
+  | { config: ModalProxyConfig; error: null }
+  | { config: null; error: 'missing' | 'invalid_url' };
+
+export function getModalProxyConfig(): ModalProxyConfigResult {
   const configuredUrl = process.env.MODAL_BACKEND_URL?.trim();
   const secret = process.env.MIRVO_INTERNAL_SECRET;
-  if (!configuredUrl || !secret) return null;
+  if (!configuredUrl || !secret?.trim()) return { config: null, error: 'missing' };
 
   try {
     const url = new URL(configuredUrl);
@@ -30,11 +34,14 @@ export function getModalProxyConfig(): ModalProxyConfig | null {
       url.search ||
       url.hash
     ) {
-      return null;
+      return { config: null, error: 'invalid_url' };
     }
-    return { backendUrl: configuredUrl.replace(/\/+$/, ''), secret };
+    return {
+      config: { backendUrl: configuredUrl.replace(/\/+$/, ''), secret },
+      error: null,
+    };
   } catch {
-    return null;
+    return { config: null, error: 'invalid_url' };
   }
 }
 
