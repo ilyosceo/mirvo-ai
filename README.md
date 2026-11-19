@@ -113,7 +113,7 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 - **React va TypeScript** — komponentlar va UI holatini boshqarish
 
-- **Google Gemini** — tabiiy tildagi tushuntirish va dars yaratish
+- **Modal + DashScope Qwen** — server-side dars yaratish; Gemini optional AI object-illustration fallback’i uchun
 
 - **Three.js / React Three Fiber** — kuchli 3D sahnalar
 
@@ -149,7 +149,18 @@ npm run build
 npm run preview
 ```
 
-Vercel’da repository’ni import qiling. Dars generatsiyasi uchun Vercel Project Settings → Environment Variables bo‘limida `GEMINI_API_KEY` ni saqlang; secretni `.env` fayliga yoki repository’ga qo‘shmang. Ilova API kalitisiz ham keshdagi darslar va lokal saqlash bilan ishlaydi.
+Vercel’da repository’ni import qiling. Yangi darslar server orqali Modal’dagi Qwen xizmatiga yuboriladi; brauzer Modal manzili yoki maxfiy kalitni olmaydi. Deploy bo‘yicha talablar quyidagi **Qwen backend deploy** bo‘limida keltirilgan. `GEMINI_API_KEY` faqat ixtiyoriy AI obyekt-rasmlari uchun kerak; dars yaratish uchun u endi ishlatilmaydi.
+
+### Qwen backend deploy
+
+`modal_service/app.py` CPU’da ishlaydigan FastAPI xizmatini taqdim etadi. Deploy qilishdan oldin Modal va Vercel’da quyidagi sozlamalarni kiriting; maxfiy qiymatlarni repository, `.env` fayli yoki brauzer kodiga qo‘shmang.
+
+- Modal Secret `mirvo-qwen-secrets`: `DASHSCOPE_API_KEY`, kamida 32 belgili tasodifiy `MODAL_GATEWAY_SECRET`; optional `QWEN_MODEL` (default `qwen-plus`) and `DASHSCOPE_ENDPOINT` (default DashScope international endpoint). Secret’ni Modal dashboard’da yarating.
+- Modal CLI (Python 3.11+): `python -m pip install -r modal_service/requirements.txt`, then `modal deploy modal_service/app.py`. Deploy creates the `mirvo-qwen-lesson-cache` Volume.
+- The Volume stores a shared cache (30-day expiry, up to 1,000 entries) only for short generic educational prompts that pass a conservative heuristic. Image-based, personal-looking, and other unmatched prompts are not cached. Filtering is heuristic, not a guarantee of detecting sensitive data; do not use this as private chat or user history. Cache file operations are serialized; Modal is limited to one container and 8 concurrent requests.
+- Vercel Environment Variables: `MODAL_QWEN_URL` (`/v1/lesson/generate` bilan tugaydigan Modal deploy URL) va Modal Secret’dagi aynan o‘sha `MODAL_GATEWAY_SECRET`.
+
+DashScope endpointi xizmat kodida ruxsat etilgan hostlar bilan cheklangan; model tanlovi server konfiguratsiyasida ruxsat etilgan ro‘yxatdan olinadi. Modal’da har bir ilova process’i uchun daqiqasiga 30 ta so‘rov limiti ham bor; u process qayta ishga tushganda yangilanadi va account/global limit o‘rnini bosmaydi. Vercel endpointi ommaga ochiq: ichki shared-secret foydalanuvchilarni aniqlamaydi yoki abuse’dan o‘zi himoya qilmaydi. Production’da Vercel uchun edge/WAF rate limit va billing limitlarini ham sozlang. Modal Volume umumiy ilova keshi, shaxsiy history emas; shaxsiy dars tarixi hozircha faqat qurilmada qoladi.
 
 
 1. O‘zbek tilida mavzu yoki savol kiriting.

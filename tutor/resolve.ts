@@ -1219,13 +1219,25 @@ export class SmartObjectResolver {
 export interface TutorResolveRouterDeps {
   dataDir: string;
   getGeminiClient: (apiVersion?: string) => GoogleGenAI | null;
+  generateLesson?: (input: {
+    query: string;
+    userPrompt: string;
+    systemInstruction: string;
+    depthMode: LessonDepthMode;
+    imageBase64?: string;
+    imageMimeType?: string;
+  }) => Promise<{
+    text: string;
+    usageMetadata?: GenerateContentResponse['usageMetadata'];
+    cacheHit: boolean;
+  }>;
 }
 
 export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
   router: Router;
   objectResolver: SmartObjectResolver;
 } {
-  const { dataDir, getGeminiClient } = deps;
+  const { dataDir, getGeminiClient, generateLesson } = deps;
   const topicCacheFile = path.join(dataDir, 'topic-cache.json');
   const objectResolver = new SmartObjectResolver(dataDir, () => getGeminiClient());
 
@@ -1355,7 +1367,8 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
     imageBase64: string | undefined,
     t0: number,
     depthMode: LessonDepthMode,
-    prewarmedCache?: Map<string, ReturnType<SmartObjectResolver['resolveObject']>>
+    prewarmedCache?: Map<string, ReturnType<SmartObjectResolver['resolveObject']>>,
+    directorSource: TutorLesson['source'] = 'gemini-director'
   ): Promise<{ lesson: TutorLesson; token_usage: TokenUsageInfo; latency_ms: number }> => {
     const cleanText = rawText.trim();
     if (!cleanText) {
@@ -1565,7 +1578,7 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
       steps: normalizedSteps,
       id: `ai-${Date.now()}`,
       sliders: Array.isArray(parsed.sliders) ? parsed.sliders : [],
-      source: 'gemini-director',
+      source: directorSource,
       latency_ms,
       token_usage,
     };
@@ -1898,57 +1911,85 @@ export function createTutorResolveRouter(deps: TutorResolveRouterDeps): {
       }
     }
 
-    const ai = getGeminiClient();
-    if (!ai) {
+    const ai = generateLesson ? null : getGeminiClient();
+    if (!generateLesson && !ai) {
       res.status(503).json({
-        error:
-          "Gemini API kaliti sozlanmagan. Iltimos, AI Studio Settings > Secrets bo'limida GEMINI_API_KEY ni kiriting.",
+        error: 'AI lesson service is not configured.',
       });
       return;
     }
 
     try {
       const parts = buildDirectorParts(trimmedQuery, depthMode, imageBase64, imageMimeType);
-
-      let response;
-      try {
-        response = await ai.models.generateContent({
-          model: GEMINI_LITE_MODEL,
-          contents: { parts },
-          config: {
-            systemInstruction: buildDirectorSystemInstruction(depthMode),
-            responseMimeType: 'application/json',
-            responseSchema: LESSON_RESPONSE_SCHEMA,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-          },
+      let rawText: string;
+      let directorUsage: TokenUsageInfo;
+      let sharedCacheHit = false;
+      if (generateLesson) {
+        const generated = await generateLesson({
+          query: trimmedQuery,
+          userPrompt: parts
+            .map((part) => part.text)
+            .filter((text): text is string => Boolean(text))
+            .join('\n'),
+          systemInstruction: buildDirectorSystemInstruction(depthMode),
+          depthMode,
+          imageBase64,
+          imageMimeType: imageBase64 ? imageMimeType || 'image/jpeg' : undefined,
         });
-      } catch (primaryErr) {
-        if (!isTransientOrUnavailableError(primaryErr)) throw primaryErr;
-        response = await ai.models.generateContent({
-          model: GEMINI_FLASH_MODEL,
-          contents: { parts },
-          config: {
-            systemInstruction: buildDirectorSystemInstruction(depthMode),
-            responseMimeType: 'application/json',
-            responseSchema: LESSON_RESPONSE_SCHEMA,
-            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-          },
-        });
+        rawText = generated.text;
+        sharedCacheHit = generated.cacheHit;
+        directorUsage = sharedCacheHit
+          ? ZERO_TOKEN_USAGE
+          : usageFromGeminiMetadata(generated.usageMetadata);
+      } else {
+        let response;
+        try {
+          response = await ai!.models.generateContent({
+            model: GEMINI_LITE_MODEL,
+            contents: { parts },
+            config: {
+              systemInstruction: buildDirectorSystemInstruction(depthMode),
+              responseMimeType: 'application/json',
+              responseSchema: LESSON_RESPONSE_SCHEMA,
+              thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+            },
+          });
+        } catch (primaryErr) {
+          if (!isTransientOrUnavailableError(primaryErr)) throw primaryErr;
+          response = await ai!.models.generateContent({
+            model: GEMINI_FLASH_MODEL,
+            contents: { parts },
+            config: {
+              systemInstruction: buildDirectorSystemInstruction(depthMode),
+              responseMimeType: 'application/json',
+              responseSchema: LESSON_RESPONSE_SCHEMA,
+              thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+            },
+          });
+        }
+        rawText = response.text ?? '';
+        directorUsage = usageFromGeminiMetadata(response.usageMetadata);
       }
 
-      const directorUsage = usageFromGeminiMetadata(response.usageMetadata);
       const { lesson, token_usage, latency_ms } = await finalizeDirectorLesson(
-        response.text ?? '',
+        rawText,
         directorUsage,
         trimmedQuery,
         imageBase64,
         t0,
-        depthMode
+        depthMode,
+        undefined,
+        sharedCacheHit ? 'cache' : generateLesson ? 'qwen-director' : 'gemini-director'
       );
 
-      res.json({ stage: 'gemini-director', latency_ms, token_usage, lesson });
+      res.json({
+        stage: sharedCacheHit ? 'cache' : generateLesson ? 'qwen-director' : 'gemini-director',
+        latency_ms,
+        token_usage,
+        lesson,
+      });
     } catch (err) {
-      console.error('Gemini Director error:', err);
+      console.error(generateLesson ? 'Qwen Director error' : 'Gemini Director error');
       res.status(500).json({ error: formatFriendlyGeminiError(err) });
     }
   });

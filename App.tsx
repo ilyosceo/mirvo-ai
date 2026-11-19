@@ -742,7 +742,11 @@ export default function App() {
 
       const usage = payload.token_usage ?? payload.lesson.token_usage ?? ZERO_TOKEN_USAGE;
       const lessonWithUsage = { ...payload.lesson, token_usage: usage };
-      if (payload.stage === 'gemini-director' || payload.stage === 'local-parser') {
+      if (
+        payload.stage === 'gemini-director' ||
+        payload.stage === 'qwen-director' ||
+        payload.stage === 'local-parser'
+      ) {
         setDailyLessonCount(saveDailyLessonCreation().count);
       }
       setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));

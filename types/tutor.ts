@@ -314,7 +314,7 @@ export interface TutorLesson {
   subject: SubjectType;
   engine: EngineType;
   depth_mode?: LessonDepthMode;
-  source?: 'local-parser' | 'cache' | 'gemini-director';
+  source?: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-director';
   latency_ms?: number;
   token_usage?: TokenUsageInfo;
   keywords?: string[];
@@ -324,7 +324,7 @@ export interface TutorLesson {
 
 export interface ResolveResponse {
   lesson: TutorLesson;
-  stage: 'local-parser' | 'cache' | 'gemini-director';
+  stage: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-director';
   latency_ms: number;
   token_usage?: TokenUsageInfo;
 }
