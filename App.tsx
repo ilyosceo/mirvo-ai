@@ -29,6 +29,11 @@ import {
 } from 'lucide-react';
 import { CACHED_LESSONS } from './data/cachedLessons';
 import { tryLocalDeterministicParse } from './lib/deterministicParser';
+import {
+  DAILY_LESSON_USAGE_STORAGE_KEY,
+  loadDailyLessonUsage,
+  saveDailyLessonCreation,
+} from './lib/dailyLessonUsage';
 import { findBuiltInCachedLesson } from './lib/lessonMatch';
 import { generateProceduralPrimitives3D } from './lib/objectCatalog';
 import {
@@ -63,8 +68,10 @@ import {
 } from './lib/voiceEngine';
 import {
   ENGINE_LABELS_UZ,
+  LESSON_DEPTH_OPTIONS,
   SUBJECT_LABELS_UZ,
   type LessonBeat,
+  type LessonDepthMode,
   type ResolveResponse,
   type StageAnchorsMap,
   type TutorLesson,
@@ -147,6 +154,7 @@ function buildDefaultSliders(lesson: TutorLesson): Record<string, number> {
 
 export default function App() {
   const [viewMode, setViewMode] = useState<'home' | 'lesson'>('home');
+  const [depthMode, setDepthMode] = useState<LessonDepthMode>('standard');
   const [lesson, setLesson] = useState<TutorLesson>(() => CACHED_LESSONS[0]);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [sliderValues, setSliderValues] = useState<Record<string, number>>(() =>
@@ -206,6 +214,9 @@ export default function App() {
   const [sessionTokenStats, setSessionTokenStats] = useState<SessionTokenStats>(() =>
     loadSessionTokenStats()
   );
+  const [dailyLessonCount, setDailyLessonCount] = useState(
+    () => loadDailyLessonUsage().count
+  );
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -243,6 +254,23 @@ export default function App() {
   useEffect(() => {
     voiceSettingsRef.current = voiceSettings;
   }, [voiceSettings]);
+
+  useEffect(() => {
+    const refreshDailyCount = () => setDailyLessonCount(loadDailyLessonUsage().count);
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === DAILY_LESSON_USAGE_STORAGE_KEY || event.key === null) {
+        refreshDailyCount();
+      }
+    };
+    const intervalId = window.setInterval(refreshDailyCount, 60_000);
+    window.addEventListener('focus', refreshDailyCount);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', refreshDailyCount);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const currentStep = useMemo(
     () => lesson.steps[activeStepIndex] || lesson.steps[0],
@@ -659,9 +687,11 @@ export default function App() {
     setErrorMsg(null);
 
     if (!withImage && q) {
-      const localLesson = tryLocalDeterministicParse(q);
+      const localLesson =
+        depthMode === 'overview' ? tryLocalDeterministicParse(q) : null;
       if (localLesson) {
         const freeLesson = { ...localLesson, token_usage: ZERO_TOKEN_USAGE };
+        setDailyLessonCount(saveDailyLessonCreation().count);
         setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
         saveLessonToCache(q, freeLesson);
         setQueryText('');
@@ -700,6 +730,7 @@ export default function App() {
           query: q,
           imageBase64: withImage?.base64,
           imageMimeType: withImage?.mimeType,
+          depthMode,
         }),
       });
 
@@ -710,6 +741,9 @@ export default function App() {
 
       const usage = payload.token_usage ?? payload.lesson.token_usage ?? ZERO_TOKEN_USAGE;
       const lessonWithUsage = { ...payload.lesson, token_usage: usage };
+      if (payload.stage === 'gemini-director' || payload.stage === 'local-parser') {
+        setDailyLessonCount(saveDailyLessonCreation().count);
+      }
       setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));
       saveLessonToCache(q || payload.lesson.topic_title, lessonWithUsage);
       setQueryText('');
@@ -853,7 +887,6 @@ export default function App() {
     const found = CACHED_LESSONS.find((l) => l.id === cardId);
     if (found) {
       const cached = { ...found, source: 'cache' as const };
-      saveLessonToCache(found.topic_title, cached);
       loadLesson(cached, true);
     }
   };
@@ -1058,7 +1091,7 @@ export default function App() {
         /* ==================== EYE-PLEASING DAYLIGHT HOME DISCOVERY SCREEN ==================== */
         <div className="flex-1 min-h-0 flex flex-col mirvo-home-bg overflow-y-auto academic-scroll">
           {/* Clean 3-Zone Top Bar */}
-          <header className="h-16 shrink-0 px-4 sm:px-8 flex items-center justify-between gap-4 sm:gap-8 max-w-6xl w-full mx-auto">
+          <header className="h-14 sm:h-16 shrink-0 px-3 sm:px-8 flex items-center justify-between gap-2 sm:gap-8 max-w-6xl w-full mx-auto">
             {/* Zone 1: Brand Wordmark */}
             <MirvoLogo size="md" />
 
@@ -1087,20 +1120,39 @@ export default function App() {
               >
                 Saqlangan tarix ({totalHistoryCount})
               </button>
+            </nav>
+
+            {/* Mobile library trigger */}
+            <div className="flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 onClick={() => {
                   setDrawerTab('settings');
                   setDrawerOpen(true);
                 }}
-                className="hover:text-blue-600 transition-colors cursor-pointer whitespace-nowrap shrink-0 py-1 hover:underline underline-offset-4"
+                className="hidden md:inline-flex items-center text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors cursor-pointer whitespace-nowrap py-1"
               >
                 Ovoz sozlamalari
               </button>
-            </nav>
-
-            {/* Mobile library trigger */}
-            <div className="flex items-center gap-2 shrink-0">
+              <span
+                aria-live="polite"
+                aria-label={`Bugun: ${dailyLessonCount}/3 dars. Qurilmangizdagi mahalliy hisoblagich.`}
+                title="Bugun yaratilgan darslar soni — faqat shu qurilmadagi hisoblagich"
+                className="whitespace-nowrap rounded-lg border border-slate-200 bg-white/90 px-2 py-1.5 text-[10px] sm:text-xs font-semibold font-mono-tabular text-slate-600"
+              >
+                Bugun: {dailyLessonCount}/3 dars
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setDrawerTab('settings');
+                  setDrawerOpen(true);
+                }}
+                aria-label="Ovoz sozlamalari"
+                className="md:hidden h-8 w-8 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white hover:border-blue-400 text-slate-700 cursor-pointer shrink-0 shadow-xs"
+              >
+                <SlidersHorizontal className="w-4 h-4 text-slate-600" />
+              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -1116,7 +1168,7 @@ export default function App() {
           </header>
 
           {/* Centered Daylight Studio Hero & Workspace */}
-          <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-3 sm:pt-6 pb-[max(1.75rem,env(safe-area-inset-bottom))] max-w-5xl w-full mx-auto">
+          <main className="flex-1 flex flex-col items-center justify-start sm:justify-center px-3 sm:px-6 pt-3 sm:pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] max-w-5xl w-full mx-auto">
             {/* Mascot + Welcoming Headline */}
             <div className="flex flex-col items-center text-center max-w-2xl">
               <div className="mb-3 sm:mb-4 transition-transform duration-300 hover:scale-105">
@@ -1240,6 +1292,37 @@ export default function App() {
                 </div>
               </form>
 
+              <div className="space-y-1.5 pt-1">
+                <span className="block text-[10px] font-semibold text-slate-500">
+                  Dars chuqurligi
+                </span>
+                <div
+                  role="group"
+                  aria-label="Dars chuqurligini tanlash"
+                  className="grid grid-cols-3 gap-1.5"
+                >
+                  {LESSON_DEPTH_OPTIONS.map((option) => {
+                    const selected = depthMode === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        aria-pressed={selected}
+                        title={option.shortDesc}
+                        onClick={() => setDepthMode(option.id)}
+                        className={`min-h-10 rounded-xl border px-1.5 py-1 text-[10px] sm:text-xs font-semibold leading-tight transition-colors cursor-pointer ${
+                          selected
+                            ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500/20'
+                            : 'border-slate-200 bg-white/90 text-slate-600 hover:border-blue-300 hover:text-blue-700'
+                        }`}
+                      >
+                        {option.label} {option.rangeLabel}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Quick Topic Launchers */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
                 <span className="text-slate-400 font-medium">Tez tanlov:</span>
@@ -1265,7 +1348,7 @@ export default function App() {
                     key={card.id}
                     type="button"
                     onClick={() => handleStarterCard(card.id)}
-                    className="group text-left bg-white border border-slate-200/90 hover:border-blue-400 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-3 min-h-[128px]"
+                    className="group text-left bg-white border border-slate-200/90 hover:border-blue-400 rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-3 min-h-[120px] sm:min-h-[128px]"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div
