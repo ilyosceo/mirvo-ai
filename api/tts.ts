@@ -8,8 +8,8 @@ import {
   sendJson,
   getUpstreamErrorStatus,
   type RequestWithOptionalBody,
-} from '../server/modalProxy';
-import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract';
+} from '../server/modalProxy.js';
+import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract.js';
 
 export const config = {
   maxDuration: 25,
