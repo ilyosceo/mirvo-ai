@@ -67,6 +67,20 @@ function restoreEnvironment() {
   globalThis.fetch = originalFetch;
 }
 
+test('tutor and TTS proxy routes return 405 for GET without requiring configuration', async (t) => {
+  t.after(restoreEnvironment);
+  delete process.env.MODAL_BACKEND_URL;
+  delete process.env.MIRVO_INTERNAL_SECRET;
+
+  for (const handler of [tutorHandler, ttsHandler]) {
+    const response = createResponse();
+    await handler(createRequest('GET'), response);
+    assert.equal(response.statusCode, 405);
+    assert.equal(response.headers.Allow, 'POST');
+    assert.deepEqual(JSON.parse(response.body.toString()), { error: 'Method not allowed' });
+  }
+});
+
 test('tutor proxy authenticates and maps the Modal lesson to the UI contract', async (t) => {
   t.after(restoreEnvironment);
   process.env.MODAL_BACKEND_URL = 'https://workspace--mirvo-ai-backend-fastapi-app.us-east.modal.run/';
@@ -139,7 +153,9 @@ test('tutor proxy returns clear configuration and schema errors', async (t) => {
     thinking: false,
   }), missingConfig);
   assert.equal(missingConfig.statusCode, 500);
-  assert.match(missingConfig.body.toString(), /MODAL_BACKEND_URL/);
+  assert.deepEqual(JSON.parse(missingConfig.body.toString()), {
+    error: 'Tutor service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
+  });
 
   process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
   process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
@@ -206,10 +222,55 @@ test('TTS proxy rejects invalid input and missing configuration', async (t) => {
   const missingConfig = createResponse();
   await ttsHandler(createRequest('POST', { text: 'Salom', voice: 'uz-UZ-SardorNeural' }), missingConfig);
   assert.equal(missingConfig.statusCode, 500);
+  assert.deepEqual(JSON.parse(missingConfig.body.toString()), {
+    error: 'TTS service is not configured. Set MODAL_BACKEND_URL and MIRVO_INTERNAL_SECRET in Vercel.',
+  });
 
   process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
   process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
   const invalid = createResponse();
   await ttsHandler(createRequest('POST', { text: 'Salom', voice: 'en-US-AriaNeural' }), invalid);
   assert.equal(invalid.statusCode, 400);
+});
+
+test('tutor and TTS proxy return safe 502 and 504 responses for upstream failures', async (t) => {
+  t.after(restoreEnvironment);
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
+  process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
+
+  const cases = [
+    {
+      handler: tutorHandler,
+      body: { topic: 'Math', depth: 'standard', thinking: false },
+      label: 'Tutor',
+    },
+    {
+      handler: ttsHandler,
+      body: { text: 'Salom', voice: 'uz-UZ-SardorNeural' },
+      label: 'TTS',
+    },
+  ] as const;
+
+  for (const { handler, body, label } of cases) {
+    globalThis.fetch = async () => {
+      throw new Error('upstream failure with private details');
+    };
+    const unavailable = createResponse();
+    await handler(createRequest('POST', body), unavailable);
+    assert.equal(unavailable.statusCode, 502);
+    assert.doesNotMatch(unavailable.body.toString(), /private details|s{32}/);
+
+    globalThis.fetch = async () => {
+      const error = new Error('upstream timeout with private details');
+      error.name = 'TimeoutError';
+      throw error;
+    };
+    const timeout = createResponse();
+    await handler(createRequest('POST', body), timeout);
+    assert.equal(timeout.statusCode, 504);
+    assert.deepEqual(JSON.parse(timeout.body.toString()), {
+      error: `${label} service timed out.`,
+    });
+    assert.doesNotMatch(timeout.body.toString(), /private details|s{32}/);
+  }
 });

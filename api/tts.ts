@@ -6,16 +6,17 @@ import {
   parseJsonBody,
   readRequestBody,
   sendJson,
+  getUpstreamErrorStatus,
   type RequestWithOptionalBody,
-} from './lib/modalProxy.ts';
-import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract.ts';
+} from '../server/modalProxy';
+import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract';
 
 export const config = {
   maxDuration: 25,
   api: { bodyParser: false },
 };
 
-export default async function handler(
+async function handleRequest(
   req: RequestWithOptionalBody,
   res: ServerResponse
 ): Promise<void> {
@@ -67,8 +68,11 @@ export default async function handler(
       }),
       signal: AbortSignal.timeout(20_000),
     });
-  } catch {
-    sendJson(res, 502, { error: 'TTS service is temporarily unavailable.' });
+  } catch (error) {
+    const status = getUpstreamErrorStatus(error);
+    sendJson(res, status, {
+      error: status === 504 ? 'TTS service timed out.' : 'TTS service is temporarily unavailable.',
+    });
     return;
   }
 
@@ -106,5 +110,20 @@ export default async function handler(
     res.end(audio);
   } catch {
     sendJson(res, 502, { error: 'TTS service returned invalid audio.' });
+  }
+}
+
+export default async function handler(
+  req: RequestWithOptionalBody,
+  res: ServerResponse
+): Promise<void> {
+  try {
+    await handleRequest(req, res);
+  } catch {
+    if (res.headersSent || res.writableEnded) {
+      res.destroy();
+      return;
+    }
+    sendJson(res, 500, { error: 'TTS service encountered an unexpected error.' });
   }
 }
