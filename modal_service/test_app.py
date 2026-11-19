@@ -9,6 +9,7 @@ from pydantic import ValidationError
 
 from modal_service.app import (
     LessonRequest,
+    TtsRequest,
     ALLOWED_ENDPOINTS,
     ALLOWED_MODELS,
     cache_eligible,
@@ -78,6 +79,20 @@ class ModalServiceValidationTests(unittest.TestCase):
                 {**base, "image_base64": "not-base64", "image_mime_type": "image/png"}
             )
 
+    def test_tts_request_accepts_only_supported_voices_and_bounds(self) -> None:
+        valid = TtsRequest.model_validate(
+            {"text": "Salom", "voice": "uz-UZ-SardorNeural", "rate": 1.2, "pitch": 0.9}
+        )
+        self.assertEqual(valid.voice, "uz-UZ-SardorNeural")
+        for invalid in (
+            {"text": "Salom", "voice": "en-US-AriaNeural"},
+            {"text": "Salom", "voice": "uz-UZ-MadinaNeural", "rate": 2},
+            {"text": "   ", "voice": "uz-UZ-MadinaNeural"},
+            {"text": "Salom", "voice": "uz-UZ-MadinaNeural", "gender": "female"},
+        ):
+            with self.assertRaises(ValidationError):
+                TtsRequest.model_validate(invalid)
+
     def test_gateway_fails_closed_without_provider_and_long_shared_secrets(self) -> None:
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(HTTPException) as missing_secret:
@@ -86,7 +101,7 @@ class ModalServiceValidationTests(unittest.TestCase):
 
         with patch.dict(
             os.environ,
-            {"DASHSCOPE_API_KEY": "test-key", "MODAL_GATEWAY_SECRET": "too-short"},
+            {"DASHSCOPE_API_KEY": "test-key", "MIRVO_INTERNAL_SECRET": "too-short"},
             clear=True,
         ):
             with self.assertRaises(HTTPException) as short_secret:
@@ -98,7 +113,7 @@ class ModalServiceValidationTests(unittest.TestCase):
             os.environ,
             {
                 "DASHSCOPE_API_KEY": "test-key",
-                "MODAL_GATEWAY_SECRET": "x" * 40,
+                "MIRVO_INTERNAL_SECRET": "x" * 40,
                 "DASHSCOPE_ENDPOINT": "http://127.0.0.1:8080/steal",
             },
             clear=True,

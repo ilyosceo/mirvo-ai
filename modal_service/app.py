@@ -16,6 +16,8 @@ import modal
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+import edge_tts
+from starlette.responses import StreamingResponse
 
 
 APP_NAME = "mirvo-qwen-gateway"
@@ -26,6 +28,9 @@ CACHE_TTL_SECONDS = 30 * 24 * 60 * 60
 CACHE_MAX_ENTRIES = 1000
 RATE_LIMIT_REQUESTS = 30
 RATE_LIMIT_WINDOW_SECONDS = 60
+MAX_TTS_TEXT_CHARS = 1200
+MAX_TTS_BODY_BYTES = 16 * 1024
+MAX_TTS_AUDIO_BYTES = 1024 * 1024
 CACHE_DIR = Path("/cache/lessons")
 logger = logging.getLogger("mirvo-qwen-gateway")
 ALLOWED_ENDPOINTS = {
@@ -127,6 +132,23 @@ class LessonResponse(BaseModel):
     text: Annotated[str, Field(min_length=1, max_length=MAX_OUTPUT_CHARS)]
     usage: Usage
     cache_hit: bool
+
+
+class TtsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    text: Annotated[str, Field(min_length=1, max_length=MAX_TTS_TEXT_CHARS)]
+    voice: str
+    rate: Annotated[float, Field(ge=0.7, le=1.5)] = 1.0
+    pitch: Annotated[float, Field(ge=0.7, le=1.5)] = 1.02
+
+    @model_validator(mode="after")
+    def validate_voice(self) -> "TtsRequest":
+        if self.voice not in {"uz-UZ-SardorNeural", "uz-UZ-MadinaNeural"}:
+            raise ValueError("unsupported Uzbek voice")
+        if not self.text.strip():
+            raise ValueError("text is required")
+        return self
 
 
 def cache_key(query: str, depth_mode: str, model: str) -> str:
@@ -247,7 +269,7 @@ def write_cache(key: str, response: dict[str, Any]) -> None:
 
 def safe_provider_config() -> tuple[str, str, str, str]:
     api_key = os.environ.get("DASHSCOPE_API_KEY", "")
-    shared_secret = os.environ.get("MODAL_GATEWAY_SECRET", "")
+    shared_secret = os.environ.get("MIRVO_INTERNAL_SECRET", "")
     endpoint = os.environ.get(
         "DASHSCOPE_ENDPOINT",
         "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions",
@@ -258,6 +280,19 @@ def safe_provider_config() -> tuple[str, str, str, str]:
     if endpoint not in ALLOWED_ENDPOINTS or model not in ALLOWED_MODELS:
         raise HTTPException(status_code=503, detail="AI service configuration is invalid")
     return api_key, shared_secret, endpoint, model
+
+
+def internal_secret() -> str:
+    secret = os.environ.get("MIRVO_INTERNAL_SECRET", "")
+    if len(secret) < 32:
+        raise HTTPException(status_code=503, detail="AI service is not configured")
+    return secret
+
+
+def authorize_internal_request(request: Request, secret: str) -> None:
+    supplied = request.headers.get("authorization", "")
+    if not supplied.startswith("Bearer ") or not hmac.compare_digest(supplied[7:], secret):
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 def prune_cache() -> None:
@@ -295,6 +330,7 @@ cache_image = modal.Image.debian_slim(python_version="3.11").pip_install(
     "fastapi==0.115.12",
     "httpx==0.28.1",
     "pydantic==2.11.3",
+    "edge-tts>=7.0,<8",
 )
 CACHE_VOLUME = cache_volume
 CACHE_LOCK = asyncio.Lock()
@@ -353,15 +389,9 @@ def web() -> FastAPI:
         except ValidationError as exc:
             raise HTTPException(status_code=422, detail="Invalid lesson request") from exc
 
-        try:
-            api_key, expected_secret, endpoint, model = safe_provider_config()
-        except HTTPException:
-            raise
-        supplied = request.headers.get("authorization", "")
-        if not supplied.startswith("Bearer ") or not hmac.compare_digest(
-            supplied[7:], expected_secret
-        ):
-            raise HTTPException(status_code=401, detail="Unauthorized")
+        expected_secret = internal_secret()
+        authorize_internal_request(request, expected_secret)
+        api_key, _, endpoint, model = safe_provider_config()
 
         if is_rate_limited(REQUEST_TIMESTAMPS, time.monotonic()):
             raise HTTPException(status_code=429, detail="Too many lesson requests")
@@ -439,5 +469,87 @@ def web() -> FastAPI:
             except Exception as exc:
                 logger.warning("Shared lesson cache write failed (%s)", type(exc).__name__)
         return response
+
+    @api.post("/api/tts")
+    async def synthesize_speech(request: Request) -> StreamingResponse:
+        expected_secret = internal_secret()
+        authorize_internal_request(request, expected_secret)
+        if is_rate_limited(REQUEST_TIMESTAMPS, time.monotonic()):
+            raise HTTPException(status_code=429, detail="Too many TTS requests")
+        content_length = request.headers.get("content-length")
+        if content_length:
+            try:
+                if int(content_length) > MAX_TTS_BODY_BYTES:
+                    raise HTTPException(status_code=413, detail="Request exceeds size limit")
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail="Invalid content length") from exc
+        tts_body = bytearray()
+        async for chunk in request.stream():
+            tts_body.extend(chunk)
+            if len(tts_body) > MAX_TTS_BODY_BYTES:
+                raise HTTPException(status_code=413, detail="Request exceeds size limit")
+        try:
+            payload = TtsRequest.model_validate_json(bytes(tts_body))
+        except ValidationError as exc:
+            raise HTTPException(status_code=400, detail="Invalid TTS request") from exc
+        except HTTPException:
+            raise
+
+        rate = f"{round((payload.rate - 1) * 100):+d}%"
+        pitch_hz = round((payload.pitch - 1) * 100)
+        pitch = f"{pitch_hz:+d}Hz"
+        try:
+            communicator = edge_tts.Communicate(
+                payload.text.strip(),
+                payload.voice,
+                rate=rate,
+                pitch=pitch,
+            )
+            audio_stream = communicator.stream()
+            first_audio: bytes | None = None
+            async with asyncio.timeout(18):
+                async for message in audio_stream:
+                    if message.get("type") == "audio" and message.get("data"):
+                        first_audio = message["data"]
+                        break
+            if first_audio is None:
+                raise HTTPException(status_code=502, detail="TTS provider returned no audio")
+        except TimeoutError as exc:
+            raise HTTPException(status_code=504, detail="TTS provider timed out") from exc
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.warning("TTS provider failed (%s)", type(exc).__name__)
+            raise HTTPException(status_code=502, detail="TTS provider unavailable") from exc
+
+        async def audio_chunks():
+            total = len(first_audio)
+            if total > MAX_TTS_AUDIO_BYTES:
+                return
+            yield first_audio
+            try:
+                async with asyncio.timeout(18):
+                    async for message in audio_stream:
+                        if message.get("type") != "audio" or not message.get("data"):
+                            continue
+                        chunk = message["data"]
+                        total += len(chunk)
+                        if total > MAX_TTS_AUDIO_BYTES:
+                            logger.warning("TTS output exceeded the configured audio size limit")
+                            return
+                        yield chunk
+            except TimeoutError:
+                logger.warning("TTS stream timed out after response began")
+            except Exception as exc:
+                logger.warning("TTS stream failed (%s)", type(exc).__name__)
+
+        return StreamingResponse(
+            audio_chunks(),
+            media_type="audio/mpeg",
+            headers={
+                "Cache-Control": "no-store",
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
 
     return api

@@ -724,7 +724,7 @@ export default function App() {
     setIsLoading(true);
     setViewMode('lesson');
     try {
-      const res = await fetch('/api/tutor/resolve', {
+      const res = await fetch('/api/tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

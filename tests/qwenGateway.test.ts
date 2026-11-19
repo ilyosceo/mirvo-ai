@@ -22,19 +22,19 @@ function requestInput() {
 }
 
 test('Qwen gateway forwards a bounded server-to-server request and validates the lesson', async (t) => {
-  const previousEndpoint = process.env.MODAL_QWEN_URL;
-  const previousSecret = process.env.MODAL_GATEWAY_SECRET;
+  const previousEndpoint = process.env.MODAL_BACKEND_URL;
+  const previousSecret = process.env.MIRVO_INTERNAL_SECRET;
   const previousFetch = globalThis.fetch;
   t.after(() => {
-    if (previousEndpoint === undefined) delete process.env.MODAL_QWEN_URL;
-    else process.env.MODAL_QWEN_URL = previousEndpoint;
-    if (previousSecret === undefined) delete process.env.MODAL_GATEWAY_SECRET;
-    else process.env.MODAL_GATEWAY_SECRET = previousSecret;
+    if (previousEndpoint === undefined) delete process.env.MODAL_BACKEND_URL;
+    else process.env.MODAL_BACKEND_URL = previousEndpoint;
+    if (previousSecret === undefined) delete process.env.MIRVO_INTERNAL_SECRET;
+    else process.env.MIRVO_INTERNAL_SECRET = previousSecret;
     globalThis.fetch = previousFetch;
   });
 
-  process.env.MODAL_QWEN_URL = endpoint;
-  process.env.MODAL_GATEWAY_SECRET = 'x'.repeat(40);
+  process.env.MODAL_BACKEND_URL = endpoint.replace('/v1/lesson/generate', '');
+  process.env.MIRVO_INTERNAL_SECRET = 'x'.repeat(40);
   let call: { url: string; init?: RequestInit } | undefined;
   globalThis.fetch = async (input, init) => {
     call = { url: String(input), init };
@@ -64,26 +64,25 @@ test('Qwen gateway forwards a bounded server-to-server request and validates the
 });
 
 test('Qwen gateway rejects non-Modal endpoints and invalid lesson JSON', async (t) => {
-  const previousEndpoint = process.env.MODAL_QWEN_URL;
-  const previousSecret = process.env.MODAL_GATEWAY_SECRET;
+  const previousEndpoint = process.env.MODAL_BACKEND_URL;
+  const previousSecret = process.env.MIRVO_INTERNAL_SECRET;
   const previousFetch = globalThis.fetch;
   t.after(() => {
-    if (previousEndpoint === undefined) delete process.env.MODAL_QWEN_URL;
-    else process.env.MODAL_QWEN_URL = previousEndpoint;
-    if (previousSecret === undefined) delete process.env.MODAL_GATEWAY_SECRET;
-    else process.env.MODAL_GATEWAY_SECRET = previousSecret;
+    if (previousEndpoint === undefined) delete process.env.MODAL_BACKEND_URL;
+    else process.env.MODAL_BACKEND_URL = previousEndpoint;
+    if (previousSecret === undefined) delete process.env.MIRVO_INTERNAL_SECRET;
+    else process.env.MIRVO_INTERNAL_SECRET = previousSecret;
     globalThis.fetch = previousFetch;
   });
 
-  process.env.MODAL_QWEN_URL =
-    'https://127.0.0.1/v1/lesson/generate';
-  process.env.MODAL_GATEWAY_SECRET = 'x'.repeat(40);
+  process.env.MODAL_BACKEND_URL = 'https://127.0.0.1';
+  process.env.MIRVO_INTERNAL_SECRET = 'x'.repeat(40);
   globalThis.fetch = async () => {
     throw new Error('Fetch must not be called for a non-Modal URL');
   };
   await assert.rejects(generateLessonWithQwen(requestInput()), /not configured/);
 
-  process.env.MODAL_QWEN_URL = endpoint;
+  process.env.MODAL_BACKEND_URL = endpoint.replace('/v1/lesson/generate', '');
   globalThis.fetch = async () =>
     new Response(
       JSON.stringify({ text: '{"steps":[]}', usage: {}, cache_hit: false }),

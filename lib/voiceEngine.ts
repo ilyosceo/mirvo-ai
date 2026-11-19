@@ -432,13 +432,13 @@ class FreeVoiceEngine {
     const reqPromise = (async () => {
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
-          const res = await fetch('/api/speech/tts', {
+          const res = await fetch('/api/tts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               text,
               voice: settings.voice,
-              gender: settings.gender,
+              rate: settings.rate,
               pitch: settings.pitch,
             }),
           });
@@ -684,7 +684,7 @@ class FreeVoiceEngine {
     const wordCount = fullText.split(/\s+/).filter(Boolean).length;
     const estimatedMs = Math.max(2200, Math.round((wordCount * 400 + 450) / safeRate));
 
-    // 1. Primary: High-quality Native Uzbek Gemini TTS (/api/speech/tts)
+    // 1. Primary: High-quality Uzbek server TTS (/api/tts)
     if (!muted) {
       const audioUrl = await this.fetchServerTtsUrl(fullText, settings);
       if (!this.active || this.beatSessionId !== sessionId) {

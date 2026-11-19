@@ -19,8 +19,8 @@ export interface QwenLessonResult {
 
 const MAX_IMAGE_BASE64_CHARS = 4_200_000;
 const MAX_RESPONSE_BYTES = 500_000;
-const MODAL_ENDPOINT_PATTERN =
-  /^https:\/\/[a-z0-9][a-z0-9-]*--mirvo-qwen-gateway-web\.modal\.run\/v1\/lesson\/generate$/i;
+const MODAL_BACKEND_PATTERN =
+  /^https:\/\/[a-z0-9][a-z0-9-]*--mirvo-qwen-gateway-web\.modal\.run\/?$/i;
 
 function isLesson(value: unknown): value is {
   topic_title: string;
@@ -78,11 +78,11 @@ async function readBoundedResponse(response: Response): Promise<string> {
 export async function generateLessonWithQwen(
   input: QwenLessonRequest
 ): Promise<QwenLessonResult> {
-  const endpoint = process.env.MODAL_QWEN_URL;
-  const sharedSecret = process.env.MODAL_GATEWAY_SECRET;
+  const backendUrl = process.env.MODAL_BACKEND_URL;
+  const sharedSecret = process.env.MIRVO_INTERNAL_SECRET;
   if (
-    !endpoint ||
-    !MODAL_ENDPOINT_PATTERN.test(endpoint) ||
+    !backendUrl ||
+    !MODAL_BACKEND_PATTERN.test(backendUrl) ||
     !sharedSecret ||
     sharedSecret.length < 32
   ) {
@@ -99,7 +99,7 @@ export async function generateLessonWithQwen(
 
   let response: Response;
   try {
-    response = await fetch(endpoint, {
+    response = await fetch(`${backendUrl.replace(/\/+$/, '')}/v1/lesson/generate`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${sharedSecret}`,
