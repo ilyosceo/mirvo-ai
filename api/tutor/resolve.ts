@@ -6,7 +6,7 @@ import { createTutorResolveRouter } from '../../tutor/resolve.ts';
 export const config = { maxDuration: 60 };
 
 const app = express();
-app.use(express.json({ limit: '20mb' }));
+app.use(express.json({ limit: '5mb' }));
 
 const { router } = createTutorResolveRouter({
   dataDir: process.env.TMPDIR || '/tmp',

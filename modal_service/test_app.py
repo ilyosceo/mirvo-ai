@@ -1,14 +1,20 @@
 import json
+import os
 import unittest
 from collections import deque
+from unittest.mock import patch
 
+from fastapi import HTTPException
 from pydantic import ValidationError
 
 from modal_service.app import (
     LessonRequest,
+    ALLOWED_ENDPOINTS,
+    ALLOWED_MODELS,
     cache_eligible,
     cache_key,
     is_rate_limited,
+    safe_provider_config,
     validate_lesson_json,
 )
 
@@ -71,6 +77,39 @@ class ModalServiceValidationTests(unittest.TestCase):
             LessonRequest.model_validate(
                 {**base, "image_base64": "not-base64", "image_mime_type": "image/png"}
             )
+
+    def test_gateway_fails_closed_without_provider_and_long_shared_secrets(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(HTTPException) as missing_secret:
+                safe_provider_config()
+            self.assertEqual(missing_secret.exception.status_code, 503)
+
+        with patch.dict(
+            os.environ,
+            {"DASHSCOPE_API_KEY": "test-key", "MODAL_GATEWAY_SECRET": "too-short"},
+            clear=True,
+        ):
+            with self.assertRaises(HTTPException) as short_secret:
+                safe_provider_config()
+            self.assertEqual(short_secret.exception.status_code, 503)
+
+    def test_provider_endpoint_and_model_are_server_side_allowlisted(self) -> None:
+        with patch.dict(
+            os.environ,
+            {
+                "DASHSCOPE_API_KEY": "test-key",
+                "MODAL_GATEWAY_SECRET": "x" * 40,
+                "DASHSCOPE_ENDPOINT": "http://127.0.0.1:8080/steal",
+            },
+            clear=True,
+        ):
+            with self.assertRaises(HTTPException):
+                safe_provider_config()
+        self.assertIn(
+            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions",
+            ALLOWED_ENDPOINTS,
+        )
+        self.assertIn("qwen-plus", ALLOWED_MODELS)
 
 
 if __name__ == "__main__":
