@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { mapModalLesson } from '../server/modalLesson';
+import { mapModalLesson } from '../server/modalLesson.js';
 import {
   getModalProxyConfig,
   getRequestErrorStatus,
@@ -9,7 +9,7 @@ import {
   readRequestBody,
   sendJson,
   type RequestWithOptionalBody,
-} from '../server/modalProxy';
+} from '../server/modalProxy.js';
 
 const MAX_TUTOR_RESPONSE_BYTES = 6 * 1024 * 1024;
 const MAX_IMAGE_BASE64_CHARS = 5_900_000;
