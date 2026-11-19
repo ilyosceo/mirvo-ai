@@ -1,15 +1,20 @@
+import { DEFAULT_EDGE_VOICE, normalizeEdgeVoice, type EdgeVoice } from './ttsContract';
+
 export type VoiceGender = 'auto' | 'female' | 'male';
+export type { EdgeVoice } from './ttsContract';
 
 export interface VoiceSettings {
   rate: number; // 0.7..1.5
   pitch: number; // 0.7..1.5
   gender: VoiceGender;
+  voice: EdgeVoice;
 }
 
 export const DEFAULT_VOICE_SETTINGS: VoiceSettings = {
   rate: 1.0,
   pitch: 1.02,
   gender: 'auto',
+  voice: DEFAULT_EDGE_VOICE,
 };
 
 const VOICE_SETTINGS_STORAGE_KEY = 'qalamai_voice_settings_v1';
@@ -37,6 +42,7 @@ export function loadVoiceSettings(): VoiceSettings {
       rate: clampVoiceRate(Number(parsed.rate ?? DEFAULT_VOICE_SETTINGS.rate)),
       pitch: clampVoicePitch(Number(parsed.pitch ?? DEFAULT_VOICE_SETTINGS.pitch)),
       gender,
+      voice: normalizeEdgeVoice(parsed.voice),
     };
   } catch {
     return { ...DEFAULT_VOICE_SETTINGS };
@@ -51,6 +57,7 @@ export function saveVoiceSettings(settings: VoiceSettings): VoiceSettings {
       settings.gender === 'female' || settings.gender === 'male' || settings.gender === 'auto'
         ? settings.gender
         : 'auto',
+    voice: normalizeEdgeVoice(settings.voice),
   };
   try {
     localStorage.setItem(VOICE_SETTINGS_STORAGE_KEY, JSON.stringify(normalized));
@@ -402,7 +409,7 @@ class FreeVoiceEngine {
   }
 
   private getTtsCacheKey(text: string, settings: VoiceSettings): string {
-    return `${settings.gender}:${getPitchBucket(settings.pitch)}:${text}`;
+    return `${settings.voice}:${settings.gender}:${getPitchBucket(settings.pitch)}:${text}`;
   }
 
   private fetchServerTtsUrl(text: string, settings: VoiceSettings): Promise<string | null> {
@@ -430,6 +437,7 @@ class FreeVoiceEngine {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               text,
+              voice: settings.voice,
               gender: settings.gender,
               pitch: settings.pitch,
             }),
@@ -451,6 +459,24 @@ class FreeVoiceEngine {
             }
             return null;
           }
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('audio/') || contentType.includes('application/octet-stream')) {
+            const blob = await res.blob();
+            const dataUrl = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+              reader.onerror = () => reject(reader.error);
+              reader.readAsDataURL(blob);
+            });
+            if (!dataUrl) return null;
+            if (this.ttsClipCache.size >= 50) {
+              const oldest = this.ttsClipCache.keys().next().value;
+              if (oldest) this.ttsClipCache.delete(oldest);
+            }
+            this.ttsClipCache.set(key, dataUrl);
+            return dataUrl;
+          }
+
           const data = (await res.json()) as {
             audioBase64?: string;
             mimeType?: string;
@@ -848,6 +874,7 @@ class FreeVoiceEngine {
             rate: clampVoiceRate(rateOrSettings.rate ?? DEFAULT_VOICE_SETTINGS.rate),
             pitch: clampVoicePitch(rateOrSettings.pitch ?? DEFAULT_VOICE_SETTINGS.pitch),
             gender: rateOrSettings.gender ?? DEFAULT_VOICE_SETTINGS.gender,
+            voice: normalizeEdgeVoice(rateOrSettings.voice ?? DEFAULT_VOICE_SETTINGS.voice),
           };
 
     this.active = true;
@@ -908,6 +935,7 @@ class FreeVoiceEngine {
             rate: clampVoiceRate(rateOrSettings.rate ?? DEFAULT_VOICE_SETTINGS.rate),
             pitch: clampVoicePitch(rateOrSettings.pitch ?? DEFAULT_VOICE_SETTINGS.pitch),
             gender: rateOrSettings.gender ?? DEFAULT_VOICE_SETTINGS.gender,
+            voice: normalizeEdgeVoice(rateOrSettings.voice ?? DEFAULT_VOICE_SETTINGS.voice),
           };
 
     this.active = true;
