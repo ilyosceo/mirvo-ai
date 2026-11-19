@@ -50,16 +50,23 @@ export async function readRequestBody(
   maxBytes: number
 ): Promise<Buffer | null> {
   if (req.body !== undefined) {
-    let serialized: string;
-    try {
-      serialized = JSON.stringify(req.body);
-    } catch {
-      throw Object.assign(new Error('Invalid request body'), { status: 400 });
+    let body: Buffer;
+    if (Buffer.isBuffer(req.body)) {
+      body = req.body;
+    } else if (typeof req.body === 'string') {
+      body = Buffer.from(req.body, 'utf8');
+    } else {
+      let serialized: string;
+      try {
+        serialized = JSON.stringify(req.body);
+      } catch {
+        throw Object.assign(new Error('Invalid request body'), { status: 400 });
+      }
+      if (typeof serialized !== 'string') {
+        throw Object.assign(new Error('Invalid request body'), { status: 400 });
+      }
+      body = Buffer.from(serialized);
     }
-    if (typeof serialized !== 'string') {
-      throw Object.assign(new Error('Invalid request body'), { status: 400 });
-    }
-    const body = Buffer.from(serialized);
     if (body.length > maxBytes) {
       throw Object.assign(new Error('Request body too large'), { status: 413 });
     }
