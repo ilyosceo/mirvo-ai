@@ -1,6 +1,7 @@
 import type { ServerResponse } from 'node:http';
 import {
   getModalProxyConfig,
+  getRequestErrorStatus,
   MAX_TTS_AUDIO_BYTES,
   MAX_TTS_BODY_BYTES,
   parseJsonBody,
@@ -39,8 +40,14 @@ async function handleRequest(
   let requestBody: Buffer | null;
   try {
     requestBody = await readRequestBody(req, MAX_TTS_BODY_BYTES);
-  } catch {
-    sendJson(res, 413, { error: 'TTS request exceeds the size limit.' });
+  } catch (error) {
+    const status = getRequestErrorStatus(error);
+    sendJson(res, status === 413 ? 413 : 400, {
+      error:
+        status === 413
+          ? 'TTS request exceeds the size limit.'
+          : `Invalid TTS request body (${req.body === undefined ? 'stream' : typeof req.body}).`,
+    });
     return;
   }
   const body = parseJsonBody(requestBody);
