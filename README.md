@@ -113,7 +113,7 @@ Mirvo AI o‘quvchini passiv tinglovchi sifatida emas, balki interaktiv ishtirok
 
 - **React va TypeScript** — komponentlar va UI holatini boshqarish
 
-- **Modal + DashScope Qwen** — server-side dars yaratish; Gemini optional AI object-illustration fallback’i uchun
+- **Modal backend** — server-side dars yaratish va TTS; credentials faqat Vercel server environment’da
 
 - **Three.js / React Three Fiber** — kuchli 3D sahnalar
 
@@ -149,20 +149,18 @@ npm run build
 npm run preview
 ```
 
-Vercel’da repository’ni import qiling. Yangi darslar server orqali Modal’dagi Qwen xizmatiga yuboriladi; brauzer Modal manzili yoki maxfiy kalitni olmaydi. Deploy bo‘yicha talablar quyidagi **Qwen backend deploy** bo‘limida keltirilgan. `GEMINI_API_KEY` faqat ixtiyoriy AI obyekt-rasmlari uchun kerak; dars yaratish uchun u endi ishlatilmaydi.
+Vercel’da repository’ni import qiling. Dars va TTS so‘rovlari server tomonidagi Vercel proxy orqali alohida deploy qilingan Modal backend’ga yuboriladi. Brauzer Modal manzili yoki maxfiy kalitni olmaydi.
 
-### Qwen backend deploy
+### Modal backend ulanishi
 
-`modal_service/app.py` CPU’da ishlaydigan FastAPI xizmatini taqdim etadi. Deploy qilishdan oldin DashScope, Modal va Vercel’da quyidagi sozlamalarni kiriting; maxfiy qiymatlarni repository, `.env` fayli yoki brauzer kodiga qo‘shmang.
+Modal FastAPI backend alohida deploy qilingan; ushbu repository backend’ni yaratmaydi yoki deploy qilmaydi. Vercel Project → **Settings → Environment Variables** bo‘limida server-only `MODAL_BACKEND_URL` (masalan, `https://<workspace>--mirvo-ai-backend-fastapi-app.us-east.modal.run`) va `MIRVO_INTERNAL_SECRET` (Modal backend’dagi qiymat bilan bir xil maxfiy kalit) ni sozlang. `VITE_` prefix ishlatmang; `.env` fayllari `.gitignore` tomonidan e’tiborsiz qoldiriladi. Sozlagandan keyin Vercel deployment’ni qayta deploy qiling.
 
-- DashScope Model Studio’dan API key oling.
-- Modal Dashboard → **Secrets** bo‘limida `mirvo-qwen-secrets` Secret yarating. `DASHSCOPE_API_KEY` qiymatiga DashScope key’ni, `MIRVO_INTERNAL_SECRET` qiymatiga kriptografik tasodifiy, kamida 32 belgili sirni kiriting. Ixtiyoriy sozlamalar ham shu Secret’da beriladi: `QWEN_MODEL` (default `qwen-plus`) va `DASHSCOPE_ENDPOINT` (default xalqaro endpoint; faqat koddagi ruxsat etilgan DashScope hostlari ishlaydi). API key yoki shared secret’ni chat, kod, `.env` yoki browser bundle’ga qo‘ymang.
-- Modal’da login qiling (`modal setup`, agar hali ulanmagan bo‘lsa), so‘ng Python 3.11+ muhitida `python -m pip install -r modal_service/requirements.txt` va `modal deploy modal_service/app.py` buyrug‘ini bajaring. Deploy `mirvo-qwen-lesson-cache` Volume’ni yaratadi va Modal app URL beradi, masalan `https://<workspace>--mirvo-qwen-gateway-web.modal.run`. URL’ni `/v1/lesson/generate` suffix’isiz saqlang; shu base URL dars va TTS backend endpointlariga ishlatiladi.
-- Vercel Project → **Settings → Environment Variables** bo‘limida `MODAL_BACKEND_URL` (Modal app base URL, yuqoridagi shaklda) va Modal Secret’dagi aynan bir xil `MIRVO_INTERNAL_SECRET` qiymatlarini qo‘shing. Har ikkisi server-only environment variables bo‘lsin (Vite `VITE_` prefix qo‘shmang). Kerakli Production/Preview/Development muhitlarini belgilang va keyin Vercel deployment’ni qayta deploy qiling.
-- Volume faqat qisqa, umumiy ta’limiy so‘rovlar uchun umumiy lesson JSON cache saqlaydi (30 kunlik TTL, ko‘pi bilan 1,000 yozuv). Rasmli, shaxsiyga o‘xshash yoki mos kelmagan so‘rovlar cache qilinmaydi. Filtrlash evristik, maxfiy ma’lumotni aniqlash kafolati emas; bu xususiy chat yoki foydalanuvchi tarixi emas. Volume saqlash va Modal compute xarajatlari provider/plan bo‘yicha farq qiladi; bepul yoki ma’lum sig‘im kafolati berilmaydi. Cache operatsiyalari serializatsiya qilingan; bir container va ko‘pi bilan 8 concurrent request.
+- Vercel uchun faqat `MODAL_BACKEND_URL` va `MIRVO_INTERNAL_SECRET` kerak. Ikkala qiymatni ham server-side environment sifatida kiriting; maxfiy kalitni repozitoriyga yoki frontend fayllariga qo‘shmang.
 - Frontend darsni Vercel `/api/tutor` endpointiga, ovozli ijroni `/api/tts` endpointiga yuboradi. Vercel Modal’ga faqat serverdan POST va `Authorization: Bearer ...` bilan murojaат qiladi. TTS `audio/mpeg` oqimi browser’ga bevosita uzatiladi; u Modal Volume’ga MP3 saqlamaydi. Avvalgi `/api/speech/tts` route moslik uchun saqlangan, ammo frontend oqimida ishlatilmaydi. Foydalanuvchi tarixi qurilmada qoladi.
 
-DashScope model tanlovi server konfiguratsiyasidagi ruxsat etilgan ro‘yxatdan olinadi. Modal’da har bir ilova process’i uchun daqiqasiga 30 ta so‘rov limiti bor; u process qayta ishga tushganda yangilanadi va account/global limit o‘rnini bosmaydi. Vercel endpointi ommaga ochiq: ichki shared-secret foydalanuvchilarni aniqlamaydi yoki abuse’dan o‘zi himoya qilmaydi. Production’da Vercel uchun edge/WAF rate limit va provider billing limitlarini ham sozlang. Modal Volume umumiy ilova keshi, shaxsiy history emas; shaxsiy dars tarixi hozircha faqat qurilmada qoladi.
+`/api/tutor` Modal `/tutor` endpoint’iga `{ topic, depth, thinking, image_base64 }` yuboradi va lesson’ni Mirvo `TutorLesson` formatiga moslaydi. `/api/tts` Modal `/tts` endpoint’iga `{ text, voice }` yuboradi va xom `audio/mpeg` bytes qaytaradi. `visual_type` yoki `visual_data` joriy renderer’ga mos kelmasa, route schema mismatch xatosini qaytaradi. Ommaviy endpointlar uchun abuse/rate himoyasini deployment darajasida sozlang; shared secret foydalanuvchini autentifikatsiya qilmaydi. Kerakli Vercel sozlamalari bo‘lmasa, proxy 500 xatosini qaytaradi.
+
+Tutor route JSON so‘rovlarni 6 MiB gacha qabul qiladi. Modal lesson javobida `title` va 1–20 ta `steps` bo‘lishi kerak; har bir step uchun `visual_type` `plotly3d`, `plotly2d`, `threejs`, `pdb`, `pubchem`, `mermaid`, `svg2d` yoki tanilgan alias bo‘lishi, `visual_data` esa `RenderParams` kalitlaridan foydalanadigan obyekt bo‘lishi kerak. Proxy ularni UI kutadigan `topic_title`, `step_title`, `katex_formulas`, `render_params` va boshqa `TutorLesson` maydonlariga o‘giradi.
 
 
 1. O‘zbek tilida mavzu yoki savol kiriting.

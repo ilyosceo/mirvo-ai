@@ -250,12 +250,6 @@ function computeInterBeatPauseMs(sentence: string, safeRate: number, silentMode:
   return Math.max(90, Math.min(420, Math.round(baseMs * rateScale)));
 }
 
-function getPitchBucket(pitch: number): string {
-  if (pitch < 0.92) return 'low';
-  if (pitch > 1.12) return 'high';
-  return 'normal';
-}
-
 const SILENT_WAV_DATA_URL =
   'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
 
@@ -409,7 +403,20 @@ class FreeVoiceEngine {
   }
 
   private getTtsCacheKey(text: string, settings: VoiceSettings): string {
-    return `${settings.voice}:${settings.gender}:${getPitchBucket(settings.pitch)}:${text}`;
+    return `${settings.voice}:${text}`;
+  }
+
+  private cacheTtsClip(key: string, url: string): void {
+    if (this.ttsClipCache.size >= 50) {
+      const oldest = [...this.ttsClipCache.entries()].find(
+        ([, cachedUrl]) => cachedUrl !== this.currentAudio?.src
+      );
+      if (oldest) {
+        URL.revokeObjectURL(oldest[1]);
+        this.ttsClipCache.delete(oldest[0]);
+      }
+    }
+    this.ttsClipCache.set(key, url);
   }
 
   private fetchServerTtsUrl(text: string, settings: VoiceSettings): Promise<string | null> {
@@ -438,8 +445,6 @@ class FreeVoiceEngine {
             body: JSON.stringify({
               text,
               voice: settings.voice,
-              rate: settings.rate,
-              pitch: settings.pitch,
             }),
           });
           if (!res.ok) {
@@ -460,45 +465,12 @@ class FreeVoiceEngine {
             return null;
           }
           const contentType = res.headers.get('content-type') || '';
-          if (contentType.includes('audio/') || contentType.includes('application/octet-stream')) {
-            const blob = await res.blob();
-            const dataUrl = await new Promise<string>((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
-              reader.onerror = () => reject(reader.error);
-              reader.readAsDataURL(blob);
-            });
-            if (!dataUrl) return null;
-            if (this.ttsClipCache.size >= 50) {
-              const oldest = this.ttsClipCache.keys().next().value;
-              if (oldest) this.ttsClipCache.delete(oldest);
-            }
-            this.ttsClipCache.set(key, dataUrl);
-            return dataUrl;
-          }
-
-          const data = (await res.json()) as {
-            audioBase64?: string;
-            mimeType?: string;
-            fallback?: boolean;
-            quotaExhausted?: boolean;
-            missingKey?: boolean;
-            retryAfterMs?: number;
-          };
-          if (data.quotaExhausted || data.missingKey) {
-            this.serverTtsUnavailableUntil =
-              Date.now() + Math.min(180_000, Math.max(20_000, data.retryAfterMs || 60_000));
-            return null;
-          }
-          if (data.fallback || !data.audioBase64) return null;
-
-          const dataUrl = `data:${data.mimeType || 'audio/wav'};base64,${data.audioBase64}`;
-          if (this.ttsClipCache.size >= 50) {
-            const oldest = this.ttsClipCache.keys().next().value;
-            if (oldest) this.ttsClipCache.delete(oldest);
-          }
-          this.ttsClipCache.set(key, dataUrl);
-          return dataUrl;
+          if (!contentType.toLowerCase().startsWith('audio/mpeg')) return null;
+          const blob = await res.blob();
+          if (!blob.size) return null;
+          const objectUrl = URL.createObjectURL(new Blob([blob], { type: 'audio/mpeg' }));
+          this.cacheTtsClip(key, objectUrl);
+          return objectUrl;
         } catch {
           if (attempt === 0) {
             await new Promise((r) => setTimeout(r, 220));

@@ -73,7 +73,6 @@ import {
   SUBJECT_LABELS_UZ,
   type LessonBeat,
   type LessonDepthMode,
-  type ResolveResponse,
   type StageAnchorsMap,
   type TutorLesson,
 } from './types/tutor';
@@ -728,25 +727,32 @@ export default function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          query: q,
-          imageBase64: withImage?.base64,
-          imageMimeType: withImage?.mimeType,
-          depthMode,
+          topic: q || 'Rasmdagi savolni tushuntir',
+          depth: depthMode,
+          thinking: false,
+          image_base64: withImage?.base64 ?? null,
         }),
       });
 
-      const payload = (await res.json()) as Partial<ResolveResponse> & { error?: string };
-      if (!res.ok || !payload.lesson) {
+      const payload = (await res.json()) as {
+        source?: 'modal_cache' | 'qwen';
+        lesson?: TutorLesson;
+        error?: string;
+      };
+      if (
+        !res.ok ||
+        !payload.lesson ||
+        (payload.source !== 'modal_cache' && payload.source !== 'qwen')
+      ) {
         throw new Error(payload.error || "Savolni tahlil qilib bo'lmadi.");
       }
 
-      const usage = payload.token_usage ?? payload.lesson.token_usage ?? ZERO_TOKEN_USAGE;
-      const lessonWithUsage = { ...payload.lesson, token_usage: usage };
-      if (
-        payload.stage === 'gemini-director' ||
-        payload.stage === 'qwen-director' ||
-        payload.stage === 'local-parser'
-      ) {
+      const usage = ZERO_TOKEN_USAGE;
+      const lessonWithUsage: TutorLesson = {
+        ...payload.lesson,
+        token_usage: usage,
+      };
+      if (payload.source === 'qwen') {
         setDailyLessonCount(saveDailyLessonCreation().count);
       }
       setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));

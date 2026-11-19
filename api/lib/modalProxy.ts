@@ -1,31 +1,58 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-export const MAX_MODAL_PROXY_BODY_BYTES = 4_300_000;
+export const MAX_TUTOR_BODY_BYTES = 6 * 1024 * 1024;
+export const MAX_TTS_BODY_BYTES = 16 * 1024;
+export const MAX_TTS_AUDIO_BYTES = 1024 * 1024;
 
 export interface RequestWithOptionalBody extends IncomingMessage {
   body?: unknown;
 }
 
-export function getModalProxyConfig(): { backendUrl: string; secret: string } | null {
-  const backendUrl = process.env.MODAL_BACKEND_URL;
+export interface ModalProxyConfig {
+  backendUrl: string;
+  secret: string;
+}
+
+export function getModalProxyConfig(): ModalProxyConfig | null {
+  const configuredUrl = process.env.MODAL_BACKEND_URL?.trim();
   const secret = process.env.MIRVO_INTERNAL_SECRET;
-  if (
-    !backendUrl ||
-    !/^https:\/\/[a-z0-9][a-z0-9-]*--mirvo-qwen-gateway-web\.modal\.run\/?$/i.test(backendUrl) ||
-    !secret ||
-    secret.length < 32
-  ) {
+  if (!configuredUrl || !secret) return null;
+
+  try {
+    const url = new URL(configuredUrl);
+    if (
+      url.protocol !== 'https:' ||
+      !url.hostname.endsWith('.modal.run') ||
+      Boolean(url.port && url.port !== '443') ||
+      url.username ||
+      url.password ||
+      !/^\/*$/.test(url.pathname) ||
+      url.search ||
+      url.hash
+    ) {
+      return null;
+    }
+    return { backendUrl: configuredUrl.replace(/\/+$/, ''), secret };
+  } catch {
     return null;
   }
-  return { backendUrl: backendUrl.replace(/\/+$/, ''), secret };
 }
 
 export async function readRequestBody(
   req: RequestWithOptionalBody,
-  maxBytes = MAX_MODAL_PROXY_BODY_BYTES
+  maxBytes: number
 ): Promise<Buffer | null> {
   if (req.body !== undefined) {
-    const body = Buffer.from(JSON.stringify(req.body));
+    let serialized: string;
+    try {
+      serialized = JSON.stringify(req.body);
+    } catch {
+      throw Object.assign(new Error('Invalid request body'), { status: 400 });
+    }
+    if (typeof serialized !== 'string') {
+      throw Object.assign(new Error('Invalid request body'), { status: 400 });
+    }
+    const body = Buffer.from(serialized);
     if (body.length > maxBytes) {
       throw Object.assign(new Error('Request body too large'), { status: 413 });
     }
@@ -43,6 +70,19 @@ export async function readRequestBody(
     chunks.push(buffer);
   }
   return chunks.length ? Buffer.concat(chunks) : null;
+}
+
+export function parseJsonBody(body: Buffer | null): Record<string, unknown> | null {
+  if (!body) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(body.toString('utf8'));
+  } catch {
+    return null;
+  }
+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+    ? (parsed as Record<string, unknown>)
+    : null;
 }
 
 export function sendJson(

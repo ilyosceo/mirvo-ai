@@ -1,5 +1,0 @@
-modal>=0.73,<2
-fastapi==0.115.12
-httpx==0.28.1
-pydantic==2.11.3
-edge-tts>=7.0,<8

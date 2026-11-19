@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --import tsx --test tests/ttsContract.test.ts tests/ttsRoute.test.ts tests/qwenGateway.test.ts tests/qwenTutorRoute.test.ts tests/modalProxy.test.ts"
+    "test": "node --import tsx --test tests/ttsContract.test.ts tests/ttsRoute.test.ts tests/modalProxy.test.ts"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
