@@ -159,20 +159,22 @@ test('proxy handlers read raw request streams when body parsing is disabled', as
     thinking: false,
   });
   const tutorRequest = createRequest('POST');
-  tutorRequest[Symbol.asyncIterator] = async function* () {
-    yield Buffer.from(rawBody);
-  };
+  setImmediate(() => {
+    tutorRequest.emit('data', Buffer.from(rawBody));
+    tutorRequest.emit('end');
+  });
   const tutorResponse = createResponse();
   await tutorHandler(tutorRequest, tutorResponse);
   assert.equal(tutorResponse.statusCode, 200);
 
   const ttsRequest = createRequest('POST');
-  ttsRequest[Symbol.asyncIterator] = async function* () {
-    yield Buffer.from(JSON.stringify({
+  setImmediate(() => {
+    ttsRequest.emit('data', Buffer.from(JSON.stringify({
       text: 'Salom',
       voice: 'uz-UZ-SardorNeural',
-    }));
-  };
+    })));
+    ttsRequest.emit('end');
+  });
   const ttsResponse = createResponse();
   await ttsHandler(ttsRequest, ttsResponse);
   assert.equal(ttsResponse.statusCode, 200);
