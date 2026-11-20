@@ -44,7 +44,7 @@ function validTutorInput(
 ): body is Record<string, unknown> & {
   topic: string;
   depth: 'overview' | 'standard' | 'deep';
-  thinking: boolean;
+  thinking?: boolean;
   image_base64?: string | null;
 } {
   if (!body) return false;
@@ -56,7 +56,7 @@ function validTutorInput(
     body.topic.length <= 4000 &&
     typeof body.depth === 'string' &&
     DEPTHS.has(body.depth) &&
-    typeof body.thinking === 'boolean' &&
+    (body.thinking === undefined || typeof body.thinking === 'boolean') &&
     (body.image_base64 === undefined ||
       body.image_base64 === null ||
       (typeof body.image_base64 === 'string' &&
@@ -123,7 +123,7 @@ async function handleRequest(
       body: JSON.stringify({
         topic: body.topic.trim(),
         depth: body.depth,
-        thinking: body.thinking,
+        thinking: Boolean(body.thinking),
         image_base64: body.image_base64 ?? null,
       }),
       signal: AbortSignal.timeout(55_000),

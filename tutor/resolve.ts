@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import express, { type Request, type Response, type Router } from 'express';
 import { ThinkingLevel, Type, type GoogleGenAI, type GenerateContentResponse } from '@google/genai';
-import { CACHED_LESSONS } from '../data/cachedLessons.ts';
+import { CACHED_LESSONS } from '../data/cachedLessons.js';
 import {
   extractObjectIntent,
   generateProceduralObjectSvg,
@@ -12,16 +12,16 @@ import {
   sanitizeSvgString,
   shouldTreatAsObjectDrawing,
   type ObjectIntent,
-} from '../lib/objectCatalog.ts';
+} from '../lib/objectCatalog.js';
 import {
   findBuiltInCachedLesson,
   normalizeCacheSearchText,
-} from '../lib/lessonMatch.ts';
+} from '../lib/lessonMatch.js';
 import {
   mergeTokenUsage,
   usageFromGeminiMetadata,
   ZERO_TOKEN_USAGE,
-} from '../lib/tokenUsage.ts';
+} from '../lib/tokenUsage.js';
 import type {
   FlowType,
   LessonDepthMode,
@@ -29,7 +29,7 @@ import type {
   ResolvedObjectPayload,
   TokenUsageInfo,
   TutorLesson,
-} from '../types/tutor.ts';
+} from '../types/tutor.js';
 
 // Gemini Flash & Flash-Lite model aliases per @google/genai guidelines
 const GEMINI_FLASH_MODEL = 'gemini-4-hydrogen';
@@ -418,7 +418,7 @@ export class SmartObjectResolver {
       const candidates = [
         this.cacheFile,
         path.join(process.cwd(), 'object-cache.json'),
-        path.resolve(__dirname, '..', 'object-cache.json'),
+        typeof __dirname !== 'undefined' ? path.resolve(__dirname, '..', 'object-cache.json') : path.join(process.cwd(), 'data', 'object-cache.json'),
       ];
       for (const file of candidates) {
         if (file && fs.existsSync(file)) {
