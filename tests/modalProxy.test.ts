@@ -127,6 +127,57 @@ test('proxy handlers accept string and Buffer bodies supplied by Vercel', async 
   assert.equal(ttsResponse.statusCode, 200);
 });
 
+test('proxy handlers read raw request streams when body parsing is disabled', async (t) => {
+  t.after(restoreEnvironment);
+  process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
+  process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
+
+  globalThis.fetch = async (input) => {
+    if (String(input).endsWith('/tutor')) {
+      return Response.json({
+        source: 'qwen',
+        lesson: {
+          title: 'Stream body',
+          steps: [{
+            step_number: 1,
+            board_title: 'Step',
+            visual_type: 'plotly2d',
+            visual_data: { expression: 'x' },
+            speech_text: 'Text',
+          }],
+        },
+      });
+    }
+    return new Response(new Uint8Array([0x49, 0x44, 0x33]), {
+      headers: { 'Content-Type': 'audio/mpeg' },
+    });
+  };
+
+  const rawBody = JSON.stringify({
+    topic: 'Matematika',
+    depth: 'overview',
+    thinking: false,
+  });
+  const tutorRequest = createRequest('POST');
+  tutorRequest[Symbol.asyncIterator] = async function* () {
+    yield Buffer.from(rawBody);
+  };
+  const tutorResponse = createResponse();
+  await tutorHandler(tutorRequest, tutorResponse);
+  assert.equal(tutorResponse.statusCode, 200);
+
+  const ttsRequest = createRequest('POST');
+  ttsRequest[Symbol.asyncIterator] = async function* () {
+    yield Buffer.from(JSON.stringify({
+      text: 'Salom',
+      voice: 'uz-UZ-SardorNeural',
+    }));
+  };
+  const ttsResponse = createResponse();
+  await ttsHandler(ttsRequest, ttsResponse);
+  assert.equal(ttsResponse.statusCode, 200);
+});
+
 test('tutor mapper accepts compatible Modal field aliases and ignores additive fields', async (t) => {
   t.after(restoreEnvironment);
   process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
