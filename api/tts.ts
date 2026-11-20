@@ -128,11 +128,12 @@ export default async function handler(
 ): Promise<void> {
   try {
     await handleRequest(req, res);
-  } catch {
+  } catch (error) {
     if (res.headersSent || res.writableEnded) {
       res.destroy();
       return;
     }
-    sendJson(res, 500, { error: 'TTS service encountered an unexpected error.' });
+    const kind = error instanceof Error ? error.name : typeof error;
+    sendJson(res, 500, { error: `TTS service encountered an unexpected error (${kind}).` });
   }
 }
