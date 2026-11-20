@@ -65,14 +65,17 @@ function validTutorInput(
 
 async function handleRequest(
   req: RequestWithOptionalBody,
-  res: ServerResponse
+  res: ServerResponse,
+  setFailureStage: (stage: string) => void
 ): Promise<void> {
+  setFailureStage('method check');
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     sendJson(res, 405, { error: 'Method not allowed' });
     return;
   }
 
+  setFailureStage('Modal configuration');
   const { config: proxyConfig, error: configError } = getModalProxyConfig();
   if (!proxyConfig) {
     sendJson(res, 500, {
@@ -85,6 +88,7 @@ async function handleRequest(
   }
 
   let requestBody: Buffer | null;
+  setFailureStage('request body read');
   try {
     requestBody = await readRequestBody(req, MAX_TUTOR_BODY_BYTES);
   } catch (error) {
@@ -98,6 +102,7 @@ async function handleRequest(
     return;
   }
 
+  setFailureStage('request validation');
   const body = parseJsonBody(requestBody);
   if (!validTutorInput(body)) {
     sendJson(res, 400, { error: 'Invalid tutor request. Check topic, depth, thinking, and image_base64.' });
@@ -105,6 +110,7 @@ async function handleRequest(
   }
 
   let upstream: Response;
+  setFailureStage('Modal tutor request');
   try {
     upstream = await fetch(`${proxyConfig.backendUrl}/tutor`, {
       method: 'POST',
@@ -128,6 +134,7 @@ async function handleRequest(
     return;
   }
 
+  setFailureStage('Modal tutor response');
   const contentLength = Number(upstream.headers.get('content-length'));
   if (Number.isFinite(contentLength) && contentLength > MAX_TUTOR_RESPONSE_BYTES) {
     await upstream.body?.cancel();
@@ -159,6 +166,7 @@ async function handleRequest(
     return;
   }
 
+  setFailureStage('lesson mapping');
   const mapped = mapModalLesson(payload, body.topic);
   if (!mapped) {
     sendJson(res, 502, {
@@ -175,14 +183,19 @@ export default async function handler(
   req: RequestWithOptionalBody,
   res: ServerResponse
 ): Promise<void> {
+  let failureStage = 'handler initialization';
   try {
-    await handleRequest(req, res);
+    await handleRequest(req, res, (stage) => {
+      failureStage = stage;
+    });
   } catch (error) {
     if (res.headersSent || res.writableEnded) {
       res.destroy();
       return;
     }
     const kind = error instanceof Error ? error.name : typeof error;
-    sendJson(res, 500, { error: `Tutor service encountered an unexpected error (${kind}).` });
+    sendJson(res, 500, {
+      error: `Tutor service encountered an unexpected error (${kind} during ${failureStage}).`,
+    });
   }
 }

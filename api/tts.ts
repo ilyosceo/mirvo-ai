@@ -18,14 +18,17 @@ export const config = {
 
 async function handleRequest(
   req: RequestWithOptionalBody,
-  res: ServerResponse
+  res: ServerResponse,
+  setFailureStage: (stage: string) => void
 ): Promise<void> {
+  setFailureStage('method check');
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     sendJson(res, 405, { error: 'Method not allowed' });
     return;
   }
 
+  setFailureStage('Modal configuration');
   const { config: proxyConfig, error: configError } = getModalProxyConfig();
   if (!proxyConfig) {
     sendJson(res, 500, {
@@ -38,6 +41,7 @@ async function handleRequest(
   }
 
   let requestBody: Buffer | null;
+  setFailureStage('request body read');
   try {
     requestBody = await readRequestBody(req, MAX_TTS_BODY_BYTES);
   } catch (error) {
@@ -50,6 +54,7 @@ async function handleRequest(
     });
     return;
   }
+  setFailureStage('request validation');
   const body = parseJsonBody(requestBody);
   if (
     !body ||
@@ -64,6 +69,7 @@ async function handleRequest(
   }
 
   let upstream: Response;
+  setFailureStage('Modal TTS request');
   try {
     upstream = await fetch(`${proxyConfig.backendUrl}/tts`, {
       method: 'POST',
@@ -85,6 +91,7 @@ async function handleRequest(
     return;
   }
 
+  setFailureStage('Modal TTS response');
   const contentType = upstream.headers.get('content-type')?.toLowerCase() || '';
   if (!upstream.ok || !contentType.startsWith('audio/mpeg')) {
     await upstream.body?.cancel();
@@ -126,14 +133,19 @@ export default async function handler(
   req: RequestWithOptionalBody,
   res: ServerResponse
 ): Promise<void> {
+  let failureStage = 'handler initialization';
   try {
-    await handleRequest(req, res);
+    await handleRequest(req, res, (stage) => {
+      failureStage = stage;
+    });
   } catch (error) {
     if (res.headersSent || res.writableEnded) {
       res.destroy();
       return;
     }
     const kind = error instanceof Error ? error.name : typeof error;
-    sendJson(res, 500, { error: `TTS service encountered an unexpected error (${kind}).` });
+    sendJson(res, 500, {
+      error: `TTS service encountered an unexpected error (${kind} during ${failureStage}).`,
+    });
   }
 }
