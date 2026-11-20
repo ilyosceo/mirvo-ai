@@ -81,7 +81,7 @@ test('tutor and TTS proxy routes return 405 for GET without requiring configurat
   }
 });
 
-test('proxy handlers accept string and Buffer bodies supplied by Vercel', async (t) => {
+test('proxy handlers accept parsed objects, strings, and Buffer bodies supplied by Vercel', async (t) => {
   t.after(restoreEnvironment);
   process.env.MODAL_BACKEND_URL = 'https://workspace.modal.run';
   process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(32);
@@ -108,11 +108,11 @@ test('proxy handlers accept string and Buffer bodies supplied by Vercel', async 
   };
 
   const tutorRequest = createRequest('POST');
-  tutorRequest.body = JSON.stringify({
+  tutorRequest.body = {
     topic: 'Matematika',
     depth: 'overview',
     thinking: false,
-  });
+  };
   const tutorResponse = createResponse();
   await tutorHandler(tutorRequest, tutorResponse);
   assert.equal(tutorResponse.statusCode, 200);
