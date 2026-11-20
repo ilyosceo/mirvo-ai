@@ -76,6 +76,7 @@ export interface Primitive3DItem {
   flowType?: FlowType;
   flowSpeed?: number;
   flowReverse?: boolean;
+  notes?: string;
 }
 
 export interface RenderParams {
@@ -168,12 +169,14 @@ export interface RenderParams {
     flowType?: FlowType;
     flowSpeed?: number;
     flowReverse?: boolean;
+  notes?: string;
   }>;
 
   // Dynamic Flow Animation defaults
   flowType?: FlowType;
   flowSpeed?: number;
   flowReverse?: boolean;
+  notes?: string;
 }
 
 export interface LessonQuiz {
@@ -231,6 +234,7 @@ export interface LessonBeat {
   flowType?: FlowType;
   flowSpeed?: number;
   flowReverse?: boolean;
+  notes?: string;
   note?: string;
 }
 
@@ -264,6 +268,7 @@ export interface LessonStep {
   flowType?: FlowType;
   flowSpeed?: number;
   flowReverse?: boolean;
+  notes?: string;
   teacher_cue?: TeacherCue;
   beats?: LessonBeat[];
   render_params: RenderParams;

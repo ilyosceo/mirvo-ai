@@ -23,6 +23,18 @@ const ENGINE_ALIASES: Record<string, EngineType> = {
   concept: 'svg2d',
   latex: 'svg2d',
   text: 'svg2d',
+  list: 'svg2d',
+  definition: 'svg2d',
+  comparison: 'svg2d',
+  notes: 'svg2d',
+  table: 'svg2d',
+  card: 'svg2d',
+  bullet: 'svg2d',
+  summary: 'svg2d',
+  fact: 'svg2d',
+  step: 'svg2d',
+  intro: 'svg2d',
+  overview: 'svg2d',
   formula: 'svg2d',
   math: 'plotly2d',
   geometry: 'threejs',
@@ -47,7 +59,7 @@ const RENDER_PARAM_KEYS = new Set<keyof RenderParams>([
   'formula', 'style', 'highlight_chain', 'diagram', 'highlight_nodes', 'kind',
   'a', 'b', 'c', 'object_name_uz', 'object_name_en', 'svg_data',
   'svg_viewbox', 'object_source', 'object_parts', 'flowType', 'flowSpeed',
-  'flowReverse',
+  'flowReverse', 'notes',
 ]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -131,6 +143,10 @@ function mapRenderParams(
     filtered.highlight = source.highlights.map(String);
   }
 
+  if (typeof source.notes === 'string' && source.notes.trim() && !filtered.notes) {
+    filtered.notes = source.notes.trim();
+  }
+
   const vt = (visualType || '').trim().toLowerCase();
   if (engine === 'svg2d' && !filtered.kind) {
     if (vt.includes('pythagor')) filtered.kind = 'pythagoras';
@@ -196,43 +212,62 @@ export function mapModalLesson(value: unknown, topic: string): {
   let engine: EngineType | null = null;
   for (const rawStep of rawLesson.steps) {
     if (!isRecord(rawStep)) return null;
-    const stepTitle = typeof rawStep.board_title === 'string'
-      ? rawStep.board_title
-      : rawStep.step_title;
+    const stepNum = Number(rawStep.step_number);
+    const stepTitle =
+      typeof rawStep.board_title === 'string' && rawStep.board_title.trim().length > 0
+        ? rawStep.board_title.trim()
+        : typeof rawStep.step_title === 'string' && rawStep.step_title.trim().length > 0
+          ? rawStep.step_title.trim()
+          : typeof rawStep.title === 'string' && rawStep.title.trim().length > 0
+            ? rawStep.title.trim()
+            : `Qadam ${stepNum || 1}`;
+
     const visualData = isRecord(rawStep.visual_data)
       ? rawStep.visual_data
       : isRecord(rawStep.render_params)
         ? rawStep.render_params
         : {};
-    const speechText = typeof rawStep.speech_text === 'string'
-      ? rawStep.speech_text
-      : rawStep.explanation_uz;
-    const latexText = typeof rawStep.latex === 'string'
-      ? rawStep.latex
+
+    const speechText =
+      typeof rawStep.speech_text === 'string' && rawStep.speech_text.trim().length > 0
+        ? rawStep.speech_text.trim()
+        : typeof rawStep.explanation_uz === 'string' && rawStep.explanation_uz.trim().length > 0
+          ? rawStep.explanation_uz.trim()
+          : stepTitle;
+
+    const rawLatex = typeof rawStep.latex === 'string'
+      ? rawStep.latex.trim()
       : Array.isArray(rawStep.katex_formulas) &&
           typeof rawStep.katex_formulas[0] === 'string'
-        ? rawStep.katex_formulas[0]
-        : undefined;
+        ? rawStep.katex_formulas[0].trim()
+        : '';
+    const latexText = rawLatex.length > 0 ? rawLatex : undefined;
+
+    const visualType =
+      typeof rawStep.visual_type === 'string' && rawStep.visual_type.trim().length > 0
+        ? rawStep.visual_type.trim()
+        : 'illustration';
+
     if (
-      !Number.isSafeInteger(rawStep.step_number) ||
-      Number(rawStep.step_number) < 1 ||
+      !Number.isSafeInteger(stepNum) ||
+      stepNum < 1 ||
       !boundedString(stepTitle, 1, 200) ||
-      !boundedString(rawStep.visual_type, 1, 80) ||
+      !boundedString(visualType, 1, 80) ||
       !boundedString(speechText, 1, 4000) ||
       (latexText !== undefined && !boundedString(latexText, 1, 4000))
     ) {
       return null;
     }
 
-    const currentEngine = resolveEngine(rawStep.visual_type, visualData);
+    const currentEngine = resolveEngine(visualType, visualData);
     if (!currentEngine) return null;
     if (!engine) engine = currentEngine;
 
-    const renderParams = mapRenderParams(visualData, currentEngine, rawStep.visual_type, topic);
+    const renderParams = mapRenderParams(visualData, currentEngine, visualType, topic);
     if (!renderParams) return null;
 
     steps.push({
-      step_number: Number(rawStep.step_number),
+      step_number: stepNum,
       step_title: stepTitle,
       speech_text: speechText,
       katex_formulas: latexText ? [latexText] : [],
