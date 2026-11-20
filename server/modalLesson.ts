@@ -29,6 +29,10 @@ const ENGINE_ALIASES: Record<string, EngineType> = {
   physics: 'threejs',
   chemistry: 'pdb',
   biology: 'svg2d',
+  triangle: 'svg2d',
+  labeled_triangle: 'svg2d',
+  circle: 'svg2d',
+  pythagoras: 'svg2d',
 };
 
 const RENDER_PARAM_KEYS = new Set<keyof RenderParams>([
@@ -107,7 +111,8 @@ function mapSubject(topic: string): SubjectType {
 
 function mapRenderParams(
   data: Record<string, unknown>,
-  engine?: EngineType | null
+  engine?: EngineType | null,
+  visualType?: string
 ): RenderParams | null {
   const nested = data.render_params;
   const source = nested === undefined ? data : nested;
@@ -124,18 +129,24 @@ function mapRenderParams(
     filtered.highlight = source.highlights.map(String);
   }
 
-  if (Object.keys(filtered).length === 0) {
-    if (engine === 'threejs') {
-      filtered.shape = 'cube';
-    } else if (engine === 'plotly2d') {
-      filtered.expression = 'x';
-    } else if (engine === 'plotly3d') {
-      filtered.expression_z = 'x + y';
-    } else if (engine === 'mermaid') {
-      filtered.diagram = 'graph TD\nA-->B';
-    } else {
-      filtered.kind = 'illustration';
-    }
+  const vt = (visualType || '').trim().toLowerCase();
+  if (engine === 'svg2d' && !filtered.kind) {
+    if (vt.includes('pythagor')) filtered.kind = 'pythagoras';
+    else if (vt.includes('triangle') || vt.includes('uchburchak')) filtered.kind = 'triangle';
+    else if (vt.includes('circle') || vt.includes('aylana')) filtered.kind = 'circle';
+    else filtered.kind = 'illustration';
+  } else if (engine === 'threejs' && !filtered.shape) {
+    if (vt.includes('sphere') || vt.includes('shar')) filtered.shape = 'sphere';
+    else if (vt.includes('cylinder')) filtered.shape = 'cylinder';
+    else if (vt.includes('cone')) filtered.shape = 'cone';
+    else if (vt.includes('pyramid')) filtered.shape = 'pyramid';
+    else filtered.shape = 'cube';
+  } else if (engine === 'plotly2d' && !filtered.expression) {
+    filtered.expression = 'x';
+  } else if (engine === 'plotly3d' && !filtered.expression_z) {
+    filtered.expression_z = 'x + y';
+  } else if (engine === 'mermaid' && !filtered.diagram) {
+    filtered.diagram = 'graph TD\nA-->B';
   }
 
   if (JSON.stringify(filtered).length > 100_000) return null;
@@ -200,7 +211,7 @@ export function mapModalLesson(value: unknown, topic: string): {
     if (!currentEngine) return null;
     if (!engine) engine = currentEngine;
 
-    const renderParams = mapRenderParams(visualData, currentEngine);
+    const renderParams = mapRenderParams(visualData, currentEngine, rawStep.visual_type);
     if (!renderParams) return null;
 
     steps.push({
