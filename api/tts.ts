@@ -50,7 +50,7 @@ async function handleRequest(
       error:
         status === 413
           ? 'TTS request exceeds the size limit.'
-          : `Invalid TTS request body (${req.body === undefined ? 'stream' : typeof req.body}).`,
+          : 'Invalid TTS request body.',
     });
     return;
   }
