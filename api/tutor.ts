@@ -35,7 +35,7 @@ async function readBoundedResponse(response: Response): Promise<Buffer | null> {
 
 export const config = {
   maxDuration: 60,
-  api: { bodyParser: false },
+  api: { bodyParser: { sizeLimit: '6mb' } },
 };
 
 function validTutorInput(
