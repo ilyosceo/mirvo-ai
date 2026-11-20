@@ -33,6 +33,7 @@ async function readBoundedResponse(response: Response): Promise<Buffer | null> {
   return Buffer.concat(chunks, total);
 }
 
+export const maxDuration = 60;
 export const config = {
   maxDuration: 60,
   api: { bodyParser: false },
@@ -143,13 +144,28 @@ async function handleRequest(
     return;
   }
   if (!upstream.ok) {
-    await upstream.body?.cancel();
+    let upstreamErrorMsg = '';
+    try {
+      const errBytes = await readBoundedResponse(upstream);
+      if (errBytes) {
+        const errJson = JSON.parse(errBytes.toString('utf8'));
+        if (errJson && typeof errJson.detail === 'string') {
+          upstreamErrorMsg = errJson.detail;
+        } else if (errJson && typeof errJson.error === 'string') {
+          upstreamErrorMsg = errJson.error;
+        }
+      }
+    } catch {
+      await upstream.body?.cancel();
+    }
     const status = upstream.status === 429 ? 429 : upstream.status === 503 ? 503 : 502;
     sendJson(res, status, {
       error:
         status === 429
           ? 'Tutor service is busy. Please try again shortly.'
-          : 'Tutor service could not generate a lesson.',
+          : upstreamErrorMsg
+            ? `Tutor service error (${upstream.status}): ${upstreamErrorMsg}`
+            : 'Tutor service could not generate a lesson.',
     });
     return;
   }

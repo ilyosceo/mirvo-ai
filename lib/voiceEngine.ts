@@ -1,7 +1,7 @@
-import { DEFAULT_EDGE_VOICE, normalizeEdgeVoice, type EdgeVoice } from './ttsContract';
+import { DEFAULT_EDGE_VOICE, normalizeEdgeVoice, type EdgeVoice } from './ttsContract.js';
 
 export type VoiceGender = 'auto' | 'female' | 'male';
-export type { EdgeVoice } from './ttsContract';
+export type { EdgeVoice } from './ttsContract.js';
 
 export interface VoiceSettings {
   rate: number; // 0.7..1.5

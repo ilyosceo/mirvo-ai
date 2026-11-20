@@ -1,5 +1,5 @@
-import type { TutorLesson } from '../types/tutor';
-import { normalizeCacheSearchText } from './lessonMatch';
+import type { TutorLesson } from '../types/tutor.js';
+import { normalizeCacheSearchText } from './lessonMatch.js';
 
 export interface SavedLessonEntry {
   key: string;
