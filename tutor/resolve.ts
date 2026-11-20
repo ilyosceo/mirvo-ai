@@ -415,16 +415,23 @@ export class SmartObjectResolver {
 
   private loadFromDisk(): CachedVisualObjectEntry[] {
     try {
-      if (fs.existsSync(this.cacheFile)) {
-        const raw = fs.readFileSync(this.cacheFile, 'utf-8');
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          return parsed
-            .filter(
-              (e: CachedVisualObjectEntry) =>
-                !(e?.name_en === 'cell' && e?.source === 'iconify')
-            )
-            .map((e: CachedVisualObjectEntry) => this.hydrateEntryIfUpgraded(e));
+      const candidates = [
+        this.cacheFile,
+        path.join(process.cwd(), 'object-cache.json'),
+        path.resolve(__dirname, '..', 'object-cache.json'),
+      ];
+      for (const file of candidates) {
+        if (file && fs.existsSync(file)) {
+          const raw = fs.readFileSync(file, 'utf-8');
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed
+              .filter(
+                (e: CachedVisualObjectEntry) =>
+                  !(e?.name_en === 'cell' && e?.source === 'iconify')
+              )
+              .map((e: CachedVisualObjectEntry) => this.hydrateEntryIfUpgraded(e));
+          }
         }
       }
     } catch {

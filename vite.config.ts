@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-// Manually load .env for server-side use (Vite only exposes VITE_* by default)
+// Manually load .env for server-side use
 try {
   const envPath = resolve(process.cwd(), '.env');
   const envContent = readFileSync(envPath, 'utf8');
@@ -48,6 +48,20 @@ export default defineConfig({
             await mod.default(req, res);
           } catch (e) {
             console.error('[local-api] /api/tutor error:', e);
+            if (!res.headersSent) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: String(e) }));
+            }
+          }
+        });
+        server.middlewares.use('/api/objects/resolve', async (req: IncomingMessage, res: ServerResponse, next) => {
+          if (req.method !== 'POST') return next();
+          try {
+            const mod = await server.ssrLoadModule('./api/objects/resolve.ts');
+            await mod.default(req, res);
+          } catch (e) {
+            console.error('[local-api] /api/objects/resolve error:', e);
             if (!res.headersSent) {
               res.statusCode = 500;
               res.setHeader('Content-Type', 'application/json');
