@@ -14,6 +14,7 @@ import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract.js';
 
 export const config = {
   maxDuration: 60,
+  api: { bodyParser: false },
 };
 
 async function handleRequest(
