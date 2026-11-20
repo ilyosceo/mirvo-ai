@@ -220,6 +220,42 @@ test('tutor proxy authenticates and maps the Modal lesson to the UI contract', a
   assert.deepEqual(payload.lesson.steps[0].render_params, { expression: 'x^2' });
 });
 
+test('tutor proxy maps Modal Singapore response with board visual_type and highlights', async (t) => {
+  t.after(restoreEnvironment);
+  process.env.MODAL_BACKEND_URL = 'https://ilyosbekorolov135--mirvo-ai-backend-fastapi-app.us-east.modal.run';
+  process.env.MIRVO_INTERNAL_SECRET = 's'.repeat(40);
+
+  globalThis.fetch = async () => Response.json({
+    source: 'qwen_singapore',
+    lesson: {
+      title: 'Kvadrat tenglama',
+      steps: [{
+        step_number: 1,
+        board_title: 'Umumiy ko‘rinish',
+        latex: 'ax^2 + bx + c = 0',
+        visual_type: 'board',
+        visual_data: { highlights: ['koeffitsiyentlar'], notes: 'a, b, c haqiqiy sonlar' },
+        speech_text: 'Kvadrat tenglama bu ikkinchi darajali tenglamadir.',
+      }],
+    },
+  });
+
+  const response = createResponse();
+  await tutorHandler(createRequest('POST', {
+    topic: 'Kvadrat tenglama',
+    depth: 'standard',
+    thinking: false,
+  }), response);
+
+  assert.equal(response.statusCode, 200);
+  const payload = JSON.parse(response.body.toString());
+  assert.equal(payload.source, 'qwen');
+  assert.equal(payload.lesson.topic_title, 'Kvadrat tenglama');
+  assert.equal(payload.lesson.steps[0].step_title, 'Umumiy ko‘rinish');
+  assert.deepEqual(payload.lesson.steps[0].katex_formulas, ['ax^2 + bx + c = 0']);
+  assert.deepEqual(payload.lesson.steps[0].render_params.highlight, ['koeffitsiyentlar']);
+});
+
 test('tutor proxy returns clear configuration and schema errors', async (t) => {
   t.after(restoreEnvironment);
   delete process.env.MODAL_BACKEND_URL;

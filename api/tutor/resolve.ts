@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import express from 'express';
-import { createTutorResolveRouter } from '../../tutor/resolve.ts';
+import { createTutorResolveRouter } from '../../tutor/resolve.js';
 
 const app = express();
 app.use(express.json({ limit: '20mb' }));

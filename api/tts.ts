@@ -12,6 +12,7 @@ import {
 } from '../server/modalProxy.js';
 import { isEdgeVoice, normalizeTtsText } from '../lib/ttsContract.js';
 
+export const maxDuration = 60;
 export const config = {
   maxDuration: 60,
 };

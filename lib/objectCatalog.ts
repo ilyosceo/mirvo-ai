@@ -1,4 +1,4 @@
-import type { Primitive3DItem } from '../types/tutor';
+import type { Primitive3DItem } from '../types/tutor.js';
 
 export interface ObjectIntent {
   raw: string;

@@ -7,7 +7,7 @@ import type {
   TeacherCue,
   TeacherDepth,
   TutorPose,
-} from '../types/tutor';
+} from '../types/tutor.js';
 
 export interface ProjectedTarget {
   xPct: number;

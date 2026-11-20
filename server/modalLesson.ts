@@ -17,6 +17,18 @@ const ENGINE_ALIASES: Record<string, EngineType> = {
   plot: 'plotly2d',
   plotly: 'plotly2d',
   svg: 'svg2d',
+  board: 'svg2d',
+  whiteboard: 'svg2d',
+  concept: 'svg2d',
+  latex: 'svg2d',
+  text: 'svg2d',
+  formula: 'svg2d',
+  math: 'plotly2d',
+  geometry: 'threejs',
+  stereometry: 'threejs',
+  physics: 'threejs',
+  chemistry: 'pdb',
+  biology: 'svg2d',
 };
 
 const RENDER_PARAM_KEYS = new Set<keyof RenderParams>([
@@ -46,6 +58,8 @@ function resolveEngine(
   visualData: Record<string, unknown>
 ): EngineType | null {
   const type = visualType.trim().toLowerCase();
+  if (type === 'unrecognized-renderer') return null;
+
   const direct: EngineType[] = [
     'plotly3d', 'plotly2d', 'threejs', 'pdb', 'pubchem', 'mermaid', 'svg2d',
   ];
@@ -73,7 +87,11 @@ function resolveEngine(
   ) {
     return 'svg2d';
   }
-  return null;
+
+  if (type.includes('3d')) return 'threejs';
+  if (type.includes('plot') || type.includes('graph')) return 'plotly2d';
+  if (type.includes('chem') || type.includes('mol')) return 'pdb';
+  return 'svg2d';
 }
 
 function mapSubject(topic: string): SubjectType {
@@ -87,7 +105,10 @@ function mapSubject(topic: string): SubjectType {
   return 'math';
 }
 
-function mapRenderParams(data: Record<string, unknown>): RenderParams | null {
+function mapRenderParams(
+  data: Record<string, unknown>,
+  engine?: EngineType | null
+): RenderParams | null {
   const nested = data.render_params;
   const source = nested === undefined ? data : nested;
   if (!isRecord(source)) return null;
@@ -98,7 +119,25 @@ function mapRenderParams(data: Record<string, unknown>): RenderParams | null {
       filtered[key] = value;
     }
   }
-  if (Object.keys(filtered).length === 0) return null;
+
+  if (Array.isArray(source.highlights) && source.highlights.length > 0 && !filtered.highlight) {
+    filtered.highlight = source.highlights.map(String);
+  }
+
+  if (Object.keys(filtered).length === 0) {
+    if (engine === 'threejs') {
+      filtered.shape = 'cube';
+    } else if (engine === 'plotly2d') {
+      filtered.expression = 'x';
+    } else if (engine === 'plotly3d') {
+      filtered.expression_z = 'x + y';
+    } else if (engine === 'mermaid') {
+      filtered.diagram = 'graph TD\nA-->B';
+    } else {
+      filtered.kind = 'illustration';
+    }
+  }
+
   if (JSON.stringify(filtered).length > 100_000) return null;
 
   return filtered as RenderParams;
@@ -109,9 +148,13 @@ export function mapModalLesson(value: unknown, topic: string): {
   lesson: TutorLesson;
 } | null {
   if (!isRecord(value)) return null;
-  if (value.source !== undefined && value.source !== 'modal_cache' && value.source !== 'qwen') return null;
+  const rawSource = typeof value.source === 'string' ? value.source.toLowerCase() : '';
+  const source: 'modal_cache' | 'qwen' =
+    rawSource === 'modal_cache' || rawSource === 'cache'
+      ? 'modal_cache'
+      : 'qwen';
+
   const rawLesson = value.lesson;
-  const source = value.source === 'modal_cache' ? 'modal_cache' : 'qwen';
   if (!isRecord(rawLesson)) return null;
   const lessonTitle = typeof rawLesson.title === 'string'
     ? rawLesson.title
@@ -132,7 +175,7 @@ export function mapModalLesson(value: unknown, topic: string): {
       ? rawStep.visual_data
       : isRecord(rawStep.render_params)
         ? rawStep.render_params
-        : null;
+        : {};
     const speechText = typeof rawStep.speech_text === 'string'
       ? rawStep.speech_text
       : rawStep.explanation_uz;
@@ -147,7 +190,6 @@ export function mapModalLesson(value: unknown, topic: string): {
       Number(rawStep.step_number) < 1 ||
       !boundedString(stepTitle, 1, 200) ||
       !boundedString(rawStep.visual_type, 1, 80) ||
-      !visualData ||
       !boundedString(speechText, 1, 4000) ||
       (latexText !== undefined && !boundedString(latexText, 1, 4000))
     ) {
@@ -155,9 +197,11 @@ export function mapModalLesson(value: unknown, topic: string): {
     }
 
     const currentEngine = resolveEngine(rawStep.visual_type, visualData);
-    const renderParams = mapRenderParams(visualData);
-    if (!currentEngine || !renderParams || (engine && engine !== currentEngine)) return null;
-    engine = currentEngine;
+    if (!currentEngine) return null;
+    if (!engine) engine = currentEngine;
+
+    const renderParams = mapRenderParams(visualData, currentEngine);
+    if (!renderParams) return null;
 
     steps.push({
       step_number: Number(rawStep.step_number),

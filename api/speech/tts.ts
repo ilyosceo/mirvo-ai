@@ -5,7 +5,7 @@ import {
   MAX_TTS_BODY_BYTES,
   isEdgeVoice,
   normalizeTtsText,
-} from '../../lib/ttsContract';
+} from '../../lib/ttsContract.js';
 
 type RequestWithBody = IncomingMessage & { body?: unknown };
 

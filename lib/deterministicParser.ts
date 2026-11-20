@@ -1,5 +1,5 @@
 import { compile, derivative, simplify } from 'mathjs';
-import type { QuadricTemplate, SliderDef, TutorLesson } from '../types/tutor';
+import type { QuadricTemplate, SliderDef, TutorLesson } from '../types/tutor.js';
 
 const KNOWN_CHEMICALS: Array<{
   patterns: RegExp[];
