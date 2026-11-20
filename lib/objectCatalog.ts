@@ -202,6 +202,9 @@ const UZ_TO_EN_DICT: Record<string, string> = {
   transformator: 'transformer',
   dvigatel: 'engine',
   motor: 'engine',
+  mator: 'engine',
+  elektromotor: 'engine',
+  elektromator: 'engine',
   kalit: 'key',
   qulf: 'lock',
   soyabon: 'umbrella',
@@ -929,7 +932,7 @@ export function generateProceduralObjectSvg(
     };
   }
 
-  if (key.includes('engine') || nameUz.includes('dvigatel') || nameUz.includes('motor')) {
+  if (key.includes('engine') || nameUz.includes('dvigatel') || nameUz.includes('motor') || nameUz.includes('mator')) {
     const svg_data = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <g data-part="0" data-part-id="cylinder">
     <rect x="64" y="54" width="72" height="82" rx="6" fill="#E2E8F0" stroke="#334155" stroke-width="3.2"/>

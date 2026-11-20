@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { FlowType, RenderParams } from '../../types/tutor';
-import { generateProceduralObjectSvg, sanitizeSvgString } from '../../lib/objectCatalog';
+import {
+  generateProceduralObjectSvg,
+  generateZeroTokenFallbackSvg,
+  sanitizeSvgString,
+} from '../../lib/objectCatalog';
 import { SvgFlowOverlay, svgElementToPathD, type FlowPathSpec } from './SvgFlowOverlay';
 
 export interface SvgAnchorBox {
@@ -254,12 +258,14 @@ export const IllustrationSvgCanvas: React.FC<IllustrationSvgCanvasProps> = ({
 
   const parsedSvg = useMemo(() => {
     if (!effectiveSvg) {
-      const proc = generateProceduralObjectSvg(
-        params.object_name_en || 'tree',
-        params.object_name_uz || 'daraxt'
-      );
-      if (!proc) return null;
-      return extractInnerSvgContent(proc.svg_data);
+      const objEn = params.object_name_en;
+      const objUz = params.object_name_uz;
+      const proc = (objEn || objUz)
+        ? generateProceduralObjectSvg(objEn || objUz!, objUz || objEn!)
+        : null;
+      if (proc) return extractInnerSvgContent(proc.svg_data);
+      const fallback = generateZeroTokenFallbackSvg(objUz || 'Obyekt', objEn || 'Object');
+      return extractInnerSvgContent(fallback.svg_data);
     }
     return extractInnerSvgContent(effectiveSvg);
   }, [effectiveSvg, params.object_name_en, params.object_name_uz]);

@@ -4,6 +4,7 @@ import type {
   SubjectType,
   TutorLesson,
 } from '../types/tutor.js';
+import { extractObjectIntent, generateProceduralObjectSvg } from '../lib/objectCatalog.js';
 
 const ENGINE_ALIASES: Record<string, EngineType> = {
   '3d': 'threejs',
@@ -112,7 +113,8 @@ function mapSubject(topic: string): SubjectType {
 function mapRenderParams(
   data: Record<string, unknown>,
   engine?: EngineType | null,
-  visualType?: string
+  visualType?: string,
+  topic?: string
 ): RenderParams | null {
   const nested = data.render_params;
   const source = nested === undefined ? data : nested;
@@ -147,6 +149,21 @@ function mapRenderParams(
     filtered.expression_z = 'x + y';
   } else if (engine === 'mermaid' && !filtered.diagram) {
     filtered.diagram = 'graph TD\nA-->B';
+  }
+
+  if (engine === 'svg2d' && filtered.kind === 'illustration' && !filtered.svg_data) {
+    const textToScan = `${topic || ''} ${visualType || ''}`;
+    const intent = extractObjectIntent(textToScan);
+    if (intent && (intent.name_uz || intent.name_en)) {
+      if (!filtered.object_name_uz) filtered.object_name_uz = intent.name_uz;
+      if (!filtered.object_name_en) filtered.object_name_en = intent.name_en;
+      const proc = generateProceduralObjectSvg(intent.name_en, intent.name_uz);
+      if (proc) {
+        filtered.svg_data = proc.svg_data;
+        filtered.svg_viewbox = proc.viewBox;
+        filtered.object_parts = proc.parts_uz;
+      }
+    }
   }
 
   if (JSON.stringify(filtered).length > 100_000) return null;
@@ -211,7 +228,7 @@ export function mapModalLesson(value: unknown, topic: string): {
     if (!currentEngine) return null;
     if (!engine) engine = currentEngine;
 
-    const renderParams = mapRenderParams(visualData, currentEngine, rawStep.visual_type);
+    const renderParams = mapRenderParams(visualData, currentEngine, rawStep.visual_type, topic);
     if (!renderParams) return null;
 
     steps.push({
