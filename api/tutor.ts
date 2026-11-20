@@ -97,7 +97,7 @@ async function handleRequest(
       error:
         status === 413
           ? 'Tutor request exceeds the 6 MB limit.'
-          : `Invalid tutor request body (${req.body === undefined ? 'stream' : typeof req.body}).`,
+          : 'Invalid tutor request body.',
     });
     return;
   }
