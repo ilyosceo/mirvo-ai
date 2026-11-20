@@ -73,17 +73,43 @@ export async function readRequestBody(
     return body;
   }
 
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of req) {
-    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    size += buffer.length;
-    if (size > maxBytes) {
-      throw Object.assign(new Error('Request body too large'), { status: 413 });
-    }
-    chunks.push(buffer);
-  }
-  return chunks.length ? Buffer.concat(chunks) : null;
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    const cleanup = () => {
+      req.removeListener('data', onData);
+      req.removeListener('end', onEnd);
+      req.removeListener('error', onError);
+      req.removeListener('aborted', onAborted);
+    };
+    const onData = (chunk: Buffer | string) => {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      size += buffer.length;
+      if (size > maxBytes) {
+        cleanup();
+        reject(Object.assign(new Error('Request body too large'), { status: 413 }));
+        return;
+      }
+      chunks.push(buffer);
+    };
+    const onEnd = () => {
+      cleanup();
+      resolve(chunks.length ? Buffer.concat(chunks, size) : null);
+    };
+    const onError = (error: Error) => {
+      cleanup();
+      reject(error);
+    };
+    const onAborted = () => {
+      cleanup();
+      reject(Object.assign(new Error('Request body aborted'), { status: 400 }));
+    };
+
+    req.on('data', onData);
+    req.once('end', onEnd);
+    req.once('error', onError);
+    req.once('aborted', onAborted);
+  });
 }
 
 export function parseJsonBody(body: Buffer | null): Record<string, unknown> | null {
