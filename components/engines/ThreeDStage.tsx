@@ -70,27 +70,8 @@ interface CameraRigControllerProps {
   resetSignal: number;
   anchorsVersion: number;
   onUserManipulateChange: (manipulated: boolean) => void;
-}
-
-interface CameraRigControllerProps {
-  isQuadricMode: boolean;
-  sceneKey: string;
-  stepIndex: number;
-  cameraPreset?: [number, number, number];
-  autoRotate: boolean;
-  activeFocusKey?: string;
-  cameraZoom: number;
-  anchors3DRef: React.MutableRefObject<Record<string, THREE.Vector3>>;
-  boxes3DRef: React.MutableRefObject<Record<string, THREE.Box3>>;
-  overviewLookRef: React.MutableRefObject<THREE.Vector3>;
-  lastAnchorsSnapshotRef: React.MutableRefObject<StageAnchorsMap>;
-  onAnchorsChangeRef: React.MutableRefObject<((anchors: StageAnchorsMap) => void) | undefined>;
-  onWebGLContextLost: () => void;
-  resetSignal: number;
-  anchorsVersion: number;
-  onUserManipulateChange: (manipulated: boolean) => void;
-  onZoomInRef: React.MutableRefObject<(() => void) | null>;
-  onZoomOutRef: React.MutableRefObject<(() => void) | null>;
+  onZoomInRef?: React.MutableRefObject<(() => void) | null>;
+  onZoomOutRef?: React.MutableRefObject<(() => void) | null>;
 }
 
 const CameraRigController: React.FC<CameraRigControllerProps> = ({
@@ -131,23 +112,31 @@ const CameraRigController: React.FC<CameraRigControllerProps> = ({
   const lastSceneKeyRef = useRef<string>('');
   const lastStepIndexRef = useRef<number>(stepIndex);
 
-  // Expose zoom refs
+  // Expose zoom refs safely
   useEffect(() => {
-    onZoomInRef.current = () => {
-      const controls = controlsRef.current;
-      if (controls) {
-        void controls.dolly(1.4, true);
-        userManipulatedStepRef.current = stepIndex;
-        onUserManipulateChange(true);
-      }
-    };
-    onZoomOutRef.current = () => {
-      const controls = controlsRef.current;
-      if (controls) {
-        void controls.dolly(-1.4, true);
-        userManipulatedStepRef.current = stepIndex;
-        onUserManipulateChange(true);
-      }
+    if (onZoomInRef) {
+      onZoomInRef.current = () => {
+        const controls = controlsRef.current;
+        if (controls) {
+          void controls.dolly(1.4, true);
+          userManipulatedStepRef.current = stepIndex;
+          onUserManipulateChange(true);
+        }
+      };
+    }
+    if (onZoomOutRef) {
+      onZoomOutRef.current = () => {
+        const controls = controlsRef.current;
+        if (controls) {
+          void controls.dolly(-1.4, true);
+          userManipulatedStepRef.current = stepIndex;
+          onUserManipulateChange(true);
+        }
+      };
+    }
+    return () => {
+      if (onZoomInRef) onZoomInRef.current = null;
+      if (onZoomOutRef) onZoomOutRef.current = null;
     };
   }, [stepIndex, onZoomInRef, onZoomOutRef, onUserManipulateChange]);
 
@@ -440,6 +429,8 @@ export const ThreeDStage: React.FC<ThreeDStageProps> = ({
   const lastAnchorsSnapshotRef = useRef<StageAnchorsMap>({});
   const onAnchorsChangeRef = useRef(onAnchorsChange);
   onAnchorsChangeRef.current = onAnchorsChange;
+  const onZoomInRef = useRef<(() => void) | null>(null);
+  const onZoomOutRef = useRef<(() => void) | null>(null);
 
   const shape = params.shape || 'pyramid';
   const isQuadricMode = shape === 'quadric' || shape === 'parametric';
@@ -593,6 +584,8 @@ export const ThreeDStage: React.FC<ThreeDStageProps> = ({
           resetSignal={resetSignal}
           anchorsVersion={anchorsVersion}
           onUserManipulateChange={setUserManipulated}
+          onZoomInRef={onZoomInRef}
+          onZoomOutRef={onZoomOutRef}
         />
 
         {isQuadricMode ? (
