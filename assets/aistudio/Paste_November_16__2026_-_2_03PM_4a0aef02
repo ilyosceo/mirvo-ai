@@ -1,0 +1,1267 @@
+ZiyoLab — Interaktiv 2D/3D AI Repetitor
+LOYIHA: O‘ZBEK TILIDAGI INTERAKTIV 2D + 3D VIZUAL VA OVOZLI AI REPETITOR PLATFORMASI
+1. SENING ROLING VA ASOSIY VAZIFANG
+Sen yuqori yuklamaga chidamli EdTech tizimlari, WebGL/3D vizualizatsiya, deterministik matematik dvigatellar va kam xarajatli AI arxitekturasi bo‘yicha bosh muhandissan.
+Vazifang — maktab o‘quvchilari, abituriyentlar, universitet talabalari va o‘qituvchilar uchun o‘zbek tilida ishlaydigan, savollarni matn, ovoz yoki rasm orqali qabul qilib, ularga jonli ovoz, mimikali yoqimtoy emoji-ustoz, qadamma-qadam KaTeX formulalar hamda interaktiv 2D/3D grafiklar bilan javob beruvchi platformani loyihalash va kodini yozish.
+2. ASOSIY ARXITEKTURA TAMOYILI: "AI — REJISSYOR, BRAUZER — RASSOM"
+Platformaning eng muhim qoidasi: LLM hech qachon to‘g‘ridan-to‘g‘ri SVG koordinatalari, Three.js sahna kodi yoki rasm/video generatsiya qilmaydi (chunki AI fazoviy koordinatalarda adashadi, sekin ishlaydi va qimmatga tushadi).
+LLM (AI) vazifasi: Foydalanuvchi savolini tushunish, mavzuni 5–7 ta mantiqiy slaydga (qadamga) bo‘lish, kerakli vizual dvigatelni tanlash va faqat qat'iy strukturalangan JSON retsept qaytarish.
+Brauzer (Frontend) vazifasi: Qaytgan JSON parametrlarini qabul qilib, ochiq kodli matematik va 3D kutubxonalar orqali foydalanuvchi qurilmasining o‘zida (WebGL/Canvas/SVG) $0 xarajat va <5 ms tezlikda, 100% matematik aniqlik bilan chizish.
+3. TEXNOLOGIK STEK (100% BEPUL VA TIJORIY OCHIQ LITSENZIYALI KUTUBXONALAR)
+Tizimda quyidagi kutubxonalar va ochiq bazalardan foydalanish shart:
+Formulalar va hisob-kitoblar: KaTeX (tezkor matematik/kimyoviy formulalar renderi) + Math.js (funksiyalar, ildizlar, ekstremumlar va tenglamalarni brauzerning o‘zida hisoblash).
+Oliy matematika va 2D/3D grafiklar: Plotly.js (2D funksiyalar 
+ hamda 360° aylantiriladigan 3D sirtlar 
+ va kontur chiziqlari).
+Stereometriya va 3D Fizika: Three.js + OrbitControls + CSS2DRenderer (piramida, konus kesimlari, 3D vektorlar va ularga yopishgan KaTeX uch belgilari). Muhim: Mobil WebView'da WebGL bloklangan holatlar uchun avtomatik HTML5 2D Canvas 3D-proyeksiya zaxira (fallback) dvigateli bo‘lishi shart.
+Kimyo va Molekulyar Biologiya (3D): 3Dmol.js + bepul RCSB Protein Data Bank API (https://files.rcsb.org/view/{PDB_ID}.pdb — insulin 1ZNI, gemoglobin 1A3N, DNK 1BNA kabi 200 000+ oqsillar uchun) + PubChem 3D REST API (?record_type=3d — istalgan kimyoviy moddaning haqiqiy 3D atom koordinatalari uchun).
+Biologiya jarayonlari, Tarix va Grammatika: Mermaid.js (Dagre graf algoritmi asosida A --> B --> C blok-sxemalar va vaqt chiziqlari).
+Ovozli tizim (STT + TTS):
+TTS (Ovoz chiqarish): Ikki darajali tizim — (1) Python FastAPI + bepul edge-tts (uz-UZ-MadinaNeural va uz-UZ-SardorNeural) MP3 oqimi; (2) Server ulanmaganda avtomatik brauzer window.speechSynthesis (lang = 'uz-UZ').
+STT (Ovoz eshitish): Brauzer Web Speech API (uz-UZ) + zaxira sifatida tezkor Whisper API.
+4. XARAJATNI NOLGA TUSHIRUVCHI 3 BOSQICHLI SO‘ROV KONVEYERI (WATERFALL)
+Har bir foydalanuvchi savoli quyidagi 3 bosqichdan o‘tadi:
+1-bosqich: Mahalliy Deterministik Parser ($0 xarajat, <2 ms):
+Agar savol matematik tenglama (y = x^2 - 4, 2x + 6 = 14), standart geometrik shakl (tomonlari 5, 6, 7 uchburchak, radiusi 6 aylana), 4 harfli PDB kodi (1ZNI) yoki kimyoviy formula (H2SO4, C6H6, Caffeine) bo‘lsa — LLM umuman chaqirilmaydi. Brauzerdagi parser parametrlarni ajratib, to‘g‘ridan-to‘g‘ri chizadi.
+2-bosqich: Umumiy Mavzular Keshi ($0 xarajat, <50 ms):
+Maktab va universitet dasturidagi barcha mashhur mavzular (masalan, Pifagor teoremasi, Fotosintez, Insulin tuzilishi) bir marta generatsiya qilingach, JSON va audio ko‘rinishida bazaga saqlanadi. Keyingi minglab foydalanuvchilar uchun AI chaqirilmaydi.
+3-bosqich: Strukturalangan LLM Rejissyor (~450 token):
+Faqat bazada yo‘q erkin savollar uchun tezkor model (masalan, Gemini Flash-Lite yoki GPT-4o-mini) chaqiriladi va faqat quyidagi JSON sxemani qaytaradi.
+5. QAT'IY RUNTIME JSON SXEMASI (AI JAVOB FORMATI)
+Runtime LLM har bir savolga faqat quyidagi valid JSON strukturani qaytarishi shart (hech qanday ortiqcha matn yoki markdownsiz):
+JSON
+{
+  "topic_title": "Mavzuning qisqa nomi (masalan: Muntazam to'rtburchakli piramida kesimi)",
+  "subject": "math | geometry | physics | chemistry | biology | history | language",
+  "engine": "plotly3d | plotly2d | threejs | pdb | pubchem | mermaid | svg2d",
+  "sliders": [
+    { "id": "h", "label": "Balandlik (h)", "min": 2, "max": 12, "step": 0.5, "default": 6 }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "step_title": "1. Piramida asosi va balandligini aniqlash",
+      "speech_text": "Keling, avval asos tomoni oltiga, balandligi esa sakkizga teng bo'lgan muntazam piramidani ko'rib chiqamiz.",
+      "katex_formulas": [
+        "S_{\\text{asos}} = a^2 = 6^2 = 36",
+        "V = \\frac{1}{3} S_{\\text{asos}} \\cdot h"
+      ],
+      "explanation_uz": "Piramida uchidan asos markaziga tushirilgan perpendikulyar uning balandligi (h) deyiladi.",
+      "emoji_emotion": "explaining",
+      "camera": [7.5, 6.2, 8.5],
+      "render_params": {
+        "shape": "pyramid",
+        "base": 6,
+        "height": 8,
+        "cut_ratio": 0.5,
+        "highlight": ["height", "base"]
+      }
+    }
+  ]
+}
+
+
+
+to‘liq loyiha yig‘ish uchun):** Yuqoridagi matnni loyiha ildizida `.cursorrules` yoki `ARCHITECTURE.md` fayliga saqlang va *"Ushbu arxitektura asosida Next.js + Tailwind + FastAPI (Edge-TTS) loyihasini noldan yarat"* deb buyruq bering.
+Three.js 3D scenes
+Gemini 4 Hydrogen
+Ran for 12s
+
+Action history
+Platformaning nomi va asosiy vizual uslubi qanday bolishini tanlaysiz?
+ZiyoLab - Yorug akademiya va tungi 3D sahna
+Ushbu Node.js muhitida ovozli tushuntirish (TTS) va ovozli savol (STT) qanday ishlashini xohlaysiz?
+bepul qanday bo'lsa ham
+Platformada qaysi imkoniyatlar va fan yonalishlari ustuvor bolishi kerak?
+hammasi bosqichma-bosqich birdaniga emas
+Gemini 4 Hydrogen
+Ran for 52s
+
+Action history
+ZiyoLab platformasining to‘liq arxitektura va dizayn rejasi ko‘rib chiqish va tasdiqlash uchun tayyor.
+Proceed with
+
+Implementation plan
+Gemini 4 Hydrogen
+Ran for 6m 24s
+
+Action history
+Here are key actions taken for the app:
+
+Installed 10 packages
+Edited 21 files
+metadata.json
+index.html
+package.json
+src/index.css
+src/types/tutor.ts
+src/types/3dmol.d.ts
+src/data/cachedLessons.ts
+src/lib/deterministicParser.ts
+src/lib/voiceEngine.ts
+server.ts
+src/components/KaTeXBlock.tsx
+src/components/TutorAvatar.tsx
+src/components/engines/Canvas3DFallback.tsx
+src/components/engines/ThreeDStage.tsx
+src/components/engines/PlotlyStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/engines/MermaidStage.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/components/VisualStage.tsx
+src/components/BottomControlDock.tsx
+src/App.tsx
+Built
+ZiyoLab — o‘zbek tilidagi interaktiv 2D/3D vizual va ovozli AI repetitor platformasi yaratildi va ishga tushirildi.
+Asosiy imkoniyatlar
+Ikki zonali interfeys (“Yorug‘ akademiya va tungi 3D sahna”): Chap/markaziy tungi laboratoriya sahnasida 3D/2D obyektlar, pastda esa yig‘iladigan qadam va parametr boshqaruv doki; o‘ng akademik panelda savol kiritish, ZiyoUstoz mimikali emoji-ustoz va KaTeX formulalar joylashgan.
+3-bosqichli so‘rov konveyeri (Waterfall):
+Mahalliy deterministik parser ($0, <2 ms): y = x^2 - 4, 2x + 6 = 14, z = sin(x) * cos(y), tomonlari 5, 6, 7 uchburchak, radiusi 6 aylana, konus, 1ZNI (PDB) va H2SO4 (PubChem) kabi so‘rovlarni brauzerning o‘zida Math.js yordamida hisoblab chizadi.
+Mavzular keshi ($0): Piramida kesimi, kvadrat funksiya, egar sirti, Pifagor teoremasi, 3D vektorlar, Insulin (1ZNI), Kofein, Fotosintez va O‘zbek tili gap bo‘laklari tayyor darslari keshdan bir zumda ochiladi.
+AI Rejissor (gemini-4-hydrogen): Yangi erkin savollar hamda yuklangan masala rasmlari (Foto) uchun server tomonida qat’iy JSON retseptini generatsiya qiladi va keyingi so‘rovlar uchun keshga saqlaydi.
+Barcha deterministik vizual dvigatellar:
+Three.js 3D Stereometriya va Fizika: RoomEnvironment PBR yoritish, OrbitControls silliq dempferlash, CSS2DRenderer uch belgilari hamda WebGL mavjud bo‘lmaganda avtomatik ishga tushadigan HTML5 2D Canvas 3D-proyeksiya zaxira dvigateli.
+Plotly.js (2D va 3D) + Math.js: 2D funksiyalar, ildizlar, hosilalar va 360° aylanadigan 3D sirt konturlari.
+3Dmol.js (RCSB PDB va PubChem 3D): Haqiqiy oqsil va kimyoviy molekulalar koordinatalarini ko‘rsatish va uslubini almashtirish.
+Mermaid.js va Aniq SVG 2D: Biologiya, tarix va grammatika blok-sxemalari hamda Pifagor/uchburchak/aylana chizmalari.
+Bepul ovozli tizim (TTS va STT): Brauzer Web Speech API (uz-UZ) hamda server tomonidagi bepul Gemini TTS/transkripsiya zaxirasi, nutq ritmiga mos og‘iz mimikasi va jonli slayderlar bilan ishlaydi.
+Tekshiruv natijalari
+npm run build (applet kompilyatsiyasi) va tsc --noEmit (TypeScript tekshiruvi) xatosiz o‘tdi; server muvaffaqiyatli qayta ishga tushirildi.
+Checkpoint
+LOYIHA: "LAMPO" USLUBIDAGI YAGONA INTERAKTIV DAFTAR-DOSKA AI REPETITORI
+Sen Apple Design Award darajasidagi EdTech mahsulot dizayneri va Senior Frontend muhandissan.
+Vazifang — o‘zbek tilida ishlaydigan, ko‘rinishi huddi jonli katak daftar va aqlli interaktiv doska kabi yoqimli, yorug‘, minimalistik va mobilga ham, kompyuterga ham birdek mos tushadigan 2D + 3D Vizual va Ovozli AI Repetitor ilovasini yaratish.
+1. QAT'IY DIZAYN QOIDALARI (BUZISH TAQIQLANADI!)
+Oldingi xatolarni takrorlamaslik uchun quyidagi vizual cheklovlarga 100% amal qil:
+HECH QANDAY QORA FON YO‘Q: Sahifaning birorta qismida (Plotly, Three.js, 3Dmol) to‘q yoki qora fon (#000, #0f172a) ishlatilmasin! Butun ilova va barcha 3D/2D sahnalar shaffof (transparent) bo‘lib, orqasida yagona iliq krem-oq katak daftar foni (background-color: #FAF8F3, chiziqlari #EDE8DC, 24px katak) ko‘rinib turishi shart.
+HECH QANDAY KORPORATIV MENYU VA TARQOQ QUTILAR YO‘Q: Tepada Mavzular | Dvigatellar | Yordam kabi sayt menyusi bo‘lmasin. Sahifa 3 qismdan iborat yagona ilova oynasi (App Shell) bo‘lsin:
+Tepa ixcham panel (56px): Chapda mavzu tanlash menyusi (☰), o‘rtada joriy mavzu nomi va qadam raqami (Pifagor teoremasi • 1/5), o‘ngda faqat 2 ta ixcham pill-tugma (🎙️ Ovoz va ⚙️ Parametrlar).
+Markaziy Yagona Katak Daftar Doskasi (Asosiy ekran — 75% joy): Barcha 2D/3D grafiklar, chizmalar, KaTeX formula kartochkasi va katta jonli Emoji-Ustoz shu bitta yorug‘ doska ichida uyg‘un joylashadi.
+Pastki Media-Pleer va Savol Doki: Huddi musiqa/podkast pleeri kabi: 5–7 bo‘lakli ko‘k progress-bar, [ < ] (oldingi), [ ↻ ] (qayta eshitish), katta ko‘k [ ▶ Tinglash ] tugmasi, [ > ] (keyingi) va uning ostida bitta toza "Yana so'rang... (masalan: y = x^2 - 4, Piramida kesimi, 1ZNI)" + mikrofon tugmasi.
+PLOTLY VA 3D RANG PALITRASI:
+Plotly'da standart kamalak ranglar (Viridis) va o‘ng chetdagi rangli shkala (showscale: false) mutlaqo o‘chirilsin.
+Barcha grafiklar, 3D piramidalar va molekulalar faqat zamonaviy pastel-yorqin ta'lim ranglarida chizilsin: Qirol ko‘ki (#2563EB), Marjon-pushti (#F43F5E), Zumrad (#10B981) va Oltin-sariq (#F59E0B).
+2. ASOSIY VIZUAL ELEMENTLAR (DOSKA ICHIDA)
+Katta va Yoqimtoy Jonli Emoji-Ustoz (Doskaning o‘ng pastki burchagida, 76x76px):
+Oddiy kichkina rasmcha emas, balki doska ustida suzib turuvchi, yumshoq soyali, yorqin quyosh-oltin rangli (#FBBF24 → #FDE047 gradient) dumaloq 3D-effektli SVG personaj.
+Tabiiy ravishda ko‘zlarini pirpiratadi, tepasida kichik status bulutcha ("Tinglayapman...", "Tushuntiryapman", "Savol!") chiqadi va ovoz yangraganda og‘zi tovush balandligiga mos (60 FPS) qimirlaydi.
+Formula va Izoh Kartochkasi (Chizma ostida):
+Iliq sarg‘ish-krem rangli (#FEF7E6), yumshoq hoshiyali (1px solid #F3E2B3, border-radius: 16px) chiroyli blok ichida asosiy KaTeX formulasi (a^2 + b^2 = c^2 yoki V = \frac{1}{3} S \cdot h), uning ostida esa 2 qatorli sodda o‘zbekcha tushuntirish turadi.
+Ochiladigan Parametrlar Slayderi (⚙️ bosilganda):
+Doska ustida suzib chiquvchi ixcham panelda o‘lcham slayderlari (a, b, balandlik h, kesim) bo‘ladi — o‘quvchi slayderni surishi bilan 2D/3D chizma va KaTeX hisob-kitobi bir zumda jonli o‘zgaradi.
+3. BOSHLANG‘ICH EKRAN VA KUTUBXONALAR STEKI
+Ilova ochilishi bilan qo‘rqinchli paraboloid emas, balki eng chiroyli va tushunarli "Pifagor teoremasi (2D Aniq Geometriya)" (katak daftarda ko‘k va pushti kvadratlar bilan) ochilsin. Chap menyuda esa quyidagi 4 ta tayyor dars va erkin qidiruv bo‘lsin:
+Pifagor teoremasi (2D SVG + KaTeX): To‘g‘ri burchakli uchburchak tomonlariga yopishgan kvadratlar va 
+ isboti.
+Muntazam Piramida Kesimi (Three.js 3D + CSS2DRenderer): Yorug‘ fonda barmoq bilan 360° aylantiriladigan 3D piramida, ichki kesim tekisligi va uchlariga yopishgan KaTeX teglari.
+3D Funksiya Sirti (Plotly.js 3D — shaffof fon, showscale: false): Ko‘k-pushti gradientli silliq 3D sirt va kontur chiziqlari.
+Insulin Oqsili 1ZNI va Kofein (3Dmol.js + RCSB PDB / PubChem 3D): Yorug‘ fonda 360° aylanadigan 3D molekula.
+Texnik talablar:
+KaTeX, Math.js, Three.js (OrbitControls + CSS2DRenderer), Plotly.js va 3Dmol.js CDN orqali ulansin.
+Foydalanuvchi pastki maydonga y = x^2 - 4, tomonlari 5, 6, 7 uchburchak, z = sin(x)*cos(y) yoki 1ZNI yozsa, LLM'siz (<5 ms) darhol chizib bersin.
+Ovoz tugmasi bosilganda window.speechSynthesis (uz-UZ) orqaliFormula belgilarisiz sof o‘zbekcha matnni o‘qisin va emojining og‘zini sinxron qimirlatsin.
+Gemini 4 Hydrogen
+Ran for 4m 50s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 14 files
+src/index.css
+src/lib/voiceEngine.ts
+src/data/cachedLessons.ts
+src/components/TutorAvatar.tsx
+src/components/KaTeXBlock.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/components/engines/Canvas3DFallback.tsx
+src/components/engines/PlotlyStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/engines/MermaidStage.tsx
+src/components/engines/ThreeDStage.tsx
+src/components/BottomControlDock.tsx
+src/components/ParametersPopover.tsx
+src/App.tsx
+Built
+ZiyoLab ilovasi to‘liq "Lampo" uslubidagi yagona yorug‘ katak daftar-doska ko‘rinishiga o‘tkazildi va ishga tushirildi:
+Asosiy o‘zgarishlar
+Yagona 3 qismli App Shell:
+Tepa ixcham panel (56px): Chapda darslar menyusi (☰), o‘rtada joriy mavzu nomi va qadam hisoblagichi (Pifagor teoremasi • 1/3), o‘ngda faqat 2 ta pill-tugma (Ovoz va Parametrlar).
+Markaziy Katak Daftar Doskasi (#FAF8F3, 24px #EDE8DC katak): Barcha Three.js, Plotly, 3Dmol, Mermaid va SVG 2D sahnalar shaffof fonda to‘g‘ridan-to‘g‘ri katak daftar ustida chiziladi.
+Pastki Media-Pleer va Savol Doki: Qadamlarga bo‘lingan #2563EB progress-bar, [ < ], [ ↻ ], [ ▶ Tinglash ], [ > ] tugmalari hamda yagona "Yana so'rang... (masalan: y = x^2 - 4, Piramida kesimi, 1ZNI)" savol paneli (matn, ovoz uz-UZ va rasm yuklash bilan).
+Krem-sarg‘ish KaTeX kartochka va 76×76px Emoji-Ustoz: Doska pastida #FEF7E6 rangli formula-izoh kartochkasi hamda o‘ng pastki burchakda ko‘z pirpiratuvchi, holat bulutli va ovozga mos 60 FPS lab qimirlatuvchi quyosh-oltin rangli SVG Emoji-Ustoz joylashtirildi.
+Yorqin ta'lim palitrasi: Plotly’da Viridis va showscale olib tashlanib, barcha 2D/3D grafika va molekulalar #2563EB (Qirol ko‘ki), #F43F5E (Marjon-pushti), #10B981 (Zumrad) va #F59E0B (Oltin-sariq) ranglariga moslashtirildi.
+Ochiladigan Parametrlar va Mavzular menyusi: ⚙️ Parametrlar tugmasi orqali jonli slayderlar, 3D kamera rakurslari va 2D Proyeksiya rejimi ochiladi; ☰ menyusida Pifagor teoremasi, Muntazam Piramida Kesimi, 3D Funksiya Sirti, Insulin Oqsili (1ZNI), Kofein va boshqa keshlangan darslar jamlangan.
+Tekshiruv natijalari
+npm run build (compile_applet) va tsc --noEmit (lint_applet) muvaffaqiyatli yakunlandi, dastur serveri qayta ishga tushirildi.
+Checkpoint
+LOYIHA: "QALAM AI" — O‘QUVCHINI HIS QILADIGAN INTERAKTIV 2D/3D AI REPETITOR
+Sen Apple Design Award darajasidagi EdTech mahsulot muhandisi va pedagogik AI arxitektorisan.
+Vazifang — o‘zbek tilida ishlaydigan, o‘quvchining savolini chuqur tushunadigan va unga jonli ovoz, maxsus chizilgan mimikali personaj, KaTeX formulalar hamda interaktiv 2D/3D grafiklar bilan dars o‘tadigan "Qalam AI" ilovasini yaratish.
+1. ENG MUHIM QOIDA: QOTIB QOLGAN SHABLONLARNI O‘CHIR, REAL GEMINI API'NI ULA!
+Oldingi versiyadagi kabi savoldan faqat kalit so‘z qidirib, tayyor shablonni chiqarish QAT'IYAN TAQIQLANADI (masalan, o‘quvchi "parabola nima?" desa, unga "hosila" mavzusini tiqishtirmaslik kerak!).
+Haqiqiy AI Mantiq (@google/genai yoki fetch Gemini API): Foydalanuvchi pastki maydonga istalgan savol yozganda yoki mikrofon orqali gapirganda, tizim haqiqiy Gemini API (gemini-2.5-flash) ga murojaat qilishi shart. (Google AI Studio muhitidagi process.env.API_KEY dan foydalan, agar kalit bo‘lmasa, yuqori o‘ng burchakda ixcham 🔑 API Kalit kiritish tugmasi bo‘lsin).
+Pedagogik sezgirlik (System Instruction): Gemini o‘quvchi savolining murakkablik darajasini his qilishi shart:
+Agar o‘quvchi "parabola nima?" deb boshlang‘ich tushuncha so‘rasa — 1-qadamni hayotiy misol (favvora suvi yoki otilgan to‘p traektoriyasi) va eng sodda 
+ grafigidan boshlasin, hech qachon darrov hosila yoki integralga o‘tib ketmasin!
+Har bir dars 4–5 ta mantiqiy qadamga bo‘linsin: 1. Oddiy tushuncha → 2. Vizual chizma va qismlari → 3. Formula va misol → 4. Interaktiv sinov savoli.
+2. VIZUAL XATOLARNI TUZATISH (UI/UX VA GRAFIK QOIDALARI)
+Brend nomi: Ilova nomi "Qalam AI" bo‘lsin (ZiyoLab emas).
+Grafik proporsiyasi (Cho‘zilib ketishni taqiqlash):
+Keng desktop ekranlarda 2D/3D doska butun ekran eniga yopishib cho‘zilib ketmasin — chizma maydoni markazda chiroyli proporsiyada (max-width: 960px, balandligi 420px) joylashsin.
+Plotly 2D grafiklarda yaxis: { scaleanchor: "x", scaleratio: 1 } o‘rnatilsin, toki parabola va aylanalar haqiqiy geometrik shaklini yo‘qotmasin, yassi chiziqqa aylanib qolmasin!
+Hech qayerda qora fon (#000) yoki Plotly colorbar shkalasi (showscale: false) bo‘lmasin. Butun sahna shaffof bo‘lib, orqasida iliq krem-oq katak daftar (#FAF8F3, chiziqlari #EDE8DC) ko‘rinib tursin.
+KaTeX Formula Kartochkasi (Skrollbarsiz):
+Formula bloklariga overflow: visible berilsin — KaTeX tenglamalari yonida hech qachon mayda vertikal yoki gorizontal skrollbar (▲▼) chiqmasin!
+Maxsus Chizilgan SVG Personaj (Standart 🤓 emoji taqiqlanadi!):
+Brauzerning oddiy Unicode emojisi (🤓) ishlatilmasin!
+Buning o‘rniga o‘ng pastki burchakda (84x84px) maxsus vektor <svg> bilan chizilgan yoqimtoy "Qalam-Ustoz" personaji bo‘lsin: quyosh-oltin rangli 3D soyali bosh, jonli harakatlanuvchi qorachiqlar, tabiiy ko‘z pirpiratish animatsiyasi, qosh harakati (o'ylayapti, tushuntiryapti, xursand) va ovoz yangraganda tovush ritmiga mos ochilib-yopiladigan og‘iz (lip-sync).
+3. 2D + 3D DVIGATELLAR STEKI (BRAUZERDA $0 CHIZISH)
+Gemini API faqat strukturalangan JSON qaytaradi, brauzer esa quyidagi kutubxonalar bilan soniyaning ulushida chizadi:
+2D Matematika va Funksiyalar: Plotly.js (1:1 proporsiya, shaffof fon, ildiz va uch nuqtalar markerlari bilan) + KaTeX.
+3D Sirtlar (Oliy matematika): Plotly.js 3D Surface (yorug‘ fonda ko‘k-pushti pastel gradient, showscale: false).
+3D Geometriya (Stereometriya): Three.js + OrbitControls + CSS2DRenderer (piramida, konus kesimi, 3D vektorlar va uchlariga yopishgan KaTeX teglari).
+3D Kimyo va Biologiya: 3Dmol.js + bepul RCSB PDB (1ZNI, 1A3N, 1BNA) va PubChem 3D bazalari.
+Sxemalar (Tarix, Biologiya, Ingliz tili): Mermaid.js (yorug‘ pastel blok-sxemalar).
+4. GEMINI API UCHUN QAT'IY JSON SXEMA
+Har bir savolga Gemini API faqat quyidagi valid JSON formatda javob qaytarsin:
+JSON
+{
+  "topic_title": "Parabola nima va u qanday hosil bo'ladi?",
+  "engine": "plotly2d | plotly3d | threejs | pdb | pubchem | mermaid",
+  "sliders": [
+    { "id": "a", "label": "Tarmoq kengligi (a)", "min": -3, "max": 3, "step": 0.5, "default": 1 }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "step_title": "1. Hayotdagi parabola va eng sodda ko'rinishi",
+      "speech_text": "Tasavvur qiling, favvoradan otilayotgan suv yoki tepaga otilgan koptok havoda silliq yoy chizadi. Matematikada ana shu simmetrik egri chiziq parabola deyiladi.",
+      "katex_formulas": ["y = x^2"],
+      "explanation_uz": "Eng sodda parabola y = x² formulasi bilan chiziladi. Uning uchi (0; 0) nuqtada joylashgan.",
+      "emotion": "explaining",
+      "plot_config": {
+        "expression": "a * x^2",
+        "x_range": [-4, 4],
+        "y_range": [-1, 10],
+        "highlights": [{ "x": 0, "y": 0, "label": "Parabola uchi (0, 0)" }]
+      }
+    }
+  ]
+}
+Gemini 4 Hydrogen
+Ran for 2m 59s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 9 files
+index.html
+src/index.css
+src/types/tutor.ts
+src/components/KaTeXBlock.tsx
+src/lib/deterministicParser.ts
+src/components/engines/PlotlyStage.tsx
+src/components/TutorAvatar.tsx
+server.ts
+src/App.tsx
+Built
+Qalam AI platformasi yangilandi, qotib qolgan shablonlar bilan javoblarni almashtirib qo‘yish muammosi olib tashlandi va haqiqiy Gemini API (gemini-4-hydrogen) bilan pedagogik sezgirlik yoqildi.
+Amalga oshirilgan yangilanishlar
+Haqiqiy AI mantiq va pedagogik sezgirlik (server.ts, src/lib/deterministicParser.ts):
+Kalit so‘zlar orqali tayyor darsni majburan ochish (keywords bo‘yicha shablon tiqishtirish) bekor qilindi. Endi "parabola nima?", "piramida hajmi qanday topiladi?" kabi barcha tushuntiruvchi va tabiiy tildagi savollar to‘g‘ridan-to‘g‘ri serverdagi @google/genai (gemini-4-hydrogen) modeliga yuboriladi (GEMINI_API_KEY Settings > Secrets bo‘limidan avtomatik olinadi).
+Tizim yo‘riqnomasi o‘quvchi savolining darajasini his qiladigan qilib sozlandi: boshlang‘ich savollarda 1-qadam hayotiy misol (masalan, favvora suvi yoki otilgan koptok) va eng sodda 
+ ko‘rinishidan boshlanadi hamda 4–5 qadamda mantiqiy davom etadi (Oddiy tushuncha → Vizual chizma → Formula va misol → Sinov savoli).
+Grafik proporsiyasi va 1:1 masshtab (src/App.tsx, src/components/engines/PlotlyStage.tsx):
+Keng ekranlarda chizma maydoni markazlashtirilgan proporsional qutiga (max-width: 960px, balandligi 420px) joylashtirildi.
+Plotly 2D grafiklarida yaxis: { scaleanchor: "x", scaleratio: 1 }, y_range hamda highlights / highlight_points markerlari ulandi; qora fon va colorbar (showscale: false) olib tashlandi.
+Skrollbarsiz KaTeX kartochka (src/index.css, src/components/KaTeXBlock.tsx, src/App.tsx):
+.katex-display va formula kartochkasiga overflow: visible berildi — tenglamalar yonida ortiqcha skrollbarlar chiqmaydi.
+Maxsus chizilgan 84x84px SVG "Qalam-Ustoz" (src/components/TutorAvatar.tsx):
+Oddiy Unicode emojilar o‘rniga quyosh-oltin rangli 3D soyali bosh, harakatlanuvchi qorachiqlar, tabiiy ko‘z pirpiratish, kayfiyatga mos qoshlar, ruchka uchi belgisi va 60 FPS lab qimirlatish (lip-sync) bilan maxsus vektor SVG personaj yaratildi.
+Brend yangilanishi (index.html, src/App.tsx, server.ts): Ilova nomi va sarlavhalari Qalam AI ga o‘zgartirildi.
+Tekshiruv natijalari
+npm run build (compile_applet) va tsc --noEmit (lint_applet) xatosiz yakunlandi, server qayta ishga tushirildi.
+Checkpoint
+emoji chizmalar atrofida harakat qilib aylanib xuddi jonli tushuntirgandek tushuntirishi kerak
+Gemini 4 Hydrogen
+Ran for 1m 15s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+src/components/TutorAvatar.tsx
+src/components/FloatingTutorGuide.tsx
+src/App.tsx
+Built
+Qalam-Ustoz endi chizmalar atrofida jonli harakatlanib, aylanib dars tushuntiradigan bo‘ldi:
+Qilingan o‘zgarishlar
+Chizma atrofida jonli aylanish (FloatingTutorGuide):
+Qalam-Ustoz endi 2D va 3D chizma maydonining tashqi konturi bo‘ylab silliq (60 FPS) harakatlanadi — chizmaning markazini to‘sib qo‘ymagan holda uning atrofidan aylanib chiqadi.
+Har bir yangi qadamga o‘tilganda personaj chizmaning boshqa burchagiga silliq uchib o‘tadi, «Tinglash» bosilganda esa chizma atrofida aylanib jonli tushuntiradi.
+Konteyner pointer-events-none bo‘lgani uchun 3D shakllarni aylantirish yoki grafiklarni tekshirishga xalaqit bermaydi.
+Chizmaga qarab turuvchi ko‘zlar va ko‘rsatkich qalam (TutorAvatar):
+Personaj chizmaning qaysi tomonida turganiga qarab ko‘z qorachiqlari va boshi aynan chizma markaziga qaraydi.
+Qo‘lidagi kichik ko‘k Qalam ko‘rsatkichi harakat davomida chizmaga qarab turadi va gapirganda lab harakati (lip-sync) bilan birga jonlanadi.
+Tekshiruv natijalari
+npm run build (compile_applet) va tsc --noEmit (lint_applet) muvaffaqiyatli o‘tdi, dastur serveri qayta ishga tushirildi.
+Checkpoint
+LOYIHA: "QALAM AI" — INTERAKTIV 2-PANELLI 3D/2D AI TA'LIM STUDIYASI
+Sen senior EdTech mahsulot arxitektori va UI/UX muhandissan.
+Vazifang — o‘zbek tilida ishlaydigan, maktab o‘quvchilari va talabalar uchun mo‘ljallangan zamonaviy Split-Screen (Ikki panelli) Interaktiv AI Repetitor ilovasini yaratish.
+1. DIZAYN VA KOMPOZITSIYA (HECH QANDAY KATAK DAFTAR VA EMOJI YO‘Q!)
+Ikki panelli Split-Studio tuzilmasi:
+Chap panel (62% kenglik) — Interaktiv 3D/2D Laboratoriya: Alohida toza karta (background: #FFFFFF, border: 1px solid #E2E8F0, border-radius: 20px, ichida mayda nuqtali #CBD5E1 muhandislik foni).
+O‘ng panel (38% kenglik) — AI Ustoz va Muloqot Oqimi: Qadamlar ro‘yxati, KaTeX formulalar, jonli parametr slayderlari va savol berish maydoni shu panelda joylashadi. (Mobilda tepada 45% 3D/2D sahna, pastda 55% AI Ustoz paneli bo‘ladi).
+SVG Emoji o‘rniga — Jonli Ovoz Sferasi (Fluid AI Voice Orb):
+Kod bilan chizilgan yuz/emoji ishlatilmasin.
+O‘ng panel tepasida zamonaviy animatsiyali AI Voice Orb (ko‘k-binafsha-zumrad gradientli silliq tebranuvchi sfera) bo‘lsin. Ovoz yangraganda u tovush ritmiga mos ravishda pulsatsiya qiladi, yonida esa "Tinglash", "To'xtatish" va ovoz tezligi tugmalari turadi.
+3D Sahna Mukammalligi (Three.js, 3Dmol.js, Plotly 3D):
+3D obyektlar bo‘shliqda osilib qolmasin: Three.js da ostida yarim shaffof koordinata tekisligi (GridHelper), yumshoq yorug‘lik va burchakda kamera tugmalari (Oldindan, Yuqoridan, Kesim, 360° aylanish) bo‘lsin.
+3Dmol.js (oqsillar va molekulalar) da o‘lcham konteynerga avtomatik moslansin (viewer.zoomTo()), foni toza #FFFFFF bo‘lsin va atomlarga bosganda ularning nomi ko‘rinsin.
+Plotly da showscale: false, shaffof fon va 1:1 proporsiya (scaleanchor: "x") majburiy o‘rnatilsin.
+2. HAQIQIY GEMINI API VA INTERAKTIV O‘QITISH MANTIQI
+Foydalanuvchi savol yozganda (masalan: "parabola nima", "piramida kesimi", "1ZNI", "fotosintez") real Gemini API (gemini-2.5-flash) chaqirilib, savol darajasiga mos 4 qadamli JSON dars tuzilsin.
+Har bir qadam o‘ng panelda chiroyli karta ko‘rinishida ochilsin:
+Qadam sarlavhasi + KaTeX formula (skrollbarsiz, overflow: visible);
+Sodda o‘zbekcha tushuntirish (TTS ovozi aynan shu matnni formula belgilarisiz o‘qiydi);
+Interaktiv mini-tekshiruv: Oxirgi qadamda o‘quvchi bilimini sinash uchun 3 variantli tezkor savol chiqsin.
+Gemini 4 Hydrogen
+Ran for 3m 32s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 16 files
+src/components/FloatingTutorGuide.tsx
+src/components/TutorAvatar.tsx
+src/components/VoiceOrb.tsx
+src/types/tutor.ts
+src/lib/voiceEngine.ts
+src/index.css
+src/components/KaTeXBlock.tsx
+src/components/engines/ThreeDStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/VisualStage.tsx
+server.ts
+src/data/cachedLessons.ts
+src/App.tsx
+src/components/ParametersPopover.tsx
+src/components/engines/MermaidStage.tsx
+src/types/3dmol.d.ts
+Built
+Qalam AI to‘liq 2-panelli Interaktiv AI Ta’lim Studiyasi (Split-Screen Studio) formatiga o‘tkazildi:
+Asosiy o‘zgarishlar
+Ikki panelli Split-Studio kompozitsiyasi (src/App.tsx, src/index.css):
+Chap panel (62% kenglik / mobilda tepada 45%): Toza #FFFFFF karta (border: 1px solid #E2E8F0, border-radius: 20px) va mayda #CBD5E1 muhandislik nuqtali foni — katak daftar va barcha SVG emojilar olib tashlandi.
+O‘ng panel (38% kenglik / mobilda pastda 55%): Qadamlar ro‘yxati, skrollbarsiz (overflow: visible) KaTeX formulalar, jonli parametr slayderlari, interaktiv mini-tekshiruv va savol kiritish paneli jamlandi.
+Jonli AI Ovoz Sferasi (src/components/VoiceOrb.tsx, src/lib/voiceEngine.ts):
+Personaj/emoji o‘rniga ko‘k-binafsha-zumrad gradientli tebranuvchi Fluid AI Voice Orb qo‘shildi. Ovoz yangraganda sfera tovush ritmiga mos pulsatsiya qiladi, yonida esa «Tinglash» / «To‘xtatish» hamda 0.85x / 1x / 1.25x tezlik tugmalari ishlaydi.
+3D va 2D Dvigatellar mukammalligi (ThreeDStage.tsx, MoleculeStage.tsx, PlotlyStage.tsx):
+Three.js sahnasida jismlar ostiga yarim shaffof GridHelper koordinata tekisligi hamda burchakdagi Oldindan, Yuqoridan, Kesim va 360° aylanish kamera tugmalari qo‘shildi.
+3Dmol.js molekulalari toza #FFFFFF fonda konteynerga avtomatik moslanadi (viewer.zoomTo()) va atom ustiga bosganda uning nomi ko‘rinadi.
+Plotly da shaffof fon, showscale: false va 1:1 (scaleanchor: "x") proporsiya saqlandi.
+Haqiqiy Gemini API va 3 variantli Mini-tekshiruv (server.ts, src/data/cachedLessons.ts):
+Foydalanuvchi savollariga serverdagi @google/genai (gemini-4-hydrogen) orqali savol darajasiga mos 4 qadamli JSON dars tuziladi hamda oxirgi qadamda 3 variantli interaktiv mini-tekshiruv (tezkor savol va izoh) chiqariladi.
+Tekshiruv natijalari
+npm run build (compile_applet) va tsc --noEmit (lint_applet) muvaffaqiyatli o‘tdi, server qayta ishga tushirildi.
+Checkpoint
+Hozirgi "Qalam AI" ilovasida quyidagi 4 ta aniq muammoni tuzatib ber:
+3D SHAKLNI QO‘L VA SICHQONCHA BILAN ERKIN AYLANTIRISH (ENG MUHIM!):
+Three.js sahnasida CSS2DRenderer (labelRenderer.domElement) ustiga style.pointerEvents = 'none' qo‘y, toki S, a', D teglari barmoq va sichqoncha harakatini to‘sib qo‘ymasin.
+WebGL <canvas> (renderer.domElement) ga style.touchAction = 'none' va cursor: grab (active bo‘lganda grabbing) o‘rnat.
+OrbitControls sozlamalarida controls.enableDamping = true, controls.enableRotate = true, controls.enableZoom = true, controls.enablePan = false bo‘lsin va har bir requestAnimationFrame ichida controls.update() chaqirilsin.
+Boshlang‘ich holatda avtomatik aylanish (autoRotate) o‘chiq tursin — foydalanuvchi istalgan payt barmog‘i bilan ushlab 360° aylantira olsin (360° aylanish tugmasi bosilgandagina avtomatik aylansin).
+KAMERA TUGMALARI PANELINI IXCHAMLASHTIRISH:
+3D sahna pastidagi katta oq kamera qutisini olib tashla — u piramidaning pastki qismini yopib qo‘ymoqda.
+Uning o‘rniga 3D sahnaning yuqori o‘ng burchagiga faqat 3 ta ixcham shaffof tugma (Oldindan, Yuqoridan, 360°) joylashtir, shunda piramida to‘liq va ochiq ko‘rinsin.
+JONLI, YOQIMTOY EMOJI-USTOZ QO‘SHISH:
+"AI Ustoz Ovozi" kartochkasidagi oddiy binafsha doira o‘rniga (va 3D sahnaning o‘ng pastki burchagida suzib turuvchi) maxsus chizilgan, 3D-soyali yoqimtoy Emoji-Ustoz personajini qo‘sh:
+Iliq quyosh-oltin rangli (#FBBF24 → #FDE047 radial gradient) dumaloq yuz, yumshoq pushti yonoqlar;
+Sichqoncha/barmoq tomonga biroz qaraydigan va har 3–4 soniyada tabiiy pirpiraydigan katta yaltiroq ko‘zlar;
+"Tinglash" bosilib ovoz chiqayotganda tovush ritmiga mos ravishda tabiiy ochilib-yopiladigan og‘iz (lip-sync) va tabassum animatsiyasi.
+QADAMLAR RO‘YXATI SKROLLINI TUZATISH:
+Pastki paneldagi 1-qadam matnining yuqori qismi kesilib qolmasligi uchun qadamlar konteyneriga padding-top: 8px va to‘g‘ri overflow-y: auto ber.
+Gemini 4 Hydrogen
+Ran for 2m 5s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 4 files
+src/components/VoiceOrb.tsx
+src/components/EmojiUstoz.tsx
+src/components/engines/ThreeDStage.tsx
+src/App.tsx
+Built
+Barcha 4 ta muammo tuzatildi va tekshirildi:
+3D shaklni qo‘l va sichqoncha bilan erkin aylantirish:
+ThreeDStage ichida CSS2DRenderer (labelRenderer.domElement) ga pointerEvents = 'none' qo‘yildi, shuning uchun S, a', D yozuvlari teginish va sichqoncha harakatini to‘smaydi.
+WebGL <canvas> ga touchAction = 'none' hamda grab / grabbing kursori o‘rnatildi.
+OrbitControls da enableDamping = true, enableRotate = true, enableZoom = true, enablePan = false yoqildi va har bir requestAnimationFrame kadrida controls.update() uzluksiz chaqiriladi.
+Boshlang‘ich holatda avtomatik aylanish (autoRotate) o‘chirilgan — faqat 360° tugmasi bosilganda aylanadi.
+Ixcham kamera tugmalari (yuqori o‘ng burchakda):
+3D sahna pastidagi katta oq kamera qutisi olib tashlandi.
+Sahnaning yuqori o‘ng burchagiga faqat 3 ta ixcham yarim shaffof tugma (Oldindan, Yuqoridan, 360°) joylashtirildi.
+Jonli va yoqimtoy 3D-soyali Emoji-Ustoz:
+"AI Ustoz Ovozi" paneli hamda 3D/2D sahnaning pastki o‘ng burchagi (pointer-events-none) uchun quyosh-oltin radial gradientli (#FBBF24 → #FDE047), pushti yonoqli, kursor/barmoqni kuzatuvchi va tabiiy ko‘z qisuvchi EmojiUstoz qo‘shildi; "Tinglash" bosilganda ovoz ritmiga mos og‘iz harakati bilan gapiradi.
+Qadamlar ro‘yxati yuqori qismi kesilishini bartaraf etish:
+O‘ng paneldagi aylanadigan qadamlar oqimiga pt-2.5 (scroll-pt-2.5) va min-h-0 berildi hamda yangi mavzu tanlanganda ro‘yxat yuqoriga qaytariladi, shuning uchun 1-qadam matni yuqoridan kesilib qolmaydi.
+(Yig‘ish compile_applet, tsc --noEmit va server qayta ishga tushirish muvaffaqiyatli yakunlandi.)
+Checkpoint
+emoji bitta joyda qotib qolgan xuddi ustozlar singari nimani o'rgatayotganini oldiga orqali uzoqlashib yaqinlashishlarni qachon qayerga borishlarni bilmayapti llm oldindan aytib qo'yadimi nima dir qilishimiz krak shuni
+Gemini 4 Hydrogen
+Ran for 3m 49s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 9 files
+src/types/tutor.ts
+src/lib/teacherChoreography.ts
+src/components/EmojiUstoz.tsx
+src/components/TeacherStageActor.tsx
+src/components/engines/ThreeDStage.tsx
+src/components/VisualStage.tsx
+server.ts
+src/data/cachedLessons.ts
+src/App.tsx
+Built
+Ha, bu "AI — Rejissyor, Brauzer — Rassom" tamoyiliga to‘liq mos keladi: endi LLM oldindan xoreografiya rejasini (teacher_cue) tuzib beradi, brauzer esa Emoji-Ustozni shu rejaga muvofiq sahnada jonli harakatlantiradi.
+Amalga oshirilgan yangiliklar:
+LLM Rejissyor Xoreografiyasi (teacher_cue):
+Gemini API (server.ts) sxemasi va tizim ko‘rsatmasiga har bir qadam uchun teacher_cue qo‘shildi:
+zone (top-left, top, right, bottom-left, orbit va h.k.) — ustoz sahnaning qaysi qismiga borishini belgilaydi.
+depth (near, mid, far) — elementni yaqindan ko‘rsatganda kattalashib oldinga keladi (near), umumiy manzarani tushuntirganda esa kichrayib orqaga uzoqlashadi (far).
+motion (approach, retreat, circle, point, celebrate) — yaqinlashish, orqaga qadam tashlash, obyekt atrofida aylanish yoki tayoqcha bilan ko‘rsatish harakati.
+target_label va waypoints — nutq davomida (pause_pct) ustoz bosib o‘tadigan 2–3 ta bekat va qisqa izoh (note).
+Tayyor darslar hamda deterministik formulalar uchun ham avtomatik xoreografiya (resolveTeacherCue) ishlaydi.
+Haqiqiy 3D Koordinatalarni Kuzatish (ThreeDStage + TeacherStageActor):
+3D sahnada (ThreeDStage) target_label (masalan S, h, a', l, R) kamera orqali real vaqt rejimida ekran koordinatalariga proyeksiyalanadi.
+Siz 3D shaklni qo‘l yoki sichqoncha bilan aylantirsangiz ham, Emoji-Ustoz tushuntirayotgan qismi qayerga ko‘chganini sezib, yoniga keladi va ko‘zlari hamda ko‘rsatkich tayoqchasini aynan o‘sha nuqtaga qaratadi.
+Nutqqa Mos Yurish va Perspektiv Yaqinlashuv-Uzoqlashuv:
+"Tinglash" bosilganda voiceEngine uzatadigan progress (0 → 1) asosida ustoz waypoints marshruti bo‘ylab silliq yuradi; jim turganda ham burchakda qotib qolmasdan chizma atrofida tabiiy nafas olib/aylanib turadi (pointer-events: none — 3D aylantirishga umuman xalaqit bermaydi).
+(Yig‘ish compile_applet, TypeScript tekshiruvi tsc --noEmit va server qayta ishga tushirish muvaffaqiyatli yakunlandi.)
+Checkpoint
+bitta emoji yetarli va Hozirgi ilovadagi bitta joyda qotib turgan emojini doska bo'ylab harakatlanadigan, yaqinlashib-uzoqlashadigan va tushuntirayotgan qismiga ishora qiladigan jonli Ustoz-Xoreografga aylantir:
+SAHNA NUQTALARI (ANCHORS) VA 3D-DAN 2D-GA PROYEKSIYA:
+Har bir 2D/3D sahnada nomlangan fokus nuqtalari (anchors) ro'yxati bo'lsin (masalan, piramidada: vertex_S, base_plane, cut_section, overview; molekulada: chain_A, chain_B, disulfide_bridge, overview; grafikda: vertex_min, x_intercept, overview).
+Three.js sahnasida tanlangan focus_target ning 3D koordinatasini point.project(camera) orqali ekrandagi (x, y) piksel koordinatasiga o'gir (hatto foydalanuvchi 3D shaklni qo'li bilan aylantirganda ham koordinata jonli yangilansin).
+EMOJI-USTOZNING HARAKATI VA YAQINLASHISH-UZOQLASHISH MANTIQI:
+Emoji doska ichida position: absolute bilan silliq animatsiyada (transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)) harakatlansin.
+To'qnashuvdan qochish: Emoji hech qachon obyektning ustiga chiqib uni yopib qo'ymasin — nishon nuqtasining bo'shroq tomonidan (chap yoki o'ngidan 85px masofada) to'xtasin.
+3 xil holat (tutor_pose):
+approach: Muhim detalni tushuntirganda o'sha nuqta yoniga uchib boradi (scale(1.08)), kamera silliq o'sha nuqtaga yaqinlashadi va emoji bilan nishon orasida ingichka yorug'lik ko'rsatkichi (pointer ring) yonadi.
+step_back: Umumiy jarayon yoki katta manzarani (overview) ko'rsatganda emoji kichrayib (scale(0.82)) o'ng pastki burchakka chekinadi, kamera esa uzoqlashib butun sahnani ko'rsatadi.
+formula_check: KaTeX formulani tushuntirganda formula kartochkasi yoniga kelib bosh irg'aydi.
+Jonli ko'z nigohi (Eye-tracking): Emojining ko'z qorachiqlari doimo joriy focus_target turgan tomonga qarab burilsin.
+MIKRO-QADAMLAR (beats) SINXRONIZATSIYASI:
+Har bir dars qadami 2–3 ta ketma-ket beats (jumla + focus_target + tutor_pose + camera_zoom) dan iborat bo'lsin. Ovoz ("Tinglash") o'qiyotganda har bir jumla boshlanishi bilan emoji avtomatik kerakli joyga ko'chib o'tsin va kamera rakursini o'zgartirsin.
+image.png
+image.png
+Gemini 4 Hydrogen
+Ran for 5m 34s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 14 files
+src/types/tutor.ts
+src/lib/teacherChoreography.ts
+src/components/EmojiUstoz.tsx
+src/components/TeacherStageActor.tsx
+src/lib/voiceEngine.ts
+src/components/engines/ThreeDStage.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/components/engines/PlotlyStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/engines/MermaidStage.tsx
+src/components/VisualStage.tsx
+server.ts
+src/data/cachedLessons.ts
+src/App.tsx
+Built
+Ilovada endi bitta jonli Ustoz-Xoreograf emoji doska bo‘ylab harakatlanadi (o‘ng paneldagi ortiqcha takroriy emoji olib tashlanib, ixcham ovoz indikatori bilan almashtirildi):
+Sahna nuqtalari (anchors) va 3D → 2D piksel proyeksiya:
+Barcha 5 ta vizual dvigatel (Three.js, SVG2D, Plotly 2D/3D, 3Dmol PDB/PubChem, Mermaid) nomlangan fokus nuqtalarini (masalan: vertex_S, base_plane, cut_section, height_axis, apothem, square_a, square_b, square_c, vertex_min, x_intercept, chain_A, disulfide_bridge, overview) ekranning aniq (x, y) piksel koordinatasiga uzatadi.
+Three.js da point.project(camera) har kadrda ishlaydi — foydalanuvchi 3D shaklni qo‘li bilan aylantirsa ham koordinatalar jonli yangilanib boradi.
+To‘qnashuvsiz harakat va 3 xil ustoz holati (tutor_pose):
+Emoji doska ichida position: absolute va transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) bilan silliq ko‘chadi, doimo nishon nuqtaning bo‘shroq chap yoki o‘ng tomonida 85px masofada to‘xtaydi (obyekt ustini yopib qo‘ymaydi).
+approach: Muhim detal yoniga uchib keladi (scale(1.08)), kamera silliq yaqinlashadi va emoji bilan nishon o‘rtasida yorug‘ ko‘rsatkich halqasi (pointer ring) yonadi.
+step_back: Umumiy manzarada kichrayib (scale(0.82)) o‘ng pastki burchakka chekinadi, kamera uzoqlashib butun sahnani ko‘rsatadi.
+formula_check: KaTeX formula tushuntirilganda o‘ng chetdagi formula kartochkasi yoniga kelib bosh irg‘aydi (nod).
+Jonli ko‘z nigohi: Ko‘z qorachiqlari doimo joriy focus_target turgan tomonga burilib turadi.
+Mikro-qadamlar (beats) va ovoz sinxronizatsiyasi:
+Har bir qadam 2–3 ta ketma-ket beats (sentence, focus_target, tutor_pose, camera_zoom) ga bo‘lindi (server.ts Gemini sxemasi va tayyor darslarda).
+"Tinglash" bosilganda har bir jumla boshlanishi bilan emoji kerakli nuqtaga uchib boradi va kamera masshtabini (camera_zoom) moslaydi; shuningdek, qadam ichidagi fokus tugmalarini bosib ham har bir nuqtani qo‘lda sinab ko‘rish mumkin.
+(Yig‘ish compile_applet, tsc --noEmit va server qayta ishga tushirish muvaffaqiyatli yakunlandi.)
+Checkpoint
+Mobil uchun mos emas asosiy foydalanuvchilar telefon orqali kirishadi ular qulay muhit bòlishi shart
+Gemini 4 Hydrogen
+Ran for 4m 26s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 9 files
+index.html
+src/index.css
+src/lib/teacherChoreography.ts
+src/components/TeacherStageActor.tsx
+src/components/engines/ThreeDStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/engines/PlotlyStage.tsx
+src/components/engines/Canvas3DFallback.tsx
+src/App.tsx
+Built
+Qalam AI telefon va kichik ekranli qurilmalar uchun to‘liq moslashtirildi:
+Moslashuvchan mobil sahna (Katta / Ixcham / Yig‘ish):
+Telefonlarda 2D/3D doska 35dvh ixcham balandlikda ochiladi, pastdagi tushuntirish, KaTeX formulalar, slayderlar va mini-test uchun keng joy qoldiradi.
+Sahnaning pastki chap burchagida Katta / Ixcham va Yig‘ish tugmalari qo‘shildi — 3D shakl yoki molekulani barmoq bilan kattaroq ko‘rish yoki faqat matn va testga diqqat qaratish mumkin.
+Klaviatura chiqqanda siqilmaslik va iOS zoom’ni o‘chirish:
+Savol yozish maydoniga bosilganda mobil klaviatura ekran joyini yopib qo‘ymasligi uchun sahna vaqtincha yig‘ilib turadi, yuborilgandan so‘ng avtomatik tiklanadi.
+Matn kiritish maydoni 16px o‘lchamga o‘tkazildi (iOS Safari’da bexosdan kattalashib ketishining oldi olindi) va ekranning pastki/yuqori safe-area chegaralari qo‘shildi.
+Barmoq bilan qulay boshqaruv va navigatsiya:
+Tezkor savollar bir qatorli gorizontal suriladigan (swipe) tasmaga o‘tkazildi.
+Har bir faol qadam ostida bosh barmoq bilan bosishga qulay Oldingi / Keyingi qadam tugmalari hamda mobil ovoz tezligini (0.85x / 1x / 1.25x) bir bosishda almashtirish tugmasi qo‘shildi.
+Slayder tutqichlari, qadam tugmalari, mikrofon va yuborish tugmalari keng barmoq tegish maydoniga (40–44px) moslashtirildi.
+3D/2D dvigatellar va Emoji-Ustoz xoreografiyasi moslashuvi:
+Tor telefon ekranlarida yuqori burchakdagi fan yorlig‘i va kamera/molekula tugmalari ustma-ust tushmasligi ta’minlandi; Plotly grafiklarida mobil rejada ortiqcha asboblar paneli yashirildi; 3D sahna o‘lchami va FOV mobil nisbatga moslandi.
+Emoji-Ustoz kichik sahnada ixchamroq o‘lchamda (46px) va 56px to‘qnashuvsiz masofada harakatlanadi, formula_check holatida esa pastdagi formula paneliga qarab bosh irg‘aydi.
+Checkpoint
+4 darslikni doska tagida 4ta kesma bòladi har bir kesma bitta dars va yanada qulay va ortiqcha detallani minimallashtirish kerak
+Gemini 4 Hydrogen
+Ran for 2m 9s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/App.tsx
+Built
+Ilova interfeysi soddalashtirildi va doska ostiga 4 ta interaktiv dars kesmasi qo‘shildi:
+Doska tagidagi 4 ta kesma: 2D/3D doskaning pastki chetiga 4 ta bosiladigan kesma joylashtirildi — har bir kesma darsning bitta bosqichini (1-dars, 2-dars, 3-dars, 4-dars) anglatadi va istalgan kesmani bosish bilan o‘sha qismga darhol o‘tiladi.
+Ortiqcha detallar olib tashlandi:
+Yuqori sarlavhadagi qo‘shimcha yorliqlar va qadam raqami qutichasi olib tashlanib, faqat mavzu nomi qoldirildi; doskadagi yorliqda esa faqat fan nomi qoldi.
+O‘ng/pastki panelda barcha 4 ta akkordeon kartochkani ustma-ust chiqarish o‘rniga faqat joriy faol qadam (KaTeX formula, izoh, jonli hisob va test) ko‘rsatiladi.
+Mayda fokus-tugmalar, avtomatik o‘qish bayroqchasi, ortiqcha ovoz sarlavhasi va savol maydoni ustidagi chip-tugmalar olib tashlandi (tezkor savollar Mavzular menyusi ichiga ko‘chirildi).
+Parametrlar bloki ixcham va yig‘iladigan (Parametrlar) ko‘rinishga keltirildi.
+Checkpoint
+Parameters larni va ovozni sozlash funksiyalari kerak emas òta sodda va ixcham bòlishi shart
+Gemini 4 Hydrogen
+Ran for 1m 25s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/App.tsx
+Built
+Interfeys yanada soddalashtirildi va ixchamlashtirildi:
+Parametrlar olib tashlandi: Slayderlar bloki (Parametrlar) interfeysdan to‘liq olib tashlandi; 2D/3D modellar va formulalar darsning standart qiymatlari asosida toza ko‘rsatiladi.
+Ovoz sozlamalari olib tashlandi: Ovoz tezligini (0.85x / 1x / 1.25x) almashtirish tugmasi va ortiqcha ovoz belgisi olib tashlanib, sarlavhada faqat qadam nomi va bitta ixcham Tinglash / To‘xtatish tugmasi qoldirildi.
+Checkpoint
+Bu qismni ham nimadir qilish kerak juda yomon va kòp joy olayapti
+Screenshot_20261114-075018_Chrome.jpg
+Screenshot_20261114-075018_Chrome.jpg
+Gemini 4 Hydrogen
+Ran for 2m 57s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+src/data/cachedLessons.ts
+src/components/KaTeXBlock.tsx
+src/App.tsx
+Built
+Pastki dars paneli va mobil tuzilma ixcham hamda qulay holatga keltirildi:
+Doska va pastki panel balansi tuzatildi: Mobilda 3D/2D doska ekrandagi asosiy bo‘sh joyni egallaydi, pastki izoh paneli esa ortiqcha bo‘shliq qoldirmasdan faqat matn hajmiga mos ixcham ko‘rinishda joylashadi.
+4 ta kesma to‘liq ko‘rinadigan bo‘ldi: Boshlang‘ich Pifagor darsi ham 4 bosqichga ajratildi — doska tagida doimo 1-dars, 2-dars, 3-dars va 4-dars kesmalari chiqib, ularga bosish orqali darslar o‘rtasida tez o‘tiladi.
+Ortiqcha qutilar va takroriy elementlar olib tashlandi:
+Katta chegarali KaTeX qutisi o‘rniga ixcham ko‘k chiplar qo‘yildi.
+Sarlavhadagi takroriy raqamlar (1. 1. ...) tozalandi.
+Alohida panel sarlavha chizig‘i, ortiqcha Oldingi / Keyingi tugmalari hamda doska ichidagi "Ixcham / Katta" suzuvchi tugmasi olib tashlandi.
+Tinglash tugmasi va pastki savol berish qatori (Savol yozing...) minimal balandlikda joylashtirildi.
+Checkpoint
+Men shunaqa narsa kutgan edim
+VID_20261114_082722_143.mp4
+Gemini 4 Hydrogen
+Canceled
+
+Action history
+Here are key actions taken for the app:
+
+Edited 12 files
+src/index.css
+src/lib/voiceEngine.ts
+src/components/EmojiUstoz.tsx
+src/types/tutor.ts
+src/components/engines/AnimatedGraphBoard.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/components/VisualStage.tsx
+src/lib/teacherChoreography.ts
+src/components/TeacherStageActor.tsx
+src/data/cachedLessons.ts
+server.ts
+src/App.tsx
+Built
+Quota limits exceeded
+Checkpoint
+Qalam AI-dagi emoji ustozni 'tutor_pose' holatlarida (approach, step_back, formula_check) silliq transitionlar bilan animatsiyalaydigan va kamera zoomiga moslashadigan logikani TeacherStageActor komponentiga qo'sh.
+Gemini 4 Hydrogen
+Ran for 0s
+Quota limits exceeded
+Qalam AI-dagi emoji ustozni 'tutor_pose' holatlarida (approach, step_back, formula_check) silliq transitionlar bilan animatsiyalaydigan va kamera zoomiga moslashadigan logikani TeacherStageActor komponentiga qo'sh
+Gemini 3.5 Flash Lite
+Ran for 47s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/components/TeacherStageActor.tsx
+Built
+TeacherStageActor komponentiga tutor_pose (approach, step_back, formula_check) holatlarida silliq o‘tishlar (cubic-bezier animatsiyalar) va kamera zoom masshtabiga (camera_zoom) to‘liq moslashadigan dinamik o‘lcham logikasi muvaffaqiyatli qo‘shildi:
+Silliq Rejim Transitionlari (tutor_pose):
+approach: Obyekt yoki fokus nuqtasi tomon silliq tezlashuv bilan borib to‘xtash.
+step_back: Umumiy ko‘rinishni ko‘rsatish uchun burchakka silliq chekinish.
+formula_check: KaTeX formula yoki matn yonida bosh irg‘ab tushuntirish uchun elastik qadam (cubic-bezier(0.34, 1.56, 0.64, 1)).
+Kamera Zoom Moslashuvi:
+Har bir mikro-qadamdagi camera_zoom qiymati (0.85x dan 1.2x gacha) xoreografik masshtab bilan ko‘paytirilib, personajning hajmi kamera rakursiga mos ravishda tabiiy kattalashib-kichrayishi ta'minlandi.
+Checkpoint
+Three.js sahnasida 3D obyektlarni barmoq yoki sichqoncha bilan erkin aylanadigan qilib, CSS2DRenderer teglari (S, a, base) ustiga pointer-events: none qo'shib chiqish. OrbitControls parametrlarini 'damping' va 'zoom' uchun qulaylashtirish.
+Gemini 3.5 Flash Lite
+Ran for 56s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/components/engines/ThreeDStage.tsx
+Built
+Three.js sahnasi uchun so‘ralgan o‘zgartirishlar muvaffaqiyatli bajarildi:
+pointer-events: none Qoidasi: CSS2DRenderer qatlami (labelRenderer.domElement) va barcha 3D teglari (.ziyo-3d-label) uchun pointer-events: none o‘rnatildi. Bu orqali teglarga bosganda ham barmoq yoki sichqoncha harakati to‘g‘ridan-to‘g‘ri WebGL canvas'ga o‘tib, 3D obyektlarni erkin aylantirish ta'minlandi.
+OrbitControls Optimizatsiyasi: damping (dampingFactor = 0.05), erkin aylanish (enableRotate = true) va yaqinlashish/uzoqlashish (enableZoom = true) sozlamalari silliq va qulay ishlaydigan qilindi.
+Grab Kursor: Sichqoncha bosilganda kursor avtomatik grab holatidan grabbing ga o‘tadigan qilib moslashtirildi.
+Checkpoint
+Qalam AI-dagi VisualStage komponentida Three.js sahna boshqaruvini optimallashtir: OrbitControls ichida enableDamping = true va enablePan = false sozlamalarini o'rnat. Shu bilan birga, CSS2DRenderer teglariga pointer-events: none qo'shib, 3D obyektlarning barmoq/sichqoncha bilan erkin aylanishini ta'minla.
+Gemini 3.5 Flash Lite
+Ran for 22s
+Built
+Ran quality control
+ThreeDStage komponentida barcha so‘ralgan optimizatsiyalar to‘liq o‘rnatildi va tekshirildi:
+OrbitControls Sozlamalari:
+enableDamping = true va dampingFactor = 0.05 orqali silliq inersiyali aylanish.
+enablePan = false qilib qo'yildi, toki 3D obyekt markazda turib faqat erkin aylanadi va yaqinlashadi/uzoqlashadi.
+CSS2DRenderer va Teglar Himoyasi:
+labelRenderer.domElement.style.pointerEvents = 'none' va .ziyo-3d-label sinfida pointer-events: none qo'llangani uchun 3D teglari sichqoncha va barmoq harakatini to'sib qo'ymaydi.
+Canvas elementiga touch-action: none hamda cursor: grab (harakat paytida grabbing) berilib, foydalanuvchi mobil telefon va kompyuterda 3D shakllarni 360° erkin aylantirishi ta'minlandi.
+Nima kam
+Gemini 4 Hydrogen
+Ran for 33s
+Hozirgi Qalam AI ni siz ko‘rsatgan videodagi darajaga to‘liq yetkazish uchun 5 ta asosiy kamchilik bor:
+1. Haqiqiy o‘zbekcha AI ovoz (speakBeats ga ulanmagan)
+Hozir dars ijro etilganda brauzerning ichki ovozi (Web Speech API) ishlaydi. Ko‘pchilik telefon va kompyuterlarda o‘zbek tili ovozi yo‘qligi uchun ovoz turkcha/ruscha aksentda chiqadi yoki umuman ovozsiz (faqat subtitr bilan) o‘tadi.
+Serverda Gemini TTS tayyor, lekin asosiy qadamlar ijrosiga ulanmagan — u ulansa, xuddi videodagidek tabiiy va ravon o‘zbekcha ovoz chiqadi.
+2. Dars bosqichlari avtomatik ketma-ket o‘tmaydi (Auto-Advance yo‘q)
+Hozir 1-dars chizilib va tushuntirilib bo‘lgach, ijro to‘xtab qoladi — 2-dars ga o‘tish uchun qo‘lda bosish kerak.
+Videodagidek uzluksiz jonli dars bo‘lishi uchun 1-dars → 2-dars → 3-dars avtomatik ulanib ketishi, 4-dars (test) da esa javob kutib to‘xtashi kerak.
+3. Jonli progress to‘lishi va tovush sinxronizatsiyasi
+Doska tagidagi 4 ta kesma qaysi darsda turganingizni ko‘rsatadi, lekin ovoz gapirayotganda aktiv kesma chizig‘i ichida 0% → 100% silliq to‘lib borishi yo‘q.
+Shuningdek, foydalanuvchi o‘ng-chap surib yoki kesma ichida oldinga/orqaga qaytarib ko‘rish imkoniyati yetishmaydi.
+4. AI yaratgan sxema va 3D darslarda bosqichma-bosqich animatsiya
+y = x², Pifagor, Fotosintez va Moviy osmon darslari chiziqma-chiziq chizilib jonlanadi.
+Lekin foydalanuvchi Gemini’dan yangi blok-sxema (tarix, biologiya, ona tili) yoki 3D molekula so‘raganda, ular birdaniga tayyor holatda chiqadi — tugunlar navbatma-navbat yorug‘lanib jonlanmaydi.
+5. Yaratilgan darslarni to‘liq saqlash (Tarix)
+Hozir Tarix bo‘limi faqat oldingi savol matnini eslab qoladi; qayta bosilganda darsni saqlangan tayyor chizmasi bilan darhol ochish o‘rniga yana serverdan so‘raydi.
+Xohlasangiz, birinchi navbatda haqiqiy o‘zbekcha ovoz + avtomatik ketma-ket o‘tish (1 → 2 → 3 → 4) + kesma ichidagi jonli progressni hoziroq qo‘shib beraman. Qaysi biridan boshlaylik?
+Hozir faqatgina 3 ga etibor berib tuzat
+Gemini 4 Hydrogen
+Ran for 3m
+
+Action history
+Here are key actions taken for the app:
+
+Edited 4 files
+src/lib/voiceEngine.ts
+src/components/engines/AnimatedGraphBoard.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/App.tsx
+Built
+Faqat 3-band (jonli progress to‘lishi va tovush sinxronizatsiyasi) bo‘yicha quyidagilar tuzatildi:
+Faol kesmada jonli progress (0% → 100%): Doska ostidagi faol dars kesmasi ichida scaleX asosida 60 FPS silliq ko‘k to‘lish chizig‘i, jumlalar bo‘linishi belgilari va foiz ko‘rsatkichi qo‘shildi.
+Kesma ustida barmoq/sichqoncha bilan surish (scrubbing): Faol kesma chizig‘ini bosib yoki chap-o‘ngga surib, chizma va tushuntirishning istalgan joyiga o‘tish mumkin (o‘ynayotgan bo‘lsa, qo‘yib yuborilganda tovush aynan o‘sha joydan davom etadi).
+Aniq tovush sinxronizatsiyasi: Nutq sintezi (speechSynthesis) so‘z chegaralari (onboundary) va haqiqiy tugash hodisasi (onend) bilan bog‘landi, endi uzoq jumlalar gap o‘rtasida kesilib qolmaydi.
+To‘xtatilgan joydan davom ettirish va orqaga/oldinga yurish: Pauza bosilganda jarayon nolga tushib ketmaydi — Davom etish tugmasi aynan to‘xtagan nuqtadan davom ettiradi; ← va → tugmalari esa jumlama-jumla orqaga/oldinga yoki qo‘shni dars kesmalariga o‘tkazadi.
+Pauza va surishda chizma sinxronligi: 2D grafik va SVG geometriya/diagramma chizmalari pauza yoki qo‘lda surilgan holatda ham progress nuqtasiga mos chizilgan darajasini aniq saqlaydi.
+Checkpoint
+Keying kamchilik Darslarni òtadigan qil
+Gemini 4 Hydrogen
+Ran for 1m 15s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/App.tsx
+Built
+Darslar endi 1-dars → 2-dars → 3-dars → 4-dars ketma-ketligida avtomatik tarzda o‘tadi:
+Avtomatik o‘tish (1 → 2 → 3 → 4): Har bir dars kesmasi (100%) to‘liq tushuntirib bo‘lingach, qisqa tanaffus (650 ms) bilan keyingi dars kesmasiga avtomatik o‘tib, darhol chizish va tushuntirishni boshlaydi.
+Oxirgi darsda to‘xtash: 4-dars (yoki test bosqichi) tugagach avtomatik to‘xtaydi, shunda o‘quvchi mini-testni bemalol yechishi mumkin.
+Xavfsiz boshqaruv: Pauza bosilganda, kesma qo‘lda surilganda, boshqa dars tanlanganda yoki bosh sahifaga qaytilganda kutilayotgan avtomatik o‘tish darhol bekor qilinadi.
+Checkpoint
+4 bandwidth bajar
+Gemini 4 Hydrogen
+Ran for 5m 59s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 4 files
+src/components/VisualStage.tsx
+src/components/engines/MermaidStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/lib/teacherChoreography.ts
+Built
+4-band (Mermaid va 3D Molekula bosqichma-bosqich animatsiyasi) bajarildi:
+Mermaid blok-sxemalar bosqichma-bosqich chizilishi:
+1-darsda tugunlar (.node), bog‘lovchi chiziqlar (stroke-dashoffset) va yorliqlar tovush hamda progress bilan ketma-ket chizilib chiqadi.
+Keyingi bosqichlarda asosiy sxema xira fonda qolib, ajratilgan tarmoqlar navbatma-navbat yorishadi va faol tugun yumshoq ko‘k soya bilan ajralib turadi.
+Qalam ustoz chizilayotgan yoki ajratilgan faol tugunga qarab silliq siljiydi; qo‘lda zoom qilinganda sxema qayta chizilib ketmaydi.
+3D Molekula va Oqsil (PDB / PubChem) bosqichma-bosqich animatsiyasi:
+1-darsda molekula/oqsil atomlari shaffof karkas ustida ovozga mos ravishda asta-sekin yig‘ilib boradi.
+Keyingi darslarda tuzilma qismlari bosqichma-bosqich ajratib ko‘rsatiladi: oqsillarda A/B zanjirlar hamda disulfid (-S-S-) ko‘priklar, organik molekulalarda esa avval uglerod skeleti, so‘ng azot halqalari va kislorod guruhlari yoritiladi.
+O‘ynayotgan vaqtda molekula sekin silliq aylanadi, barmoq/sichqoncha bilan aylantirilganda esa darhol foydalanuvchi boshqaruviga bo‘ysunadi; shuningdek katakli doska foni molekula ortidan shaffof ko‘rinib turadi.
+Checkpoint
+5 ni ham
+Gemini 4 Hydrogen
+Ran for 1m 18s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 2 files
+src/lib/lessonStorage.ts
+src/App.tsx
+Built
+5-band (yaratilgan darslarni localStorage da to‘liq saqlash) ham bajarildi:
+To‘liq darslarni avtomatik saqlash: Matn, ovoz yoki rasm orqali yaratilgan barcha 4 qadamli darslar (chizma parametrlari, formulalar va testlari bilan birga) qurilma xotirasida (localStorage) saqlanadi (12 tagacha oxirgi dars, xotira to‘lganda eskilari avtomatik tozalanadi).
+Qayta so‘ramasdan tezkor ochish: Oldin yaratilgan savol qayta yuborilganda yoki Tarix bo‘limidan tanlanganda dars serverga murojaat qilmasdan darhol ochiladi.
+Tarix boshqaruvi: Tarix ro‘yxatida saqlangan darsning mavzusi, fani, qadamlar soni ko‘rsatiladi va keraksiz darsni alohida o‘chirib tashlash tugmasi qo‘shildi.
+Checkpoint
+Emojini jonliroq qilish kerak xuddi jonli chizayotganga òxshasin
+Gemini 4 Hydrogen
+Ran for 1m 45s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+src/components/EmojiUstoz.tsx
+src/components/TeacherStageActor.tsx
+src/App.tsx
+Built
+Qalam ustoz emojisi endi doskada jonli chizayotgandek ko‘p bosqichli dinamik harakatlar bilan jonlantirildi:
+Jonli qalam uchi va siyoh izi: Chizma chizilayotgan paytda doskadagi chizish nuqtasiga (drawing_tip) qalam uchi bevosita tegib turadi, orqasida yumshoq sarg‘ish-ko‘k harakat izi (trail) va uchqunli impuls ko‘rinadi; yo‘naltiruvchi nur esa doimiy harakatda qalam uchiga ulanadi.
+Chizish ritmi va qo‘l harakati: Ustoz chizayotganida (hatto ovoz o‘chirilgan holatda ham) tanasi yengil oldinga egilib, jonli siqilish-cho‘zilish (squash & stretch) va qalam tutgan qo‘lning mayda chizish tebranishlari bilan harakatlanadi.
+Ifodali yuz va nigoh: Dinamik qoshlar (diqqat bilan chizganda egilgan, formula tekshirganda ko‘tarilgan), yaltiroq ko‘z qarashlari (eye tracking chizilayotgan nuqtaga qaraydi) va erkin uchib turuvchi olovrang uchqun sharcha qo‘shildi.
+Checkpoint
+Implement a 'living' animation state for the EmojiUstoz mascot. Enhance the EmojiUstoz component to cycle between different subtle idle states (bouncing, blinking, head-tilting) when isSpeaking is false and replace the static face with an SVG path animation that mimics a pen drawing on the screen when isSpeaking is true.
+Gemini 4 Hydrogen
+Ran for 1m 16s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/components/EmojiUstoz.tsx
+Built
+Implemented the living animation state for the EmojiUstoz mascot:
+Cycling Subtle Idle States (isSpeaking === false): Cycles automatically every ~2.8 seconds through three organic idle behaviors:
+Bouncing: Gentle vertical hop with elastic squash-and-stretch and cheerful wide eyes.
+Blinking: Crisp natural double-blink intervals with relaxed facial expression.
+Head-Tilting: Curious side-to-side head tilt paired with coordinated eye glances and asymmetric brow lift.
+Live SVG Path Pen-Drawing Face (isSpeaking === true): Replaces the static face with an animated chalkboard-grid overlay where progressive SVG chalk-ink strokes (handwriting wave, parabola arch, and continuous calligraphy loop) draw themselves via strokeDashoffset, while a miniature Qalam stylus glides smoothly along the exact active tip with voice-reactive ink glow.
+Checkpoint
+Juda sekin chizayapti asosing nuqtalarni avval belgilab olib keyin tezroq chizib berishi kerak juda tez emas va doimo yuzi ekranga qarab harakatlanayotganga òxshasin
+Gemini 4 Hydrogen
+Ran for 2m 14s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+src/components/EmojiUstoz.tsx
+src/components/engines/AnimatedGraphBoard.tsx
+src/components/engines/SvgGeometryStage.tsx
+Built
+Chizish tezligi, ketma-ketligi va ustozning ekran qarshisidagi harakati yangilandi:
+Avval asosiy nuqtalar, keyin tezkor chizish:
+Grafiklarda: 1-qadamda avval X va Y o‘qlari chizilib, asosiy koordinata nuqtalari ketma-ket belgilanadi (0.22–0.72 oraliqda); keyingi qadamda esa parabola yoki funksiya chizig‘i belgilangan nuqtalar orqali o‘rtacha-tez, ravon ritmda (~0.08–0.54 oraliqda — na cho‘zilgan, na birdaniga) tortiladi.
+Geometriya va diagrammalarda: Uchburchak, Pifagor va aylana chizmalarida avval asosiy uch va markaz nuqtalari qo‘yiladi (0–0.18), so‘ngra tomonlar va yoylar tezroq hamda silliq chizib beriladi.
+Yuzi doimo ekranga qaragan jonli ustoz:
+Gapirganda ham, jim turganda ham ustozning ko‘zlari, qoshlari va og‘zi yashirinmaydi — doimo ekranga (foydalanuvchiga) qarab turadi, bosh egilishi esa yumshoq chegaralangan (±6°).
+Kutish vaqtida sakrash, ko‘z qisish va bosh egish holatlari almashib turadi; chizish vaqtida esa nigohi chizilayotgan nuqtaga qarab qalam uchi bilan birga harakatlanadi.
+Checkpoint
+Add a subtle 'shake' animation to the quiz buttons when a user selects the wrong answer, and a 'pulse' effect to the correct button to provide immediate visual feedback.
+Gemini 4 Hydrogen
+Ran for 1m 49s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 2 files
+src/index.css
+src/App.tsx
+Built
+Quiz tugmalari uchun tezkor vizual qayta aloqa animatsiyalari qo‘shildi:
+Noto‘g‘ri javob (shake): Noto‘g‘ri variant tanlanganda o‘sha tugma GPU asosidagi yengil gorizontal silkinish (380ms) animatsiyasini ijro etadi va bir xil noto‘g‘ri javob qayta bosilganda ham qayta ishga tushadi.
+To‘g‘ri javob (pulse): Javob tanlanganda to‘g‘ri javob tugmasi zumrad rangli yengil kattalashish va nurli halqa (pulse) effekti bilan ajralib ko‘rinadi.
+Barcha ekranlar va qulaylik: Animatsiyalar ham mobil, ham desktop quiz panellariga qo‘llandi hamda prefers-reduced-motion sozlamasini hurmat qiladi.
+Checkpoint
+Add a user settings panel in the drawer that allows the user to adjust the EmojiUstoz mascot's speaking speed, pitch, and voice gender.
+Gemini 4 Hydrogen
+Ran for 2m 58s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 2 files
+src/lib/voiceEngine.ts
+src/App.tsx
+Built
+Yon menyu (drawer) ichida EmojiUstoz ovozini moslashtirish uchun Sozlamalar bo‘limi qo‘shildi:
+Menyu bo‘limlari: Yon menyuda Darslar, Tarix va Sozlamalar alohida tablar ko‘rinishida joylashtirildi.
+Nutq tezligi (0.70× – 1.50×): Slayder orqali EmojiUstozning dars tushuntirish va chizish sur’atini sekinlashtirish yoki tezlashtirish mumkin.
+Ovoz toni (0.70 – 1.50): Slayder yordamida ovoz balandligini (past, tabiiy yoki baland ton) sozlash mumkin.
+Ovoz turi (Avtomatik, Ayol, Erkak): Qurilmadagi mos ovoz profilini tanlaydi; alohida jins ovozi topilmagan brauzerlarda esa ohang avtomatik moslashtiriladi.
+Jonli sinov va saqlash: Sozlamalar ichida jonli EmojiUstoz ko‘rinishi va Ovozni sinash tugmasi mavjud bo‘lib, barcha tanlovlar localStorage da saqlanadi hamda dars davomida darhol qo‘llanadi.
+Checkpoint
+Bazi narsalarni men shunaqa chiqaradi deb òylagandim iloji yoqmi uni uchun nima qilish kerak faqatgina rostini ayt .enga sifat muhimroq
+IMG_20261114_204229_783.jpg
+IMG_20261114_204229_783.jpg
+IMG_20261114_204230_111.jpg
+IMG_20261114_204230_111.jpg
+IMG_20261114_204230_471.jpg
+IMG_20261114_204230_471.jpg
+IMG_20261114_204230_362.jpg
+IMG_20261114_204230_362.jpg
+IMG_20261114_204230_659.jpg
+IMG_20261114_204230_659.jpg
+IMG_20261114_204230_244.jpg
+IMG_20261114_204230_244.jpg
+IMG_20261114_204230_557.jpg
+IMG_20261114_204230_557.jpg
+IMG_20261114_204230_177.jpg
+IMG_20261114_204230_177.jpg
+IMG_20261114_204224_012.jpg
+IMG_20261114_204224_012.jpg
+IMG_20261114_204224_435.jpg
+IMG_20261114_204224_435.jpg
+IMG_20261114_204230_252.jpg
+IMG_20261114_204230_252.jpg
+IMG_20261114_204230_105.jpg
+IMG_20261114_204230_105.jpg
+IMG_20261114_204224_193.jpg
+IMG_20261114_204224_193.jpg
+IMG_20261114_204224_278.jpg
+IMG_20261114_204224_278.jpg
+IMG_20261114_204224_148.jpg
+IMG_20261114_204224_148.jpg
+IMG_20261114_204224_129.jpg
+IMG_20261114_204224_129.jpg
+IMG_20261114_204224_302.jpg
+IMG_20261114_204224_302.jpg
+Gemini 4 Hydrogen
+Ran for 1m 6s
+
+Action history
+Rostini aytganda, hozirgi holatda Qalam AI bunday darslik darajasidagi 3D kvadrik sirtlarni chiza olmaydi. Buning 3 ta aniq sababi bor:
+1. Nega hozir bunday chiqmayapti? (Haqiqiy sabablar)
+Grafik dvigateli faqat 
+ ni biladi: Hozirgi 3D grafik bo‘limi (plotly3d) faqat bitta qiymatli balandlik sirtini chizadi (masalan, 
+). Siz yuborgan rasmlardagi ellipsoid, ikki pallali giperboloid, bir pallali giperboloid, yotiq konus va silindrlar esa 
+ ko‘rinishidagi yopiq yoki ko‘p qiymatli sirtlardir — ularni oddiy 
+ formulasi bilan chizib bo‘lmaydi.
+3D sahnada shakllar soni cheklangan: Hozirgi 3D stereometriya dvigateli faqat 8 ta oldindan yozilgan oddiy shaklni biladi (piramida, konus, silindr, kub, shar, vektor, snaryad). Unda giperboloid, paraboloid yoki 
+ o‘qlari bo‘ylab yo‘nalgan kvadrik sirtlar matematikasi yo‘q.
+Chizish uslubi (Renderer) farqi: Siz yuborgan rasmlar — akademik darslik illyustratsiyasi uslubida:
+Sirt orqasida qolgan o‘q va chiziqlar punktir (dashed) bo‘lib ko‘rinadi;
+Sirt ustida 3 ta asosiy tekislik kesimlari aniq yashil, ko‘k va to‘q sariq egri chiziqlar bilan ajratilgan;
+Ranglar yaltiroq metall yoki issiq-sovuq issiqlik xaritasi emas, yumshoq yarim-shaffof pastel tusda;
+Koordinata o‘qlari katakli quti ichida emas, markazda o‘tkir strelkali 
+ va 
+ kursiv harflari bilan berilgan.
+2. Iloji bormi?
+Ha, 100% iloji bor — hamda buni oddiy statik rasm sifatida emas, barmoq bilan aylantirib, 
+ slayderlari bilan jonli o‘zgartirsa bo‘ladigan haqiqiy 3D sahna sifatida qilish mumkin.
+3. Sifatli natija uchun aynan nima qilish kerak?
+Agar sizga haqiqiy darslik sifati muhim bo‘lsa, AI ga rasm generatsiya qildirish noto‘g‘ri yo‘l (chunki AI rasmida formulalar buziladi, aylantirib bo‘lmaydi va slayder ishlamaydi). Buning o‘rniga quyidagi 4 ta muhandislik yangilanishini qilish kerak:
+Parametrik Kvadrik Sirtlar Dvigateli (Three.js ichida)
+Rasmlaringizdagi barcha 17 ta ko‘rinishni qamrab oladigan parametrik matematik sirt generatori yozish: sphere, ellipsoid, hyperboloid_1, hyperboloid_2, elliptic_cone, elliptic_paraboloid, hyperbolic_paraboloid, elliptic_cylinder, hyperbolic_cylinder, parabolic_cylinder.
+Har bir sirtga axis: 'x' | 'y' | 'z' parametri qo‘shish — shunda 
+ bilan 
+ o‘z o‘qiga qarab to‘g‘ri buriladi.
+Nostandart murakkab tenglamalar (masalan, 
+) uchun esa Marching Cubes (umumiy implicit sirt quruvchi) algoritmini ulash.
+Ikki o‘tishli (2-Pass) "Yashirin Chiziq" va Kesim Shaderi
+Siz yuborgan chizmalardagi eng chiroyli effekt — sirtning old tarafidagi kesim chiziqlari va o‘qlar to‘liq, sirtning orqa tarafida qolgan qismi esa punktir (uzuk-uzuk) bo‘lib ko‘rinishidir.
+Buni Three.js da depthFunc: LessEqualDepth (to‘liq chiziq) va depthFunc: GreaterDepth (LineDashedMaterial, shaffof punktir) orqali real vaqtda, aylantirganda ham dinamik ishlaydigan qilib chiqarish mumkin.
+Akademik O‘qlar, 
+ To‘r va Kursiv Belgilar
+Katakli kulrang pol (GridHelper) o‘rniga o‘zaro perpendikulyar, uchlarida ingichka strelkali 
+ o‘qlari, 
+ markazi va 
+ yarim-o‘q ko‘rsatkichlarini chizish.
+Yozuvlarni oq ramkali qutichalarda emas, shaffof fondagi toza matematik kursiv (serif italic) uslubida joylashtirish.
+AI Director va Tenglama Parserini Moslash
+Foydalanuvchi formulani yozganda (masalan, "x^2/a^2 + y^2/b^2 - z^2/c^2 = 1") yoki rasm yuklaganda tizim bu tenglamani tanib, kerakli sirt turi, asosiy o‘qi va 
+ slayderlari bilan to‘g‘ridan-to‘g‘ri shu yangi 3D dvigatelga uzatadigan qilish.
+Xohlasangiz, hoziroq 1- va 2-qadamdan boshlab barcha 17 ta kvadrik sirtni aynan shu darslik uslubida (yumshoq pastel shaffof sirt, rangli asosiy kesimlar, orqa tarafi punktir chiziqlar, toza 
+ strelkalari va 
+ slayderlari bilan) jonli 3D ko‘rinishda qurib berishim mumkin. Boshlaymizmi?
+Checkpoint
+Three.js + ParametricGeometry + mathjs (Eng tavsiya etiladigan stek)
+​Nima beradi: Three.js tarkibidagi tayyor ParametricGeometry moduliga istalgan matematik formulani (u, v) \mapsto (x, y, z) ko‘rinishida bersangiz, u silliq 3D sirtni o‘zi quradi. mathjs esa LLM yuborgan matnli formulani (masalan, "x2/a2 + y2/b2 - z2/c2 = 1") brauzerning o‘zida xavfsiz hisoblab beradi.
+​Afzalligi: Telegram Mini App va oddiy telefonlarda ham juda yengil (~150 KB) va 60 FPS tezlikda ishlaydi.
+​Nimadan qochish kerak (Rost gap):
+​Serverda Python Manim ishlatmang. Manim tayyor MP4 video render qiladi: bitta so‘rov uchun serverda 8–15 soniya CPU band bo‘ladi (xarajati qimmat), eng yomoni — o‘quvchi videoni barmog‘i bilan 360° aylantira olmaydi va slayderlarni sura olmaydi.
+LLm Ning yagona vazifasi shu qolganini tayyor yechimlardan foydalanamiz {
+"template": "hyperboloid_two_sheets",
+"params": { "a": 1.5, "b": 1.5, "c": 2.0, "axis": "z" },
+"steps": [
+{
+"draw": ["axes", "wireframe"],
+"camera": [4, 3, 5],
+"speech": "Ikki pallali giperboloid z o'qi bo'ylab ikkita alohida kosachadan iborat."
+},
+{
+"draw": ["surface", "equator_ring"],
+"camera": [2, 5, 3],
+"speech": "z tekisligi bilan kesilganda aylana yoki ellips hosil bo'ladi."
+}
+]
+}
+Gemini 4 Hydrogen
+Ran for 6m 17s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 10 files
+src/types/tutor.ts
+src/index.css
+src/components/engines/quadricSurfaces.ts
+src/components/engines/ThreeDStage.tsx
+src/components/engines/Canvas3DFallback.tsx
+src/lib/teacherChoreography.ts
+src/lib/deterministicParser.ts
+src/data/cachedLessons.ts
+src/App.tsx
+server.ts
+Built
+Three.js + ParametricGeometry + mathjs asosidagi yengil, 60 FPS tezlikda ishlaydigan 3D kvadrik va parametrik sirtlar dvigateli to‘liq joriy qilindi:
+Amalga oshirilgan imkoniyatlar
+Barcha 10 turdagi kvadrik sirtlar va 3 o‘q yo‘nalishi (x, y, z):
+sphere (
+), ellipsoid (
+)
+hyperboloid_one_sheet, hyperboloid_two_sheets (ikkita alohida kosacha)
+elliptic_cone, elliptic_paraboloid, hyperbolic_paraboloid (egar sirt)
+elliptic_cylinder, hyperbolic_cylinder, parabolic_cylinder (
+, 
+, 
+)
+Hamda ixtiyoriy (u, v) -> (x, y, z) formulalarni mathjs orqali xavfsiz hisoblab ParametricGeometry bilan chizuvchi parametric rejimi.
+Matematik darslik uslubidagi 3D ko‘rinish va 2-bosqichli punktir okklyuziya:
+Sirtlar yumshoq shaffof pastel materiallarda chiziladi, ularning ortida qolgan koordinata o‘qlari (x, y, z, o), to‘r chiziqlari va asosiy kesimlar (ekvator halqasi, yashil va ko‘k meridianlar) avtomatik punktir (dashed) ko‘rinishda ajratiladi.
+Matematika standartiga mos koordinata tizimi (z — vertikal yuqoriga, x — chap-oldinga, y — o‘ng-oldinga) va toza kursiv serif yorliqlar (a, b, c, r, p) qo‘llanilgan.
+Bosqichma-bosqich draw qatlamlari va LLM JSON sxemasi:
+AI direktori endi og‘ir Python/Manim video yoki xom kod o‘rniga faqat ixcham JSON shablon (template, axis, a/b/c/r/p, hamda qadamba-qadam draw: ["axes", "wireframe"] → ["surface", "equator_ring"] → ["meridians", "labels"]) qaytaradi; qolgan 360° interaktiv 3D chizma va jonli slayderlar to‘liq brauzerning o‘zida ishlaydi.
+Tayyor darslar kutubxonasiga Ikki pallali giperboloid (3D), Ellipsoid (3D Sirt) va yangilangan Giperbolik paraboloid (Egar sirt) qo‘shildi, shuningdek qidiruv satriga kiritilgan kanonik tenglama va nomlar soniyalardan kam vaqtda mahalliy parser orqali ochiladi.
+Tekshiruv natijalari
+TypeScript tahlili (tsc --noEmit) va Vite ishlab chiqarish buildi xatosiz yakunlandi, server qayta ishga tushirilib /api/lessons ro‘yxati tekshirildi.
+Checkpoint
+React Three Fiber + Drei (Line2 va CameraControls):
+Oddiy Three.js o‘rniga uning React ustqurmasi bo‘lgan @react-three/fiber va @react-three/drei ni ishlating (mutlaqo bepul). Undagi Line2 moduli telefon ekranida qalinligi o‘zgarmaydigan o‘ta tiniq yaxlit va uzuk-uzuk (dashed) chiziqlarni beradi, CameraControls esa barmoq bilan aylantirish va ustoz kamerasi burilishini Apple darajasida silliq qiladi.
+Gemini 4 Hydrogen
+Ran for 5m 42s
+
+Action history
+Here are key actions taken for the app:
+
+Installed 2 packages
+Edited 4 files
+src/components/engines/quadricSurfaces.ts
+src/components/engines/QuadricSceneR3F.tsx
+src/components/engines/StereometrySceneR3F.tsx
+src/components/engines/ThreeDStage.tsx
+Built
+3D sahna React Three Fiber + Drei (Line2 va CameraControls) arxitekturasiga to‘liq o‘tkazildi:
+O‘ta tiniq chiziqlar (Line2 / LineSegments2): Mobil va Retina ekranlarda qalinligi o‘zgarmaydigan ekran-piksel o‘lchamidagi yaxlit va uzuk-uzuk (dashed) chiziqlar yo‘lga qo‘yildi. 2-bosqichli chuqurlik (LessEqualDepth oldingi yaxlit chiziqlar va GreaterDepth orqa yashirin uzuk-uzuk chiziqlar) hamda sirt ustidagi meridianlar, ekvatorlar va koordinata o‘qlari aniq ajralib turadi.
+Silliq kamera boshqaruvi (CameraControls): Barmoq bilan aylantirish, ikki barmoq bilan yaqinlashtirish (pinch-to-zoom) va dars qadamlarida ustoz kamerasining (cameraPreset, focusTarget, cameraZoom) silliq burilishlari smoothTime va draggingSmoothTime orqali sozlandi (tasodifiy yon tomonga siljib ketish — pan o‘chirilgan).
+Barcha mavjud imkoniyatlar saqlandi:
+10 ta kvadrik sirt shabloni va mathjs parametrli sirtlar (ParametricGeometry bilan pastel yarim-shaffof mat material).
+Stereometriya va fizika shakllari (pyramid, cone, cylinder, cube, sphere, vectors, projectile).
+EmojiUstoz 2D nuqta kuzatuvi, WebGL2 bo‘lmagan yoki uzilgan holatlar uchun 2D zaxira chizgichi, shuningdek quiz animatsiyalari va ovoz sozlamalari.
+Tekshiruv: Loyiha tsc --noEmit hamda production build (vite build) orqali xatosiz kompilyatsiya qilindi va server qayta ishga tushirildi (HTTP 200).
+Checkpoint
+Emojini tubdan 100 foiz òzgartir va rasm oldindan nima chizayotganini hira chiziqlarda kòrinib qolgan kòrmasdan turib keyin emoji chizgandek qilib chiqa
+Screenshot_20261115-070243_Chrome.jpg
+Screenshot_20261115-070243_Chrome.jpg
+Emojini tubdan 100 foiz òzgartir va rasm oldindan nima chizayotganini hira chiziqlarda kòrinib qolgan kòrmasdan turib keyin emoji chizgandek qilib chiqachiqara
+Gemini 4 Hydrogen
+Canceled
+The task was canceled.
+Emojini tubdan 100 foiz òzgartir va rasm oldindan nima chizayotganini hira chiziqlarda kòrinib qolgan kòrmasdan turib keyin emoji chizgandek qilib chiqachiqara
+Gemini 4 Hydrogen
+Ran for 5m 22s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 7 files
+src/components/EmojiUstoz.tsx
+src/components/TeacherStageActor.tsx
+src/lib/teacherChoreography.ts
+src/components/engines/SvgGeometryStage.tsx
+src/components/engines/MermaidStage.tsx
+src/components/engines/MoleculeStage.tsx
+src/components/engines/AnimatedGraphBoard.tsx
+Built
+EmojiUstoz ko‘rinishi va doskada chizish tartibi to‘liq qayta ishlandi:
+100% yangilangan EmojiUstoz dizayni: Eski qora shar, yonidagi alohida zarg‘aldoq sharcha hamda kesik chiziqli «lazer nuri» butunlay olib tashlandi. Uning o‘rniga issiq oltin-qaymoq rangli, moviy ustoz qalpoqchali, jonli ko‘z va qosh mimikali hamda qo‘lida ko‘k-oltin qalam ushlab turgan yangi qahramon yaratildi. U har doim ekranga qarab turadi, ko‘z qarashi chizilayotgan nuqtaga ergashadi va qalami uchi qog‘ozga tegib chizgandek harakatlanadi.
+Oldindan xira ko‘rinib turish butunlay yo‘qotildi:
+Fotosintez, Osmon moviyligi, Pifagor, Aylana va Uchburchak sahnalarida kelgusi bosqich elementlari (O₂, Glyukoza, H₂O, CO₂, a², b², c² va h.k.) endi xira (0.14–0.3 shaffoflikda) oldindan ko‘rinib turmaydi — doska mutlaqo bo‘sh holatda boshlanadi.
+Har bir shakl, nur, poya, barg, o‘q, to‘lqin va kvadrat faqat EmojiUstoz o‘sha qismga kelganda chiziqma-chiziq (stroke-dashoffset) bo‘ylab jonli ravishda chizilib chiqadi.
+Mermaid blok-sxemalar, 2D grafiklar va 3D molekulalarda ham chizilmagan elementlarni xira ko‘rsatish o‘chirildi.
+Tekshiruv: TypeScript tekshiruvi (tsc --noEmit) va production build muvaffaqiyatli o‘tdi, server qayta ishga tushirildi (HTTP 200).
+Checkpoint
+Men shunaqa natija sòragan edim
+VID_20261114_082722_143.mp4
+Gemini 4 Hydrogen
+Ran for 0s
+Quota limits exceeded
+Nega 6 burchakni chiz desam aylana chizayapti
+Gemini 4 Hydrogen
+Ran for 5m 28s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 7 files
+src/types/tutor.ts
+src/lib/teacherChoreography.ts
+src/components/EmojiUstoz.tsx
+src/components/TeacherStageActor.tsx
+src/components/engines/SvgGeometryStage.tsx
+src/lib/deterministicParser.ts
+server.ts
+Built
+Rostini aytsam, "6 burchakni chiz" deganda aylana chiqib qolishining sababi quyidagicha edi:
+2D chizish dvigatelida shu paytgacha faqat Pifagor, uchburchak va aylana turlari bor edi — N-burchak (ko‘pburchak / polygon) uchun alohida chizuvchi qism yozilmagani sababli so‘rov eng yaqin shakl sifatida aylanaga tushib qolayotgan edi.
+Hozir ikkala muammo ham to‘liq tuzatildi:
+Istalgan muntazam ko‘pburchak (3 dan 16 burchakkacha) qo‘shildi:
+Endi "6 burchakni chiz", "muntazam oltiburchak", "5-burchak", "sakkizburchak" kabi so‘rovlar aylanaga emas, to‘g‘ridan-to‘g‘ri muntazam ko‘pburchak dvigateliga tushadi (6 burchakni chiz -> 6 ta uch va 6 ta tomon ketma-ket chiziladi).
+2- va 3-qadamlarda ichki burchak (
+), markaziy burchak, apofema va diagonallar bosqichma-bosqich chiziladi, slayderlar orqali tomonlar soni (n) va uzunligini (a) jonli o‘zgartirish mumkin.
+Eski keshda saqlanib qolgan xato "circle" natijalari chiqmasligi uchun kesh versiyasi yangilandi (v7).
+Ustoz ko‘rinishi va chizish harakati siz yuborgan video uslubiga moslandi:
+Avvalgi kulrang tayoqcha, beret va doskani kesib o‘tuvchi uzuk-uzuk chiziqlar butunlay olib tashlandi.
+Videodagidek silliq 3D qora-sarg‘ish yaltiroq shar, oq ifodali ko‘zlar, gapirganda qimirlaydigan oq og‘iz va tepada alohida suzib yuruvchi zarg‘aldoq sharcha qo‘yildi.
+Doska boshida bo‘sh (hira chiziqlarsiz) turadi va faqat jonli zarg‘aldoq nuqta izidan bosqichma-bosqich chizib boradi.
+Checkpoint
+Òzbek tilida ovoz juda yomon rusmi ingliz Tilda tushunarsiz gapirayapti
+Gemini 4 Hydrogen
+Ran for 27m
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+server.ts
+src/lib/voiceEngine.ts
+src/App.tsx
+Built
+Restored from previous checkpoint
+Checkpoint
+I made some changes.
+Manual edit
+Edited 3 files
+server.ts
+src/App.tsx
+src/lib/voiceEngine.ts
+Checkpoint
+Fix the errors in the app
+Gemini 4 Hydrogen
+Ran for 3m 36s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+server.ts
+Built
+Xatolik tuzatildi.
+Sababi
+Server tomonidagi TTS chaqiruvi standart v1 API versiyasi orqali yuborilayotgan edi, speechConfig va speechMetadata parametrlari esa v1beta versiyasida qo‘llab-quvvatlanadi.
+Qilingan o‘zgarish
+getGeminiClient funksiyasi ixtiyoriy apiVersion parametrini qabul qiladigan qilib yangilandi va /api/speech/tts yo‘nalishi uchun v1beta API versiyasi ulandi.
+Server qayta ishga tushirilib, ayol (Kore) va erkak (Charon) ovozlari bilan jonli tekshirildi — ikkalasi ham xatosiz audio/wav audio qaytarmoqda.
+tsc --noEmit va vite build tekshiruvlari muvaffaqiyatli yakunlandi.
+Checkpoint
+Òzbek tilida ovoz juda yomon rusmi ingliz Tilda tushunarsiz gapirayapti
+Gemini 4 Hydrogen
+Canceled
+
+Action history
+Here are key actions taken for the app:
+
+Edited 3 files
+server.ts
+src/lib/voiceEngine.ts
+src/App.tsx
+Built
+Ovozning ruscha yoki inglizcha talaffuzda eshitilishiga uchta aniq sabab bor edi, ularni tuzatib chiqdim va hozir rostini ham aytib o‘taman:
+Nima sababdan ovoz yomon chiqqan?
+Til kodi (languageCode: 'uz') va fonetik tayyorlov yo‘q edi: Serverdagi TTS avval gemini-3.8-flash-lite-tts modelida til kodi ko‘rsatilmasdan ishlardi. Matn ichidagi x, y, z, =, ^2, EmojiUstoz kabi belgilar va inglizcha ko‘rinadigan so‘zlar modelni avtomatik ravishda ingliz yoki rus talaffuziga o‘tkazib yuborardi.
+Mobil brauzerlarda audio bloklanishi (Autoplay): Tugma bosilgandan keyin serverdan audio kelguncha bir necha soniya o‘tadi. Telefon brauzeri (Chrome/Safari) foydalanuvchi bosishi ichida audio elementi oldindan ochilmagan bo‘lsa, serverdan kelgan o‘zbekcha audioni bloklab, brauzerning ichki ovoziga tushib qolardi.
+Turkcha / xorijiy brauzer ovoziga tushib ketishi: Agar server ovozi ishlamasa yoki bloklansa, dastur qurilmadagi tr-TR (turkcha) yoki boshqa tildagi tizim ovoziga o‘tib ketardi — bu esa o‘zbekcha matnni tushunarsiz talaffuzda o‘qib berardi.
+Nimalar o‘zgartirildi?
+Flagman TTS + O‘zbek tili kodi: Endi server gemini-3.8-flash-tts modelidan v1beta orqali languageCode: 'uz' va Toshkent adabiy o‘zbek tili talaffuzi ko‘rsatmasi bilan audio yaratadi (Kore va Charon ovozlari).
+Matematik va texnik so‘zlarni o‘zbekcha o‘qishga moslash: Endi gapirishdan oldin y = x^2, 6-burchak, EmojiUstozman, 2D/3D, √, π, α/β kabi ko‘rinishlar to‘g‘ridan-to‘g‘ri igrik teng iks kvadrat, 6 burchak, Ustozman shaklida o‘zbek fonetikasiga o‘girib beriladi (mijoz tomondagi tozalash ham = va ^ belgilarini yo‘qotmasligi uchun yangilandi).
+Mobil audio blokini ochish: Foydalanuvchi ekranga birinchi marta tegishi yoki Play/Darsni boshlash tugmasini bosishi bilan audio pleyer oldindan ochiladi, shuning uchun serverdan kelgan o‘zbekcha audio telefonlarda ham uzilishsiz yangraydi.
+Xorijiy tizim ovozini o‘chirish: Brauzerning mahalliy speechSynthesis zaxirasi endi faqat qurilmada haqiqiy uz-* o‘zbekcha ovoz bo‘lsa ishlaydi; turkcha/ruscha/inglizcha ovozlarga o‘tish butunlay olib tashlandi.
+Rosti (muhim cheklov):
+Gemini’ning prebuilt ovozlari (Kore, Charon) ko‘p tilli neyro-ovozlardir — ular maxsus faqat O‘zbekistonda yozilgan alohida o‘zbek diktori darajasida 100% aksentsiz bo‘lmasligi mumkin, lekin endi matnni ruscha yoki inglizcha talaffuzga sakramasdan, aniq o‘zbekcha o‘qishga majburlangan.
+Server audio qaytarolmagan holatda esa dastur chet tilida g‘alati gapirmasdan, sokin lab-harakati (cadence) bilan darsni davom ettiradi.
+Tekshiruv natijalari:
+TypeScript va Vite build (tsc --noEmit, npm run build) xatosiz o‘tdi.
+Server qayta ishga tushirilib, /api/health (200 OK) va /api/speech/tts (200 OK, gemini-3.8-flash-tts, langCodeUsed: true, audio/wav) jonli tekshirildi.
+Checkpoint
+Yaxshi lekin api narxlari qancha uni
+Gemini 4 Hydrogen
+Ran for 27s
+
+Action history
+Ilovangizda ishlatilayotgan Gemini modellari Google AI Studio Free Tierda bepul limitlar bilan ishlaydi, pullik tarifga (Pay-as-you-go) o‘tganda esa narxlar har 1 million (1M) token uchun quyidagicha:
+1. Modellarning rasmiy API narxlari (Paid Tier)
+Vazifa	Model	Kirish (Input)	Chiqish (Output)
+Dars tuzish (JSON / rasm tahlili)	gemini-4-hydrogen	$1.50 / 1M token	$7.50 / 1M token (thinking bilan)
+Ovoz (TTS — asosiy)	gemini-3.8-flash-tts	$0.50 / 1M token	$9.00 / 1M token (audio)
+Ovoz (TTS — yengil zaxira)	gemini-3.8-flash-lite-tts	$0.50 / 1M token	$6.00 / 1M token (audio)
+Mikrofon (STT)	gemini-3.5-transcribe	$2.00 / 1M token (audio)	$12.00 / 1M token (matn)
+Muhim eslatma (gemini-3.8-flash-tts): Audioda 1 soniya nutq taxminan 25 token deb hisoblanadi. Hozirgi $9.00 tarifda 1 soat toza ovoz ≈ $0.81 (1 daqiqa ≈ 1.3 sent). (Google hujjatlariga ko‘ra, 2027-yil 1-yanvardan boshlang‘ich chegirma tugab, bu model narxi kirish $1.00 / chiqish $18.00 ga oshishi rejalashtirilgan; flash-lite-tts esa $6.00 bo‘lib, 1 soat ovoz ≈ $0.54).
+2. Amalda 1 ta dars qanchaga tushadi? (Rost hisob)
+Oddiy geometriya va tayyor keshlangan darslar (6-burchak, y = x^2 va b.): $0 (lokal parser va keshdan olinadi, Gemini matn API chaqirilmaydi; faqat birinchi marta ovoz yaratishga ~1 sent ketadi).
+Yangi savol yoki rasm tahlili (gemini-4-hydrogen + 4 qadamli ovoz):
+Dars retseptini tuzish: ~$0.01 – $0.015
+4 ta qadamning ovozi (35–40 soniya nutq): **$0.008 – $0.01**
+Jami 1 ta yangi dars ≈ $0.02 – $0.025 (2–2.5 sent) atrofida.
+Takroriy ochilganda: Serverda ham dars (topic-cache), ham ovoz (ttsAudioCache) keshlangani uchun qayta pul yechilmaydi.
+3. Xarajatni kamaytirish yo‘llari
+Test va kichik foydalanuvchilar uchun Free Tier bepul (faqat daqiqalik so‘rov limiti bor va Google ma’lumotlarni modelni yaxshilashda ishlatishi mumkin).
+Xarajatni ~33% pasaytirish uchun ovozni gemini-3.8-flash-tts dan gemini-3.8-flash-lite-tts ga tushirish, dars tuzishda esa thinkingLevel: LOW ishlatish mumkin.
+Agar foydalanuvchi ko‘payib, TTS xarajati sezilarli bo‘lsa, eng to‘g‘ri yo‘l — yaratilgan .wav audiolarni disk/bazada saqlab borish (shunda bitta tushuntirish faqat 1 marta generatsiya qilinadi).
+Batafsil va joriy narxlarni tekshirish uchun: ai.google.dev/gemini-api/docs/pricing
+Fix the errors in the app
+Gemini 4 Hydrogen
+Ran for 1m 34s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 2 files
+server.ts
+src/lib/voiceEngine.ts
+Built
+Xatolar (429 RESOURCE_EXHAUSTED) tuzatildi.
+Muammo nimada edi?
+Google AI Studio’ning Free Tier (bepul) tarifida TTS modellari uchun kunlik va daqiqalik qattiq limit bor (gemini-3.8-flash-tts uchun kuniga 10 ta so‘rov, daqiqasiga 3 ta so‘rov).
+Avvalgi kod har bir gapda birinchi flash-ttsni chaqirar, 429 xatosi chiqqanda esa uni yana qayta urinib ko‘rar va har safar konsolga to‘liq xato logini chiqarardi; mijoz tomon esa keyingi gaplarni oldindan yuklash (prefetch) va qayta urinish bilan limitni yanada tez tugatib, xatolarni takrorlab yuborardi.
+Nimalar tuzatildi?
+Asosiy TTS modeli almashtirildi: Umumiy nutq uchun mo‘ljallangan yengilroq gemini-3.8-flash-lite-tts (languageCode: 'uz' bilan) asosiy model qilindi va 429 xatosida qayta-qayta urinish to‘xtatildi.
+429 Cooldown va sokin zaxira rejimi: Server va brauzer 429 limitiga yetganda avtomatik tanaffus (cooldown) yoqiladi — API ga behuda so‘rov va xato loglari yuborilmaydi, dars esa sokin lab-harakati (cadence) bilan xatosiz davom etadi.
+Doimiy disk kesh (tts-cache) va prefetchni cheklash: Bir marta yaratilgan o‘zbekcha audiolar server diskida saqlanadi va keyingi darslarda qayta API so‘rovi yubormaydi; navbatdagi gapni oldindan parallel yuklash o‘chirildi (daqiqalik limitdan oshib ketmaslik uchun).
+Rostini aytganda:
+Hozirgi API kalitda bugungi Free Tier TTS limiti allaqachon tugagani sababli server limit tiklanguncha (yoki Settings > Secrets orqali pullik API kalit ulanguncha) yangi audio generatsiyasini to‘xtatib, xatosiz rejimda ishlaydi. Limit tiklangandan so‘ng yangi audio avtomatik ravishda disk keshiga yozilib, qayta so‘rov sarflamaydi.
+Tekshiruv:
+tsc --noEmit va npm run build xatosiz yakunlandi, server qayta ishga tushirildi va /api/speech/tts 429 holatida xato chiqarmasdan cooldown + fallback bilan javob berishi jonli tekshirildi.
+Checkpoint
+Fix the voice engine to prioritize high-quality Uzbek language synthesis by ensuring the voiceEngine correctly requests local platform-native speech synthesis, falling back to a more reliable browser-supported Uzbek voice if available, and optimizing the speakBeats function to handle sentence pauses more gracefully.
+Gemini 4 Hydrogen
+Ran for 2m 11s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/lib/voiceEngine.ts
+Built
+Updated the voice engine to prioritize genuine Uzbek synthesis across platform-native and browser-supported fallback tiers, and smoothed sentence-to-sentence pacing in speakBeats:
+Platform-native Uzbek priority & browser fallback:
+Updated selectSpeechVoice to recognize uz-* / uz_UZ and Uzbek-named voices while filtering out non-Uzbek system voices (en-*, ru-*, tr-*), ranking local platform-native (localService) Latin Uzbek (uz-UZ) voices first, followed by reliable browser-supported Uzbek voices (e.g., neural/online uz-UZ).
+Added asynchronous voice loading (voiceschanged listener with a short timeout) so Android/Chrome voice lists are populated before selection rather than returning empty on first play.
+Added client-side Uzbek math/symbol phonetic normalization (x, y, z, ^2, =, °, √, 6-burchak, etc.) and SpeechSynthesis.resume() recovery before speak(), plus automatic fallback from a failing native voice (onerror) to the secondary browser Uzbek voice before entering silent synchronized cadence.
+Graceful sentence pauses in speakBeats:
+Added punctuation-aware inter-beat pauses (longer after ., !, ?, :; shorter after ,, ;, —; scaled smoothly by playback rate and shortened in muted/cadence mode) while resting the avatar mouth cleanly between sentences.
+Made beat pauses cancellable inside stop() so pausing, seeking, or switching lessons interrupts transitions immediately without timer leaks.
+Verification:
+tsc --noEmit and npm run build passed cleanly.
+Verified voice ranking (native-uz -> browser-uz fallback -> none for non-Uzbek lists) and checked /api/health and / returning HTTP 200.
+Checkpoint
+Add a global progress bar at the very top of the screen that tracks the user's completion percentage across all steps in the current lesson, providing a subtle sense of achievement.
+Gemini 4 Hydrogen
+Ran for 1m 10s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 1 file
+src/App.tsx
+Built
+Added a global lesson completion progress bar at the very top of the lesson screen:
+Top-edge global progress bar: Added a full-width 4px progress bar (role="progressbar") above the slim top header that smoothly tracks (activeStepIndex + activeStepProgress) / totalSteps in real time across all steps and beats in the current lesson.
+Completion feedback: Uses a blue-to-emerald gradient as you progress and transitions to solid emerald with a subtle glow at 100% (including when answering the final step's quiz correctly), alongside a compact tabular percentage readout (· XX%) in the header subtitle.
+Verification: Ran tsc --noEmit and npm run build — both succeeded cleanly.
+Checkpoint
+Update the voice settings slider UI in the drawer to include real-time preview animation of the EmojiUstoz mascot, so users can immediately see the effect of their pitch and rate adjustments without needing to trigger a full speech preview.
+Gemini 4 Hydrogen
+Ran for 1m 38s
+
+Action history
+Here are key actions taken for the app:
+
+Edited 2 files
+src/components/EmojiUstoz.tsx
+src/App.tsx
+Built
+Updated the drawer's voice settings UI with real-time EmojiUstoz preview animation when adjusting rate and pitch:
+Rate & pitch-reactive mascot animation: Added speechRate and speechPitch props to EmojiUstoz so speaking cadence speed, head poise/tilt, companion orb bobbing frequency/height, and mouth shape visibly respond to rate (0.70×–1.50×) and pitch (0.70–1.50) adjustments in real time.
+Instant slider feedback in the drawer: Dragging or pressing the Nutq tezligi (rate) or Ovoz toni (pitch) sliders immediately activates a smooth 60 FPS mouth-and-pose preview loop (1.5s auto-idle timeout, cleaned up on drawer close/tab switch) alongside a compact animated equalizer bar and live indicator without needing to trigger a full audio speech preview.
+Verification: Ran tsc --noEmit and npm run build — both completed cleanly with zero errors.
+Checkpoint
+Qara masalan daraxt òsimlik lar desam bazada yoq narsalarni chiza olmayapti shuni internetdanmi olib keyin 2d yoki 3d chizgandek ekranga chiqara olmaydimi
+Gemini 4 Hydrogen
+Canceled
+
+Action history
+The task was canceled.
+Mening loyihamda foydalanuvchi so‘ragan obyektni bazadan topib ekranga chizish funksiyasi bor, lekin bazada yo‘q narsalarni chiza olmayapti. Xarajatlarni minimal ($0 ga yaqin) ushlab turgan holda quyidagi 5 bosqichli "Smart Fallback & Auto-Cache" arxitekturasini yozib ber:
+OBYEKTNI ANIQLASH VA TARJIMA QILISH:
+Foydalanuvchi kiritgan matndan asosiy obyektni ajratib ol (masalan: "katta yashil daraxt" -> "daraxt").
+Uni qidiruv uchun ingliz tiliga o‘gir (bepul kutubxona yoki kichik lug‘at orqali: "daraxt" -> "tree").
+BAZANI TEKSHIRISH (1-qadam):
+Avval o‘zimizning bazadan name_uz yoki name_en bo‘yicha qidir.
+Agar bazada bor bo‘lsa, ortiqcha tashqi so‘rov yubormasdan darhol o‘sha ma'lumotni (SVG kodi yoki 3D model havolasini) qaytar.
+BAZADA YO‘Q BO‘LSA — BEPUL MANBALARDAN OLISH (Fallback zanjiri):
+3A (2D SVG uchun): Bepul va kalitsiz Iconify API (https://api.iconify.design/search?query={name_en}&limit=3) orqali mos ikonka/vektorni qidir va https://api.iconify.design/{prefix}/{name}.svg orqali toza <svg> kodini yuklab ol.
+3B (3D uchun, agar 3D rejim yoqilgan bo‘lsa): Ochiq bazadan (masalan, Poly Pizza API) tayyor .glb model havolasini qidir.
+3C (Zaxira varianti): Agar tashqi API'dan ham topilmasa, faqat shu holatdagina yengil AI modelga (masalan, Gemini Flash) qat'iy cheklov bilan "faqat 15-25 qatorli sodda <svg> kodi qaytar" deb so‘rov yubor (yoki o‘simlik/daraxt bo‘lsa frontendda protsedural Canvas/JS algoritmi orqali chiz).
+BAZANI AVTOMATIK BOYITISH (Auto-Cache):
+3-bosqichda internetdan topilgan yoki generatsiya qilingan yangi obyektning SVG kodini (yoki model havolasini) foydalanuvchiga ko‘rsatish bilan birga, avtomatik ravishda o‘z bazamizga (name_uz, name_en, svg_data, source) saqlab qo‘y. Shunda keyingi safar bu obyekt bazadan 0.1 soniyada chiqsin.
+EKRANDA "CHIZILAYOTGANDEK" ANIMATSIYA QILISH (Frontend):
+Backenddan kelgan <svg> ichidagi barcha <path>, <line>, <circle>, <rect> elementlarining uzunligini (getTotalLength()) hisobla.
+stroke-dasharray va stroke-dashoffset yordamida chiziqlarni ketma-ket 1.5–2 soniya davomida xuddi qalam bilan chizilayotgandek animatsiya qilib ekranga chiqar.
+Avval mening hozirgi kod strukturasini tahlil qil, keyin backend va frontend uchun to‘liq, ishlaydigan kodni yozib ber.

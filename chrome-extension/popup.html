@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Uz3D AI Tutor</title>
+    <style>
+      body {
+        width: 320px;
+        margin: 0;
+        padding: 14px;
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+      .title {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0 0 4px;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: #475569;
+        margin: 0 0 12px;
+        line-height: 1.4;
+      }
+      label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 4px;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 36px;
+        padding: 0 10px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      button {
+        width: 100%;
+        height: 40px;
+        border-radius: 10px;
+        border: none;
+        background: #2563eb;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .status {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #334155;
+        min-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Uz3D AI Tutor</h1>
+    <p class="subtitle">
+      YouTube dars sahifasidagi subtitrlarni brauzerda o‘qib, 3D o‘zbekcha doskaga uzatadi.
+    </p>
+    <label for="platform-url">Platforma manzili</label>
+    <input
+      id="platform-url"
+      type="url"
+      placeholder="http://localhost:3000"
+      value="http://localhost:3000"
+    />
+    <button id="extract-btn" type="button">Joriy YouTube darsni ochish</button>
+    <div id="status" class="status"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>

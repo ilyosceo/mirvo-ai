@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated learner account profile for Mirvo AI lesson access",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "lastLessonTopic": {
+          "type": "string",
+          "maxLength": 180
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "displayName", "createdAt", "updatedAt"]
+    },
+    "SavedLessonRecord": {
+      "title": "SavedLessonRecord",
+      "description": "Metadata summary of a learner's saved interactive whiteboard lesson",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "topicTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "subject": {
+          "type": "string",
+          "enum": ["math", "geometry", "physics", "chemistry", "biology", "history", "language"]
+        },
+        "engine": {
+          "type": "string",
+          "enum": ["plotly2d", "plotly3d", "threejs", "pdb", "pubchem", "mermaid", "svg2d"]
+        },
+        "stepCount": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "userId", "topicTitle", "subject", "engine", "stepCount", "createdAt", "updatedAt"]
+    },
+    "VideoLessonCache": {
+      "title": "VideoLessonCache",
+      "description": "Shared video_id cache storing Uz3D segmented lessons to avoid duplicate AI calls",
+      "type": "object",
+      "properties": {
+        "videoId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "lessonId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "selectedModelId": {
+          "type": "string",
+          "enum": ["electric_motor", "human_heart", "atom_bohr", "plant_cell", "none_2d_board"]
+        },
+        "lessonTitleUz": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "sourceChannel": {
+          "type": "string",
+          "enum": ["youtube_extension", "local_audio", "image_topic", "mock_demo"]
+        },
+        "createdByUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "segments": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "videoId",
+        "lessonId",
+        "selectedModelId",
+        "lessonTitleUz",
+        "sourceChannel",
+        "createdByUid",
+        "segments",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Owner-isolated learner account profile containing verified email"
+    },
+    "/users/{userId}/lessons/{lessonId}": {
+      "schema": {
+        "$ref": "#/entities/SavedLessonRecord"
+      },
+      "description": "Owner-isolated learner lesson history records scoped to parent user document"
+    },
+    "/videoLessons/{videoId}": {
+      "schema": {
+        "$ref": "#/entities/VideoLessonCache"
+      },
+      "description": "Deduplicated video_id lesson cache for zero-cost repeat playback"
+    }
+  }
+}

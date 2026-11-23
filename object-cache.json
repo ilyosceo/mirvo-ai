@@ -1,0 +1,557 @@
+[
+  {
+    "id": "obj-rele-1795422468455",
+    "name_uz": "rele",
+    "name_en": "electric circuit",
+    "aliases_uz": [
+      "transformator va rele himoyasi"
+    ],
+    "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <g data-part=\"0\" data-part-id=\"battery_cell\">\n    <rect x=\"26\" y=\"72\" width=\"38\" height=\"62\" rx=\"6\" fill=\"#22C55E\" stroke=\"#15803D\" stroke-width=\"2.8\"/>\n    <rect x=\"37\" y=\"64\" width=\"16\" height=\"8\" rx=\"2\" fill=\"#94A3B8\" stroke=\"#334155\" stroke-width=\"2\"/>\n    <text x=\"45\" y=\"96\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"800\" fill=\"#FFFFFF\">+</text>\n    <text x=\"45\" y=\"124\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"800\" fill=\"#FFFFFF\">−</text>\n  </g>\n  <g data-part=\"1\" data-part-id=\"conductor\">\n    <path d=\"M 45 64 V 40 H 152 V 82 M 152 126 V 162 H 45 V 134\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"98\" cy=\"40\" r=\"4\" fill=\"#1D4ED8\"/>\n    <line x1=\"98\" y1=\"40\" x2=\"118\" y2=\"28\" stroke=\"#1D4ED8\" stroke-width=\"3.2\" stroke-linecap=\"round\"/>\n  </g>\n  <g data-part=\"2\" data-part-id=\"load_bulb\">\n    <circle cx=\"152\" cy=\"102\" r=\"22\" fill=\"#FEF08A\" stroke=\"#CA8A04\" stroke-width=\"3\"/>\n    <path d=\"M 142 108 L 148 96 L 156 108 L 162 96\" fill=\"none\" stroke=\"#EA580C\" stroke-width=\"2.6\" stroke-linecap=\"round\"/>\n  </g>\n</svg>",
+    "viewBox": "0 0 200 200",
+    "source": "procedural",
+    "mode": "2d",
+    "primitives_3d": [
+      {
+        "type": "cylinder",
+        "position": [
+          -1.4,
+          1.2,
+          0
+        ],
+        "args": [
+          0.42,
+          0.42,
+          1.4,
+          24
+        ],
+        "color": "#22c55e",
+        "label": "Batareya",
+        "partId": "battery_cell"
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          -1.4,
+          1.98,
+          0
+        ],
+        "args": [
+          0.16,
+          0.16,
+          0.18,
+          16
+        ],
+        "color": "#94a3b8",
+        "partId": "battery_cell"
+      },
+      {
+        "type": "tube",
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "args": [
+          0.08,
+          36,
+          10
+        ],
+        "points": [
+          [
+            -1.4,
+            2.05,
+            0
+          ],
+          [
+            -1.4,
+            2.5,
+            0
+          ],
+          [
+            1.4,
+            2.5,
+            0
+          ],
+          [
+            1.4,
+            1.8,
+            0
+          ]
+        ],
+        "color": "#f59e0b",
+        "label": "O‘tkazgich sim",
+        "partId": "conductor"
+      },
+      {
+        "type": "tube",
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "args": [
+          0.08,
+          36,
+          10
+        ],
+        "points": [
+          [
+            1.4,
+            0.7,
+            0
+          ],
+          [
+            1.4,
+            0.35,
+            0
+          ],
+          [
+            -1.4,
+            0.35,
+            0
+          ],
+          [
+            -1.4,
+            0.5,
+            0
+          ]
+        ],
+        "color": "#3b82f6",
+        "partId": "conductor"
+      },
+      {
+        "type": "sphere",
+        "position": [
+          1.4,
+          1.35,
+          0
+        ],
+        "args": [
+          0.48,
+          22,
+          22
+        ],
+        "color": "#fef08a",
+        "opacity": 0.7,
+        "label": "Chiroq (yuklama)",
+        "partId": "load_bulb"
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          1.4,
+          0.8,
+          0
+        ],
+        "args": [
+          0.24,
+          0.24,
+          0.32,
+          18
+        ],
+        "color": "#64748b",
+        "partId": "load_bulb"
+      }
+    ],
+    "parts_uz": [
+      {
+        "label": "Tok manbai (Batareya)",
+        "partId": "battery_cell",
+        "desc": "Kuchlanish (EYuK) hosil qiladi"
+      },
+      {
+        "label": "O‘tkazgich va kalit",
+        "partId": "conductor",
+        "desc": "Elektronlar oqimini yuklamaga uzatadi"
+      },
+      {
+        "label": "Yuklama (Chiroq)",
+        "partId": "load_bulb",
+        "desc": "Elektr energiyasini yorug‘likka aylantiradi"
+      }
+    ],
+    "createdAt": "2026-11-23T08:27:48.455Z"
+  },
+  {
+    "id": "obj-gidroakkumulyator-elektr-stansiyasi-gaes-1795347476469",
+    "name_uz": "gidroakkumulyator elektr stansiyasi (GAES)",
+    "name_en": "hydro turbine",
+    "aliases_uz": [
+      "gaes nima"
+    ],
+    "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <g data-part=\"0\" data-part-id=\"penstock\">\n    <path d=\"M 16 42 H 68 L 96 106 H 54 L 30 62 H 16 Z\" fill=\"#60A5FA\" stroke=\"#1D4ED8\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n    <path d=\"M 24 52 H 58 L 80 96\" fill=\"none\" stroke=\"#E0F2FE\" stroke-width=\"2.5\" stroke-dasharray=\"5 4\" stroke-linecap=\"round\"/>\n    <path d=\"M 52 142 H 178 V 176 H 52 Z\" fill=\"#BAE6FD\" stroke=\"#0284C7\" stroke-width=\"2.4\"/>\n  </g>\n  <g data-part=\"1\" data-part-id=\"runner_blades\">\n    <circle cx=\"106\" cy=\"126\" r=\"32\" fill=\"#E2E8F0\" stroke=\"#334155\" stroke-width=\"2.6\"/>\n    <g data-animate=\"spin\">\n      <circle cx=\"106\" cy=\"126\" r=\"24\" fill=\"none\" stroke=\"none\"/>\n      <line x1=\"106\" y1=\"104\" x2=\"106\" y2=\"148\" stroke=\"#0284C7\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n      <line x1=\"84\" y1=\"126\" x2=\"128\" y2=\"126\" stroke=\"#0284C7\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n      <circle cx=\"106\" cy=\"126\" r=\"9\" fill=\"#0F172A\"/>\n    </g>\n  </g>\n  <g data-part=\"2\" data-part-id=\"generator_unit\">\n    <line x1=\"106\" y1=\"68\" x2=\"106\" y2=\"118\" stroke=\"#475569\" stroke-width=\"6\" stroke-linecap=\"round\"/>\n    <rect x=\"78\" y=\"24\" width=\"56\" height=\"44\" rx=\"8\" fill=\"#2563EB\" stroke=\"#1E3A8A\" stroke-width=\"2.8\"/>\n    <rect x=\"88\" y=\"34\" width=\"36\" height=\"24\" rx=\"4\" fill=\"#FDE047\" stroke=\"#CA8A04\" stroke-width=\"2\"/>\n  </g>\n</svg>",
+    "viewBox": "0 0 200 200",
+    "source": "procedural",
+    "mode": "2d",
+    "primitives_3d": [
+      {
+        "type": "tube",
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "args": [
+          0.34,
+          28,
+          16
+        ],
+        "points": [
+          [
+            -2.1,
+            2.9,
+            0
+          ],
+          [
+            -1.25,
+            2.1,
+            0
+          ],
+          [
+            -0.55,
+            1.15,
+            0
+          ]
+        ],
+        "color": "#38bdf8",
+        "opacity": 0.8,
+        "label": "Bosim quvuri",
+        "partId": "penstock"
+      },
+      {
+        "type": "torus",
+        "position": [
+          0,
+          1.05,
+          0
+        ],
+        "rotation": [
+          1.5707963267948966,
+          0,
+          0
+        ],
+        "args": [
+          1.05,
+          0.25,
+          16,
+          32
+        ],
+        "color": "#64748b",
+        "opacity": 0.48,
+        "partId": "runner_blades"
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          0,
+          1.05,
+          0
+        ],
+        "args": [
+          0.32,
+          0.32,
+          0.55,
+          20
+        ],
+        "color": "#0284c7",
+        "label": "Ishchi parraklar",
+        "partId": "runner_blades",
+        "animation": "spin",
+        "animationAxis": "y",
+        "animationSpeed": 2.4,
+        "animationPivot": [
+          0,
+          1.05,
+          0
+        ]
+      },
+      {
+        "type": "box",
+        "position": [
+          0,
+          1.05,
+          0
+        ],
+        "args": [
+          1.75,
+          0.14,
+          0.34
+        ],
+        "color": "#0ea5e9",
+        "partId": "runner_blades",
+        "animation": "spin",
+        "animationAxis": "y",
+        "animationSpeed": 2.4,
+        "animationPivot": [
+          0,
+          1.05,
+          0
+        ]
+      },
+      {
+        "type": "box",
+        "position": [
+          0,
+          1.05,
+          0
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "args": [
+          1.75,
+          0.14,
+          0.34
+        ],
+        "color": "#0ea5e9",
+        "partId": "runner_blades",
+        "animation": "spin",
+        "animationAxis": "y",
+        "animationSpeed": 2.4,
+        "animationPivot": [
+          0,
+          1.05,
+          0
+        ]
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          0,
+          2.1,
+          0
+        ],
+        "args": [
+          0.12,
+          0.12,
+          1.9,
+          16
+        ],
+        "color": "#475569",
+        "partId": "generator_unit",
+        "animation": "spin",
+        "animationAxis": "y",
+        "animationSpeed": 2.4,
+        "animationPivot": [
+          0,
+          2.1,
+          0
+        ]
+      },
+      {
+        "type": "cylinder",
+        "position": [
+          0,
+          3,
+          0
+        ],
+        "args": [
+          0.95,
+          0.95,
+          0.9,
+          28
+        ],
+        "color": "#2563eb",
+        "label": "Gidrogenerator",
+        "partId": "generator_unit"
+      }
+    ],
+    "parts_uz": [
+      {
+        "label": "Bosim quvuri (naporniy truboprovod)",
+        "partId": "penstock",
+        "desc": "Ichida suv oqimi balandlikdan tezlanib turbinaning kuraklari tomon otiladi"
+      },
+      {
+        "label": "Ishchi parrak g‘ildirak (Frensis/Kaplan)",
+        "partId": "runner_blades",
+        "desc": "Kuchli suv oqimi kuraklarga urilib, markaziy valni katta moment bilan aylantiradi"
+      },
+      {
+        "label": "Val va gidrogenerator",
+        "partId": "generator_unit",
+        "desc": "Ichida vertikal val bilan bog‘langan rotor aylanib, stator o‘ramlarida tok chiqaradi"
+      }
+    ],
+    "createdAt": "2026-11-22T11:37:56.469Z"
+  },
+  {
+    "id": "obj-shamol-turbinasi-1795347476457",
+    "name_uz": "shamol turbinasi",
+    "name_en": "wind turbine",
+    "aliases_uz": [
+      "shamol turbinasi 3d"
+    ],
+    "svg_data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">\n  <g data-part=\"0\" data-part-id=\"tower\">\n    <polygon points=\"92,76 108,76 116,178 84,178\" fill=\"#E2E8F0\" stroke=\"#334155\" stroke-width=\"2.8\" stroke-linejoin=\"round\"/>\n    <rect x=\"64\" y=\"176\" width=\"72\" height=\"10\" rx=\"3\" fill=\"#64748B\"/>\n  </g>\n  <g data-part=\"1\" data-part-id=\"nacelle_generator\">\n    <rect x=\"86\" y=\"62\" width=\"38\" height=\"18\" rx=\"6\" fill=\"#2563EB\" stroke=\"#1E40AF\" stroke-width=\"2.4\"/>\n    <circle cx=\"100\" cy=\"71\" r=\"8\" fill=\"#F59E0B\" stroke=\"#92400E\" stroke-width=\"2.2\"/>\n  </g>\n  <g data-part=\"2\" data-part-id=\"rotor_blades\">\n    <g data-animate=\"spin\">\n      <circle cx=\"100\" cy=\"71\" r=\"52\" fill=\"none\" stroke=\"none\"/>\n      <path d=\"M 100 63 L 94 18 L 106 20 Z\" fill=\"#F8FAFC\" stroke=\"#0F172A\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n      <path d=\"M 106 75 L 146 102 L 138 112 Z\" fill=\"#F8FAFC\" stroke=\"#0F172A\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n      <path d=\"M 94 75 L 54 102 L 62 112 Z\" fill=\"#F8FAFC\" stroke=\"#0F172A\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>\n    </g>\n  </g>\n</svg>",
+    "viewBox": "0 0 200 200",
+    "source": "procedural",
+    "mode": "3d",
+    "primitives_3d": [
+      {
+        "type": "lathe",
+        "position": [
+          0,
+          0.1,
+          0
+        ],
+        "args": [
+          24
+        ],
+        "profile": [
+          [
+            0.38,
+            0
+          ],
+          [
+            0.22,
+            1.4
+          ],
+          [
+            0.14,
+            2.9
+          ]
+        ],
+        "color": "#e2e8f0",
+        "label": "Tayanch minora",
+        "partId": "tower"
+      },
+      {
+        "type": "rounded_box",
+        "position": [
+          0,
+          3.05,
+          -0.15
+        ],
+        "args": [
+          0.48,
+          0.42,
+          0.95,
+          0.1
+        ],
+        "color": "#2563eb",
+        "label": "Generator",
+        "partId": "nacelle_generator"
+      },
+      {
+        "type": "sphere",
+        "position": [
+          0,
+          3.05,
+          0.42
+        ],
+        "args": [
+          0.2,
+          18,
+          18
+        ],
+        "color": "#f59e0b",
+        "partId": "rotor_blades",
+        "animation": "spin",
+        "animationAxis": "z",
+        "animationSpeed": 1.8,
+        "animationPivot": [
+          0,
+          3.05,
+          0.42
+        ]
+      },
+      {
+        "type": "capsule",
+        "position": [
+          0,
+          3.75,
+          0.42
+        ],
+        "args": [
+          0.09,
+          1.2
+        ],
+        "color": "#f8fafc",
+        "label": "Parraklar",
+        "partId": "rotor_blades",
+        "animation": "spin",
+        "animationAxis": "z",
+        "animationSpeed": 1.8,
+        "animationPivot": [
+          0,
+          3.05,
+          0.42
+        ]
+      },
+      {
+        "type": "capsule",
+        "position": [
+          0.62,
+          2.68,
+          0.42
+        ],
+        "rotation": [
+          0,
+          0,
+          -2.09
+        ],
+        "args": [
+          0.09,
+          1.2
+        ],
+        "color": "#f8fafc",
+        "partId": "rotor_blades",
+        "animation": "spin",
+        "animationAxis": "z",
+        "animationSpeed": 1.8,
+        "animationPivot": [
+          0,
+          3.05,
+          0.42
+        ]
+      },
+      {
+        "type": "capsule",
+        "position": [
+          -0.62,
+          2.68,
+          0.42
+        ],
+        "rotation": [
+          0,
+          0,
+          2.09
+        ],
+        "args": [
+          0.09,
+          1.2
+        ],
+        "color": "#f8fafc",
+        "partId": "rotor_blades",
+        "animation": "spin",
+        "animationAxis": "z",
+        "animationSpeed": 1.8,
+        "animationPivot": [
+          0,
+          3.05,
+          0.42
+        ]
+      }
+    ],
+    "parts_uz": [
+      {
+        "label": "Tayanch minora",
+        "partId": "tower",
+        "desc": "Ichidan o‘tgan kuch kabellari bo‘ylab generatordagi tok pastga podstansiyaga oqadi"
+      },
+      {
+        "label": "Gondola va generator",
+        "partId": "nacelle_generator",
+        "desc": "Ichida tishli multiplikator sekin aylanishni tezlashtirib generator rotorini aylantiradi"
+      },
+      {
+        "label": "Aerodinamik parraklar",
+        "partId": "rotor_blades",
+        "desc": "Havo oqimi bosim farqi bilan parraklarni va markaziy gubka valini aylantiradi"
+      }
+    ],
+    "createdAt": "2026-11-22T11:37:56.457Z"
+  }
+]

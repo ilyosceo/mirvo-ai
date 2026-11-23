@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+*.local
+
+credentials*.json
+*credential*.json
+serviceAccount*.json
+
+artifacts/
+tts-cache/
+**/.tempmediaStorage/
+
+.DS_Store
+Thumbs.db
