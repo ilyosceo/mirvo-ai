@@ -3,16 +3,13 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
-  Award,
   Box,
-  CheckCircle2,
   Coins,
   Droplets,
   FileText,
   History,
   Layers,
   Loader2,
-  Lock,
   LogOut,
   Mail,
   MessageSquare,
@@ -25,14 +22,12 @@ import {
   RotateCcw,
   RotateCw,
   SlidersHorizontal,
-  Sparkles,
   Sun,
   Trash2,
   Volume2,
   VolumeX,
   Wind,
   X,
-  XCircle,
   Zap,
 } from 'lucide-react';
 import { CACHED_LESSONS } from './data/cachedLessons';
@@ -77,17 +72,11 @@ import {
 import {
   ENGINE_LABELS_UZ,
   SUBJECT_LABELS_UZ,
-  type CheckAnswerResponse,
-  type EvaluateLessonResponse,
   type LessonBeat,
-  type LessonStep,
-  type OpenQuestionDef,
   type ResolveResponse,
   type StageAnchorsMap,
-  type StepEvaluationInput,
   type TutorLesson,
 } from './types/tutor';
-import { evaluateLessonAnswersLocally } from './lib/lessonEvaluator';
 import { VisualStage } from './components/VisualStage';
 import { TeacherStageActor } from './components/TeacherStageActor';
 import { MirvoMentor } from './components/MirvoMentor';
@@ -192,30 +181,6 @@ function clampLessonStepCount(raw: number): number {
   return Math.max(4, Math.min(12, Math.round(raw)));
 }
 
-function resolveStepOpenQuestion(
-  step: LessonStep | undefined,
-  lesson: TutorLesson
-): OpenQuestionDef {
-  if (step?.open_question?.question?.trim()) {
-    return step.open_question;
-  }
-  if (step?.quiz?.question?.trim()) {
-    return {
-      question: step.quiz.question.trim(),
-      expected_points: step.quiz.explanation_uz || step.explanation_uz,
-      hint_uz: `${lesson.topic_title} bo‘yicha asosiy qoidani o‘z so‘zingiz bilan yozing.`,
-    };
-  }
-  const cleanTitle = (step?.step_title || lesson.topic_title)
-    .replace(/^\d+[\.\)\-\:]\s*/, '')
-    .trim();
-  return {
-    question: `"${cleanTitle}" bosqichida tushuntirilgan asosiy qoida yoki jarayonni o‘z so‘zingiz bilan qisqacha tushuntiring.`,
-    expected_points: step?.explanation_uz || step?.speech_text || lesson.topic_title,
-    hint_uz: `Doskadagi formula va asosiy fikrga tayanib 1–2 gap yozing.`,
-  };
-}
-
 export default function App() {
   const { user, logout, syncLessonProgress } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -246,23 +211,6 @@ export default function App() {
     return step?.camera;
   });
   const [autoRotate3D, setAutoRotate3D] = useState(false);
-
-  // Mandatory open-ended written answers & end-of-lesson evaluation tracking
-  const [passedSteps, setPassedSteps] = useState<
-    Record<number, { answer: string; feedback: string; score?: number }>
-  >({});
-  const [answerDraft, setAnswerDraft] = useState('');
-  const [checkingAnswer, setCheckingAnswer] = useState(false);
-  const [answerResult, setAnswerResult] = useState<CheckAnswerResponse | null>(null);
-  const [answerCheckOpen, setAnswerCheckOpen] = useState(false);
-  const [answerLockNotice, setAnswerLockNotice] = useState<string | null>(null);
-  const [evalModalView, setEvalModalView] = useState<'question' | 'results'>('question');
-  const [evaluatingLesson, setEvaluatingLesson] = useState(false);
-  const [lessonEvalResult, setLessonEvalResult] = useState<EvaluateLessonResponse | null>(null);
-  const [isSpeakingResults, setIsSpeakingResults] = useState(false);
-  const passedStepsRef = useRef<
-    Record<number, { answer: string; feedback: string; score?: number }>
-  >({});
 
   // Drawers & mobile typing resilience
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -353,10 +301,6 @@ export default function App() {
   useEffect(() => {
     voiceSettingsRef.current = voiceSettings;
   }, [voiceSettings]);
-
-  useEffect(() => {
-    passedStepsRef.current = passedSteps;
-  }, [passedSteps]);
 
   useEffect(() => {
     try {
@@ -613,17 +557,11 @@ export default function App() {
             const currentIdx = activeStepIndexRef.current;
             const steps = lessonStepsRef.current;
             const nextIdx = currentIdx + 1;
-            const alreadyPassed = Boolean(passedStepsRef.current[currentIdx]);
-            if (viewModeRef.current === 'lesson') {
-              if (!alreadyPassed) {
-                setAnswerLockNotice(null);
-                setAnswerCheckOpen(true);
-              } else if (nextIdx < steps.length) {
-                autoPlayTimerRef.current = window.setTimeout(() => {
-                  autoPlayTimerRef.current = null;
-                  handleStepChangeRef.current(nextIdx, true);
-                }, 650);
-              }
+            if (viewModeRef.current === 'lesson' && nextIdx < steps.length) {
+              autoPlayTimerRef.current = window.setTimeout(() => {
+                autoPlayTimerRef.current = null;
+                handleStepChangeRef.current(nextIdx, true);
+              }, 650);
             }
           },
         },
@@ -782,16 +720,6 @@ export default function App() {
       setSliderValues(buildDefaultSliders(nextLesson));
       setCameraOverride(nextLesson.steps[0]?.camera);
       setAutoRotate3D(false);
-      passedStepsRef.current = {};
-      setPassedSteps({});
-      setAnswerDraft('');
-      setAnswerResult(null);
-      setAnswerCheckOpen(false);
-      setAnswerLockNotice(null);
-      setEvalModalView('question');
-      setEvaluatingLesson(false);
-      setLessonEvalResult(null);
-      setIsSpeakingResults(false);
       setErrorMsg(null);
       setDrawerOpen(false);
       setLessonPanelOpen(false);
@@ -873,19 +801,6 @@ export default function App() {
   const handleStepChange = useCallback(
     (nextIndex: number, autoPlay = true) => {
       if (nextIndex < 0 || nextIndex >= lesson.steps.length) return;
-      // Enforce passing all preceding steps before advancing forward
-      if (nextIndex > activeStepIndexRef.current) {
-        for (let i = 0; i < nextIndex; i++) {
-          if (!passedStepsRef.current[i]) {
-            stopPlayback();
-            setAnswerLockNotice(
-              `Keyingi darsga o‘tish uchun avval ${activeStepIndexRef.current + 1}-dars savoliga to‘g‘ri javob yozing.`
-            );
-            setAnswerCheckOpen(true);
-            return;
-          }
-        }
-      }
       stopPlayback();
       if (boardModeRef.current === 'summary') {
         boardModeRef.current = 'detailed';
@@ -895,12 +810,6 @@ export default function App() {
       setActiveBeatIndex(0);
       setBeatProgress(0);
       setActiveStepIndex(nextIndex);
-      const existingPass = passedStepsRef.current[nextIndex];
-      setAnswerDraft(existingPass?.answer || '');
-      setAnswerResult(null);
-      setEvalModalView('question');
-      setAnswerCheckOpen(false);
-      setAnswerLockNotice(null);
       const step = lesson.steps[nextIndex];
       if (step?.camera) {
         setCameraOverride([...step.camera]);
@@ -1404,34 +1313,14 @@ export default function App() {
       }
       return;
     }
-    if (!passedStepsRef.current[activeStepIndex]) {
-      stopPlayback();
-      setAnswerLockNotice(
-        "Keyingi darsga o‘tish uchun avval ushbu dars savoliga yozma javob bering."
-      );
-      setAnswerCheckOpen(true);
-      return;
-    }
     if (activeStepIndex + 1 < lesson.steps.length) {
       handleStepChange(activeStepIndex + 1, true);
-    } else {
-      setAnswerLockNotice(null);
-      if (lessonEvalResult) {
-        setEvalModalView('results');
-      } else {
-        setEvalModalView('question');
-      }
-      setAnswerCheckOpen(true);
     }
   };
 
   const handleToggleMute = () => {
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
-    if (nextMuted && isSpeakingResults) {
-      voiceEngine.stop();
-      setIsSpeakingResults(false);
-    }
     if (!isPlaying) return;
     if (boardMode === 'summary' && summaryBeats.length > 0) {
       speakBeatsList(summaryBeats, nextMuted, summaryBeatIndex, 0);
@@ -1440,182 +1329,15 @@ export default function App() {
     }
   };
 
-  const activeOpenQuestion = useMemo(
-    () => resolveStepOpenQuestion(currentStep, lesson),
-    [currentStep, lesson]
-  );
-
-  const isCurrentStepPassed = Boolean(passedSteps[activeStepIndex]);
-
-  const highestUnlockedStep = useMemo(() => {
-    for (let i = 0; i < lesson.steps.length; i++) {
-      if (!passedSteps[i]) return i;
-    }
-    return Math.max(0, lesson.steps.length - 1);
-  }, [lesson.steps.length, passedSteps]);
-
-  const isLessonCompleted = useMemo(
-    () => lesson.steps.length > 0 && lesson.steps.every((_, idx) => Boolean(passedSteps[idx])),
-    [lesson.steps, passedSteps]
-  );
-
-  const speakEvaluationSummary = useCallback((result: EvaluateLessonResponse) => {
-    if (!result.summary_speech_uz?.trim()) return;
-    stopPlayback();
-    voiceEngine.unlockAudio();
-    setIsSpeakingResults(true);
-    voiceEngine.speak(
-      result.summary_speech_uz,
-      {
-        onStart: () => setIsSpeakingResults(true),
-        onEnd: () => setIsSpeakingResults(false),
-      },
-      true,
-      voiceSettingsRef.current
-    );
-  }, [stopPlayback]);
-
-  const evaluateAllStepAnswers = useCallback(
-    async (
-      answersMap: Record<number, { answer: string; feedback: string; score?: number }>
-    ) => {
-      const items: StepEvaluationInput[] = lesson.steps.map((step, idx) => {
-        const qDef = resolveStepOpenQuestion(step, lesson);
-        return {
-          stepIndex: idx,
-          stepTitle: step.step_title,
-          question: qDef.question,
-          expectedPoints: qDef.expected_points,
-          stepExplanation: step.explanation_uz,
-          formulas: step.katex_formulas,
-          userAnswer: answersMap[idx]?.answer || '',
-        };
-      });
-
-      setEvalModalView('results');
-      setEvaluatingLesson(true);
-      setLessonEvalResult(null);
-
-      let finalEval: EvaluateLessonResponse | null = null;
-      try {
-        const res = await fetch('/api/tutor/evaluate-lesson', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            topicTitle: lesson.topic_title,
-            items,
-          }),
-        });
-        const payload = await safeParseJson<EvaluateLessonResponse>(
-          res,
-          'Natijalarni hisoblab bo‘lmadi.'
-        );
-        if (res.ok && typeof payload.overall_percent === 'number' && Array.isArray(payload.steps)) {
-          finalEval = payload;
-          if (payload.token_usage) {
-            setSessionTokenStats((prev) => recordSessionTokenStats(prev, payload.token_usage));
-          }
-        }
-      } catch {
-        // Resilient local Uzbek evaluator fallback ensures final percentages & correct answers always load
-      }
-
-      if (!finalEval) {
-        finalEval = evaluateLessonAnswersLocally(lesson.topic_title, items);
-      }
-
-      const enrichedMap: Record<number, { answer: string; feedback: string; score?: number }> = {
-        ...answersMap,
-      };
-      for (const s of finalEval.steps) {
-        enrichedMap[s.stepIndex] = {
-          answer: answersMap[s.stepIndex]?.answer || s.userAnswer,
-          feedback: s.feedback_uz,
-          score: s.score,
-        };
-      }
-      passedStepsRef.current = enrichedMap;
-      setPassedSteps(enrichedMap);
-      setLessonEvalResult(finalEval);
-      setEvaluatingLesson(false);
-
-      if (!isMuted) {
-        speakEvaluationSummary(finalEval);
-      }
-    },
-    [lesson, isMuted, speakEvaluationSummary]
-  );
-
-  const handleReplayCurrentStepFromModal = useCallback(() => {
-    if (isSpeakingResults) {
-      voiceEngine.stop();
-      setIsSpeakingResults(false);
-    }
-    setAnswerCheckOpen(false);
-    setAnswerLockNotice(null);
-    setAnswerResult(null);
-    setIsMuted(false);
-    voiceEngine.unlockAudio();
-    if (boardModeRef.current === 'summary') {
-      boardModeRef.current = 'detailed';
-      setBoardMode('detailed');
-    }
-    setActiveBeatIndex(0);
-    setBeatProgress(0);
-    if (activeStepBeats.length > 0) {
-      speakBeatsList(activeStepBeats, false, 0, 0);
-    }
-  }, [activeStepBeats, isSpeakingResults, speakBeatsList]);
-
-  const handleCheckWrittenAnswer = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const trimmed = answerDraft.trim();
-    if (trimmed.length < 2) {
-      setAnswerResult({
-        passed: false,
-        score: 0,
-        feedback_uz: "Javob yozilmaguncha keyingi darsga o‘tib bo‘lmaydi. Qisqacha javob yozing.",
-      });
-      return;
-    }
-
-    setCheckingAnswer(true);
-    setAnswerLockNotice(null);
-    setAnswerResult(null);
-
-    const nextMap = {
-      ...passedStepsRef.current,
-      [activeStepIndex]: {
-        answer: trimmed,
-        feedback: 'Javob qabul qilindi',
-        score: passedStepsRef.current[activeStepIndex]?.score,
-      },
-    };
-    passedStepsRef.current = nextMap;
-    setPassedSteps(nextMap);
-
-    const isLastStep = activeStepIndex + 1 >= lesson.steps.length;
-    if (!isLastStep) {
-      setCheckingAnswer(false);
-      handleStepChange(activeStepIndex + 1, true);
-      return;
-    }
-
-    setCheckingAnswer(false);
-    await evaluateAllStepAnswers(nextMap);
-  };
-
   const cleanStepTitle = (title: string) => title.replace(/^\d+\.\s*/, '');
 
   const globalLessonProgress = useMemo(() => {
     const totalSteps = Math.max(1, lesson.steps.length);
-    const passedCount = lesson.steps.filter((_, idx) => Boolean(passedSteps[idx])).length;
-    if (passedCount === totalSteps) return 1;
     return Math.max(
       0,
-      Math.min(1, (activeStepIndex + (isCurrentStepPassed ? 1 : activeStepProgress)) / totalSteps)
+      Math.min(1, (activeStepIndex + activeStepProgress) / totalSteps)
     );
-  }, [lesson.steps, passedSteps, activeStepIndex, isCurrentStepPassed, activeStepProgress]);
+  }, [lesson.steps.length, activeStepIndex, activeStepProgress]);
 
   const globalLessonPercent = Math.round(globalLessonProgress * 100);
   const currentLessonUsage = lesson.token_usage ?? ZERO_TOKEN_USAGE;
@@ -1839,40 +1561,6 @@ export default function App() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setAnswerLockNotice(null);
-                  setEvalModalView(
-                    lessonEvalResult && activeStepIndex === lesson.steps.length - 1
-                      ? 'results'
-                      : 'question'
-                  );
-                  setAnswerCheckOpen(true);
-                }}
-                aria-label="Dars savoliga javob yozish"
-                className={`h-8 px-2.5 sm:px-3 rounded-full border text-[11px] font-medium inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                  lessonEvalResult
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                    : isCurrentStepPassed
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                    : 'bg-[#0071E3]/[0.08] border-[#0071E3]/25 text-[#0071E3] hover:bg-[#0071E3]/[0.14]'
-                }`}
-              >
-                {lessonEvalResult || isCurrentStepPassed ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                ) : (
-                  <Sparkles className="w-3.5 h-3.5 text-[#0071E3]" />
-                )}
-                <span className="hidden sm:inline">
-                  {lessonEvalResult
-                    ? `Natija: ${lessonEvalResult.overall_percent}%`
-                    : isCurrentStepPassed
-                    ? 'Javob yozildi'
-                    : 'Javob yozish'}
-                </span>
-              </button>
-
-              <button
-                type="button"
                 onClick={() => setLessonPanelOpen((v) => !v)}
                 aria-expanded={lessonPanelOpen}
                 aria-label="Tafsilotlar va qo‘shimcha savol"
@@ -2056,39 +1744,28 @@ export default function App() {
                   )}
                 </button>
 
-                {/* Step Indicator Dots with Hard Lock */}
+                {/* Step Indicator Dots */}
                 <div
                   aria-label="Bosqichlar indikatori"
                   className="flex items-center gap-1 px-1.5 sm:px-2 shrink-0"
                 >
                   {lesson.steps.map((step, idx) => {
                     const isActive = idx === activeStepIndex;
-                    const isPassed = Boolean(passedSteps[idx]);
-                    const isLocked = idx > highestUnlockedStep;
+                    const isVisited = idx < activeStepIndex;
                     return (
                       <button
                         key={step.step_number || idx}
                         type="button"
                         onClick={() => handleStepChange(idx, true)}
-                        aria-label={
-                          isLocked
-                            ? `${idx + 1}-qadam (qulflangan — avval joriy savolga javob bering)`
-                            : `${idx + 1}-qadam: ${cleanStepTitle(step.step_title)}`
-                        }
+                        aria-label={`${idx + 1}-qadam: ${cleanStepTitle(step.step_title)}`}
                         aria-current={isActive ? 'step' : undefined}
-                        title={
-                          isLocked
-                            ? `${idx + 1}. Qulflangan`
-                            : `${idx + 1}. ${cleanStepTitle(step.step_title)}`
-                        }
+                        title={`${idx + 1}. ${cleanStepTitle(step.step_title)}`}
                         className={`h-2 rounded-full apple-transition cursor-pointer ${
                           isActive
                             ? 'w-5 bg-[#0071E3]'
-                            : isPassed
-                            ? 'w-2 bg-emerald-500 hover:bg-emerald-600'
-                            : isLocked
-                            ? 'w-2 bg-black/10 opacity-60'
-                            : 'w-2 bg-black/25 hover:bg-black/40'
+                            : isVisited
+                            ? 'w-2 bg-[#0071E3]/45 hover:bg-[#0071E3]/70'
+                            : 'w-2 bg-black/20 hover:bg-black/40'
                         }`}
                       />
                     );
@@ -2258,80 +1935,6 @@ export default function App() {
                     </div>
                   )}
 
-                  {/* Mandatory Written Assessment (No Multiple Choice) */}
-                  <div className="rounded-2xl border border-[#0071E3]/20 bg-[#0071E3]/[0.04] p-4 space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-[#0071E3] inline-flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>AI Yozma Tekshiruv</span>
-                      </span>
-                      {isCurrentStepPassed ? (
-                        <span className="text-[11px] font-semibold text-emerald-700 inline-flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Tasdiqlandi</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-medium text-[#6E6E73] inline-flex items-center gap-1">
-                          <Lock className="w-3 h-3" />
-                          <span>Keyingi dars qulflangan</span>
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-sm font-semibold text-[#1D1D1F] leading-snug">
-                      {activeOpenQuestion.question}
-                    </p>
-
-                    <form onSubmit={handleCheckWrittenAnswer} className="space-y-2.5">
-                      <textarea
-                        rows={3}
-                        value={answerDraft}
-                        onFocus={() => setIsMobileTyping(true)}
-                        onBlur={() => setIsMobileTyping(false)}
-                        onChange={(e) => setAnswerDraft(e.target.value)}
-                        placeholder="Javobingizni o‘z so‘zingiz bilan yozing..."
-                        className="w-full rounded-2xl border border-black/[0.08] bg-white px-3 py-2.5 text-sm text-[#1D1D1F] placeholder:text-[#6E6E73]/75 focus:outline-none focus:border-[#0071E3] resize-none"
-                      />
-                      <button
-                        type="submit"
-                        disabled={checkingAnswer || answerDraft.trim().length < 2}
-                        className="w-full h-9 rounded-full bg-[#0071E3] hover:bg-[#0077ED] disabled:opacity-50 text-white text-xs font-medium inline-flex items-center justify-center gap-1.5 apple-transition cursor-pointer"
-                      >
-                        {checkingAnswer ? (
-                          <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>AI tekshirmoqda...</span>
-                          </>
-                        ) : (
-                          <span>AI bilan tekshirish</span>
-                        )}
-                      </button>
-                    </form>
-
-                    {answerResult && (
-                      <div
-                        className={`rounded-xl px-3 py-2.5 text-xs space-y-1 ${
-                          answerResult.passed
-                            ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
-                            : 'bg-amber-50 border border-amber-200 text-amber-900'
-                        }`}
-                      >
-                        <div className="font-semibold flex items-center justify-between gap-2">
-                          <span>
-                            {answerResult.passed ? 'To‘g‘ri javob!' : 'Yana urinib ko‘ring'}
-                          </span>
-                          {typeof answerResult.score === 'number' && (
-                            <span className="font-mono-tabular">{answerResult.score}%</span>
-                          )}
-                        </div>
-                        <p className="leading-relaxed">{answerResult.feedback_uz}</p>
-                        {!answerResult.passed && answerResult.hint_uz && (
-                          <p className="text-[11px] opacity-85">Ishora: {answerResult.hint_uz}</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
                   {activeStepBeats.length > 0 && (
                     <div className="space-y-2 pt-2 border-t border-black/[0.05]">
                       <div className="text-xs font-medium text-[#6E6E73]">Asosiy fikrlar</div>
@@ -2374,8 +1977,6 @@ export default function App() {
                     <div className="space-y-1.5">
                       {lesson.steps.map((step, idx) => {
                         const isActive = idx === activeStepIndex;
-                        const isPassed = Boolean(passedSteps[idx]);
-                        const isLocked = idx > highestUnlockedStep;
                         return (
                           <button
                             key={step.step_number || idx}
@@ -2384,19 +1985,12 @@ export default function App() {
                             className={`w-full text-left rounded-2xl border px-3 py-2 flex items-center justify-between gap-2 apple-transition cursor-pointer ${
                               isActive
                                 ? 'border-[#0071E3] bg-[#0071E3]/[0.06] text-[#1D1D1F]'
-                                : isLocked
-                                ? 'border-black/[0.04] bg-[#F5F5F7]/40 text-[#6E6E73]/75'
                                 : 'border-black/[0.05] bg-[#F5F5F7]/60 hover:bg-[#F5F5F7] text-[#6E6E73]'
                             }`}
                           >
                             <div className="text-xs font-semibold text-[#1D1D1F] truncate">
                               {idx + 1}. {cleanStepTitle(step.step_title)}
                             </div>
-                            {isPassed ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            ) : isLocked ? (
-                              <Lock className="w-3.5 h-3.5 text-[#6E6E73]/60 shrink-0" />
-                            ) : null}
                           </button>
                         );
                       })}
@@ -3066,332 +2660,6 @@ export default function App() {
               )}
             </div>
           </aside>
-        </div>
-      )}
-
-      {/* ==================== STEP QUESTION & FINAL PERCENTAGE RESULTS MODAL ==================== */}
-      {viewMode === 'lesson' && answerCheckOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/35 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Dars yakuniy savoli va natijalar"
-        >
-          <div className="w-full max-w-xl rounded-3xl bg-white border border-black/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col max-h-[90dvh]">
-            <div className="px-5 py-4 border-b border-black/[0.06] flex items-center justify-between gap-3 shrink-0">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#0071E3]">
-                  {evalModalView === 'results' ? (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Award className="w-4 h-4 text-[#0071E3]" />
-                      <span>Yakuniy natijalar · {lesson.steps.length} ta dars</span>
-                    </span>
-                  ) : (
-                    <span>
-                      {activeStepIndex + 1}-dars / {lesson.steps.length} · Nazorat savoli
-                    </span>
-                  )}
-                  {evalModalView === 'question' && isCurrentStepPassed && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 text-[10px]">
-                      <CheckCircle2 className="w-3 h-3" />
-                      Saqlandi
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-[#6E6E73] truncate mt-0.5">
-                  {evalModalView === 'results'
-                    ? lesson.topic_title
-                    : cleanStepTitle(currentStep.step_title)}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isSpeakingResults) {
-                    voiceEngine.stop();
-                    setIsSpeakingResults(false);
-                  }
-                  setAnswerCheckOpen(false);
-                }}
-                aria-label="Yopish"
-                className="w-8 h-8 rounded-full text-[#6E6E73] hover:bg-black/[0.05] hover:text-[#1D1D1F] flex items-center justify-center cursor-pointer shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {evalModalView === 'results' ? (
-              <div className="p-5 space-y-4 overflow-y-auto">
-                {evaluatingLesson || !lessonEvalResult ? (
-                  <div className="py-10 flex flex-col items-center justify-center gap-3 text-center">
-                    <Loader2 className="w-7 h-7 animate-spin text-[#0071E3]" />
-                    <div className="text-sm font-medium text-[#1D1D1F]">
-                      Barcha dars javoblari tahlil qilinib, foizlarda hisoblanmoqda...
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {/* Overall Percentage Hero Card */}
-                    <div className="rounded-2xl border border-black/[0.07] bg-gradient-to-br from-[#F5F8FF] to-white p-4 space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <div className="text-[11px] font-medium text-[#6E6E73]">
-                            Umumiy o‘zlashtirish ko‘rsatkichi
-                          </div>
-                          <div className="flex items-baseline gap-2 mt-0.5">
-                            <span
-                              className="text-3xl sm:text-4xl font-bold font-mono-tabular text-[#1D1D1F]"
-                              style={{ fontFamily: 'var(--font-display)' }}
-                            >
-                              {lessonEvalResult.overall_percent}%
-                            </span>
-                            <span
-                              className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                                lessonEvalResult.overall_percent >= 80
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : lessonEvalResult.overall_percent >= 55
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-rose-100 text-rose-800'
-                              }`}
-                            >
-                              {lessonEvalResult.overall_percent >= 85
-                                ? 'A’lo natija'
-                                : lessonEvalResult.overall_percent >= 65
-                                ? 'Yaxshi natija'
-                                : lessonEvalResult.overall_percent >= 40
-                                ? 'Qoniqarli'
-                                : 'Qayta ko‘rib chiqing'}
-                            </span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isSpeakingResults) {
-                              voiceEngine.stop();
-                              setIsSpeakingResults(false);
-                            } else {
-                              speakEvaluationSummary(lessonEvalResult);
-                            }
-                          }}
-                          className={`h-9 px-3.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5 apple-transition cursor-pointer shrink-0 ${
-                            isSpeakingResults
-                              ? 'bg-[#1D1D1F] text-white'
-                              : 'bg-[#0071E3] hover:bg-[#0077ED] text-white'
-                          }`}
-                        >
-                          {isSpeakingResults ? (
-                            <>
-                              <VolumeX className="w-3.5 h-3.5" />
-                              <span>To‘xtatish</span>
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-3.5 h-3.5" />
-                              <span>Javoblarni eshitish</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="h-2 w-full rounded-full bg-black/[0.06] overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            lessonEvalResult.overall_percent >= 70
-                              ? 'bg-emerald-500'
-                              : lessonEvalResult.overall_percent >= 45
-                              ? 'bg-amber-500'
-                              : 'bg-rose-500'
-                          }`}
-                          style={{ width: `${lessonEvalResult.overall_percent}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Per-Step Percentage + Correct Answers Breakdown */}
-                    <div className="space-y-2.5">
-                      {lessonEvalResult.steps.map((item) => (
-                        <div
-                          key={item.stepIndex}
-                          className="rounded-2xl border border-black/[0.07] bg-[#F9F9FB] p-3.5 space-y-2"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="text-[11px] font-semibold text-[#0071E3]">
-                                {item.stepIndex + 1}-dars · {item.stepTitle}
-                              </div>
-                              <div className="text-xs sm:text-[13px] font-semibold text-[#1D1D1F] mt-0.5 leading-snug">
-                                {item.question}
-                              </div>
-                            </div>
-                            <span
-                              className={`shrink-0 font-mono-tabular text-xs font-bold px-2.5 py-1 rounded-full ${
-                                item.score >= 70
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : item.score >= 40
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-rose-100 text-rose-800'
-                              }`}
-                            >
-                              {item.score}%
-                            </span>
-                          </div>
-
-                          <div className="text-xs text-[#1D1D1F] bg-white rounded-xl border border-black/[0.05] px-3 py-2">
-                            <span className="font-semibold text-[#6E6E73]">Sizning javobingiz: </span>
-                            <span>{item.userAnswer || '—'}</span>
-                          </div>
-
-                          <div className="text-xs text-emerald-950 bg-emerald-50/80 rounded-xl border border-emerald-200/80 px-3 py-2 leading-relaxed">
-                            <span className="font-semibold text-emerald-800">To‘g‘ri javob: </span>
-                            <span>{item.correct_answer_uz}</span>
-                          </div>
-
-                          {item.feedback_uz && (
-                            <div className="text-[11px] text-[#6E6E73] px-0.5">
-                              {item.feedback_uz}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-black/[0.06]">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (isSpeakingResults) {
-                            voiceEngine.stop();
-                            setIsSpeakingResults(false);
-                          }
-                          setAnswerCheckOpen(false);
-                        }}
-                        className="h-10 px-4 rounded-full bg-[#F5F5F7] hover:bg-black/[0.06] text-xs font-medium text-[#1D1D1F] apple-transition cursor-pointer"
-                      >
-                        Doskaga qaytish
-                      </button>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setEvalModalView('question')}
-                          className="h-10 px-4 rounded-full border border-black/[0.1] bg-white hover:bg-[#F5F5F7] text-xs font-medium text-[#1D1D1F] apple-transition cursor-pointer"
-                        >
-                          Javobni tahrirlash
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isSpeakingResults) {
-                              voiceEngine.stop();
-                              setIsSpeakingResults(false);
-                            }
-                            setAnswerCheckOpen(false);
-                            stopPlayback();
-                            setViewMode('home');
-                          }}
-                          className="h-10 px-5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 apple-transition cursor-pointer"
-                        >
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Yakunlash</span>
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="p-5 space-y-4 overflow-y-auto">
-                {answerLockNotice && !isCurrentStepPassed && (
-                  <div className="rounded-2xl bg-amber-50 border border-amber-200 px-3.5 py-2.5 text-xs font-medium text-amber-900 flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-amber-700 shrink-0" />
-                    <span>{answerLockNotice}</span>
-                  </div>
-                )}
-
-                <div className="space-y-1.5">
-                  <div className="text-[11px] font-medium text-[#6E6E73]">
-                    Javob yozilmaguncha keyingi darsga o‘tib bo‘lmaydi
-                  </div>
-                  <h3
-                    className="text-base sm:text-[17px] font-semibold text-[#1D1D1F] leading-snug"
-                    style={{ fontFamily: 'var(--font-display)' }}
-                  >
-                    {activeOpenQuestion.question}
-                  </h3>
-                </div>
-
-                <form onSubmit={handleCheckWrittenAnswer} className="space-y-3">
-                  <textarea
-                    rows={3}
-                    value={answerDraft}
-                    onFocus={() => setIsMobileTyping(true)}
-                    onBlur={() => setIsMobileTyping(false)}
-                    onChange={(e) => {
-                      setAnswerDraft(e.target.value);
-                      if (answerResult) setAnswerResult(null);
-                    }}
-                    placeholder="O‘z so‘zingiz bilan javob yozing (variant tanlash emas)..."
-                    className="w-full rounded-2xl border border-black/[0.1] bg-[#F5F5F7]/70 focus:bg-white px-3.5 py-3 text-sm text-[#1D1D1F] placeholder:text-[#6E6E73]/75 focus:outline-none focus:border-[#0071E3] resize-none"
-                  />
-
-                  {answerResult && !answerResult.passed && (
-                    <div className="rounded-2xl px-3.5 py-2.5 text-xs border bg-amber-50 border-amber-200 text-amber-950 flex items-center gap-2">
-                      <XCircle className="w-4 h-4 text-amber-700 shrink-0" />
-                      <span>{answerResult.feedback_uz}</span>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={handleReplayCurrentStepFromModal}
-                      className="h-10 px-4 rounded-full bg-[#F5F5F7] hover:bg-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Qayta eshitish</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      {lessonEvalResult && activeStepIndex === lesson.steps.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={() => setEvalModalView('results')}
-                          className="h-10 px-4 rounded-full border border-black/[0.1] bg-white hover:bg-[#F5F5F7] text-xs font-medium text-[#1D1D1F] apple-transition cursor-pointer"
-                        >
-                          Natija ({lessonEvalResult.overall_percent}%)
-                        </button>
-                      )}
-
-                      <button
-                        type="submit"
-                        disabled={checkingAnswer || answerDraft.trim().length < 2}
-                        className="h-10 px-5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] disabled:opacity-45 text-white text-xs sm:text-sm font-medium inline-flex items-center gap-1.5 apple-transition cursor-pointer"
-                      >
-                        {checkingAnswer ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Hisoblanmoqda...</span>
-                          </>
-                        ) : activeStepIndex + 1 < lesson.steps.length ? (
-                          <>
-                            <span>Keyingi</span>
-                            <ArrowRight className="w-4 h-4" />
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="w-4 h-4" />
-                            <span>Natijani ko‘rish</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            )}
-          </div>
         </div>
       )}
 
