@@ -1,7 +1,7 @@
-import React, { useId } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import type { TeacherDepth, TutorPose } from '../types/tutor';
 
-interface MirvoMentorProps {
+export interface MirvoMentorProps {
   isSpeaking: boolean;
   isDrawing?: boolean;
   isListening?: boolean;
@@ -17,6 +17,7 @@ interface MirvoMentorProps {
   speechPitch?: number;
   lookVector?: { x: number; y: number };
   focusActive?: boolean;
+  interactive?: boolean;
 }
 
 function clampVal(v: number, min: number, max: number): number {
@@ -29,209 +30,400 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
   isListening = false,
   isNodding = false,
   voiceActivity = 0,
-  size = 64,
+  size = 76,
   className = '',
   tiltDeg = 0,
   pose = 'approach',
   calloutNote,
   depth = 'mid',
-  speechRate = 1,
   speechPitch = 1,
   lookVector,
   focusActive = false,
+  interactive = false,
 }) => {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
-  const coreGradientId = `mirvo-lens-core-${uid}`;
-  const ringGradientId = `mirvo-lens-ring-${uid}`;
-  const activity = Math.max(0, Math.min(1, voiceActivity));
-  const rate = Math.max(0.7, Math.min(1.5, speechRate));
-  const pitchScale = Math.max(0.8, Math.min(1.25, speechPitch));
-  const bars = [0.42, 0.76, 1, 0.72, 0.38];
-  const shadowAlpha = depth === 'near' ? 0.18 : depth === 'far' ? 0.08 : 0.13;
-  const haloVisible = isSpeaking || isListening || focusActive;
+  const faceGradId = `ustoz-face-${uid}`;
+  const rimGradId = `ustoz-rim-${uid}`;
+  const irisGradId = `ustoz-iris-${uid}`;
 
-  const lx = clampVal(lookVector?.x ?? 0, -2.5, 2.5);
-  const ly = clampVal(lookVector?.y ?? 0, -2.5, 2.5);
-  const hasLookDir = Math.hypot(lx, ly) > 0.08;
-  const focusAngleDeg = hasLookDir ? (Math.atan2(ly, lx) * 180) / Math.PI : -45;
-  const eyeScale = focusActive ? 2.5 : 2.1;
-  const pupilScale = focusActive ? 1.45 : 1.15;
-  const eyeOffsetX = hasLookDir ? clampVal(lx * eyeScale, -5.6, 5.6) : 0;
-  const eyeOffsetY = hasLookDir ? clampVal(ly * eyeScale * 0.9, -4.8, 4.8) : 0;
-  const pupilOffsetX = hasLookDir ? clampVal(lx * pupilScale, -2.8, 2.8) : 0;
-  const pupilOffsetY = hasLookDir ? clampVal(ly * pupilScale * 0.9, -2.4, 2.4) : 0;
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [cursorGaze, setCursorGaze] = useState<{
+    active: boolean;
+    leftX: number;
+    leftY: number;
+    rightX: number;
+    rightY: number;
+    faceShiftX: number;
+    faceShiftY: number;
+    headTilt: number;
+  }>({
+    active: false,
+    leftX: 0,
+    leftY: 0,
+    rightX: 0,
+    rightY: 0,
+    faceShiftX: 0,
+    faceShiftY: 0,
+    headTilt: 0,
+  });
+
+  const [isBlinking, setIsBlinking] = useState(false);
+
+  // Real-time mouse / pointer eye-tracking across the entire viewport
+  useEffect(() => {
+    let rafId = 0;
+    let lastClientX = 0;
+    let lastClientY = 0;
+
+    const updateEyesFromPoint = (clientX: number, clientY: number) => {
+      const el = rootRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const centerX = rect.left + rect.width * 0.5;
+      const centerY = rect.top + rect.height * 0.52;
+
+      // Left eye center & Right eye center in viewport coords
+      const leftEyeX = rect.left + rect.width * (40 / 112);
+      const rightEyeX = rect.left + rect.width * (72 / 112);
+      const eyeY = rect.top + rect.height * (56 / 112);
+
+      const computeEyeOffset = (ex: number, ey: number, maxRadius: number) => {
+        const dx = clientX - ex;
+        const dy = clientY - ey;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 1) return { x: 0, y: 0 };
+        const factor = Math.min(1, dist / 180) * maxRadius;
+        return {
+          x: (dx / dist) * factor,
+          y: (dy / dist) * factor,
+        };
+      };
+
+      const left = computeEyeOffset(leftEyeX, eyeY, 5.2);
+      const right = computeEyeOffset(rightEyeX, eyeY, 5.2);
+      const face = computeEyeOffset(centerX, centerY, 2.8);
+      const headTilt = clampVal(((clientX - centerX) / 420) * 6, -6, 6);
+
+      setCursorGaze({
+        active: true,
+        leftX: left.x,
+        leftY: left.y,
+        rightX: right.x,
+        rightY: right.y,
+        faceShiftX: face.x,
+        faceShiftY: face.y,
+        headTilt,
+      });
+    };
+
+    const handlePointerMove = (e: PointerEvent | MouseEvent) => {
+      lastClientX = e.clientX;
+      lastClientY = e.clientY;
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        updateEyesFromPoint(lastClientX, lastClientY);
+      });
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('mousemove', handlePointerMove);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Natural periodic blink
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setIsBlinking(true);
+      window.setTimeout(() => setIsBlinking(false), 130);
+    }, 3900);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const fallbackLx = clampVal(lookVector?.x ?? 0, -2.5, 2.5);
+  const fallbackLy = clampVal(lookVector?.y ?? 0, -2.5, 2.5);
+
+  const leftOffsetX = cursorGaze.active ? cursorGaze.leftX : clampVal(fallbackLx * 2.1, -5, 5);
+  const leftOffsetY = cursorGaze.active ? cursorGaze.leftY : clampVal(fallbackLy * 2.0, -4.6, 4.6);
+  const rightOffsetX = cursorGaze.active ? cursorGaze.rightX : clampVal(fallbackLx * 2.1, -5, 5);
+  const rightOffsetY = cursorGaze.active ? cursorGaze.rightY : clampVal(fallbackLy * 2.0, -4.6, 4.6);
+  const faceX = cursorGaze.active ? cursorGaze.faceShiftX : clampVal(fallbackLx * 1.1, -2.5, 2.5);
+  const faceY = cursorGaze.active ? cursorGaze.faceShiftY : clampVal(fallbackLy * 1.0, -2.2, 2.2);
+
+  const activity = Math.max(0, Math.min(1, voiceActivity));
+  const pitchScale = Math.max(0.8, Math.min(1.25, speechPitch));
+  const combinedTilt = tiltDeg + (cursorGaze.active ? cursorGaze.headTilt : 0);
+  const shadowAlpha = depth === 'near' ? 0.22 : depth === 'far' ? 0.12 : 0.17;
+  const mouthHeight = isSpeaking ? clampVal((4 + activity * 11) * pitchScale, 4, 14) : 4;
 
   return (
     <div
-      className={`relative inline-flex flex-col items-center justify-center select-none pointer-events-none shrink-0 ${className}`}
+      ref={rootRef}
+      className={`relative inline-flex flex-col items-center justify-center select-none ${
+        interactive ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'
+      } shrink-0 ${className}`}
       style={{
         width: size,
         height: size,
-        filter: `drop-shadow(0 5px 12px rgba(15, 23, 42, ${shadowAlpha}))`,
-        transform: `translateY(${isNodding ? -2 : 0}px) rotate(${tiltDeg.toFixed(1)}deg)`,
-        opacity: depth === 'far' ? 0.92 : 1,
-        transition: 'opacity 220ms ease, filter 220ms ease, transform 220ms ease',
+        filter: `drop-shadow(0 8px 18px rgba(17, 24, 39, ${shadowAlpha}))`,
+        transform: `translateY(${isNodding ? -3 : 0}px) rotate(${combinedTilt.toFixed(1)}deg)`,
+        transition: 'transform 140ms cubic-bezier(0.22, 1, 0.36, 1)',
       }}
       role="img"
-      aria-label="Mirvo AI fokus ko‘rsatkichi"
+      aria-label="Mirvo Emoji Ustoz — ko‘zi bilan sichqonchani kuzatuvchi ustoz"
       data-pose={pose}
     >
       {calloutNote && (
         <div
-          className={`mb-1 px-2.5 py-0.5 rounded-full backdrop-blur-md shadow-xs text-[10px] font-semibold whitespace-nowrap leading-tight transition-colors ${
-            focusActive && isSpeaking
-              ? 'bg-amber-50/95 border border-amber-400/80 text-amber-950'
-              : 'bg-white/95 border border-black/[0.08] text-[#1D1D1F]'
+          className={`mb-1.5 px-2.5 py-0.5 rounded-full backdrop-blur-md shadow-xs text-[10px] font-mono-tabular font-semibold whitespace-nowrap leading-tight transition-colors ${
+            focusActive || isSpeaking
+              ? 'bg-[#111827] border border-amber-400/90 text-amber-300'
+              : 'bg-white/95 border border-black/15 text-[#111827]'
           }`}
         >
           {calloutNote}
         </div>
       )}
 
-      <svg viewBox="0 0 120 120" className="w-full h-full overflow-visible" aria-hidden="true">
+      <svg viewBox="0 0 112 112" className="w-full h-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id={coreGradientId} x1="34" y1="30" x2="86" y2="90" gradientUnits="userSpaceOnUse">
+          <radialGradient id={faceGradId} cx="42%" cy="34%" r="64%">
+            <stop offset="0%" stopColor="#FDE68A" />
+            <stop offset="52%" stopColor="#FBBF24" />
+            <stop offset="100%" stopColor="#D97706" />
+          </radialGradient>
+          <linearGradient id={rimGradId} x1="16" y1="16" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFFBEB" />
+            <stop offset="100%" stopColor="#FDE68A" />
+          </linearGradient>
+          <radialGradient id={irisGradId} cx="38%" cy="35%" r="65%">
             <stop offset="0%" stopColor="#3B82F6" />
-            <stop offset="55%" stopColor="#0071E3" />
-            <stop offset="100%" stopColor="#1D4ED8" />
-          </linearGradient>
-          <linearGradient id={ringGradientId} x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="100%" stopColor="#F0F7FF" />
-          </linearGradient>
+            <stop offset="65%" stopColor="#1D4ED8" />
+            <stop offset="100%" stopColor="#1E3A8A" />
+          </radialGradient>
         </defs>
 
-        {haloVisible && (
+        {/* Active speaking / listening pulse ring */}
+        {(isSpeaking || isListening || focusActive || isDrawing) && (
           <circle
-            cx="60"
-            cy="60"
-            r={isListening ? 49 : focusActive && isSpeaking ? 48 : focusActive ? 46 : 45}
+            cx="56"
+            cy="58"
+            r="50"
             fill="none"
-            stroke={isListening ? '#3B82F6' : focusActive ? '#F59E0B' : '#0071E3'}
-            strokeWidth={focusActive && isSpeaking ? '2.2' : '1.6'}
-            strokeDasharray="4 4"
-            opacity={focusActive && isSpeaking ? '0.92' : focusActive ? '0.72' : '0.58'}
+            stroke={isListening ? '#3B82F6' : '#F59E0B'}
+            strokeWidth="2"
+            strokeDasharray="5 4"
+            opacity="0.85"
             className="mirvo-mentor-halo"
           />
         )}
 
-        <g
-          className="mirvo-mentor-body"
-          style={{ animationDuration: `${Math.max(0.6, 1.3 / rate)}s` }}
-        >
-          {/* Outer optical bezel */}
-          <circle
-            cx="60"
-            cy="60"
-            r="36"
-            fill={`url(#${ringGradientId})`}
-            stroke={isListening ? '#60A5FA' : focusActive || isDrawing ? '#F59E0B' : '#CBD5E1'}
-            strokeWidth={focusActive ? '2.1' : '1.8'}
-          />
+        {/* Warm Emoji Body Outer Rim + 2.5D Golden Sphere */}
+        <circle
+          cx="56"
+          cy="58"
+          r="44"
+          fill={`url(#${rimGradId})`}
+          stroke="#B45309"
+          strokeWidth="2.2"
+        />
+        <circle
+          cx="56"
+          cy="58"
+          r="40"
+          fill={`url(#${faceGradId})`}
+        />
 
-          {/* Subtle cardinal reticle ticks */}
+        {/* Top Specular Gloss Highlight */}
+        <ellipse
+          cx="45"
+          cy="36"
+          rx="18"
+          ry="8.5"
+          fill="#FFFBEB"
+          opacity="0.45"
+          transform="rotate(-12 45 36)"
+        />
+
+        {/* Academic Mortarboard Cap (Ustoz Toji) */}
+        <g
+          style={{
+            transform: `translate(${(faceX * 0.45).toFixed(2)}px, ${(faceY * 0.35).toFixed(2)}px)`,
+          }}
+        >
           <path
-            d="M60 21V26 M60 94V99 M21 60H26 M94 60H99"
-            stroke={focusActive || isDrawing ? '#F59E0B' : '#94A3B8'}
+            d="M20 22 L56 8 L92 22 L56 34 Z"
+            fill="#111827"
+            stroke="#374151"
             strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M38 29 C38 29 46 34 56 34 C66 34 74 29 74 29 L74 35 C74 35 66 39 56 39 C46 39 38 35 38 35 Z"
+            fill="#1F2937"
+          />
+          {/* Golden Tassel */}
+          <path
+            d="M56 20 L83 25 L83 41"
+            fill="none"
+            stroke="#F59E0B"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="83" cy="42.5" r="3.4" fill="#F59E0B" stroke="#111827" strokeWidth="1" />
+        </g>
+
+        {/* Face features group with subtle 2.5D parallax shift toward cursor */}
+        <g
+          style={{
+            transform: `translate(${faceX.toFixed(2)}px, ${faceY.toFixed(2)}px)`,
+          }}
+        >
+          {/* Warm Rosy Cheeks */}
+          <ellipse cx="27" cy="69" rx="6.5" ry="3.8" fill="#EA580C" opacity="0.34" />
+          <ellipse cx="85" cy="69" rx="6.5" ry="3.8" fill="#EA580C" opacity="0.34" />
+
+          {/* Expressive Eyebrows that lift slightly when speaking or looking up */}
+          <path
+            d={`M 29 ${41 + leftOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)} Q 40 ${
+              36 + leftOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
+            } 49 ${41 + leftOffsetY * 0.35}`}
+            fill="none"
+            stroke="#78350F"
+            strokeWidth="2.6"
+            strokeLinecap="round"
+          />
+          <path
+            d={`M 63 ${41 + rightOffsetY * 0.35} Q 72 ${
+              36 + rightOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
+            } 83 ${41 + rightOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)}`}
+            fill="none"
+            stroke="#78350F"
+            strokeWidth="2.6"
             strokeLinecap="round"
           />
 
-          {/* Directional optical bezel pointer & bead aimed directly toward target part */}
-          {(focusActive || isDrawing || hasLookDir) && (
-            <g
-              style={{
-                transformOrigin: '60px 60px',
-                transform: `rotate(${focusAngleDeg.toFixed(1)}deg)`,
-                transition: 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)',
-              }}
-            >
-              {(focusActive || isDrawing) && (
-                <polygon
-                  points="99,60 92,55.5 92,64.5"
-                  fill="#F59E0B"
-                  stroke="#FFFFFF"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                />
-              )}
-              <circle
-                cx="95.5"
-                cy="60"
-                r={focusActive ? '4.4' : '3.6'}
-                fill="#F59E0B"
-                stroke="#FFFFFF"
-                strokeWidth="1.4"
-              />
-            </g>
-          )}
-
-          {/* Cobalt precision core */}
+          {/* LEFT EYE SOCKET + GLASSES FRAME */}
           <circle
-            cx="60"
-            cy="60"
-            r="26"
-            fill={`url(#${coreGradientId})`}
-            stroke="rgba(255,255,255,0.5)"
-            strokeWidth="1.2"
+            cx="40"
+            cy="56"
+            r="13.2"
+            fill="#FFFFFF"
+            stroke="#111827"
+            strokeWidth="2.8"
           />
 
-          {/* Responsive directional gaze eyes looking toward the explained part */}
-          <g
-            aria-hidden="true"
-            style={{
-              transform: `translate(${eyeOffsetX.toFixed(2)}px, ${eyeOffsetY.toFixed(2)}px)`,
-              transition: 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)',
-            }}
-          >
-            <ellipse cx="51" cy={isSpeaking ? '52' : '54'} rx="4.2" ry={isListening ? '4.8' : '4.3'} fill="#FFFFFF" />
-            <ellipse cx="69" cy={isSpeaking ? '52' : '54'} rx="4.2" ry={isListening ? '4.8' : '4.3'} fill="#FFFFFF" />
-            <circle
-              cx={51 + pupilOffsetX}
-              cy={(isSpeaking ? 52 : 54) + pupilOffsetY}
-              r="2.1"
-              fill="#0F172A"
-            />
-            <circle
-              cx={69 + pupilOffsetX}
-              cy={(isSpeaking ? 52 : 54) + pupilOffsetY}
-              r="2.1"
-              fill="#0F172A"
-            />
-            <circle cx={50.2 + pupilOffsetX * 0.6} cy={(isSpeaking ? 50.8 : 52.8) + pupilOffsetY * 0.6} r="0.8" fill="#FFFFFF" />
-            <circle cx={68.2 + pupilOffsetX * 0.6} cy={(isSpeaking ? 50.8 : 52.8) + pupilOffsetY * 0.6} r="0.8" fill="#FFFFFF" />
-          </g>
+          {/* RIGHT EYE SOCKET + GLASSES FRAME */}
+          <circle
+            cx="72"
+            cy="56"
+            r="13.2"
+            fill="#FFFFFF"
+            stroke="#111827"
+            strokeWidth="2.8"
+          />
 
-          {/* Active audio equalizer mouth OR crisp attentive smile curve */}
-          {isSpeaking || isListening ? (
-            <g aria-hidden="true">
-              {bars.map((bar, index) => {
-                const centerY = 70;
-                const height = isSpeaking
-                  ? (3.5 + bar * (4.5 + activity * 9.5)) * pitchScale
-                  : 3.5 + bar * 4.5;
-                return (
-                  <rect
-                    key={index}
-                    x={47.5 + index * 6 - 1.3}
-                    y={centerY - height / 2}
-                    width="2.6"
-                    height={Math.min(16, height)}
-                    rx="1.3"
-                    fill={isListening ? '#BFDBFE' : '#FFFFFF'}
-                    opacity={0.82 + bar * 0.18}
-                    className={isSpeaking ? 'mirvo-mentor-wave' : undefined}
-                    style={isSpeaking ? { animationDelay: `${index * -0.11}s` } : undefined}
-                  />
-                );
-              })}
+          {/* Glasses Bridge & Side Temples */}
+          <path
+            d="M 53.2 55.5 Q 56 53 58.8 55.5"
+            fill="none"
+            stroke="#111827"
+            strokeWidth="2.8"
+            strokeLinecap="round"
+          />
+          <path d="M 19 53 L 26.8 55" stroke="#111827" strokeWidth="2.4" strokeLinecap="round" />
+          <path d="M 85.2 55 L 93 53" stroke="#111827" strokeWidth="2.4" strokeLinecap="round" />
+
+          {isBlinking ? (
+            <>
+              <path
+                d="M 30 56 Q 40 60 50 56"
+                fill="none"
+                stroke="#111827"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 62 56 Q 72 60 82 56"
+                fill="none"
+                stroke="#111827"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+              />
+            </>
+          ) : (
+            <>
+              {/* LEFT IRIS + PUPIL + CATCHLIGHT (Follows Mouse Cursor!) */}
+              <g
+                style={{
+                  transform: `translate(${leftOffsetX.toFixed(2)}px, ${leftOffsetY.toFixed(2)}px)`,
+                }}
+              >
+                <circle cx="40" cy="56" r="6.6" fill={`url(#${irisGradId})`} />
+                <circle cx="40" cy="56" r="3.6" fill="#090D16" />
+                <circle cx="37.8" cy="53.6" r="2.1" fill="#FFFFFF" />
+                <circle cx="42.1" cy="58.2" r="0.9" fill="#FFFFFF" opacity="0.75" />
+              </g>
+
+              {/* RIGHT IRIS + PUPIL + CATCHLIGHT (Follows Mouse Cursor!) */}
+              <g
+                style={{
+                  transform: `translate(${rightOffsetX.toFixed(2)}px, ${rightOffsetY.toFixed(2)}px)`,
+                }}
+              >
+                <circle cx="72" cy="56" r="6.6" fill={`url(#${irisGradId})`} />
+                <circle cx="72" cy="56" r="3.6" fill="#090D16" />
+                <circle cx="69.8" cy="53.6" r="2.1" fill="#FFFFFF" />
+                <circle cx="74.1" cy="58.2" r="0.9" fill="#FFFFFF" opacity="0.75" />
+              </g>
+            </>
+          )}
+
+          {/* EXPRESSIVE MOUTH: Lip-Sync when speaking, warm friendly smile when idle */}
+          {isSpeaking ? (
+            <g>
+              <rect
+                x="44"
+                y={77 - mouthHeight * 0.45}
+                width="24"
+                height={mouthHeight}
+                rx={Math.min(7, mouthHeight * 0.5)}
+                fill="#7C2D12"
+                stroke="#111827"
+                strokeWidth="2"
+              />
+              {mouthHeight > 6.5 && (
+                <path
+                  d={`M 49 ${77 + mouthHeight * 0.28} Q 56 ${75 + mouthHeight * 0.05} 63 ${
+                    77 + mouthHeight * 0.28
+                  }`}
+                  fill="#F97316"
+                />
+              )}
             </g>
+          ) : isListening ? (
+            <circle
+              cx="56"
+              cy="77"
+              r="5.2"
+              fill="#7C2D12"
+              stroke="#111827"
+              strokeWidth="2.2"
+            />
           ) : (
             <path
-              d="M 52 67 Q 60 73 68 67"
+              d="M 43 75 Q 56 84 69 75"
               fill="none"
-              stroke="#FFFFFF"
-              strokeWidth="2.8"
+              stroke="#111827"
+              strokeWidth="3.2"
               strokeLinecap="round"
             />
           )}

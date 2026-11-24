@@ -3,15 +3,15 @@
 
 @layer base {
   :root {
-    --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', sans-serif;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', sans-serif;
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
-    --apple-canvas: #F5F5F7;
+    --apple-canvas: #FAF8F5;
     --apple-surface: #FFFFFF;
-    --apple-text: #1D1D1F;
-    --apple-secondary: #6E6E73;
-    --apple-accent: #0071E3;
-    --apple-accent-hover: #0077ED;
+    --apple-text: #111827;
+    --apple-secondary: #57534E;
+    --apple-accent: #1D4ED8;
+    --apple-accent-hover: #1E40AF;
     --apple-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
@@ -22,8 +22,8 @@
     margin: 0;
     padding: 0;
     font-family: var(--font-sans);
-    background-color: #F5F5F7;
-    color: #1D1D1F;
+    background-color: #FAF8F5;
+    color: #111827;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: contain;

@@ -1413,35 +1413,66 @@ export function generateProceduralObjectSvg(
     };
   }
 
-  if (key.includes('hydro turbine') || nameUz.includes('gidroturbina')) {
-    const svg_data = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  if (key.includes('hydro turbine') || nameUz.includes('gidroturbina') || nameUz.includes('gaes')) {
+    const svg_data = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200">
   <g data-part="0" data-part-id="penstock">
-    <path d="M 16 42 H 68 L 96 106 H 54 L 30 62 H 16 Z" fill="#60A5FA" stroke="#1D4ED8" stroke-width="2.8" stroke-linejoin="round"/>
-    <path d="M 24 52 H 58 L 80 96" fill="none" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round"/>
-    <path d="M 52 142 H 178 V 176 H 52 Z" fill="#BAE6FD" stroke="#0284C7" stroke-width="2.4"/>
+    <!-- Yuqori suv ombori (H1) va beton to'g'on -->
+    <rect x="10" y="22" width="54" height="36" rx="4" fill="#38BDF8" stroke="#0284C7" stroke-width="2.2"/>
+    <path d="M 14 30 Q 24 26 34 30 T 58 30" fill="none" stroke="#E0F2FE" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 14 40 Q 26 36 38 40 T 58 40" fill="none" stroke="#BAE6FD" stroke-width="1.6" stroke-linecap="round"/>
+    <!-- Beton to'g'on devori -->
+    <polygon points="58,16 74,16 88,166 56,166" fill="#CBD5E1" stroke="#334155" stroke-width="2.4" stroke-linejoin="round"/>
+    <line x1="63" y1="28" x2="74" y2="28" stroke="#64748B" stroke-width="1.6"/>
+    <line x1="62" y1="54" x2="77" y2="54" stroke="#64748B" stroke-width="1.6"/>
+    <line x1="60" y1="84" x2="80" y2="84" stroke="#64748B" stroke-width="1.6"/>
+    <!-- Bosimli naporniy quvur (Penstock) -->
+    <polygon points="56,42 74,42 122,124 102,134" fill="#2563EB" stroke="#1E3A8A" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M 64 49 L 110 125" fill="none" stroke="#93C5FD" stroke-width="2.6" stroke-dasharray="6 4" stroke-linecap="round"/>
+    <!-- Quvur halqalari -->
+    <line x1="68" y1="68" x2="85" y2="59" stroke="#1E3A8A" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="84" y1="95" x2="101" y2="86" stroke="#1E3A8A" stroke-width="2.4" stroke-linecap="round"/>
+    <!-- Pastki suv havzasi (H2) va chiqish trubasi -->
+    <path d="M 122 152 H 228 V 182 H 88 V 158 H 116 Z" fill="#7DD3FC" stroke="#0284C7" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M 142 165 Q 160 160 178 165 T 218 165" fill="none" stroke="#0369A1" stroke-width="2" stroke-linecap="round"/>
   </g>
   <g data-part="1" data-part-id="runner_blades">
-    <circle cx="106" cy="126" r="32" fill="#E2E8F0" stroke="#334155" stroke-width="2.6"/>
+    <!-- Spiral kamera va Frensis gidroturbinasi -->
+    <circle cx="128" cy="134" r="28" fill="#F1F5F9" stroke="#0F172A" stroke-width="2.8"/>
+    <circle cx="128" cy="134" r="22" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.8" stroke-dasharray="4 3"/>
     <g data-animate="spin">
-      <circle cx="106" cy="126" r="24" fill="none" stroke="none"/>
-      <line x1="106" y1="104" x2="106" y2="148" stroke="#0284C7" stroke-width="5" stroke-linecap="round"/>
-      <line x1="84" y1="126" x2="128" y2="126" stroke="#0284C7" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="106" cy="126" r="9" fill="#0F172A"/>
+      <circle cx="128" cy="134" r="19" fill="none" stroke="none"/>
+      <line x1="128" y1="113" x2="128" y2="155" stroke="#0284C7" stroke-width="4.2" stroke-linecap="round"/>
+      <line x1="107" y1="134" x2="149" y2="134" stroke="#0284C7" stroke-width="4.2" stroke-linecap="round"/>
+      <line x1="113" y1="119" x2="143" y2="149" stroke="#1D4ED8" stroke-width="3.6" stroke-linecap="round"/>
+      <line x1="143" y1="119" x2="113" y2="149" stroke="#1D4ED8" stroke-width="3.6" stroke-linecap="round"/>
+      <circle cx="128" cy="134" r="8" fill="#F59E0B" stroke="#111827" stroke-width="2.2"/>
     </g>
   </g>
   <g data-part="2" data-part-id="generator_unit">
-    <line x1="106" y1="68" x2="106" y2="118" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
-    <rect x="78" y="24" width="56" height="44" rx="8" fill="#2563EB" stroke="#1E3A8A" stroke-width="2.8"/>
-    <rect x="88" y="34" width="36" height="24" rx="4" fill="#FDE047" stroke="#CA8A04" stroke-width="2"/>
+    <!-- Mashina zali, vertikal val va Gidrogenerator-Dvigatel (G/M) -->
+    <rect x="96" y="18" width="64" height="62" rx="6" fill="#F8FAFC" stroke="#334155" stroke-width="2.4"/>
+    <line x1="128" y1="74" x2="128" y2="112" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+    <!-- Generator stator va rotori -->
+    <rect x="106" y="28" width="44" height="38" rx="6" fill="#1D4ED8" stroke="#1E3A8A" stroke-width="2.4"/>
+    <rect x="114" y="35" width="28" height="24" rx="4" fill="#FDE047" stroke="#CA8A04" stroke-width="2"/>
+    <line x1="120" y1="39" x2="120" y2="55" stroke="#B45309" stroke-width="2"/>
+    <line x1="128" y1="39" x2="128" y2="55" stroke="#B45309" stroke-width="2"/>
+    <line x1="136" y1="39" x2="136" y2="55" stroke="#B45309" stroke-width="2"/>
+    <!-- Kuchaytiruvchi transformator va LEP ustuni -->
+    <rect x="172" y="48" width="22" height="28" rx="3" fill="#F59E0B" stroke="#78350F" stroke-width="2.2"/>
+    <path d="M 150 44 H 178 V 48" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- Elektr uzatish minorasi (LEP) -->
+    <path d="M 206 78 L 214 26 L 222 78 M 202 38 H 226 M 204 52 H 224" fill="none" stroke="#334155" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 194 48 Q 204 42 214 38" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/>
   </g>
 </svg>`;
     return {
       svg_data,
-      viewBox: '0 0 200 200',
+      viewBox: '0 0 240 200',
       parts_uz: [
-        { label: 'Bosim quvuri (naporniy truboprovod)', partId: 'penstock', desc: 'Ichida suv oqimi balandlikdan tezlanib turbinaning kuraklari tomon otiladi' },
-        { label: 'Ishchi parrak g‘ildirak (Frensis/Kaplan)', partId: 'runner_blades', desc: 'Kuchli suv oqimi kuraklarga urilib, markaziy valni katta moment bilan aylantiradi' },
-        { label: 'Val va gidrogenerator', partId: 'generator_unit', desc: 'Ichida vertikal val bilan bog‘langan rotor aylanib, stator o‘ramlarida tok chiqaradi' },
+        { label: 'Yuqori suv ombori, to‘g‘on va bosim quvuri', partId: 'penstock', desc: 'H₁ balandlikdagi suv naporniy truboprovod orqali katta bosim bilan turbinaga tushadi (nasos rejimida qayta yuqoriga haydaladi)' },
+        { label: 'Spiral kamera va Frensis ishchi g‘ildiragi', partId: 'runner_blades', desc: 'Suv oqimi kuraklarga urilib, g‘ildirak va markaziy valni katta aylanish momenti bilan aylantiradi' },
+        { label: 'Vertikal val, Gidrogenerator (G/M) va LEP', partId: 'generator_unit', desc: 'Rotor magnit maydoni stator chulg‘amlarida elektr toki hosil qilib, transformator orqali tarmoqqa uzatadi' },
       ],
     };
   }

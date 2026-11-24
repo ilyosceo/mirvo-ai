@@ -1520,24 +1520,24 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => void handleSwitchObjectDimension('2d')}
-                    className={`px-2 py-1 text-[11px] font-medium rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
                       lesson.engine === 'svg2d'
-                        ? 'bg-[#0071E3] text-white'
-                        : 'text-[#6E6E73] hover:text-[#1D1D1F]'
+                        ? 'bg-[#111827] text-[#FDE68A]'
+                        : 'text-[#57534E] hover:text-[#111827]'
                     }`}
                   >
-                    2D
+                    2D Chizma
                   </button>
                   <button
                     type="button"
                     onClick={() => void handleSwitchObjectDimension('3d')}
-                    className={`px-2 py-1 text-[11px] font-medium rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                      lesson.engine === 'threejs'
-                        ? 'bg-[#0071E3] text-white'
-                        : 'text-[#6E6E73] hover:text-[#1D1D1F]'
+                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
+                      lesson.engine === 'threejs' || lesson.engine === 'zdog'
+                        ? 'bg-[#111827] text-[#FDE68A]'
+                        : 'text-[#57534E] hover:text-[#111827]'
                     }`}
                   >
-                    3D
+                    2.5D Hajmli
                   </button>
                 </div>
               )}

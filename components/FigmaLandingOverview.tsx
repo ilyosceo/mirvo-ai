@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight,
-  ArrowUp,
+  ArrowUpRight,
   BookOpen,
   Box,
   Droplets,
+  Eye,
   Film,
   History,
   Image as ImageIcon,
@@ -15,12 +15,14 @@ import {
   Minus,
   Plus,
   SlidersHorizontal,
+  Sparkles,
   Upload,
+  Waves,
   Wind,
   X,
   Zap,
 } from 'lucide-react';
-import { MirvoLogo } from './MirvoLogo';
+import { MirvoMentor } from './MirvoMentor';
 import { PWAInstallButton } from './PWAInstallButton';
 import type { SessionTokenStats } from '../lib/tokenUsage';
 
@@ -73,40 +75,65 @@ interface FigmaLandingOverviewProps {
 
 type HomeSpotlightMode = 'topic' | 'video';
 
-interface BentoExample {
+interface StudioModuleItem {
   id: string;
-  category: string;
+  code: string;
   title: string;
   description: string;
   formulaPreview: string;
+  accentColor: string;
+  accentBg: string;
+  actionType: 'starter' | 'topic';
+  query?: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const BENTO_QUICK_EXAMPLES: readonly BentoExample[] = [
+const STUDIO_MODULES: readonly StudioModuleItem[] = [
+  {
+    id: 'gaes-hydro-module',
+    code: '01 / GIDROTEXNIKA · 2.5D SXEMA',
+    title: 'Gidroakkumulyator stansiyasi (GAES)',
+    description:
+      'Yuqori va pastki suv havzasi, naporniy quvur, Frensis turbinasi va teskari nasos sikli chizmasi.',
+    formulaPreview: 'P = ρ · g · Q · H · η',
+    accentColor: '#1D4ED8',
+    accentBg: '#EFF6FF',
+    actionType: 'topic',
+    query: 'Gidroakkumulyator elektr stansiyasi (GAES)',
+    icon: Waves,
+  },
   {
     id: 'physics-transformer',
-    category: 'Elektrotexnika · 2D/2.5D',
-    title: 'Transformator va induksiya',
-    description: 'Birlamchi va ikkilamchi chulg‘amlar, magnit oqimi hamda kuchlanish o‘zgarishi.',
+    code: '02 / ELEKTROTEXNIKA · INTERAKTIV',
+    title: 'Transformator va magnit oqimi',
+    description:
+      'Birlamchi va ikkilamchi chulg‘amlar, po‘lat o‘zak hamda kuchlanish pasayish-oshish vektori.',
     formulaPreview: 'U₁ / U₂ = N₁ / N₂',
+    accentColor: '#D97706',
+    accentBg: '#FEF3C7',
+    actionType: 'starter',
     icon: Zap,
   },
   {
-    id: 'wind-turbine-energy',
-    category: 'Mexanika · 2.5D Animatsiya',
-    title: 'Shamol turbinasi va Bets qonuni',
-    description: 'Aerodinamik parraklar aylanishi, gondola generatori va shamol quvvati tahlili.',
-    formulaPreview: 'P = ½ρAv³C_p',
-    icon: Wind,
-  },
-  {
     id: 'hydraulic-press-pascal',
-    category: 'Fizika · Gidravlika',
+    code: '03 / MEXANIKA & FIZIKA · RAPIER2D',
     title: 'Gidravlik press va Paskal qonuni',
-    description: 'Suyuqliklarda bosim uzatilishi va kichik kuchdan katta yutish mexanizmi.',
+    description:
+      'Tutash idishlarda bosim taqsimoti, porshen yuzalari nisbati va kuchdan yutish simulyatsiyasi.',
     formulaPreview: 'F₁ / A₁ = F₂ / A₂',
+    accentColor: '#059669',
+    accentBg: '#ECFDF5',
+    actionType: 'starter',
     icon: Droplets,
   },
+];
+
+const STUDIO_CHIP_TOPICS: readonly { label: string; query: string; starterId?: string }[] = [
+  { label: 'Shamol turbinasi (Bets qonuni)', query: 'shamol turbinasi', starterId: 'wind-turbine-energy' },
+  { label: 'Elektr generatori (50 Hz)', query: 'elektr generator', starterId: 'electric-generator-ac' },
+  { label: 'Kofein molekulasi (RDKit 2D)', query: 'kofein molekulasi', starterId: 'caffeine-pubchem-3d' },
+  { label: 'Pifagor teoremasi (Mafs)', query: 'Pifagor teoremasi', starterId: 'pythagoras-visual' },
+  { label: 'Fotosintez jarayoni', query: 'fotosintez', starterId: 'photosynthesis-visual' },
 ];
 
 export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
@@ -126,6 +153,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   onDismissError,
   onSubmitPrompt,
   onSelectStarterCard,
+  onSelectQuickTopic,
   onOpenVideoModal,
   onOpenVideoWithFile,
   onOpenVideoWithYoutube,
@@ -138,8 +166,18 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   const [youtubeDraft, setYoutubeDraft] = useState('');
   const [isDraggingVideo, setIsDraggingVideo] = useState(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [cursorCoords, setCursorCoords] = useState<{ x: number; y: number }>({ x: 720, y: 340 });
+
   const videoInputRef = useRef<HTMLInputElement | null>(null);
   const attachMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      setCursorCoords({ x: Math.round(e.clientX), y: Math.round(e.clientY) });
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onMove);
+  }, []);
 
   useEffect(() => {
     if (!attachMenuOpen) return;
@@ -185,7 +223,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#F5F5F7] text-[#1D1D1F] overflow-y-auto academic-scroll">
+    <div className="flex-1 min-h-0 flex flex-col bg-[#FAF8F5] text-[#111827] overflow-y-auto academic-scroll">
       <input
         ref={videoInputRef}
         type="file"
@@ -197,74 +235,87 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
         className="hidden"
       />
 
-      {/* ==================== MINIMALIST APPLE GLASS TOP NAVBAR ==================== */}
-      <header className="sticky top-0 z-30 h-14 shrink-0 apple-glass border-b border-black/5">
-        <div className="max-w-6xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-3">
-          {/* Left: Clean Brand Mark */}
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center cursor-pointer shrink-0"
-            aria-label="Mirvo AI bosh sahifasi"
-          >
-            <MirvoLogo size="md" />
-          </button>
+      {/* ==================== FIGMA STUDIO ARCHITECTURAL NAVBAR ==================== */}
+      <header className="sticky top-0 z-30 h-16 shrink-0 bg-[#FAF8F5]/92 backdrop-blur-md border-b border-[#E6E2D8]">
+        <div className="max-w-[1280px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between gap-3">
+          {/* Left: M·AI Brand Mark + Studio Tag */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="inline-flex items-center gap-2.5 cursor-pointer group"
+              aria-label="Mirvo Studio bosh sahifasi"
+            >
+              <span className="h-9 px-2.5 rounded-lg bg-[#111827] text-[#F59E0B] font-mono-tabular text-xs font-bold tracking-wider inline-flex items-center justify-center shadow-xs group-hover:bg-[#1E293B] transition-colors">
+                M·AI
+              </span>
+              <span
+                className="text-base sm:text-[17px] font-bold tracking-[-0.03em] text-[#111827]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                Mirvo Studio
+              </span>
+            </button>
 
-          {/* Center: Apple Segmented Pill Switcher */}
+            <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-md bg-[#F0ECE1] text-[#57534E] font-mono-tabular text-[11px] font-medium">
+              2D / 2.5D STEM LAB
+            </span>
+          </div>
+
+          {/* Center: Architectural Segmented Switcher */}
           <nav
-            aria-label="Asosiy rejim"
-            className="inline-flex items-center p-1 rounded-full bg-black/[0.045] border border-black/[0.04]"
+            aria-label="Asosiy ish rejimi"
+            className="inline-flex items-center p-1 rounded-xl bg-[#F0ECE1] border border-[#E6E2D8]"
           >
             <button
               type="button"
               onClick={() => setSpotlightMode('topic')}
               aria-pressed={spotlightMode === 'topic'}
-              className={`min-h-[30px] px-3 sm:px-4 rounded-full text-xs sm:text-[13px] font-medium apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`min-h-[32px] px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 spotlightMode === 'topic'
-                  ? 'bg-white text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)]'
-                  : 'text-[#6E6E73] hover:text-[#1D1D1F]'
+                  ? 'bg-white text-[#111827] shadow-xs'
+                  : 'text-[#57534E] hover:text-[#111827]'
               }`}
             >
-              Mavzu bo‘yicha
+              Mavzu &amp; Chizma Doskasi
             </button>
             <button
               type="button"
               onClick={() => setSpotlightMode('video')}
               aria-pressed={spotlightMode === 'video'}
-              className={`min-h-[30px] px-3 sm:px-4 rounded-full text-xs sm:text-[13px] font-medium apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`min-h-[32px] px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 spotlightMode === 'video'
-                  ? 'bg-white text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)]'
-                  : 'text-[#6E6E73] hover:text-[#1D1D1F]'
+                  ? 'bg-white text-[#111827] shadow-xs'
+                  : 'text-[#57534E] hover:text-[#111827]'
               }`}
             >
-              Videodan dars
+              Videodan Tahlil
             </button>
           </nav>
 
-          {/* Right: Saved / Recent Lessons + PWA Install + Settings */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          {/* Right: History + Library + Settings */}
+          <div className="flex items-center gap-2 shrink-0">
             <PWAInstallButton compact />
+
             <button
               type="button"
               onClick={() => onOpenDrawer('history')}
               aria-label="Saqlangan darslar tarixi"
-              className="h-9 px-3 rounded-full bg-white/80 hover:bg-white border border-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
+              className="h-9 px-3 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
             >
-              <History className="w-3.5 h-3.5 text-[#0071E3]" />
+              <History className="w-3.5 h-3.5 text-[#1D4ED8]" />
               <span className="hidden sm:inline">Saqlanganlar</span>
-              {totalHistoryCount > 0 && (
-                <span className="font-mono-tabular px-1.5 py-0.5 rounded-full bg-[#0071E3]/[0.1] text-[#0071E3] text-[10px] font-semibold leading-none">
-                  {totalHistoryCount}
-                </span>
-              )}
+              <span className="font-mono-tabular px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#1D4ED8] text-[10px] font-bold leading-none">
+                {totalHistoryCount}
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => onOpenDrawer('settings')}
-              aria-label="Sozlamalar va hisob"
-              title={userEmail || 'Sozlamalar'}
-              className="w-9 h-9 rounded-full bg-white/80 hover:bg-white border border-black/[0.06] text-[#6E6E73] hover:text-[#1D1D1F] inline-flex items-center justify-center apple-transition cursor-pointer shrink-0"
+              aria-label="Sozlamalar va ovoz"
+              title={userEmail || 'Ustoz ovozi va sozlamalar'}
+              className="w-9 h-9 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] text-[#57534E] hover:text-[#111827] inline-flex items-center justify-center transition-colors cursor-pointer shrink-0"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
             </button>
@@ -272,304 +323,446 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
         </div>
       </header>
 
-      {/* ==================== HERO + SPOTLIGHT + BENTO GRID ==================== */}
-      <main className="flex-1 px-4 sm:px-6 pt-12 sm:pt-16 pb-16">
-        <div className="max-w-5xl mx-auto">
-          {/* Hero Copy */}
-          <section className="max-w-3xl mx-auto text-center space-y-4">
-            <div className="inline-flex items-center rounded-full px-3.5 py-1.5 bg-[#0071E3]/[0.08] text-[#0071E3] text-xs font-medium tracking-[-0.01em]">
-              AI Interaktiv Doska • O‘zbek tilida
-            </div>
+      {/* ==================== ASYMMETRIC SPLIT HERO + EMOJI USTOZ STAGE ==================== */}
+      <main className="flex-1 px-4 sm:px-8 pt-8 sm:pt-12 pb-16">
+        <div className="max-w-[1280px] mx-auto space-y-12">
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-8 items-stretch">
+            {/* LEFT COLUMN (7 cols): Editorial Copy + Ink-Bordered Workbench */}
+            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                {/* Technical Spec Eyebrow */}
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#FEF3C7] border border-[#F59E0B]/40">
+                  <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                  <span className="font-mono-tabular text-[11px] font-bold tracking-wide text-[#B45309] uppercase">
+                    INTERAKTIV STEM LABORATORIYASI · ZDOG · PIXI v8 · MAFS · RAPIER2D
+                  </span>
+                </div>
 
-            <h1
-              className="text-4xl md:text-5xl font-semibold tracking-[-0.025em] text-[#1D1D1F] leading-[1.08]"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              Murakkab mavzularni jonli ko‘ring.
-            </h1>
+                <h1
+                  className="text-3xl sm:text-5xl font-bold tracking-[-0.035em] text-[#111827] leading-[1.08]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  Murakkab fanlarni jonli chizma va Emoji Ustoz bilan kashf eting.
+                </h1>
 
-            <p className="text-base sm:text-lg text-[#6E6E73] leading-relaxed max-w-2xl mx-auto">
-              Interaktiv 2D va 2.5D chizmalar, jonli fizika simulyatsiyalari hamda ovozli tahlil bilan
-              istalgan mavzuni bosqichma-bosqich tushuning.
-            </p>
-          </section>
+                <p className="text-sm sm:text-base text-[#57534E] leading-relaxed max-w-2xl">
+                  Har bir formula, elektr sxema va fizik jarayon o‘zbek tilida bosqichma-bosqich
+                  chiziladi. O‘ng tarafdagi{' '}
+                  <strong className="font-semibold text-[#111827]">Emoji Ustoz</strong> sichqonchangiz
+                  harakatini ko‘zi bilan jonli kuzatib, doskada har bir qismni ko‘rsatib tushuntiradi.
+                </p>
+              </div>
 
-          {/* Decluttered Unified Spotlight Action Card */}
-          <section aria-label="Dars yaratish maydoni" className="mt-9 sm:mt-11">
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDraggingVideo(true);
-              }}
-              onDragLeave={() => setIsDraggingVideo(false)}
-              onDrop={handleCardDrop}
-              className={`max-w-2xl mx-auto rounded-3xl bg-white p-3.5 sm:p-4 apple-transition ${
-                isDraggingVideo
-                  ? 'border-2 border-[#0071E3] ring-4 ring-[#0071E3]/10 shadow-[0_12px_36px_rgba(0,113,227,0.12)]'
-                  : 'border border-black/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.04)]'
-              }`}
-            >
-              {spotlightMode === 'topic' ? (
-                <form onSubmit={onSubmitPrompt} className="space-y-3">
-                  {imagePreview && (
-                    <div className="flex items-center justify-between gap-2.5 rounded-2xl bg-[#F5F5F7] px-3 py-2 border border-black/[0.04]">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <img
-                          src={imagePreview.dataUrl}
-                          alt="Yuklangan masala rasmi"
-                          referrerPolicy="no-referrer"
-                          className="w-9 h-9 rounded-xl object-cover border border-black/[0.06] shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <div className="text-xs font-medium text-[#1D1D1F] truncate">
-                            {imagePreview.name}
-                          </div>
-                          <div className="text-[11px] text-[#6E6E73]">Doska uchun rasm</div>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={onClearImagePreview}
-                        aria-label="Rasmni olib tashlash"
-                        className="w-8 h-8 rounded-full hover:bg-black/[0.05] text-[#6E6E73] hover:text-[#1D1D1F] flex items-center justify-center cursor-pointer"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Primary Clean Input Row */}
-                  <div className="flex items-center gap-2 pl-2 pr-0.5">
-                    <input
-                      type="text"
-                      value={queryText}
-                      onChange={(e) => onQueryTextChange(e.target.value)}
-                      placeholder="Savol yoki mavzu yozing..."
-                      aria-label="Mavzu yoki savol"
-                      className="flex-1 min-w-0 h-11 bg-transparent text-[15px] sm:text-base text-[#1D1D1F] placeholder:text-[#6E6E73]/75 focus:outline-none"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={onToggleMic}
-                      aria-label={isListening ? 'Ovoz yozishni to‘xtatish' : 'Ovoz bilan savol'}
-                      title={isListening ? 'Tinglanmoqda...' : 'Ovozli savol'}
-                      className={`w-9 h-9 rounded-full inline-flex items-center justify-center apple-transition cursor-pointer shrink-0 ${
-                        isListening
-                          ? 'bg-rose-600 text-white animate-pulse'
-                          : 'bg-[#F5F5F7] hover:bg-black/[0.07] text-[#6E6E73] hover:text-[#1D1D1F]'
-                      }`}
-                    >
-                      {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                    </button>
-
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      aria-label="Dars yaratish"
-                      className="h-10 px-4 sm:px-5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-sm font-medium inline-flex items-center justify-center gap-1.5 shrink-0 disabled:opacity-50 apple-transition cursor-pointer whitespace-nowrap"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <>
-                          <span className="hidden sm:inline">Boshlash</span>
-                          <ArrowUp className="w-4 h-4" />
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Organized Compact Control Bar: + Attach Menu (Left) + 4..12 Step Count Selector (Right) */}
-                  <div className="pt-2.5 border-t border-black/[0.05] flex items-center justify-between gap-2 px-1">
-                    <div ref={attachMenuRef} className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setAttachMenuOpen((v) => !v)}
-                        aria-expanded={attachMenuOpen}
-                        className="h-8 px-3 rounded-full bg-[#F5F5F7] hover:bg-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
-                      >
-                        <Plus className="w-3.5 h-3.5 text-[#0071E3]" />
-                        <span>Rasm · Video</span>
-                      </button>
-
-                      {attachMenuOpen && (
-                        <div className="absolute left-0 top-10 z-30 w-52 rounded-2xl bg-white border border-black/[0.08] shadow-[0_14px_36px_rgba(0,0,0,0.12)] p-1.5 space-y-0.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setAttachMenuOpen(false);
-                              onOpenFilePicker();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl hover:bg-[#F5F5F7] text-left text-xs font-medium text-[#1D1D1F] flex items-center gap-2.5 cursor-pointer"
-                          >
-                            <ImageIcon className="w-4 h-4 text-[#0071E3] shrink-0" />
-                            <span>Masala rasmini yuklash</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setAttachMenuOpen(false);
-                              videoInputRef.current?.click();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl hover:bg-[#F5F5F7] text-left text-xs font-medium text-[#1D1D1F] flex items-center gap-2.5 cursor-pointer"
-                          >
-                            <Film className="w-4 h-4 text-[#0071E3] shrink-0" />
-                            <span>MP4 video yuklash</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setAttachMenuOpen(false);
-                              onOpenVideoModal();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl hover:bg-[#F5F5F7] text-left text-xs font-medium text-[#1D1D1F] flex items-center gap-2.5 cursor-pointer"
-                          >
-                            <Link2 className="w-4 h-4 text-[#0071E3] shrink-0" />
-                            <span>YouTube havola qo‘shish</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* User-Selectable Lesson Count (4 to 12) */}
-                    <div
-                      role="group"
-                      aria-label="Dars bosqichlari soni (4 dan 12 gacha)"
-                      className="inline-flex items-center gap-1.5"
-                    >
-                      <span className="text-[11px] font-medium text-[#6E6E73] hidden sm:inline">
-                        Darslar soni:
+              {/* Architectural Prompt Workbench (1.5px dark border) */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDraggingVideo(true);
+                }}
+                onDragLeave={() => setIsDraggingVideo(false)}
+                onDrop={handleCardDrop}
+                className={`rounded-2xl bg-white p-4 sm:p-5 transition-all ${
+                  isDraggingVideo
+                    ? 'border-2 border-[#1D4ED8] ring-4 ring-[#1D4ED8]/15'
+                    : 'border-[1.5px] border-[#111827] shadow-[0_10px_30px_rgba(17,24,39,0.06)]'
+                }`}
+              >
+                {spotlightMode === 'topic' ? (
+                  <form onSubmit={onSubmitPrompt} className="space-y-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono-tabular text-[11px] font-bold tracking-wider text-[#1D4ED8] uppercase">
+                        DOSKA TOPSHIRIG‘I // MAVZU YOKI FORMULA KIRITING
                       </span>
-                      <div className="inline-flex items-center rounded-full bg-[#F5F5F7] border border-black/[0.05] p-0.5">
+                      <span className="hidden sm:inline-flex items-center gap-1 font-mono-tabular text-[11px] text-[#57534E]">
+                        <Sparkles className="w-3 h-3 text-[#D97706]" />
+                        2D / 2.5D Chizma + Ovoz
+                      </span>
+                    </div>
+
+                    {imagePreview && (
+                      <div className="flex items-center justify-between gap-2.5 rounded-xl bg-[#FAF8F5] px-3 py-2 border border-[#E6E2D8]">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <img
+                            src={imagePreview.dataUrl}
+                            alt="Yuklangan masala rasmi"
+                            referrerPolicy="no-referrer"
+                            className="w-9 h-9 rounded-lg object-cover border border-[#E6E2D8] shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-[#111827] truncate">
+                              {imagePreview.name}
+                            </div>
+                            <div className="text-[11px] text-[#57534E]">Doska tahlili uchun rasm</div>
+                          </div>
+                        </div>
                         <button
                           type="button"
-                          onClick={() => onLessonStepCountChange(clampStepCount(lessonStepCount - 1))}
-                          disabled={lessonStepCount <= 4}
-                          aria-label="Dars sonini kamaytirish"
-                          className="w-7 h-7 rounded-full hover:bg-white disabled:opacity-35 text-[#1D1D1F] flex items-center justify-center apple-transition cursor-pointer"
+                          onClick={onClearImagePreview}
+                          aria-label="Rasmni olib tashlash"
+                          className="w-7 h-7 rounded-lg hover:bg-[#E6E2D8]/60 text-[#57534E] hover:text-[#111827] flex items-center justify-center cursor-pointer"
                         >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="min-w-[56px] px-2 text-center font-mono-tabular text-xs font-semibold text-[#1D1D1F] whitespace-nowrap">
-                          {lessonStepCount} ta dars
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => onLessonStepCountChange(clampStepCount(lessonStepCount + 1))}
-                          disabled={lessonStepCount >= 12}
-                          aria-label="Dars sonini oshirish"
-                          className="w-7 h-7 rounded-full hover:bg-white disabled:opacity-35 text-[#1D1D1F] flex items-center justify-center apple-transition cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
-                    </div>
-                  </div>
-                </form>
-              ) : (
-                <form onSubmit={handleVideoFormSubmit} className="space-y-3">
-                  <div className="flex items-center gap-2 pl-2 pr-0.5">
-                    <Link2 className="w-4 h-4 text-[#0071E3] shrink-0" />
-                    <input
-                      type="url"
-                      value={youtubeDraft}
-                      onChange={(e) => setYoutubeDraft(e.target.value)}
-                      placeholder="YouTube video havolasini kiriting (https://youtube.com/watch?v=...)..."
-                      aria-label="YouTube video havolasi"
-                      className="flex-1 min-w-0 h-11 bg-transparent text-[15px] text-[#1D1D1F] placeholder:text-[#6E6E73]/75 focus:outline-none"
-                    />
-                    <button
-                      type="submit"
-                      className="h-10 px-4 sm:px-5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-sm font-medium inline-flex items-center justify-center gap-1.5 shrink-0 apple-transition cursor-pointer whitespace-nowrap"
-                    >
-                      <span>Davom etish</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                    )}
 
-                  <div className="pt-2.5 border-t border-black/[0.05] flex flex-wrap items-center justify-between gap-2 px-1">
-                    <div className="flex flex-wrap items-center gap-2">
+                    {/* Input + Mic + Dark Architectural CTA */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <div className="flex-1 flex items-center gap-2 rounded-xl bg-[#FAF8F5] border border-[#E6E2D8] focus-within:border-[#111827] px-3.5 h-12 transition-colors">
+                        <input
+                          type="text"
+                          value={queryText}
+                          onChange={(e) => onQueryTextChange(e.target.value)}
+                          placeholder="Masalan: Gidroakkumulyator elektr stansiyasi (GAES)..."
+                          aria-label="Mavzu yoki savol"
+                          className="flex-1 min-w-0 bg-transparent text-sm sm:text-[15px] font-medium text-[#111827] placeholder:text-[#78716C] focus:outline-none"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={onToggleMic}
+                          aria-label={isListening ? 'Ovoz yozishni to‘xtatish' : 'Ovoz bilan so‘rash'}
+                          title={isListening ? 'Tinglanmoqda...' : 'Ovozli savol'}
+                          className={`w-8 h-8 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                            isListening
+                              ? 'bg-rose-600 text-white animate-pulse'
+                              : 'bg-[#F0ECE1] hover:bg-[#E6E2D8] text-[#111827]'
+                          }`}
+                        >
+                          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                        </button>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        aria-label="Doskani ochish"
+                        className="h-12 px-5 rounded-xl bg-[#111827] hover:bg-[#1E293B] text-[#FDE68A] text-sm font-bold inline-flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Chizilmoqda...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Doskani ochish</span>
+                            <ArrowUpRight className="w-4 h-4 text-[#F59E0B]" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Bottom Toolbar inside Workbench */}
+                    <div className="pt-3 border-t border-[#E6E2D8] flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div ref={attachMenuRef} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setAttachMenuOpen((v) => !v)}
+                            aria-expanded={attachMenuOpen}
+                            className="h-8 px-3 rounded-lg bg-[#F0ECE1] hover:bg-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-[#1D4ED8]" />
+                            <span>Rasm · Video yuklash</span>
+                          </button>
+
+                          {attachMenuOpen && (
+                            <div className="absolute left-0 top-10 z-30 w-56 rounded-xl bg-white border border-[#111827] shadow-xl p-1.5 space-y-0.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAttachMenuOpen(false);
+                                  onOpenFilePicker();
+                                }}
+                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
+                              >
+                                <ImageIcon className="w-4 h-4 text-[#1D4ED8] shrink-0" />
+                                <span>Masala rasmini yuklash</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAttachMenuOpen(false);
+                                  videoInputRef.current?.click();
+                                }}
+                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
+                              >
+                                <Film className="w-4 h-4 text-[#D97706] shrink-0" />
+                                <span>MP4 video yuklash</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAttachMenuOpen(false);
+                                  onOpenVideoModal();
+                                }}
+                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
+                              >
+                                <Link2 className="w-4 h-4 text-[#059669] shrink-0" />
+                                <span>YouTube havola qo‘shish</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Step Count Selector (4..12) */}
+                      <div
+                        role="group"
+                        aria-label="Dars bosqichlari soni (4 dan 12 gacha)"
+                        className="inline-flex items-center gap-2"
+                      >
+                        <span className="text-[11px] font-semibold text-[#57534E] hidden sm:inline">
+                          Bosqichlar:
+                        </span>
+                        <div className="inline-flex items-center rounded-lg bg-[#F0ECE1] border border-[#E6E2D8] p-0.5">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onLessonStepCountChange(clampStepCount(lessonStepCount - 1))
+                            }
+                            disabled={lessonStepCount <= 4}
+                            aria-label="Dars sonini kamaytirish"
+                            className="w-7 h-7 rounded-md hover:bg-white disabled:opacity-35 text-[#111827] flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="min-w-[68px] px-2 text-center font-mono-tabular text-xs font-bold text-[#111827] whitespace-nowrap">
+                            {lessonStepCount} qadam
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onLessonStepCountChange(clampStepCount(lessonStepCount + 1))
+                            }
+                            disabled={lessonStepCount >= 12}
+                            aria-label="Dars sonini oshirish"
+                            className="w-7 h-7 rounded-md hover:bg-white disabled:opacity-35 text-[#111827] flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleVideoFormSubmit} className="space-y-3.5">
+                    <div className="font-mono-tabular text-[11px] font-bold tracking-wider text-[#1D4ED8] uppercase">
+                      VIDEO LABORATORIYA // YOUTUBE YOKI MP4 DAN DARS YARATISH
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <div className="flex-1 flex items-center gap-2 rounded-xl bg-[#FAF8F5] border border-[#E6E2D8] px-3.5 h-12">
+                        <Link2 className="w-4 h-4 text-[#1D4ED8] shrink-0" />
+                        <input
+                          type="url"
+                          value={youtubeDraft}
+                          onChange={(e) => setYoutubeDraft(e.target.value)}
+                          placeholder="YouTube video havolasini kiriting (https://youtube.com/watch?v=...)..."
+                          aria-label="YouTube video havolasi"
+                          className="flex-1 min-w-0 bg-transparent text-sm text-[#111827] placeholder:text-[#78716C] focus:outline-none"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="h-12 px-5 rounded-xl bg-[#111827] hover:bg-[#1E293B] text-[#FDE68A] text-sm font-bold inline-flex items-center justify-center gap-2 shrink-0 transition-colors cursor-pointer whitespace-nowrap"
+                      >
+                        <span>Tahlil qilish</span>
+                        <ArrowUpRight className="w-4 h-4 text-[#F59E0B]" />
+                      </button>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#E6E2D8] flex flex-wrap items-center gap-2">
                       <button
                         type="button"
                         onClick={() => videoInputRef.current?.click()}
-                        className="h-8 px-3.5 rounded-full bg-[#0071E3]/[0.08] hover:bg-[#0071E3]/[0.14] text-xs font-medium text-[#0071E3] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
+                        className="h-8 px-3.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-xs font-semibold text-[#1D4ED8] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        <span>Lokal MP4 fayl</span>
+                        <span>Kompyuterdan MP4 tanlash</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={onOpenUz3DPlayer}
-                        className="h-8 px-3.5 rounded-full bg-[#F5F5F7] hover:bg-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
+                        className="h-8 px-3.5 rounded-lg bg-[#F0ECE1] hover:bg-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
-                        <Box className="w-3.5 h-3.5 text-[#0071E3]" />
-                        <span>Uz3D Pleyer</span>
+                        <Box className="w-3.5 h-3.5 text-[#D97706]" />
+                        <span>Vizual Studiya</span>
                       </button>
                     </div>
-                  </div>
-                </form>
-              )}
+                  </form>
+                )}
 
-              {errorMsg && (
-                <div className="mt-3 rounded-2xl bg-rose-50 border border-rose-200/70 px-3.5 py-2.5 text-xs text-rose-800 flex items-center justify-between gap-2">
-                  <span>{errorMsg}</span>
+                {errorMsg && (
+                  <div className="mt-3 rounded-xl bg-rose-50 border border-rose-300 px-3.5 py-2.5 text-xs font-medium text-rose-900 flex items-center justify-between gap-2">
+                    <span>{errorMsg}</span>
+                    <button
+                      type="button"
+                      onClick={onDismissError}
+                      aria-label="Xatoni yopish"
+                      className="p-1 text-rose-700 hover:text-rose-950 cursor-pointer shrink-0"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN (5 cols): LIVE INTERACTIVE EYE-TRACKING EMOJI USTOZ STAGE */}
+            <div className="lg:col-span-5 flex">
+              <div className="w-full rounded-3xl bg-[#111827] border-2 border-[#F59E0B] p-5 sm:p-6 text-white flex flex-col justify-between gap-5 shadow-[0_18px_45px_rgba(17,24,39,0.16)] relative overflow-hidden">
+                {/* Top Status Bar inside Dark Studio Card */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1F2937] border border-white/10 font-mono-tabular text-[11px] font-bold text-[#F59E0B]">
+                    <Eye className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    JONLI EMOJI USTOZ · EYE-TRACKING
+                  </span>
+
+                  <span className="font-mono-tabular text-[11px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-2.5 py-1 rounded-md">
+                    X:{cursorCoords.x} Y:{cursorCoords.y}
+                  </span>
+                </div>
+
+                {/* Center Stage: Live Eye-Tracking Emoji Ustoz + Speech Callout */}
+                <div className="flex flex-col sm:flex-row items-center gap-5 my-auto py-1">
+                  <div className="relative shrink-0 p-2 rounded-3xl bg-gradient-to-b from-[#1E293B] to-[#0F172A] border border-white/10 shadow-inner">
+                    <MirvoMentor
+                      size={118}
+                      isSpeaking={isListening}
+                      isListening={isListening}
+                      voiceActivity={isListening ? 0.65 : 0.08}
+                      interactive
+                    />
+                  </div>
+
+                  <div className="space-y-2.5 text-center sm:text-left">
+                    <div className="inline-block px-2.5 py-0.5 rounded bg-[#F59E0B]/20 text-[#FDE68A] font-mono-tabular text-[10px] font-bold uppercase tracking-wider">
+                      Sichqonchani harakatlantiring
+                    </div>
+                    <p
+                      className="text-base sm:text-[17px] font-bold text-white leading-snug"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      “Salom! Sichqonchani qayerga olib borsangiz, ko‘zim bilan o‘sha nuqtani
+                      kuzatib turaman!”
+                    </p>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Dars davomida ham doskaning burchagida turib, har bir chizma qismi va
+                      formulaga ko‘zim bilan qarab ovozli tushuntirib beraman.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bottom Quick-Action Footer inside Emoji Ustoz Card */}
+                <div className="pt-3.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-mono-tabular text-[11px] text-slate-300">
+                    Ko‘z vektori: <strong className="text-[#FDE68A]">360° Kursor kuzatuvi</strong>
+                  </span>
+
                   <button
                     type="button"
-                    onClick={onDismissError}
-                    aria-label="Xatoni yopish"
-                    className="p-1 text-rose-600 hover:text-rose-900 cursor-pointer shrink-0"
+                    onClick={() =>
+                      onSelectQuickTopic(
+                        'Gidroakkumulyator elektr stansiyasi (GAES)',
+                        'Gidroakkumulyator elektr stansiyasi (GAES)'
+                      )
+                    }
+                    className="h-8 px-3 rounded-lg bg-[#F59E0B] hover:bg-[#D97706] text-[#111827] text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <span>GAES chizmasini sinash</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              )}
+              </div>
             </div>
           </section>
 
-          {/* ==================== 3-COLUMN BENTO GRID QUICK-START EXAMPLES ==================== */}
-          <section aria-label="Tezkor dars misollari" className="mt-10 sm:mt-12 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-              {BENTO_QUICK_EXAMPLES.map((item) => {
-                const IconComp = item.icon;
+          {/* ==================== 3-COLUMN FIGMA STEM LAB MODULE CARDS ==================== */}
+          <section aria-label="STEM Laboratoriya modullari" className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E6E2D8] pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono-tabular text-xs font-bold uppercase tracking-wider text-[#111827]">
+                  INTERAKTIV LABORATORIYA MODULLARI
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#F0ECE1] font-mono-tabular text-[11px] font-semibold text-[#57534E]">
+                  FIGMA DESIGN SYSTEM
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {STUDIO_CHIP_TOPICS.map((chip) => (
+                  <button
+                    key={chip.label}
+                    type="button"
+                    onClick={() => {
+                      if (chip.starterId) {
+                        onSelectStarterCard(chip.starterId);
+                      } else {
+                        onSelectQuickTopic(chip.query, chip.label);
+                      }
+                    }}
+                    className="h-7 px-2.5 rounded-md bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] text-[11px] font-semibold text-[#57534E] transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {STUDIO_MODULES.map((mod) => {
+                const IconComp = mod.icon;
                 return (
                   <button
-                    key={item.id}
+                    key={mod.id}
                     type="button"
-                    onClick={() => onSelectStarterCard(item.id)}
-                    className="group text-left rounded-3xl bg-white border border-black/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_14px_38px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 p-6 flex flex-col justify-between gap-5 apple-transition cursor-pointer"
+                    onClick={() => {
+                      if (mod.actionType === 'topic' && mod.query) {
+                        onSelectQuickTopic(mod.query, mod.title);
+                      } else {
+                        onSelectStarterCard(mod.id);
+                      }
+                    }}
+                    className="group text-left rounded-2xl bg-white border border-[#E6E2D8] hover:border-[#111827] p-6 flex flex-col justify-between gap-5 transition-all hover:-translate-y-0.5 shadow-[0_6px_24px_rgba(17,24,39,0.03)] hover:shadow-[0_14px_34px_rgba(17,24,39,0.08)] cursor-pointer"
                   >
                     <div className="space-y-3.5">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-[#0071E3]/[0.08] text-[#0071E3] flex items-center justify-center shrink-0">
-                          <IconComp className="w-5 h-5" />
-                        </div>
-                        <span className="text-[11px] font-medium text-[#6E6E73]">
-                          {item.category}
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className="font-mono-tabular text-[11px] font-bold tracking-wider uppercase"
+                          style={{ color: mod.accentColor }}
+                        >
+                          {mod.code}
+                        </span>
+                        <span
+                          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: mod.accentBg, color: mod.accentColor }}
+                        >
+                          <IconComp className="w-4 h-4" />
                         </span>
                       </div>
 
                       <div className="space-y-1.5">
                         <h2
-                          className="text-base sm:text-[17px] font-semibold tracking-[-0.02em] text-[#1D1D1F] group-hover:text-[#0071E3] apple-transition leading-snug"
+                          className="text-lg font-bold tracking-[-0.025em] text-[#111827] group-hover:text-[#1D4ED8] transition-colors leading-snug"
                           style={{ fontFamily: 'var(--font-display)' }}
                         >
-                          {item.title}
+                          {mod.title}
                         </h2>
-                        <p className="text-[13px] text-[#6E6E73] leading-relaxed">
-                          {item.description}
+                        <p className="text-[13px] text-[#57534E] leading-relaxed">
+                          {mod.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-black/[0.05] flex items-center justify-between gap-2">
-                      <span className="font-mono-tabular text-xs font-medium text-[#1D1D1F] bg-[#F5F5F7] px-2.5 py-1 rounded-full">
-                        {item.formulaPreview}
+                    <div className="pt-3.5 border-t border-[#E6E2D8] flex items-center justify-between gap-2">
+                      <span className="font-mono-tabular text-xs font-bold text-[#111827] bg-[#F5F2EB] border border-[#E6E2D8] px-3 py-1.5 rounded-lg">
+                        {mod.formulaPreview}
                       </span>
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#0071E3]">
-                        <span>Ochish</span>
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 apple-transition" />
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-[#111827] group-hover:text-[#1D4ED8] transition-colors">
+                        <span>Doskada ochish</span>
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </span>
                     </div>
                   </button>
@@ -577,43 +770,40 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
               })}
             </div>
 
-            {/* Minimal Utility Links Strip */}
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenDrawer('library')}
-                className="h-8 px-3.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-[#0071E3]" />
-                <span>Darslar kutubxonasi</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onOpenUz3DPlayer}
-                className="h-8 px-3.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-xs font-medium text-[#1D1D1F] inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap"
-              >
-                <Box className="w-3.5 h-3.5 text-[#0071E3]" />
-                <span>Uz3D Studio</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onEnterWorkspace}
-                className="h-8 px-3.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-xs font-medium text-[#1D1D1F] apple-transition cursor-pointer whitespace-nowrap"
-              >
-                Oxirgi doska
-              </button>
-
-              {!userEmail && (
+            {/* Bottom Architectural Utility Bar */}
+            <div className="pt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[#57534E]">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => onRequestAuth()}
-                  className="h-8 px-3.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-xs font-medium text-[#6E6E73] hover:text-[#1D1D1F] apple-transition cursor-pointer whitespace-nowrap"
+                  onClick={() => onOpenDrawer('library')}
+                  className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  Hisobga kirish
+                  <BookOpen className="w-3.5 h-3.5 text-[#1D4ED8]" />
+                  <span>Barcha darslar kutubxonasi (18+)</span>
                 </button>
-              )}
+
+                <button
+                  type="button"
+                  onClick={onEnterWorkspace}
+                  className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span>Oxirgi ochilgan doskaga qaytish</span>
+                </button>
+
+                {!userEmail && (
+                  <button
+                    type="button"
+                    onClick={() => onRequestAuth()}
+                    className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] font-semibold text-[#57534E] hover:text-[#111827] transition-colors cursor-pointer"
+                  >
+                    Hisobga kirish
+                  </button>
+                )}
+              </div>
+
+              <div className="font-mono-tabular text-[11px] text-[#78716C]">
+                FIGMA STUDIO UI · KO‘Z BILAN KUZATUVCHI EMOJI USTOZ · O‘ZBEK TILIDA
+              </div>
             </div>
           </section>
         </div>

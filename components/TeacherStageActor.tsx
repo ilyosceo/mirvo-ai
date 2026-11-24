@@ -59,7 +59,7 @@ export const TeacherStageActor: React.FC<TeacherStageActorProps> = ({
   }, []);
 
   const isCompact = stageSize.width < 520 || stageSize.height < 300;
-  const sphereSize = isCompact ? 46 : 54;
+  const sphereSize = isCompact ? 56 : 70;
   const mentorRadius = sphereSize / 2;
 
   const placement = computeBeatPlacement({
