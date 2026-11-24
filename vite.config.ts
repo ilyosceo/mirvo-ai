@@ -105,17 +105,40 @@ export default defineConfig({
           if (
             id.includes('node_modules/pixi.js') ||
             id.includes('node_modules/phaser') ||
-            id.includes('node_modules/@rive-app/')
+            id.includes('node_modules/@rive-app/') ||
+            id.includes('node_modules/zdog')
           ) {
             return 'vendor-canvas2d';
           }
           if (
+            id.includes('node_modules/konva') ||
+            id.includes('node_modules/react-konva')
+          ) {
+            return 'vendor-konva';
+          }
+          if (
+            id.includes('node_modules/mafs') ||
+            id.includes('node_modules/jsxgraph')
+          ) {
+            return 'vendor-math-geo';
+          }
+          if (id.includes('node_modules/@dimforge/rapier')) {
+            return 'vendor-rapier2d';
+          }
+          if (id.includes('node_modules/@rdkit/')) {
+            return 'vendor-rdkit';
+          }
+          if (
             id.includes('node_modules/gsap') ||
-            id.includes('node_modules/motion')
+            id.includes('node_modules/motion') ||
+            id.includes('node_modules/@motion-canvas/')
           ) {
             return 'vendor-animation';
           }
-          if (id.includes('node_modules/@xyflow/')) {
+          if (
+            id.includes('node_modules/@xyflow/') ||
+            id.includes('node_modules/cytoscape')
+          ) {
             return 'vendor-xyflow';
           }
           if (

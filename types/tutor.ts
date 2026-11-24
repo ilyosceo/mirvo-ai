@@ -11,8 +11,18 @@ export type EngineType =
   | 'plotly3d'
   | 'plotly2d'
   | 'threejs'
+  | 'zdog'
+  | 'pixi'
+  | 'konva'
+  | 'mafs'
+  | 'jsxgraph'
+  | 'rapier2d'
+  | 'matter'
   | 'pdb'
   | 'pubchem'
+  | 'rdkit'
+  | 'cytoscape'
+  | 'xyflow'
   | 'mermaid'
   | 'svg2d';
 
@@ -543,13 +553,23 @@ export const SUBJECT_LABELS_UZ: Record<SubjectType, string> = {
 };
 
 export const ENGINE_LABELS_UZ: Record<EngineType, string> = {
-  threejs: 'Three.js 3D Sahna',
+  threejs: 'Zdog 2.5D Sahna',
+  zdog: 'Zdog 2.5D Hajmli',
+  pixi: 'PixiJS v8 2D/2.5D',
+  konva: 'Konva Interaktiv Doska',
+  mafs: 'Mafs 2D Matematika',
+  jsxgraph: 'JSXGraph Geometriya',
+  rapier2d: 'Rapier2D Fizika',
+  matter: 'Matter.js Mexanika',
   plotly2d: 'Plotly 2D Grafik',
-  plotly3d: 'Plotly 3D Sirt',
-  pdb: '3Dmol PDB Oqsil',
-  pubchem: '3Dmol PubChem',
+  plotly3d: 'Plotly 2.5D Sirt',
+  pdb: '2D Biomolekula',
+  pubchem: 'SmilesDrawer 2D Kimyo',
+  rdkit: 'RDKit 2D Xeminformatika',
+  cytoscape: 'Cytoscape Biograf',
+  xyflow: 'React Flow Sxema',
   mermaid: 'Mermaid Blok-Sxema',
-  svg2d: 'Aniq 2D Geometriya',
+  svg2d: 'Aniq 2D Chizma',
 };
 
 export interface ResolvedObjectPayload {

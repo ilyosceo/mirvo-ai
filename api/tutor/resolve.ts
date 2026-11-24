@@ -136,7 +136,7 @@ Return ONLY valid JSON matching this TutorLesson schema:
 {
   "topic_title": "Mavzu nomi (o'zbekcha)",
   "subject": "physics" | "math" | "geometry" | "chemistry" | "biology" | "history" | "language",
-  "engine": "threejs" | "svg2d" | "plotly2d" | "plotly3d" | "mermaid",
+  "engine": "svg2d" | "zdog" | "mafs" | "jsxgraph" | "konva" | "matter" | "rapier2d" | "rdkit" | "pubchem" | "cytoscape" | "xyflow" | "plotly2d" | "mermaid",
   "sliders": [
     { "id": "param1", "label": "Tezlik", "min": 1, "max": 10, "step": 1, "default": 5, "unit": "m/s" }
   ],

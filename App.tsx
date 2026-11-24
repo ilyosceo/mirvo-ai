@@ -104,7 +104,7 @@ import type { Uz3DLessonResponse } from './types/uz3d';
 const HOME_STARTER_CARDS = [
   {
     id: 'physics-transformer',
-    subjectLabel: 'Energetika · 2D/3D',
+    subjectLabel: 'Elektrotexnika · 2D/2.5D',
     title: 'Transformator qanday ishlaydi?',
     subtitle: 'Temir o‘zak, chulg‘amlar va elektromagnit induksiya',
     icon: Zap,
@@ -113,7 +113,7 @@ const HOME_STARTER_CARDS = [
   },
   {
     id: 'wind-turbine-energy',
-    subjectLabel: 'ShES · 3D Animatsiya',
+    subjectLabel: 'Mexanika · 2.5D Animatsiya',
     title: 'Shamol turbinasi va Bets qonuni',
     subtitle: 'Aylanuvchi parraklar, gondola generatori va quvvat',
     icon: Wind,
@@ -122,7 +122,7 @@ const HOME_STARTER_CARDS = [
   },
   {
     id: 'electric-generator-ac',
-    subjectLabel: 'Elektrotexnika · 3D',
+    subjectLabel: 'Elektrotexnika · 2.5D',
     title: 'Elektr generatori va 50 Hz tok',
     subtitle: 'Stator, rotor, Faradey qonuni va sirpanish halqalari',
     icon: Sun,
@@ -142,8 +142,8 @@ const HOME_STARTER_CARDS = [
 
 const QUICK_VISUAL_TOPICS = [
   { label: 'Transformator', query: 'transformator' },
-  { label: 'Shamol turbinasi (3D)', query: 'shamol turbinasi 3D' },
-  { label: 'Elektr dvigatel (3D)', query: 'elektr dvigatel 3D' },
+  { label: 'Shamol turbinasi', query: 'shamol turbinasi' },
+  { label: 'Elektr dvigatel', query: 'elektr dvigatel' },
   { label: 'Gidroturbina (GES)', query: 'gidroturbina' },
 ] as const;
 

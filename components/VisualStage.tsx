@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import type { EngineType, FlowType, RenderParams, StageAnchorsMap } from '../types/tutor';
 import { ThreeDStage } from './engines/ThreeDStage';
 import { PlotlyStage } from './engines/PlotlyStage';
@@ -6,6 +6,13 @@ import { AnimatedGraphBoard } from './engines/AnimatedGraphBoard';
 import { MoleculeStage } from './engines/MoleculeStage';
 import { MermaidStage } from './engines/MermaidStage';
 import { SvgGeometryStage } from './engines/SvgGeometryStage';
+import { MatterPhysicsStage } from './engines/MatterPhysicsStage';
+
+const LazyZdogStage = lazy(() => import('./engines/ZdogStage'));
+const LazyMafsGeometryStage = lazy(() => import('./engines/MafsGeometryStage'));
+const LazyKonvaBoardStage = lazy(() => import('./engines/KonvaBoardStage'));
+const LazyNetworkGraphStage = lazy(() => import('./engines/NetworkGraphStage'));
+const LazyRapierPixiStage = lazy(() => import('./engines/RapierPixiStage'));
 
 interface VisualStageProps {
   engine: EngineType;
@@ -29,6 +36,12 @@ interface VisualStageProps {
   onAnchorsChange?: (anchors: StageAnchorsMap) => void;
 }
 
+const StageLoadingFallback: React.FC = () => (
+  <div className="w-full h-full flex items-center justify-center text-xs font-medium text-[#6E6E73]">
+    Vizual sahna yuklanmoqda...
+  </div>
+);
+
 export const VisualStage: React.FC<VisualStageProps> = ({
   engine,
   params,
@@ -51,6 +64,20 @@ export const VisualStage: React.FC<VisualStageProps> = ({
   onAnchorsChange,
 }) => {
   switch (engine) {
+    case 'zdog':
+      return (
+        <Suspense fallback={<StageLoadingFallback />}>
+          <LazyZdogStage
+            params={params}
+            sliderValues={sliderValues}
+            autoRotate={autoRotate}
+            cameraZoom={cameraZoom}
+            stepIndex={stepIndex}
+            isPlaying={isPlaying}
+            onAnchorsChange={onAnchorsChange}
+          />
+        </Suspense>
+      );
     case 'threejs':
       return (
         <ThreeDStage
@@ -68,6 +95,68 @@ export const VisualStage: React.FC<VisualStageProps> = ({
           flowReverse={flowReverse}
           isPlaying={isPlaying}
           stepIndex={stepIndex}
+          onAnchorsChange={onAnchorsChange}
+        />
+      );
+    case 'mafs':
+    case 'jsxgraph':
+      return (
+        <Suspense fallback={<StageLoadingFallback />}>
+          <LazyMafsGeometryStage
+            mode={engine}
+            params={params}
+            sliderValues={sliderValues}
+            stepIndex={stepIndex}
+            onAnchorsChange={onAnchorsChange}
+          />
+        </Suspense>
+      );
+    case 'konva':
+      return (
+        <Suspense fallback={<StageLoadingFallback />}>
+          <LazyKonvaBoardStage
+            params={params}
+            sliderValues={sliderValues}
+            stepIndex={stepIndex}
+            onAnchorsChange={onAnchorsChange}
+          />
+        </Suspense>
+      );
+    case 'xyflow':
+    case 'cytoscape':
+      return (
+        <Suspense fallback={<StageLoadingFallback />}>
+          <LazyNetworkGraphStage
+            mode={engine}
+            params={params}
+            stepIndex={stepIndex}
+            isPlaying={isPlaying}
+            onAnchorsChange={onAnchorsChange}
+          />
+        </Suspense>
+      );
+    case 'rapier2d':
+    case 'pixi':
+      return (
+        <Suspense fallback={<StageLoadingFallback />}>
+          <LazyRapierPixiStage
+            params={params}
+            sliderValues={sliderValues}
+            isPlaying={isPlaying}
+            stepIndex={stepIndex}
+            onAnchorsChange={onAnchorsChange}
+          />
+        </Suspense>
+      );
+    case 'matter':
+      return (
+        <MatterPhysicsStage
+          params={params}
+          sliderValues={sliderValues}
+          focusPart={focusPart}
+          focusTarget={focusTarget}
+          dimInactiveParts={dimInactiveParts}
+          isPlaying={isPlaying}
           onAnchorsChange={onAnchorsChange}
         />
       );
@@ -95,6 +184,7 @@ export const VisualStage: React.FC<VisualStageProps> = ({
       );
     case 'pdb':
     case 'pubchem':
+    case 'rdkit':
       return (
         <MoleculeStage
           engine={engine}

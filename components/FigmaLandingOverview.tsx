@@ -85,7 +85,7 @@ interface BentoExample {
 const BENTO_QUICK_EXAMPLES: readonly BentoExample[] = [
   {
     id: 'physics-transformer',
-    category: 'Energetika · 2D/3D',
+    category: 'Elektrotexnika · 2D/2.5D',
     title: 'Transformator va induksiya',
     description: 'Birlamchi va ikkilamchi chulg‘amlar, magnit oqimi hamda kuchlanish o‘zgarishi.',
     formulaPreview: 'U₁ / U₂ = N₁ / N₂',
@@ -93,7 +93,7 @@ const BENTO_QUICK_EXAMPLES: readonly BentoExample[] = [
   },
   {
     id: 'wind-turbine-energy',
-    category: 'ShES · 3D Animatsiya',
+    category: 'Mexanika · 2.5D Animatsiya',
     title: 'Shamol turbinasi va Bets qonuni',
     description: 'Aerodinamik parraklar aylanishi, gondola generatori va shamol quvvati tahlili.',
     formulaPreview: 'P = ½ρAv³C_p',
@@ -289,8 +289,8 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
             </h1>
 
             <p className="text-base sm:text-lg text-[#6E6E73] leading-relaxed max-w-2xl mx-auto">
-              2D va 3D modellar, chizmalar hamda ovozli tahlil bilan istalgan mavzuni bosqichma-bosqich
-              tushuning.
+              Interaktiv 2D va 2.5D chizmalar, jonli fizika simulyatsiyalari hamda ovozli tahlil bilan
+              istalgan mavzuni bosqichma-bosqich tushuning.
             </p>
           </section>
 
