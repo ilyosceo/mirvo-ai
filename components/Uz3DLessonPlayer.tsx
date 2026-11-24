@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import '@google/model-viewer';
 import {
   ArrowLeft,
   BookOpen,
@@ -716,17 +715,10 @@ export const Uz3DLessonPlayer: React.FC<Uz3DLessonPlayerProps> = ({
 
           <div className="flex-1 min-h-0 relative">
             {useModelViewerGlb ? (
-              <model-viewer
-                src={lesson.model_glb_url || undefined}
-                alt={lesson.lesson_title_uz}
-                camera-controls
-                auto-rotate={autoRotate || undefined}
-                camera-orbit={activeHotspot?.camera_orbit || '30deg 65deg 5m'}
-                camera-target={activeHotspot?.camera_target || '0m 0.6m 0m'}
-                shadow-intensity="1"
-                exposure="1.05"
-                style={{ width: '100%', height: '100%', background: 'transparent' }}
-                onError={() => setGlbLoadFailed(true)}
+              <ThreeDStage
+                params={threeDParams}
+                sliderValues={{}}
+                cameraPreset={threeDCameraPreset}
               />
             ) : is2DBoardFallback ? (
               <div className="w-full h-full flex items-center justify-center p-6 sm:p-10">

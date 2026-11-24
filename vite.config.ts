@@ -90,25 +90,43 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    dedupe: ['react', 'react-dom', 'three', '@react-three/fiber', '@react-three/drei'],
+    dedupe: ['react', 'react-dom'],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (
-            id.includes('node_modules/three') ||
-            id.includes('node_modules/@react-three/') ||
             id.includes('node_modules/react/') ||
             id.includes('node_modules/react-dom/')
           ) {
-            return 'vendor-3d';
+            return 'vendor-core';
+          }
+          if (
+            id.includes('node_modules/pixi.js') ||
+            id.includes('node_modules/phaser') ||
+            id.includes('node_modules/@rive-app/')
+          ) {
+            return 'vendor-canvas2d';
+          }
+          if (
+            id.includes('node_modules/gsap') ||
+            id.includes('node_modules/motion')
+          ) {
+            return 'vendor-animation';
+          }
+          if (id.includes('node_modules/@xyflow/')) {
+            return 'vendor-xyflow';
+          }
+          if (
+            id.includes('node_modules/echarts') ||
+            id.includes('node_modules/d3') ||
+            id.includes('node_modules/d3-')
+          ) {
+            return 'vendor-charts';
           }
           if (id.includes('node_modules/katex')) {
             return 'vendor-katex';
-          }
-          if (id.includes('node_modules/3dmol')) {
-            return 'vendor-3dmol';
           }
           if (id.includes('node_modules/plotly.js-dist-min')) {
             return 'vendor-plotly';
