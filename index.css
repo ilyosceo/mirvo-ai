@@ -987,13 +987,14 @@
 }
 
 .mirvo-native .svg-box {
-  height: 212px;
+  position: relative;
+  height: 256px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.18) 0%, rgba(11, 18, 32, 0) 70%);
-  border-radius: 14px;
-  overflow: visible;
+  border-radius: 16px;
+  overflow: hidden;
 }
 .mirvo-native .svg-box svg {
   width: 100%;
@@ -1637,7 +1638,7 @@
     margin-bottom: 0;
   }
   .mirvo-native .svg-box {
-    height: 295px;
+    height: 328px;
   }
   .mirvo-native .svg-box svg {
     max-width: 560px;

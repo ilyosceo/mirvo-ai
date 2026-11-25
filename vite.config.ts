@@ -90,7 +90,7 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    dedupe: ['react', 'react-dom'],
+    dedupe: ['react', 'react-dom', 'three'],
   },
   build: {
     rollupOptions: {
@@ -101,6 +101,9 @@ export default defineConfig({
             id.includes('node_modules/react-dom/')
           ) {
             return 'vendor-core';
+          }
+          if (id.includes('node_modules/three')) {
+            return 'vendor-three';
           }
           if (
             id.includes('node_modules/pixi.js') ||

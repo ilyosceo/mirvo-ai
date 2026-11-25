@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   CheckCircle2,
+  Coins,
   Layers,
   Loader2,
   Mic,
@@ -12,12 +13,169 @@ import {
   Target,
   X,
 } from 'lucide-react';
-import { IsometricLab25D, LAB_STEPS_BY_MODEL, type LabModel } from './IsometricLab25D';
+import { PbrMachine3DStage } from './engines/PbrMachine3DStage';
 import { FloatingEmojiUstoz } from './FloatingEmojiUstoz';
 import { type UstozExpression } from './MirvoMentor';
 import { PWAInstallButton } from './PWAInstallButton';
 import { voiceEngine } from '../lib/voiceEngine';
-import type { SessionTokenStats } from '../lib/tokenUsage';
+import {
+  formatCostUsd,
+  formatCostUzsApprox,
+  formatTokenCount,
+  loadLessonTokenLogs,
+  type SessionTokenStats,
+} from '../lib/tokenUsage';
+
+export type LabModel = 'transformer' | 'turbine' | 'hydraulic' | 'gaes';
+
+const LAB_STEPS_BY_MODEL: Record<
+  LabModel,
+  readonly {
+    index: number;
+    partId: string;
+    shortLabel: string;
+    title: string;
+    explanation: string;
+    anchorPct: { x: number; y: number };
+  }[]
+> = {
+  transformer: [
+    {
+      index: 0,
+      partId: 'primary_coil',
+      shortLabel: '1. N₁ chulg‘am',
+      title: '1-qadam: Birlamchi 3D chulg‘am (N₁)',
+      explanation: 'Kirish o‘zgaruvchan kuchlanishi U₁ mis chulg‘amda magnit yurituvchi kuch hosil qiladi.',
+      anchorPct: { x: 28, y: 52 },
+    },
+    {
+      index: 1,
+      partId: 'core',
+      shortLabel: '2. O‘zak (Φ)',
+      title: '2-qadam: Po‘lat o‘zak va magnit oqimi (Φ)',
+      explanation: 'Qatlamli ferromagnit o‘zak o‘zgaruvchan magnit oqimini deyarli yo‘qotishsiz ikkinchi chulg‘amga uzatadi.',
+      anchorPct: { x: 46, y: 34 },
+    },
+    {
+      index: 2,
+      partId: 'secondary_coil',
+      shortLabel: '3. N₂ chulg‘am',
+      title: '3-qadam: Ikkilamchi oltin-mis chulg‘am (N₂)',
+      explanation: 'Faradey induksiya qonuniga binoan o‘ramlar nisbati N₂/N₁ ga mos chiqish kuchlanishi U₂ hosil bo‘ladi.',
+      anchorPct: { x: 62, y: 52 },
+    },
+    {
+      index: 3,
+      partId: 'voltmeter',
+      shortLabel: '4. Voltmetr',
+      title: '4-qadam: 3D Analog Voltmetr ko‘rsatkichi',
+      explanation: 'Strelka real vaqtda chiqish kuchlanishi U₂ qiymatini burchak bo‘yicha aniq ko‘rsatadi.',
+      anchorPct: { x: 82, y: 56 },
+    },
+  ],
+  turbine: [
+    {
+      index: 0,
+      partId: 'wind_flow',
+      shortLabel: '1. Shamol',
+      title: '1-qadam: Kinetik shamol oqimi',
+      explanation: 'Havo oqimi tezligi v oshganda kinetik energiya tezlikning kubiga (v³) proporsional ortadi.',
+      anchorPct: { x: 26, y: 42 },
+    },
+    {
+      index: 1,
+      partId: 'blades',
+      shortLabel: '2. Parraklar',
+      title: '2-qadam: Aerodinamik 3D parraklar',
+      explanation: 'Uchta qanot ko‘tarish kuchi hisobiga shamol energiyasini aylanma mexanik momentga aylantiradi.',
+      anchorPct: { x: 52, y: 36 },
+    },
+    {
+      index: 2,
+      partId: 'gearbox',
+      shortLabel: '3. Reduktor',
+      title: '3-qadam: Tishli ko‘paytiruvchi reduktor',
+      explanation: 'Gondola kesimida ko‘rinib turgan 3D tishli g‘ildiraklar sekin aylanishni yuqori tezlikka ko‘paytiradi.',
+      anchorPct: { x: 50, y: 40 },
+    },
+    {
+      index: 3,
+      partId: 'generator',
+      shortLabel: '4. Generator',
+      title: '4-qadam: Mis chulg‘amli sinxron generator',
+      explanation: 'Generator mexanik aylanishni tarmoq uchun toza elektr quvvatiga (kW) aylantiradi.',
+      anchorPct: { x: 48, y: 44 },
+    },
+  ],
+  hydraulic: [
+    {
+      index: 0,
+      partId: 'small_piston',
+      shortLabel: '1. Kichik A₁',
+      title: '1-qadam: Kichik kirish porsheni (F₁)',
+      explanation: 'Kichik yuzali porshenga berilgan F₁ kuch suyuqlikda P = F₁ / S₁ bosim uyg‘otadi.',
+      anchorPct: { x: 28, y: 48 },
+    },
+    {
+      index: 1,
+      partId: 'fluid',
+      shortLabel: '2. Suyuqlik',
+      title: '2-qadam: Paskal bosim kanali',
+      explanation: 'Siqilmas moy bosimni yopiq U-kanal orqali barcha nuqtalarga bir xil uzatadi (P₁ = P₂).',
+      anchorPct: { x: 48, y: 74 },
+    },
+    {
+      index: 2,
+      partId: 'large_piston',
+      shortLabel: '3. Katta A₂',
+      title: '3-qadam: Katta chiqish silindri (F₂)',
+      explanation: 'Yuza necha marta katta bo‘lsa, porshendagi ko‘tarish kuchi ham shuncha marta ortadi.',
+      anchorPct: { x: 68, y: 54 },
+    },
+    {
+      index: 3,
+      partId: 'load',
+      shortLabel: '4. Yuk bloki',
+      title: '4-qadam: Ko‘tarilayotgan oltin yuk',
+      explanation: 'Kichik kirish kuchi yordamida bir necha barobar og‘ir 3D yuk silliq ko‘tariladi.',
+      anchorPct: { x: 68, y: 36 },
+    },
+  ],
+  gaes: [
+    {
+      index: 0,
+      partId: 'upper_reservoir',
+      shortLabel: '1. Yuqori havza',
+      title: '1-qadam: Yuqori suv havzasi (Potensial energiya)',
+      explanation: 'H balandlikda to‘plangan suv E = m·g·H potensial energiya zaxirasini saqlaydi.',
+      anchorPct: { x: 26, y: 30 },
+    },
+    {
+      index: 1,
+      partId: 'penstock',
+      shortLabel: '2. Quvur',
+      title: '2-qadam: Bosimli suv quvuri (Penstock)',
+      explanation: 'Generatsiyada suv pastga otiladi, Nasos rejimida esa teskari yuqoriga haydaladi.',
+      anchorPct: { x: 44, y: 48 },
+    },
+    {
+      index: 2,
+      partId: 'runner',
+      shortLabel: '3. Turbina',
+      title: '3-qadam: Qaytarma Frensis nasos-turbinasi',
+      explanation: 'Kesim ichidagi 8 parrakli 3D ishchi g‘ildirak suv bosimini aylanma harakatga aylantiradi.',
+      anchorPct: { x: 58, y: 64 },
+    },
+    {
+      index: 3,
+      partId: 'generator',
+      shortLabel: '4. Generator',
+      title: '4-qadam: Sinxron generator-motor va transformator',
+      explanation: 'Tig‘iz soatlarda elektr ishlab chiqaradi, tunda esa motor bo‘lib suvni yuqoriga qaytaradi.',
+      anchorPct: { x: 58, y: 40 },
+    },
+  ],
+};
 
 export interface StarterCardItem {
   id: string;
@@ -144,6 +302,25 @@ const MODEL_MISSIONS: Record<LabModel, readonly MissionSpec[]> = {
           : `Hozir ${f2} N — biroz oshiring (masalan, 60 N × 12x)`,
     },
   ],
+  gaes: [
+    {
+      id: 'gaes-110',
+      title: 'Generatsiya quvvatini 95–125 MVt oralig‘iga keltiring',
+      rewardXp: 150,
+      check: (mw) => mw >= 95 && mw <= 125,
+      hint: (mw) =>
+        mw < 0
+          ? 'Hozir Nasos rejimida — yuklamani musbat (+) tomonga suring'
+          : `Hozir ${mw} MVt — bosim (H) yoki yuklamani moslang`,
+    },
+    {
+      id: 'gaes-pump',
+      title: 'Tungi Nasos rejimini yoqing (-50 MVt yoki pastroq)',
+      rewardXp: 200,
+      check: (mw) => mw <= -50,
+      hint: (mw) => `Hozir ${mw} MVt — 2-slayderni chapga (manfiy Nasos rejimiga) suring!`,
+    },
+  ],
 };
 
 interface ReelItem {
@@ -238,6 +415,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   userEmail,
   userName,
   totalHistoryCount,
+  sessionTokenStats,
   queryText,
   onQueryTextChange,
   lessonStepCount,
@@ -299,7 +477,14 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     transformer: 0,
     turbine: 0,
     hydraulic: 0,
+    gaes: 0,
   });
+  const lessonTokenLogs = useMemo(
+    () => loadLessonTokenLogs(),
+    // Re-read whenever sessionTokenStats updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sessionTokenStats.total_tokens, sessionTokenStats.ai_requests]
+  );
   const [xpFlash, setXpFlash] = useState<string | null>(null);
 
   // Real Emotional TTS + Free-Flying Emoji Ustoz State
@@ -416,6 +601,35 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
         s2Min: 20,
         s2Max: 60,
         s2Step: 5,
+      };
+    }
+    if (model === 'gaes') {
+      const sign = sl2 < -5 ? -1 : sl2 > 5 ? 1 : 0;
+      const mwMag = Math.round((9.81 * sl1 * (Math.abs(sl2) * 0.9) * 0.9) / 1000);
+      const signedMw = sign * mwMag;
+      return {
+        outputVal: signedMw,
+        formulaSymbol: 'P = ρ · g · Q · H · η',
+        formulaLive:
+          sign < 0
+            ? `Nasos: ${mwMag} MVt sarf (H=${sl1}m)`
+            : sign === 0
+              ? 'Kutish rejimi (0 MVt)'
+              : `Generatsiya: +${mwMag} MVt`,
+        r1l: 'Bosim (H)',
+        r1v: `${sl1} m`,
+        r2l: sign < 0 ? 'Nasos quvvati' : 'Generatsiya',
+        r2v: `${signedMw > 0 ? '+' : ''}${signedMw} MVt`,
+        s1l: 'Bosim balandligi (H)',
+        s1v: `${sl1} m`,
+        s1Min: 40,
+        s1Max: 220,
+        s1Step: 10,
+        s2l: 'Rejim (-Nasos / +Generatsiya)',
+        s2v: `${sl2 > 0 ? '+' : ''}${sl2}%`,
+        s2Min: -100,
+        s2Max: 100,
+        s2Step: 10,
       };
     }
     const f2 = Math.round(sl1 * sl2);
@@ -542,6 +756,9 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     } else if (nextModel === 'turbine') {
       setSl1(10);
       setSl2(40);
+    } else if (nextModel === 'gaes') {
+      setSl1(120);
+      setSl2(90);
     } else {
       setSl1(40);
       setSl2(6);
@@ -549,17 +766,19 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     setUstozExpr('happy');
     setUstozBubble(
       nextModel === 'transformer'
-        ? 'Transformator 2.5D modeli! Istalgan qismni bosing yoki slayderni suring.'
+        ? 'Transformator WebGL 3D modeli! Sichqoncha bilan 360° aylantirib ko‘ring.'
         : nextModel === 'turbine'
-        ? 'Shamol turbinasi 2.5D modeli! Shamol tezligi quvvatni kubik oshiradi.'
-        : 'Paskal gidravlik pressi! Kichik kuch bilan og‘ir yukni ko‘tarib ko‘ring.'
+        ? 'Shamol turbinasi 3D kesimi! Gondola ichidagi tishli reduktor va generatorga qarang.'
+        : nextModel === 'gaes'
+        ? 'GAES-120 haqiqiy 3D stansiyasi! 2-slayderni chapga sursangiz Nasos rejimiga o‘tadi.'
+        : 'Paskal 3D gidravlik pressi! Kichik kuch bilan og‘ir oltin yukni ko‘tarib ko‘ring.'
     );
   };
 
   const jumpModel = (nextModel: LabModel) => {
     setActiveTab('doska');
     pickModel(nextModel);
-    showToast('2.5D izometrik model yuklandi');
+    showToast('Three.js WebGL 3D model yuklandi');
   };
 
   const openFullLabLesson = (targetModel: LabModel = model) => {
@@ -567,13 +786,17 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     setPlaying(false);
     if (targetModel === 'transformer') onSelectStarterCard('physics-transformer');
     else if (targetModel === 'turbine') onSelectStarterCard('wind-turbine-energy');
+    else if (targetModel === 'gaes')
+      onSelectQuickTopic('Gidroakkumulyator elektr stansiyasi (GAES)', 'GAES stansiya');
     else onSelectStarterCard('hydraulic-press-pascal');
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const v = queryText.trim().toLowerCase();
-    if (v.includes('shamol') || v.includes('turbin')) {
+    if (v.includes('gaes') || v.includes('gidroakkum') || v.includes('ges')) {
+      pickModel('gaes');
+    } else if (v.includes('shamol') || v.includes('turbin')) {
       pickModel('turbine');
     } else if (v.includes('gidrav') || v.includes('paskal') || v.includes('press')) {
       pickModel('hydraulic');
@@ -584,12 +807,12 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     if (queryText.trim() || imagePreview) {
       voiceEngine.stop();
       setPlaying(false);
-      showToast('AI 2.5D dars yaratilmoqda...');
+      showToast('Qwen 3.8 Omni Flash orqali 3D dars yaratilmoqda...');
       onSubmitPrompt(e);
     } else {
       setStepFocusActive(true);
       flyUstozToStep(model, activeLabStep);
-      showToast('4 qadamli 2.5D tahlil faollashtirildi');
+      showToast('4 qadamli WebGL 3D tahlil faollashtirildi');
     }
   };
 
@@ -879,8 +1102,8 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                 <div>
                   <h1 className="h1">Murakkab mavzularni jonli ko‘ring</h1>
                   <p className="lead">
-                    2.5D izometrik modellar, amaliy topshiriqlar va emotsional o‘zbekcha ustoz ovozi
-                    bilan o‘rganing.
+                    Haqiqiy Three.js WebGL 3D modellar (PBR), 360° aylantirish, qismlarga ajratish
+                    va 3D Emoji Ustoz ovozi bilan istalgan qurilmani o‘rganing.
                   </p>
 
                   <form className="prompt-card" onSubmit={handleFormSubmit}>
@@ -1129,6 +1352,13 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     <button
                       type="button"
                       className="soft-btn"
+                      onClick={() => pickModel('gaes')}
+                    >
+                      GAES 3D Laboratoriya
+                    </button>
+                    <button
+                      type="button"
+                      className="soft-btn"
                       onClick={() =>
                         onSelectQuickTopic(
                           'Gidroakkumulyator elektr stansiyasi (GAES)',
@@ -1136,7 +1366,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                         )
                       }
                     >
-                      GAES stansiya
+                      GAES AI dars
                     </button>
                     <button type="button" className="soft-btn" onClick={onEnterWorkspace}>
                       Oxirgi doska
@@ -1148,6 +1378,95 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     >
                       Kutubxona (18+)
                     </button>
+                  </div>
+
+                  {/* Live Qwen 3.8 Omni Flash Per-Lesson Token & Cost Meter */}
+                  <div
+                    style={{
+                      marginTop: 14,
+                      padding: '11px 13px',
+                      borderRadius: 16,
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 6,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 8,
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: 'var(--ink)',
+                        }}
+                      >
+                        <Coins className="w-3.5 h-3.5 text-amber-500" />
+                        Qwen 3.8 Omni Flash · Aniq Token Hisoblagich
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('profil')}
+                        style={{
+                          border: 'none',
+                          background: 'var(--surface-2)',
+                          color: 'var(--accent)',
+                          borderRadius: 999,
+                          padding: '3px 9px',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Barcha darslar ({lessonTokenLogs.length}) ›
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 10,
+                        fontSize: 11.5,
+                        color: 'var(--muted)',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      <span>
+                        Jami: <strong style={{ color: 'var(--ink)' }}>{formatTokenCount(sessionTokenStats.total_tokens)}</strong> tok
+                      </span>
+                      <span>
+                        Kirish: <strong>{formatTokenCount(sessionTokenStats.prompt_tokens)}</strong>
+                      </span>
+                      <span>
+                        Chiqish: <strong>{formatTokenCount(sessionTokenStats.output_tokens)}</strong>
+                      </span>
+                      <span>
+                        Xarajat:{' '}
+                        <strong style={{ color: '#059669' }}>
+                          {formatCostUsd(sessionTokenStats.cost_usd)} ({formatCostUzsApprox(sessionTokenStats.cost_usd)})
+                        </strong>
+                      </span>
+                    </div>
+
+                    {lessonTokenLogs[0] && (
+                      <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                        Oxirgi dars: <strong style={{ color: 'var(--ink)' }}>{lessonTokenLogs[0].topic}</strong> —{' '}
+                        {formatTokenCount(lessonTokenLogs[0].total_tokens)} tok (
+                        {formatCostUsd(lessonTokenLogs[0].cost_usd)})
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1184,6 +1503,13 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                         onClick={() => pickModel('hydraulic')}
                       >
                         Gidravlika
+                      </button>
+                      <button
+                        type="button"
+                        className={`lab-btn ${model === 'gaes' ? 'active' : ''}`}
+                        onClick={() => pickModel('gaes')}
+                      >
+                        GAES-120
                       </button>
                     </div>
 
@@ -1265,16 +1591,53 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     </span>
                   </div>
 
-                  {/* TRUE 2.5D ISOMETRIC STAGE (with 4-tone shading + Live Rotating Dial Needle) */}
+                  {/* TRUE 3D WEBGL PBR STAGE (PerspectiveCamera + OrbitControls + Real-time Shadows + Exploded View) */}
                   <div ref={labStageRef} className="svg-box" id="svgBox">
-                    <IsometricLab25D
-                      model={model}
-                      sl1={sl1}
-                      sl2={sl2}
+                    <PbrMachine3DStage
+                      machineKey={model === 'hydraulic' ? 'hydraulics' : model}
+                      sliderValues={
+                        model === 'transformer'
+                          ? { u1: sl1, turns_ratio: sl2 }
+                          : model === 'turbine'
+                            ? { wind_speed: sl1, blade_r: sl2 }
+                            : model === 'gaes'
+                              ? {
+                                  head: sl1,
+                                  flow: Math.abs(sl2),
+                                  mode: sl2 < -5 ? -1 : sl2 > 5 ? 1 : 0,
+                                }
+                              : { force_in: sl1, area_ratio: sl2 }
+                      }
                       exploded={exploded}
-                      activeStep={activeLabStep}
-                      stepHighlightActive={stepFocusActive}
-                      onSelectStep={handleSelectStep}
+                      onExplodedChange={setExploded}
+                      focusPart={stepFocusActive ? activeStepMeta.partId : undefined}
+                      isPlaying={true}
+                      darkSurface={true}
+                      compactHud={true}
+                      onPartSelect={(partId, label, screenPos) => {
+                        const matchedStep = currentSteps.find((s) => s.partId === partId);
+                        if (matchedStep) {
+                          setActiveLabStep(matchedStep.index);
+                          setStepFocusActive(true);
+                        }
+                        if (screenPos && labStageRef.current) {
+                          const rect = labStageRef.current.getBoundingClientRect();
+                          const absX = rect.left + screenPos.x;
+                          const absY = rect.top + screenPos.y;
+                          const onLeft = screenPos.x > rect.width * 0.52;
+                          setFlightTarget({
+                            x: onLeft ? absX - 115 : absX + 24,
+                            y: absY - 46,
+                            side: onLeft ? 'right' : 'left',
+                          });
+                        }
+                        setUstozExpr('amazed');
+                        setUstozBubble(
+                          matchedStep
+                            ? `${matchedStep.title} — ${matchedStep.explanation}`
+                            : `${label || partId}: 3D detalni aylantirib yaqindan ko‘rishingiz mumkin!`
+                        );
+                      }}
                     />
                   </div>
 
@@ -1645,15 +2008,28 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
 
                   <div className="reel-center">
                     <span className="reel-formula">{activeReel.f}</span>
-                    <div style={{ width: '100%', maxWidth: 340, height: 205 }}>
-                      <IsometricLab25D
-                        model={activeReel.model}
-                        sl1={activeReel.model === 'turbine' ? 12 : activeReel.model === 'hydraulic' ? 50 : 220}
-                        sl2={activeReel.model === 'turbine' ? 45 : activeReel.model === 'hydraulic' ? 8 : 4}
-                        exploded={false}
-                        activeStep={0}
-                        stepHighlightActive={false}
-                        onSelectStep={() => {}}
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: 360,
+                        height: 230,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <PbrMachine3DStage
+                        machineKey={activeReel.model === 'hydraulic' ? 'hydraulics' : activeReel.model}
+                        sliderValues={
+                          activeReel.model === 'turbine'
+                            ? { wind_speed: 12, blade_r: 45 }
+                            : activeReel.model === 'hydraulic'
+                              ? { force_in: 50, area_ratio: 8 }
+                              : { u1: 220, turns_ratio: 4 }
+                        }
+                        autoRotate={true}
+                        isPlaying={true}
+                        darkSurface={true}
+                        compactHud={true}
                       />
                     </div>
                     <div
@@ -1857,6 +2233,124 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                       >
                         Kirish
                       </button>
+                    )}
+                  </div>
+
+                  {/* Per-Lesson Exact Token Breakdown Card (Qwen 3.8 Omni Flash) */}
+                  <div
+                    style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 20,
+                      padding: 16,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: 10,
+                      }}
+                    >
+                      <strong style={{ fontSize: 14 }}>
+                        Har bir dars token sarfi (Qwen 3.8 Omni Flash)
+                      </strong>
+                      <span
+                        style={{
+                          fontSize: 11.5,
+                          fontWeight: 700,
+                          color: '#059669',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        Jami: {formatCostUsd(sessionTokenStats.cost_usd)} ({formatCostUzsApprox(sessionTokenStats.cost_usd)})
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: 11.5,
+                        color: 'var(--muted)',
+                        marginBottom: 10,
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      Narx tarifi: Kirish $0.15 / 1M · Kesh $0.016 / 1M · Chiqish $0.47 / 1M token
+                    </div>
+
+                    {lessonTokenLogs.length === 0 ? (
+                      <div
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: 12,
+                          background: 'var(--surface-2)',
+                          fontSize: 12,
+                          color: 'var(--muted)',
+                        }}
+                      >
+                        Hozircha AI generatsiya qilingan darslar yo‘q. Doskada istalgan qurilma yoki
+                        mavzuni yozib Boshlash ni bosing — sarflangan kirish, kesh va chiqish
+                        tokenlari darsma-dars yozib boriladi.
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 8,
+                          maxHeight: 240,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {lessonTokenLogs.map((entry) => (
+                          <div
+                            key={entry.id}
+                            style={{
+                              padding: '9px 11px',
+                              borderRadius: 12,
+                              background: 'var(--surface-2)',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 3,
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: 8,
+                                fontSize: 12.5,
+                                fontWeight: 700,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {entry.topic}
+                              </span>
+                              <span style={{ color: '#059669', flexShrink: 0 }}>
+                                {formatTokenCount(entry.total_tokens)} tok · {formatCostUsd(entry.cost_usd)}
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 11,
+                                color: 'var(--muted)',
+                                fontVariantNumeric: 'tabular-nums',
+                              }}
+                            >
+                              Model: {entry.model} · Kirish: {formatTokenCount(entry.prompt_tokens)}{' '}
+                              (Kesh: {formatTokenCount(entry.cached_tokens)}) · Chiqish:{' '}
+                              {formatTokenCount(entry.output_tokens)} · {formatCostUzsApprox(entry.cost_usd)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
 

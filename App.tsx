@@ -34,6 +34,7 @@ import { CACHED_LESSONS } from './data/cachedLessons';
 import { tryLocalDeterministicParse } from './lib/deterministicParser';
 import { findBuiltInCachedLesson } from './lib/lessonMatch';
 import { generateProceduralPrimitives3D } from './lib/objectCatalog';
+import { upgradeDeviceLessonToTrue3D } from './lib/qwenOmni3DDirector';
 import {
   formatCostUsd,
   formatCostUzsApprox,
@@ -706,7 +707,8 @@ export default function App() {
   }, [isPreviewingVoice, startVoicePreview]);
 
   const loadLesson = useCallback(
-    (nextLesson: TutorLesson, autoPlay = true) => {
+    (rawNextLesson: TutorLesson, autoPlay = true) => {
+      const nextLesson = upgradeDeviceLessonToTrue3D(rawNextLesson);
       stopPlayback();
       activeStepIndexRef.current = 0;
       lessonStepsRef.current = nextLesson.steps;
@@ -900,7 +902,12 @@ export default function App() {
 
       const builtInLesson = findBuiltInCachedLesson(q);
       if (builtInLesson && (requestedSteps <= 4 || builtInLesson.steps.length >= requestedSteps)) {
-        const freeLesson = { ...builtInLesson, source: 'cache' as const, token_usage: ZERO_TOKEN_USAGE };
+        const upgradedBuiltIn = upgradeDeviceLessonToTrue3D(builtInLesson, q);
+        const freeLesson = {
+          ...upgradedBuiltIn,
+          source: 'cache' as const,
+          token_usage: ZERO_TOKEN_USAGE,
+        };
         setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
         saveLessonToCache(q, freeLesson);
         setQueryText('');
@@ -909,8 +916,20 @@ export default function App() {
       }
 
       const cachedSaved = findSavedLesson(mergedSavedLessons, q);
-      if (cachedSaved && (requestedSteps <= 4 || cachedSaved.steps.length >= requestedSteps)) {
-        const freeLesson = { ...cachedSaved, token_usage: ZERO_TOKEN_USAGE };
+      const isFreshSaved3D =
+        cachedSaved &&
+        (cachedSaved.engine === 'threejs' ||
+          cachedSaved.subject === 'math' ||
+          cachedSaved.subject === 'geometry');
+      if (
+        cachedSaved &&
+        isFreshSaved3D &&
+        (requestedSteps <= 4 || cachedSaved.steps.length >= requestedSteps)
+      ) {
+        const freeLesson = {
+          ...cachedSaved,
+          token_usage: cachedSaved.token_usage ?? ZERO_TOKEN_USAGE,
+        };
         setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
         saveLessonToCache(q, freeLesson);
         setQueryText('');
@@ -952,8 +971,13 @@ export default function App() {
       }
 
       const usage = payload.token_usage ?? payload.lesson.token_usage ?? ZERO_TOKEN_USAGE;
-      const lessonWithUsage = { ...payload.lesson, token_usage: usage };
-      setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));
+      const lessonWithUsage = upgradeDeviceLessonToTrue3D(
+        { ...payload.lesson, token_usage: usage },
+        q
+      );
+      setSessionTokenStats((prev) =>
+        recordSessionTokenStats(prev, usage, lessonWithUsage.topic_title)
+      );
       saveLessonToCache(q || payload.lesson.topic_title, lessonWithUsage);
       setQueryText('');
       setImagePreview(null);
@@ -1537,10 +1561,37 @@ export default function App() {
                         : 'text-[#57534E] hover:text-[#111827]'
                     }`}
                   >
-                    2.5D Hajmli
+                    3D WebGL
                   </button>
                 </div>
               )}
+
+              {/* Live Per-Lesson Token & Cost Pill in Whiteboard Top Bar */}
+              <button
+                type="button"
+                onClick={() => {
+                  setDrawerTab('settings');
+                  setDrawerOpen(true);
+                }}
+                title={
+                  currentLessonUsage.total_tokens > 0
+                    ? `Model: ${currentLessonUsage.model || 'qwen3.8-omni-flash'} | Kirish: ${formatTokenCount(currentLessonUsage.prompt_tokens)} (Kesh: ${formatTokenCount(currentLessonUsage.cached_tokens || 0)}) | Chiqish: ${formatTokenCount(currentLessonUsage.output_tokens)} | Narx: ${formatCostUsd(currentLessonUsage.cost_usd)} (${formatCostUzsApprox(currentLessonUsage.cost_usd)})`
+                    : 'Keshlangan dars — 0 token sarflandi ($0.00)'
+                }
+                className="h-8 px-2.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-[11px] font-mono-tabular font-semibold text-[#1D1D1F] inline-flex items-center gap-1 apple-transition cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <Coins className="w-3.5 h-3.5 text-amber-500" />
+                {currentLessonUsage.total_tokens > 0 ? (
+                  <span>
+                    {formatTokenCount(currentLessonUsage.total_tokens)} tok ·{' '}
+                    <span className="text-emerald-600">
+                      {formatCostUsd(currentLessonUsage.cost_usd)}
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-[#6E6E73]">0 tok (Kesh)</span>
+                )}
+              </button>
 
               {boardMode === 'detailed' && lesson.engine === 'threejs' && (
                 <button
@@ -2689,7 +2740,9 @@ export default function App() {
         onClose={() => setVideoModalOpen(false)}
         onLessonReady={(videoLesson, queryLabel) => {
           const usage = videoLesson.token_usage ?? ZERO_TOKEN_USAGE;
-          setSessionTokenStats((prev) => recordSessionTokenStats(prev, usage));
+          setSessionTokenStats((prev) =>
+            recordSessionTokenStats(prev, usage, videoLesson.topic_title || queryLabel)
+          );
           saveLessonToCache(queryLabel, videoLesson);
           loadLesson(videoLesson, true);
         }}

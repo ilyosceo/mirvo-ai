@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import type { TeacherDepth, TutorPose } from '../types/tutor';
+import { EmojiUstoz3D } from './EmojiUstoz3D';
 
 export type UstozExpression = 'happy' | 'amazed' | 'thinking' | 'proud' | 'alert' | 'calm';
 
@@ -22,6 +23,7 @@ export interface MirvoMentorProps {
   interactive?: boolean;
   expression?: UstozExpression;
   pointingSide?: 'left' | 'right' | null;
+  prefer3D?: boolean;
 }
 
 function clampVal(v: number, min: number, max: number): number {
@@ -46,8 +48,11 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
   interactive = false,
   expression = 'happy',
   pointingSide = null,
+  prefer3D,
 }) => {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  const [svgFallback, setSvgFallback] = useState(false);
+  const shouldRender3D = (prefer3D ?? size >= 54) && !svgFallback;
   const faceGradId = `ustoz-face-${uid}`;
   const rimGradId = `ustoz-rim-${uid}`;
   const irisGradId = `ustoz-iris-${uid}`;
@@ -198,6 +203,19 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
         </div>
       )}
 
+      {shouldRender3D ? (
+        <EmojiUstoz3D
+          size={size}
+          expression={expression}
+          isSpeaking={isSpeaking}
+          isListening={isListening}
+          isNodding={isNodding}
+          voiceActivity={voiceActivity}
+          lookVector={lookVector}
+          pointingSide={pointingSide}
+          onWebglFallback={() => setSvgFallback(true)}
+        />
+      ) : (
       <svg viewBox="0 0 112 112" className="w-full h-full overflow-visible" aria-hidden="true">
         <defs>
           <radialGradient id={faceGradId} cx="42%" cy="34%" r="64%">
@@ -538,7 +556,7 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
           </g>
         )}
 
-        {/* Animated Pointing Hand when pointing directly at a 2.5D part */}
+        {/* Animated Pointing Hand when pointing directly at a 3D part */}
         {pointingSide && (
           <g
             transform={
@@ -559,6 +577,7 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
           </g>
         )}
       </svg>
+      )}
     </div>
   );
 };

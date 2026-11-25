@@ -138,7 +138,13 @@ export type Extended3DPrimitiveType =
   | 'octahedron'
   | 'dodecahedron'
   | 'tube'
-  | 'lathe';
+  | 'lathe'
+  | 'gear'
+  | 'coil'
+  | 'helical_coil'
+  | 'turbine_runner'
+  | 'impeller'
+  | 'dial_gauge';
 
 export interface Custom3DObject {
   type: Extended3DPrimitiveType | 'vector' | 'arrow' | 'axis' | 'plane';
@@ -151,9 +157,14 @@ export interface Custom3DObject {
   from?: [number, number, number];
   to?: [number, number, number];
   color?: string;
+  emissive?: string;
+  emissiveIntensity?: number;
   opacity?: number;
   roughness?: number;
   metalness?: number;
+  transmission?: number;
+  clearcoat?: number;
+  explodeOffset?: [number, number, number];
   label?: string;
   partId?: string;
   animation?: PartAnimationType;
@@ -174,13 +185,19 @@ export interface Primitive3DItem {
   type: Extended3DPrimitiveType;
   position: [number, number, number];
   rotation?: [number, number, number];
+  scale?: [number, number, number] | number;
   args: number[];
   points?: [number, number, number][];
   profile?: [number, number][];
   color: string;
+  emissive?: string;
+  emissiveIntensity?: number;
   opacity?: number;
   roughness?: number;
   metalness?: number;
+  transmission?: number;
+  clearcoat?: number;
+  explodeOffset?: [number, number, number];
   label?: string;
   partId?: string;
   flowType?: FlowType;
@@ -458,6 +475,7 @@ export interface TokenUsageInfo {
   total_tokens: number;
   cost_usd: number;
   llm_calls?: number;
+  model?: string;
 }
 
 export type LessonDepthMode = 'overview' | 'standard' | 'deep';
@@ -525,7 +543,7 @@ export interface TutorLesson {
   engine: EngineType;
   depth_mode?: LessonDepthMode;
   requested_steps?: number;
-  source?: 'local-parser' | 'cache' | 'gemini-director' | 'modal-backend' | 'video-lesson';
+  source?: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-omni' | 'modal-backend' | 'video-lesson';
   latency_ms?: number;
   token_usage?: TokenUsageInfo;
   keywords?: string[];
@@ -536,7 +554,7 @@ export interface TutorLesson {
 
 export interface ResolveResponse {
   lesson: TutorLesson;
-  stage: 'local-parser' | 'cache' | 'gemini-director' | 'modal-backend' | 'video-lesson';
+  stage: 'local-parser' | 'cache' | 'gemini-director' | 'qwen-omni' | 'modal-backend' | 'video-lesson';
   latency_ms: number;
   token_usage?: TokenUsageInfo;
   scenePlan?: SceneArchitecturePlan;
@@ -553,7 +571,7 @@ export const SUBJECT_LABELS_UZ: Record<SubjectType, string> = {
 };
 
 export const ENGINE_LABELS_UZ: Record<EngineType, string> = {
-  threejs: 'Zdog 2.5D Sahna',
+  threejs: 'Three.js WebGL 3D (PBR)',
   zdog: 'Zdog 2.5D Hajmli',
   pixi: 'PixiJS v8 2D/2.5D',
   konva: 'Konva Interaktiv Doska',

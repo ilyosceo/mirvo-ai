@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import { GoogleGenAI } from '@google/genai';
 import { createTutorResolveRouter } from './tutor/resolve.js';
+import { generateQwenOmni3DLesson } from './lib/qwenOmni3DDirector.js';
 import {
   applyRateLimitHeaders,
   checkIpRateLimit,
@@ -46,6 +47,42 @@ async function startServer() {
     dataDir: process.cwd(),
     getGeminiClient,
   });
+
+  app.post('/api/tutor/resolve', async (req, res, next) => {
+    const qwenApiKey =
+      process.env.QWEN_API_KEY?.trim() || process.env.DASHSCOPE_API_KEY?.trim();
+    if (!qwenApiKey) {
+      next();
+      return;
+    }
+    const { query = '', stepCount, stepsCount, imageBase64, imageMimeType } = req.body || {};
+    const trimmed = String(query || '').trim();
+    if (!trimmed && !imageBase64) {
+      next();
+      return;
+    }
+    const started = Date.now();
+    const safeCount = Math.max(4, Math.min(12, Number(stepsCount || stepCount || 4)));
+    const result = await generateQwenOmni3DLesson({
+      apiKey: qwenApiKey,
+      query: trimmed || 'Rasm asosida 3D texnik tahlil',
+      stepCount: safeCount,
+      imageBase64,
+      imageMimeType,
+    });
+    if (result) {
+      res.json({
+        lesson: result.lesson,
+        stage: 'qwen-omni',
+        model: result.modelUsed,
+        latency_ms: Date.now() - started,
+        token_usage: result.tokenUsage,
+      });
+      return;
+    }
+    next();
+  });
+
   app.use(tutorRouter);
 
   app.get('/api/generate-lesson', (req, res) => {

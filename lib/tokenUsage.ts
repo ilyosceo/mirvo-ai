@@ -1,10 +1,16 @@
 import type { TokenUsageInfo } from '../types/tutor.js';
 
-// Gemini Flash API rates (USD per 1M tokens)
-export const GEMINI_INPUT_RATE_PER_1M = 0.75;
-export const GEMINI_CACHED_INPUT_RATE_PER_1M = 0.075;
-export const GEMINI_OUTPUT_RATE_PER_1M = 3.75;
-export const APPROX_USD_TO_UZS = 12800;
+// Official Qwen 3.8 Omni Flash rates on Alibaba Cloud DashScope (USD per 1M tokens)
+export const QWEN_OMNI_INPUT_RATE_PER_1M = 0.15;
+export const QWEN_OMNI_CACHED_INPUT_RATE_PER_1M = 0.016;
+export const QWEN_OMNI_OUTPUT_RATE_PER_1M = 0.47;
+
+// Gemini Flash fallback rates (USD per 1M tokens)
+export const GEMINI_INPUT_RATE_PER_1M = 0.30;
+export const GEMINI_CACHED_INPUT_RATE_PER_1M = 0.03;
+export const GEMINI_OUTPUT_RATE_PER_1M = 2.50;
+
+export const APPROX_USD_TO_UZS = 12850;
 
 export const ZERO_TOKEN_USAGE: TokenUsageInfo = {
   prompt_tokens: 0,
@@ -22,6 +28,86 @@ export interface GeminiUsageMetadataLike {
   candidatesTokenCount?: number;
   thoughtsTokenCount?: number;
   totalTokenCount?: number;
+}
+
+export interface DashScopeUsageLike {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  output_tokens?: number;
+  total_tokens?: number;
+  cached_tokens?: number;
+  prompt_tokens_details?: {
+    cached_tokens?: number;
+    audio_tokens?: number;
+    image_tokens?: number;
+  };
+  completion_tokens_details?: {
+    reasoning_tokens?: number;
+    audio_tokens?: number;
+  };
+}
+
+export function calculateQwenCostUsd(params: {
+  prompt_tokens: number;
+  cached_tokens?: number;
+  output_tokens: number;
+  model?: string;
+}): number {
+  const cached = Math.max(0, params.cached_tokens ?? 0);
+  const uncachedInput = Math.max(0, params.prompt_tokens - cached);
+  const output = Math.max(0, params.output_tokens);
+
+  const isMax = (params.model || '').toLowerCase().includes('max');
+  const inRate = isMax ? 2.0 : QWEN_OMNI_INPUT_RATE_PER_1M;
+  const cacheRate = isMax ? 0.25 : QWEN_OMNI_CACHED_INPUT_RATE_PER_1M;
+  const outRate = isMax ? 6.0 : QWEN_OMNI_OUTPUT_RATE_PER_1M;
+
+  const cost =
+    (uncachedInput * inRate + cached * cacheRate + output * outRate) / 1_000_000;
+
+  return Math.round(cost * 1_000_000) / 1_000_000;
+}
+
+export function usageFromDashScope(
+  usage?: DashScopeUsageLike | null,
+  model = 'qwen3.8-omni-flash'
+): TokenUsageInfo {
+  if (!usage) {
+    return { ...ZERO_TOKEN_USAGE, llm_calls: 1, model };
+  }
+  const prompt_tokens = Math.max(0, Number(usage.prompt_tokens ?? 0));
+  const cached_tokens = Math.max(
+    0,
+    Number(usage.prompt_tokens_details?.cached_tokens ?? usage.cached_tokens ?? 0)
+  );
+  const output_tokens = Math.max(
+    0,
+    Number(usage.completion_tokens ?? usage.output_tokens ?? 0)
+  );
+  const thoughts_tokens = Math.max(
+    0,
+    Number(usage.completion_tokens_details?.reasoning_tokens ?? 0)
+  );
+  const total_tokens = Math.max(
+    prompt_tokens + output_tokens,
+    Number(usage.total_tokens ?? 0)
+  );
+
+  return {
+    prompt_tokens,
+    cached_tokens,
+    output_tokens,
+    thoughts_tokens,
+    total_tokens,
+    cost_usd: calculateQwenCostUsd({
+      prompt_tokens,
+      cached_tokens,
+      output_tokens,
+      model,
+    }),
+    llm_calls: 1,
+    model,
+  };
 }
 
 export function calculateGeminiCostUsd(params: {
@@ -46,7 +132,7 @@ export function usageFromGeminiMetadata(
   meta?: GeminiUsageMetadataLike | null
 ): TokenUsageInfo {
   if (!meta) {
-    return { ...ZERO_TOKEN_USAGE, llm_calls: 1 };
+    return { ...ZERO_TOKEN_USAGE, llm_calls: 1, model: 'gemini-flash' };
   }
 
   const prompt_tokens = Math.max(0, meta.promptTokenCount ?? 0);
@@ -64,6 +150,7 @@ export function usageFromGeminiMetadata(
     total_tokens,
     cost_usd: calculateGeminiCostUsd({ prompt_tokens, cached_tokens, output_tokens }),
     llm_calls: 1,
+    model: 'gemini-flash',
   };
 }
 
@@ -75,6 +162,7 @@ export function mergeTokenUsage(...items: Array<TokenUsageInfo | undefined | nul
   let total_tokens = 0;
   let cost_usd = 0;
   let llm_calls = 0;
+  let model: string | undefined;
 
   for (const item of items) {
     if (!item) continue;
@@ -85,6 +173,7 @@ export function mergeTokenUsage(...items: Array<TokenUsageInfo | undefined | nul
     total_tokens += item.total_tokens || 0;
     cost_usd += item.cost_usd || 0;
     llm_calls += item.llm_calls ?? (item.total_tokens > 0 ? 1 : 0);
+    if (item.model) model = item.model;
   }
 
   return {
@@ -95,6 +184,7 @@ export function mergeTokenUsage(...items: Array<TokenUsageInfo | undefined | nul
     total_tokens,
     cost_usd: Math.round(cost_usd * 1_000_000) / 1_000_000,
     llm_calls,
+    model,
   };
 }
 
@@ -112,9 +202,22 @@ export function formatCostUsd(costUsd: number): string {
 }
 
 export function formatCostUzsApprox(costUsd: number): string {
-  const uzs = Math.round(Math.max(0, costUsd || 0) * APPROX_USD_TO_UZS);
+  const uzs = Math.max(0, costUsd || 0) * APPROX_USD_TO_UZS;
   if (uzs <= 0) return '0 so‘m';
-  return `~${formatTokenCount(uzs)} so‘m`;
+  if (uzs < 1) return '<1 so‘m';
+  return `~${formatTokenCount(Math.round(uzs))} so‘m`;
+}
+
+export interface LessonTokenLogEntry {
+  id: string;
+  topic: string;
+  model: string;
+  prompt_tokens: number;
+  cached_tokens: number;
+  output_tokens: number;
+  total_tokens: number;
+  cost_usd: number;
+  createdAt: string;
 }
 
 export interface SessionTokenStats {
@@ -128,6 +231,7 @@ export interface SessionTokenStats {
 }
 
 const SESSION_STATS_KEY = 'qalamai_token_stats_v1';
+const LESSON_TOKEN_LOGS_KEY = 'mirvo_lesson_token_logs_v1';
 
 export const EMPTY_SESSION_STATS: SessionTokenStats = {
   prompt_tokens: 0,
@@ -138,6 +242,44 @@ export const EMPTY_SESSION_STATS: SessionTokenStats = {
   ai_requests: 0,
   free_requests: 0,
 };
+
+export function loadLessonTokenLogs(): LessonTokenLogEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(LESSON_TOKEN_LOGS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function appendLessonTokenLog(
+  topic: string,
+  usage?: TokenUsageInfo | null
+): LessonTokenLogEntry[] {
+  if (typeof window === 'undefined') return [];
+  const safe = usage ?? ZERO_TOKEN_USAGE;
+  const entry: LessonTokenLogEntry = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    topic: topic || 'Dars',
+    model: safe.model || (safe.total_tokens > 0 ? 'qwen3.8-omni-flash' : 'cache (0 token)'),
+    prompt_tokens: safe.prompt_tokens || 0,
+    cached_tokens: safe.cached_tokens || 0,
+    output_tokens: safe.output_tokens || 0,
+    total_tokens: safe.total_tokens || 0,
+    cost_usd: safe.cost_usd || 0,
+    createdAt: new Date().toISOString(),
+  };
+  const next = [entry, ...loadLessonTokenLogs()].slice(0, 50);
+  try {
+    window.localStorage.setItem(LESSON_TOKEN_LOGS_KEY, JSON.stringify(next));
+  } catch {
+    // ignore
+  }
+  return next;
+}
 
 export function loadSessionTokenStats(): SessionTokenStats {
   if (typeof window === 'undefined') return { ...EMPTY_SESSION_STATS };
@@ -161,10 +303,14 @@ export function loadSessionTokenStats(): SessionTokenStats {
 
 export function recordSessionTokenStats(
   prev: SessionTokenStats,
-  usage?: TokenUsageInfo | null
+  usage?: TokenUsageInfo | null,
+  topic?: string
 ): SessionTokenStats {
   const safe = usage ?? ZERO_TOKEN_USAGE;
   const usedAi = (safe.total_tokens || 0) > 0 || (safe.llm_calls || 0) > 0;
+  if (topic) {
+    appendLessonTokenLog(topic, safe);
+  }
   const next: SessionTokenStats = {
     prompt_tokens: prev.prompt_tokens + (safe.prompt_tokens || 0),
     cached_tokens: prev.cached_tokens + (safe.cached_tokens || 0),
@@ -186,6 +332,7 @@ export function resetSessionTokenStats(): SessionTokenStats {
   const empty = { ...EMPTY_SESSION_STATS };
   try {
     window.localStorage.setItem(SESSION_STATS_KEY, JSON.stringify(empty));
+    window.localStorage.removeItem(LESSON_TOKEN_LOGS_KEY);
   } catch {
     // ignore storage errors
   }

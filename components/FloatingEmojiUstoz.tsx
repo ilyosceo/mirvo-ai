@@ -256,7 +256,8 @@ export const FloatingEmojiUstoz: React.FC<FloatingEmojiUstozProps> = ({
           }}
         >
           <MirvoMentor
-            size={74}
+            size={84}
+            prefer3D={true}
             isSpeaking={isSpeaking}
             isListening={isListening}
             voiceActivity={voiceActivity}
