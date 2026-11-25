@@ -1,27 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ArrowUpRight,
-  BookOpen,
-  Box,
-  Droplets,
-  Eye,
-  Film,
-  History,
-  Image as ImageIcon,
-  Link2,
-  Loader2,
-  Mic,
-  MicOff,
-  Minus,
-  Plus,
-  SlidersHorizontal,
-  Sparkles,
-  Upload,
-  Waves,
-  Wind,
-  X,
-  Zap,
-} from 'lucide-react';
+import { Loader2, Mic, MicOff, Minus, Plus, SlidersHorizontal, X } from 'lucide-react';
 import { MirvoMentor } from './MirvoMentor';
 import { PWAInstallButton } from './PWAInstallButton';
 import type { SessionTokenStats } from '../lib/tokenUsage';
@@ -73,71 +51,79 @@ interface FigmaLandingOverviewProps {
   onLogout: () => void;
 }
 
-type HomeSpotlightMode = 'topic' | 'video';
+type NativeTab = 'doska' | 'darslar' | 'reels' | 'profil';
+type LabModel = 'transformer' | 'turbine' | 'hydraulic';
+type ThemeMode = 'light' | 'dark';
+type VoiceMood = 'Jonli' | 'Sokin' | 'Hayrat';
+type SubjectFilter = 'Barchasi' | 'Fizika' | 'Matematika' | 'Kimyo' | 'Biologiya';
+type PayMethod = 'click' | 'payme' | 'uzum' | 'card';
 
-interface StudioModuleItem {
+interface ReelItem {
   id: string;
-  code: string;
-  title: string;
-  description: string;
-  formulaPreview: string;
-  accentColor: string;
-  accentBg: string;
-  actionType: 'starter' | 'topic';
-  query?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  model: LabModel;
+  starterId: string;
+  f: string;
+  t: string;
+  detail: string;
 }
 
-const STUDIO_MODULES: readonly StudioModuleItem[] = [
+const REELS_DATA: readonly ReelItem[] = [
   {
-    id: 'gaes-hydro-module',
-    code: '01 / GIDROTEXNIKA · 2.5D SXEMA',
-    title: 'Gidroakkumulyator stansiyasi (GAES)',
-    description:
-      'Yuqori va pastki suv havzasi, naporniy quvur, Frensis turbinasi va teskari nasos sikli chizmasi.',
-    formulaPreview: 'P = ρ · g · Q · H · η',
-    accentColor: '#1D4ED8',
-    accentBg: '#EFF6FF',
-    actionType: 'topic',
-    query: 'Gidroakkumulyator elektr stansiyasi (GAES)',
-    icon: Waves,
+    id: 'reel-bets',
+    model: 'turbine',
+    starterId: 'wind-turbine-energy',
+    f: 'Bets qonuni: Cp max = 59.3%',
+    t: 'Shamol tezligi 2x oshsa, quvvat 8x ortadi',
+    detail:
+      'Quvvat shamol tezligining kubiga (v³) proporsional. Albert Bets nazariyasiga ko‘ra, hech bir turbina shamol energiyasining 59.3% dan ortig‘ini ololmaydi.',
   },
   {
-    id: 'physics-transformer',
-    code: '02 / ELEKTROTEXNIKA · INTERAKTIV',
-    title: 'Transformator va magnit oqimi',
-    description:
-      'Birlamchi va ikkilamchi chulg‘amlar, po‘lat o‘zak hamda kuchlanish pasayish-oshish vektori.',
-    formulaPreview: 'U₁ / U₂ = N₁ / N₂',
-    accentColor: '#D97706',
-    accentBg: '#FEF3C7',
-    actionType: 'starter',
-    icon: Zap,
+    id: 'reel-pascal',
+    model: 'hydraulic',
+    starterId: 'hydraulic-press-pascal',
+    f: 'Paskal qonuni: F2 = F1 × (S2/S1)',
+    t: 'Kichik kuch bilan og‘ir yukni ko‘tarish siri',
+    detail:
+      'Yopiq suyuqlikda bosim hamma tomonga bir xil uzatiladi. Katta porshen yuzasi 6 barobar katta bo‘lsa, chiqish kuchi ham 6 barobar ortadi.',
   },
   {
-    id: 'hydraulic-press-pascal',
-    code: '03 / MEXANIKA & FIZIKA · RAPIER2D',
-    title: 'Gidravlik press va Paskal qonuni',
-    description:
-      'Tutash idishlarda bosim taqsimoti, porshen yuzalari nisbati va kuchdan yutish simulyatsiyasi.',
-    formulaPreview: 'F₁ / A₁ = F₂ / A₂',
-    accentColor: '#059669',
-    accentBg: '#ECFDF5',
-    actionType: 'starter',
-    icon: Droplets,
+    id: 'reel-transformer',
+    model: 'transformer',
+    starterId: 'physics-transformer',
+    f: 'Induksiya: U2 / U1 = N2 / N1',
+    t: 'Transformator harakatsiz kuchlanishni o‘zgartiradi',
+    detail:
+      'Birlamchi chulg‘amdagi o‘zgaruvchan tok po‘lat o‘zakda magnit oqimi (Φ) hosil qiladi va ikkilamchi chulg‘amda mutanosib kuchlanish uyg‘otadi.',
   },
 ];
 
-const STUDIO_CHIP_TOPICS: readonly { label: string; query: string; starterId?: string }[] = [
-  { label: 'Shamol turbinasi (Bets qonuni)', query: 'shamol turbinasi', starterId: 'wind-turbine-energy' },
-  { label: 'Elektr generatori (50 Hz)', query: 'elektr generator', starterId: 'electric-generator-ac' },
-  { label: 'Kofein molekulasi (RDKit 2D)', query: 'kofein molekulasi', starterId: 'caffeine-pubchem-3d' },
-  { label: 'Pifagor teoremasi (Mafs)', query: 'Pifagor teoremasi', starterId: 'pythagoras-visual' },
-  { label: 'Fotosintez jarayoni', query: 'fotosintez', starterId: 'photosynthesis-visual' },
+const PAYMENT_OPTIONS: readonly {
+  id: PayMethod;
+  tag: string;
+  color: string;
+  label: string;
+}[] = [
+  { id: 'click', tag: 'Click', color: '#0077FF', label: 'Click orqali to‘lash' },
+  { id: 'payme', tag: 'Payme', color: '#00B8B8', label: 'Payme hamyon' },
+  { id: 'uzum', tag: 'Uzum', color: '#7000FF', label: 'Uzum Bank' },
+  { id: 'card', tag: 'Karta', color: '#334155', label: 'UzCard / Humo / Visa' },
 ];
+
+const SUBJECT_FILTERS: readonly SubjectFilter[] = [
+  'Barchasi',
+  'Fizika',
+  'Matematika',
+  'Kimyo',
+  'Biologiya',
+];
+
+function formatSpaceNumber(n: number): string {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
 
 export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   userEmail,
+  userName,
   totalHistoryCount,
   queryText,
   onQueryTextChange,
@@ -155,167 +141,484 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   onSelectStarterCard,
   onSelectQuickTopic,
   onOpenVideoModal,
-  onOpenVideoWithFile,
-  onOpenVideoWithYoutube,
-  onOpenUz3DPlayer,
   onOpenDrawer,
   onRequestAuth,
   onEnterWorkspace,
 }) => {
-  const [spotlightMode, setSpotlightMode] = useState<HomeSpotlightMode>('topic');
-  const [youtubeDraft, setYoutubeDraft] = useState('');
-  const [isDraggingVideo, setIsDraggingVideo] = useState(false);
-  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
-  const [cursorCoords, setCursorCoords] = useState<{ x: number; y: number }>({ x: 720, y: 340 });
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    try {
+      const saved = window.localStorage.getItem('mirvo_theme_v1');
+      if (saved === 'dark' || saved === 'light') return saved;
+    } catch {
+      // ignore
+    }
+    return 'light';
+  });
 
-  const videoInputRef = useRef<HTMLInputElement | null>(null);
-  const attachMenuRef = useRef<HTMLDivElement | null>(null);
+  const [activeTab, setActiveTab] = useState<NativeTab>('doska');
+  const [model, setModel] = useState<LabModel>('transformer');
+  const [sl1, setSl1] = useState<number>(220);
+  const [sl2, setSl2] = useState<number>(4);
+
+  const [xp, setXp] = useState<number>(12450);
+  const [playing, setPlaying] = useState<boolean>(false);
+  const [mood, setMood] = useState<VoiceMood>('Jonli');
+  const [subjectFilter, setSubjectFilter] = useState<SubjectFilter>('Barchasi');
+  const [reelIdx, setReelIdx] = useState<number>(0);
+
+  const [sheetOpen, setSheetOpen] = useState<boolean>(false);
+  const [selectedPay, setSelectedPay] = useState<PayMethod>('click');
+  const [toastMsg, setToastMsg] = useState<string>('');
+  const [toastVisible, setToastVisible] = useState<boolean>(false);
+  const toastTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      setCursorCoords({ x: Math.round(e.clientX), y: Math.round(e.clientY) });
-    };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    return () => window.removeEventListener('pointermove', onMove);
-  }, []);
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      window.localStorage.setItem('mirvo_theme_v1', theme);
+    } catch {
+      // ignore
+    }
+  }, [theme]);
 
   useEffect(() => {
-    if (!attachMenuOpen) return;
-    const handleOutside = (e: PointerEvent) => {
-      if (attachMenuRef.current && !attachMenuRef.current.contains(e.target as Node)) {
-        setAttachMenuOpen(false);
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch {
+          // ignore
+        }
       }
     };
-    window.addEventListener('pointerdown', handleOutside);
-    return () => window.removeEventListener('pointerdown', handleOutside);
-  }, [attachMenuOpen]);
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastVisible(false);
+    }, 2200);
+  };
 
   const clampStepCount = (n: number) => Math.max(4, Math.min(12, Math.round(n)));
 
-  const handleVideoFileChosen = (file: File | null | undefined) => {
-    if (!file) return;
-    if (onOpenVideoWithFile) {
-      onOpenVideoWithFile(file);
+  const pickModel = (nextModel: LabModel) => {
+    setModel(nextModel);
+    if (nextModel === 'transformer') {
+      setSl1(220);
+      setSl2(4);
+    } else if (nextModel === 'turbine') {
+      setSl1(10);
+      setSl2(40);
     } else {
-      onOpenVideoModal();
+      setSl1(40);
+      setSl2(6);
     }
   };
 
-  const handleCardDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const jumpModel = (nextModel: LabModel) => {
+    setActiveTab('doska');
+    pickModel(nextModel);
+    showToast('2.5D model yuklandi');
+  };
+
+  const openFullLabLesson = (targetModel: LabModel = model) => {
+    if (targetModel === 'transformer') onSelectStarterCard('physics-transformer');
+    else if (targetModel === 'turbine') onSelectStarterCard('wind-turbine-energy');
+    else onSelectStarterCard('hydraulic-press-pascal');
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingVideo(false);
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
-    if (file.type.startsWith('video/') || /\.(mp4|webm|mov|m4v)$/i.test(file.name)) {
-      handleVideoFileChosen(file);
+    const v = queryText.trim().toLowerCase();
+    if (v.includes('shamol') || v.includes('turbin')) {
+      pickModel('turbine');
+    } else if (v.includes('gidrav') || v.includes('paskal') || v.includes('press')) {
+      pickModel('hydraulic');
+    } else if (v.includes('transformator') || v.includes('induksiya')) {
+      pickModel('transformer');
+    }
+
+    if (queryText.trim() || imagePreview) {
+      showToast('2.5D dars tayyorlandi');
+      onSubmitPrompt(e);
+    } else {
+      pickModel(model);
+      showToast('2.5D dars tayyorlandi');
     }
   };
 
-  const handleVideoFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const url = youtubeDraft.trim();
-    if (url && onOpenVideoWithYoutube) {
-      onOpenVideoWithYoutube(url);
+  const speakMoodPreview = (nextPlaying: boolean, nextMood: VoiceMood) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      if (!nextPlaying) return;
+      const sample =
+        model === 'transformer'
+          ? `Transformator kirish kuchlanishi ${sl1} volt, chiqish kuchlanishi ${Math.round(sl1 * sl2)} volt.`
+          : model === 'turbine'
+          ? `Shamol tezligi ${sl1} metr sekund, parrak diametri ${sl2} metr.`
+          : `Paskal qonuni: kirish kuchi ${sl1} nyuton, chiqish kuchi ${Math.round(sl1 * sl2)} nyuton.`;
+      const utter = new SpeechSynthesisUtterance(sample);
+      utter.lang = 'uz-UZ';
+      utter.rate = nextMood === 'Sokin' ? 0.9 : nextMood === 'Hayrat' ? 1.12 : 1.02;
+      utter.pitch = nextMood === 'Hayrat' ? 1.15 : nextMood === 'Sokin' ? 0.94 : 1.0;
+      utter.onend = () => setPlaying(false);
+      utter.onerror = () => setPlaying(false);
+      window.speechSynthesis.speak(utter);
+    } catch {
+      // ignore if speech synthesis unavailable
+    }
+  };
+
+  const togglePlay = () => {
+    const next = !playing;
+    setPlaying(next);
+    showToast(next ? 'Emotsional ustoz ovozi boshlandi' : 'Ovoz to‘xtatildi');
+    speakMoodPreview(next, mood);
+  };
+
+  const handleSetMood = (nextMood: VoiceMood) => {
+    setMood(nextMood);
+    showToast(`Ohang: ${nextMood}`);
+    if (playing) speakMoodPreview(true, nextMood);
+  };
+
+  const nextReel = () => {
+    setReelIdx((prev) => (prev + 1) % REELS_DATA.length);
+    setXp((prev) => prev + 50);
+    showToast('+50 Mirvo Ball qo‘shildi');
+  };
+
+  const claimXp = (cost: number, label: string) => {
+    if (xp < cost) {
+      showToast('Ball yetarli emas');
       return;
     }
-    onOpenVideoModal();
+    setXp((prev) => prev - cost);
+    showToast(`${label} olindi`);
   };
 
-  return (
-    <div className="flex-1 min-h-0 flex flex-col bg-[#FAF8F5] text-[#111827] overflow-y-auto academic-scroll">
-      <input
-        ref={videoInputRef}
-        type="file"
-        accept="video/mp4,video/webm,video/quicktime,video/*"
-        onChange={(e) => {
-          handleVideoFileChosen(e.target.files?.[0]);
-          e.target.value = '';
-        }}
-        className="hidden"
+  const copyCode = (text: string, msg: string) => {
+    if (navigator.clipboard?.writeText) {
+      void navigator.clipboard.writeText(text).catch(() => {});
+    }
+    showToast(msg);
+  };
+
+  // Compute exact 2.5D Lab parameters (100% preserved formulas & animations)
+  const labConfig = (() => {
+    if (model === 'transformer') {
+      const u2 = Math.round(sl1 * sl2);
+      const dur = Math.max(0.35, 2.0 - sl1 / 250).toFixed(2);
+      const secCount = Math.min(8, Math.max(3, Math.round(sl2 + 2)));
+      return {
+        r1l: 'Kirish (U1)',
+        r1v: `${sl1} V`,
+        r2l: 'Chiqish (U2)',
+        r2v: `${u2} V`,
+        s1l: 'Kirish kuchlanishi',
+        s1v: `${sl1} V`,
+        s1Min: 110,
+        s1Max: 380,
+        s1Step: 10,
+        s2l: 'O‘ramlar nisbati',
+        s2v: `${sl2.toFixed(1)}x`,
+        s2Min: 1,
+        s2Max: 6,
+        s2Step: 0.5,
+        dur,
+        secCount,
+        f2: 0,
+      };
+    }
+    if (model === 'turbine') {
+      const kw = Math.round(
+        (0.5 * 1.225 * Math.PI * (sl2 * 0.5) ** 2 * sl1 ** 3 * 0.45) / 1000
+      );
+      const dur = Math.max(0.38, 5.4 - sl1 * 0.24).toFixed(2);
+      return {
+        r1l: 'Shamol tezligi',
+        r1v: `${sl1} m/s`,
+        r2l: 'Quvvat (P)',
+        r2v: `${kw} kW`,
+        s1l: 'Shamol tezligi',
+        s1v: `${sl1} m/s`,
+        s1Min: 3,
+        s1Max: 20,
+        s1Step: 1,
+        s2l: 'Parrak diametri',
+        s2v: `${sl2} m`,
+        s2Min: 20,
+        s2Max: 60,
+        s2Step: 5,
+        dur,
+        secCount: 0,
+        f2: 0,
+      };
+    }
+    const f2 = Math.round(sl1 * sl2);
+    return {
+      r1l: 'Kirish (F1)',
+      r1v: `${sl1} N`,
+      r2l: 'Chiqish (F2)',
+      r2v: `${f2} N`,
+      s1l: 'Berilgan kuch (F1)',
+      s1v: `${sl1} N`,
+      s1Min: 10,
+      s1Max: 100,
+      s1Step: 5,
+      s2l: 'Yuza nisbati (S2/S1)',
+      s2v: `${sl2}x`,
+      s2Min: 2,
+      s2Max: 12,
+      s2Step: 1,
+      dur: '1.1',
+      secCount: 0,
+      f2,
+    };
+  })();
+
+  const hydraulicP = Math.round((sl1 / 100) * 22);
+  const hydraulicL = Math.round((sl1 / 100) * 14);
+  const activeReel = REELS_DATA[reelIdx];
+
+  const renderLabSvg = (targetModel: LabModel, compact = false) => {
+    if (targetModel === 'transformer') {
+      const count = compact ? 6 : labConfig.secCount;
+      const dur = compact ? '1.1s' : `${labConfig.dur}s`;
+      return (
+        <svg viewBox="0 0 280 156" fill="none" aria-label="Transformator 2.5D modeli">
+          <polygon
+            points="58,22 222,22 232,32 232,138 68,138 58,128"
+            fill="#1E293B"
+            stroke="#475569"
+            strokeWidth="1.5"
+          />
+          <rect
+            x="58"
+            y="22"
+            width="164"
+            height="106"
+            rx="10"
+            fill="#334155"
+            stroke="#64748B"
+            strokeWidth="1.5"
+          />
+          <rect x="92" y="46" width="96" height="58" rx="6" fill="#0B1220" />
+          <rect
+            x="74"
+            y="34"
+            width="132"
+            height="82"
+            rx="8"
+            stroke="#38BDF8"
+            strokeWidth="2.5"
+            className="flux"
+            style={{ animationDuration: dur }}
+          />
+          <rect x="48" y="42" width="32" height="9" rx="4.5" fill="#3B82F6" />
+          <rect x="48" y="57" width="32" height="9" rx="4.5" fill="#3B82F6" />
+          <rect x="48" y="72" width="32" height="9" rx="4.5" fill="#3B82F6" />
+          <rect x="48" y="87" width="32" height="9" rx="4.5" fill="#3B82F6" />
+          <rect x="48" y="102" width="32" height="9" rx="4.5" fill="#3B82F6" />
+          {Array.from({ length: count }).map((_, i) => (
+            <rect
+              key={i}
+              x="200"
+              y={36 + i * 11}
+              width="32"
+              height="7"
+              rx="3.5"
+              fill="#F59E0B"
+            />
+          ))}
+          <text x="140" y="79" textAnchor="middle" fill="#38BDF8" fontSize="11" fontWeight="700">
+            Magnit oqimi Φ
+          </text>
+        </svg>
+      );
+    }
+
+    if (targetModel === 'turbine') {
+      const dur = compact ? '2.2s' : `${labConfig.dur}s`;
+      return (
+        <svg viewBox="0 0 280 156" fill="none" aria-label="Shamol turbinasi 2.5D modeli">
+          <path
+            d="M16 52 H92 M10 82 H84 M20 112 H94"
+            stroke="#38BDF8"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flux"
+            style={{ animationDuration: dur }}
+          />
+          <polygon points="134,152 138,82 142,82 146,152" fill="#CBD5E1" />
+          <g className="spin" style={{ animationDuration: dur }}>
+            <path d="M140 82 L137 20 L145 76 Z" fill="#F8FAFC" />
+            <path d="M140 82 L194 114 L144 88 Z" fill="#F8FAFC" />
+            <path d="M140 82 L86 114 L136 88 Z" fill="#F8FAFC" />
+          </g>
+          <circle cx="140" cy="82" r="7" fill="#3B82F6" stroke="#FFFFFF" strokeWidth="2.5" />
+        </svg>
+      );
+    }
+
+    const p = compact ? 10 : hydraulicP;
+    const l = compact ? 7 : hydraulicL;
+    const f2Display = compact ? 240 : labConfig.f2;
+    return (
+      <svg viewBox="0 0 280 156" fill="none" aria-label="Gidravlik press 2.5D modeli">
+        <path
+          d={`M58 ${44 + p} V126 Q58 138 70 138 H210 Q222 138 222 126 V${60 - l} H174 V112 H92 V${44 + p} Z`}
+          fill="#0EA5E9"
+          fillOpacity="0.45"
+          stroke="#38BDF8"
+          strokeWidth="2.5"
+        />
+        <rect x="58" y={34 + p} width="34" height="12" rx="3" fill="#3B82F6" />
+        <line x1="75" y1={12 + p} x2="75" y2={34 + p} stroke="#93C5FD" strokeWidth="4" />
+        <rect x="174" y={50 - l} width="48" height="12" rx="3" fill="#F59E0B" />
+        <rect x="182" y={28 - l} width="32" height="22" rx="4" fill="#FDE68A" />
+        <text x="198" y={43 - l} textAnchor="middle" fill="#78350F" fontSize="11" fontWeight="800">
+          {f2Display}N
+        </text>
+      </svg>
+    );
+  };
+
+  const showCard = (categories: readonly SubjectFilter[]) =>
+    subjectFilter === 'Barchasi' || categories.includes(subjectFilter);
+
+  const MirvoMarkSvg = (
+    <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <rect width="40" height="40" rx="10" fill="#1D4ED8" />
+      <path
+        d="M10 27V13L17 22L23 13L30 27"
+        stroke="#FFFFFF"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      <circle cx="30" cy="12" r="3" fill="#38BDF8" />
+    </svg>
+  );
 
-      {/* ==================== FIGMA STUDIO ARCHITECTURAL NAVBAR ==================== */}
-      <header className="sticky top-0 z-30 h-16 shrink-0 bg-[#FAF8F5]/92 backdrop-blur-md border-b border-[#E6E2D8]">
-        <div className="max-w-[1280px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between gap-3">
-          {/* Left: M·AI Brand Mark + Studio Tag */}
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2.5 cursor-pointer group"
-              aria-label="Mirvo Studio bosh sahifasi"
-            >
-              <span className="h-9 px-2.5 rounded-lg bg-[#111827] text-[#F59E0B] font-mono-tabular text-xs font-bold tracking-wider inline-flex items-center justify-center shadow-xs group-hover:bg-[#1E293B] transition-colors">
-                M·AI
-              </span>
-              <span
-                className="text-base sm:text-[17px] font-bold tracking-[-0.03em] text-[#111827]"
-                style={{ fontFamily: 'var(--font-display)' }}
-              >
-                Mirvo Studio
-              </span>
-            </button>
+  const navItems: readonly { id: NativeTab; label: string; icon: React.ReactNode }[] = [
+    {
+      id: 'doska',
+      label: 'Doska',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1">
+          <rect x="3" y="4" width="18" height="12" rx="2" />
+          <path d="M8 20h8M12 16v4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'darslar',
+      label: 'Darslar',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      ),
+    },
+    {
+      id: 'reels',
+      label: 'Qisqa',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1">
+          <polygon points="6 4 20 12 6 20 6 4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'profil',
+      label: 'Profil',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
+    },
+  ];
 
-            <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-md bg-[#F0ECE1] text-[#57534E] font-mono-tabular text-[11px] font-medium">
-              2D / 2.5D STEM LAB
-            </span>
-          </div>
+  return (
+    <div className="mirvo-native flex-1 min-h-0 flex flex-col relative overflow-hidden">
+      {/* Native Toast Notification */}
+      <div className={`toast ${toastVisible ? 'show' : ''}`} role="status" aria-live="polite">
+        {toastMsg}
+      </div>
 
-          {/* Center: Architectural Segmented Switcher */}
-          <nav
-            aria-label="Asosiy ish rejimi"
-            className="inline-flex items-center p-1 rounded-xl bg-[#F0ECE1] border border-[#E6E2D8]"
+      {/* ==================== DESKTOP STICKY FROSTED TOP NAV (>= 1024px) ==================== */}
+      <header className="desktop-nav-bar">
+        <div className="desktop-nav-inner">
+          <button
+            type="button"
+            className="brand"
+            onClick={() => setActiveTab('doska')}
+            aria-label="Mirvo bosh sahifa"
           >
-            <button
-              type="button"
-              onClick={() => setSpotlightMode('topic')}
-              aria-pressed={spotlightMode === 'topic'}
-              className={`min-h-[32px] px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                spotlightMode === 'topic'
-                  ? 'bg-white text-[#111827] shadow-xs'
-                  : 'text-[#57534E] hover:text-[#111827]'
-              }`}
-            >
-              Mavzu &amp; Chizma Doskasi
-            </button>
-            <button
-              type="button"
-              onClick={() => setSpotlightMode('video')}
-              aria-pressed={spotlightMode === 'video'}
-              className={`min-h-[32px] px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                spotlightMode === 'video'
-                  ? 'bg-white text-[#111827] shadow-xs'
-                  : 'text-[#57534E] hover:text-[#111827]'
-              }`}
-            >
-              Videodan Tahlil
-            </button>
+            {MirvoMarkSvg}
+            <span>Mirvo</span>
+          </button>
+
+          <nav className="desktop-tabs" aria-label="Asosiy navigatsiya">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={`desktop-tab-btn ${activeTab === item.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            ))}
           </nav>
 
-          {/* Right: History + Library + Settings */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="top-actions">
+            <div className="theme-seg" role="group" aria-label="Mavzu rejimi">
+              <button
+                type="button"
+                className={`t-btn ${theme === 'light' ? 'active' : ''}`}
+                onClick={() => setTheme('light')}
+              >
+                Yorug‘
+              </button>
+              <button
+                type="button"
+                className={`t-btn ${theme === 'dark' ? 'active' : ''}`}
+                onClick={() => setTheme('dark')}
+              >
+                OLED Qorong‘i
+              </button>
+            </div>
+
+            <button type="button" className="pill-stat" onClick={() => setActiveTab('profil')}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              <span>{formatSpaceNumber(xp)}</span>
+            </button>
+
+            <button type="button" className="pill-stat" onClick={() => setSheetOpen(true)}>
+              Pro
+            </button>
+
             <PWAInstallButton compact />
 
             <button
               type="button"
-              onClick={() => onOpenDrawer('history')}
-              aria-label="Saqlangan darslar tarixi"
-              className="h-9 px-3 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              <History className="w-3.5 h-3.5 text-[#1D4ED8]" />
-              <span className="hidden sm:inline">Saqlanganlar</span>
-              <span className="font-mono-tabular px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#1D4ED8] text-[10px] font-bold leading-none">
-                {totalHistoryCount}
-              </span>
-            </button>
-
-            <button
-              type="button"
+              className="pill-stat"
               onClick={() => onOpenDrawer('settings')}
-              aria-label="Sozlamalar va ovoz"
-              title={userEmail || 'Ustoz ovozi va sozlamalar'}
-              className="w-9 h-9 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] text-[#57534E] hover:text-[#111827] inline-flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              aria-label="Sozlamalar"
+              title="Sozlamalar va kutubxona"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
             </button>
@@ -323,212 +626,168 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
         </div>
       </header>
 
-      {/* ==================== ASYMMETRIC SPLIT HERO + EMOJI USTOZ STAGE ==================== */}
-      <main className="flex-1 px-4 sm:px-8 pt-8 sm:pt-12 pb-16">
-        <div className="max-w-[1280px] mx-auto space-y-12">
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-8 items-stretch">
-            {/* LEFT COLUMN (7 cols): Editorial Copy + Ink-Bordered Workbench */}
-            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                {/* Technical Spec Eyebrow */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#FEF3C7] border border-[#F59E0B]/40">
-                  <span className="w-2 h-2 rounded-full bg-[#D97706]" />
-                  <span className="font-mono-tabular text-[11px] font-bold tracking-wide text-[#B45309] uppercase">
-                    INTERAKTIV STEM LABORATORIYASI · ZDOG · PIXI v8 · MAFS · RAPIER2D
-                  </span>
+      {/* ==================== MAIN SCROLLABLE VIEWPORT ==================== */}
+      <div className="scroll-area">
+        <div className="stage-shell">
+          {/* ==================== TAB 1: DOSKA ==================== */}
+          {activeTab === 'doska' && (
+            <section className="tab-view" id="tab-doska">
+              {/* Mobile Top Row (100% preserved) */}
+              <div className="top-row mobile-only-top">
+                <button type="button" className="brand" onClick={() => setActiveTab('doska')}>
+                  {MirvoMarkSvg}
+                  <span>Mirvo</span>
+                </button>
+                <div className="top-actions">
+                  <div className="theme-seg" role="group" aria-label="Mavzu">
+                    <button
+                      type="button"
+                      className={`t-btn ${theme === 'light' ? 'active' : ''}`}
+                      onClick={() => setTheme('light')}
+                    >
+                      Yorug‘
+                    </button>
+                    <button
+                      type="button"
+                      className={`t-btn ${theme === 'dark' ? 'active' : ''}`}
+                      onClick={() => setTheme('dark')}
+                    >
+                      OLED
+                    </button>
+                  </div>
+                  <button type="button" className="pill-stat" onClick={() => setActiveTab('profil')}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" aria-hidden="true">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    <span>{formatSpaceNumber(xp)}</span>
+                  </button>
+                  <button type="button" className="pill-stat" onClick={() => setSheetOpen(true)}>
+                    Pro
+                  </button>
                 </div>
-
-                <h1
-                  className="text-3xl sm:text-5xl font-bold tracking-[-0.035em] text-[#111827] leading-[1.08]"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  Murakkab fanlarni jonli chizma va Emoji Ustoz bilan kashf eting.
-                </h1>
-
-                <p className="text-sm sm:text-base text-[#57534E] leading-relaxed max-w-2xl">
-                  Har bir formula, elektr sxema va fizik jarayon o‘zbek tilida bosqichma-bosqich
-                  chiziladi. O‘ng tarafdagi{' '}
-                  <strong className="font-semibold text-[#111827]">Emoji Ustoz</strong> sichqonchangiz
-                  harakatini ko‘zi bilan jonli kuzatib, doskada har bir qismni ko‘rsatib tushuntiradi.
-                </p>
               </div>
 
-              {/* Architectural Prompt Workbench (1.5px dark border) */}
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDraggingVideo(true);
-                }}
-                onDragLeave={() => setIsDraggingVideo(false)}
-                onDrop={handleCardDrop}
-                className={`rounded-2xl bg-white p-4 sm:p-5 transition-all ${
-                  isDraggingVideo
-                    ? 'border-2 border-[#1D4ED8] ring-4 ring-[#1D4ED8]/15'
-                    : 'border-[1.5px] border-[#111827] shadow-[0_10px_30px_rgba(17,24,39,0.06)]'
-                }`}
-              >
-                {spotlightMode === 'topic' ? (
-                  <form onSubmit={onSubmitPrompt} className="space-y-3.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono-tabular text-[11px] font-bold tracking-wider text-[#1D4ED8] uppercase">
-                        DOSKA TOPSHIRIG‘I // MAVZU YOKI FORMULA KIRITING
-                      </span>
-                      <span className="hidden sm:inline-flex items-center gap-1 font-mono-tabular text-[11px] text-[#57534E]">
-                        <Sparkles className="w-3 h-3 text-[#D97706]" />
-                        2D / 2.5D Chizma + Ovoz
-                      </span>
-                    </div>
+              <div className="doska-desktop-grid">
+                {/* LEFT COLUMN: Hero Copy + Prompt Card + Emotional Voice Strip */}
+                <div>
+                  <h1 className="h1">Murakkab mavzularni jonli ko‘ring</h1>
+                  <p className="lead">
+                    2.5D interaktiv modellar va emotsional o‘zbekcha ustoz ovozi bilan o‘rganing.
+                  </p>
 
+                  <form className="prompt-card" onSubmit={handleFormSubmit}>
                     {imagePreview && (
-                      <div className="flex items-center justify-between gap-2.5 rounded-xl bg-[#FAF8F5] px-3 py-2 border border-[#E6E2D8]">
-                        <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 8,
+                          padding: '6px 10px',
+                          borderRadius: 12,
+                          background: 'var(--surface-2)',
+                          marginBottom: 10,
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                           <img
                             src={imagePreview.dataUrl}
                             alt="Yuklangan masala rasmi"
-                            referrerPolicy="no-referrer"
-                            className="w-9 h-9 rounded-lg object-cover border border-[#E6E2D8] shrink-0"
+                            style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }}
                           />
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold text-[#111827] truncate">
-                              {imagePreview.name}
-                            </div>
-                            <div className="text-[11px] text-[#57534E]">Doska tahlili uchun rasm</div>
-                          </div>
+                          <span
+                            style={{
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {imagePreview.name}
+                          </span>
                         </div>
                         <button
                           type="button"
                           onClick={onClearImagePreview}
                           aria-label="Rasmni olib tashlash"
-                          className="w-7 h-7 rounded-lg hover:bg-[#E6E2D8]/60 text-[#57534E] hover:text-[#111827] flex items-center justify-center cursor-pointer"
+                          className="soft-btn"
+                          style={{ padding: 5 }}
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     )}
 
-                    {/* Input + Mic + Dark Architectural CTA */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                      <div className="flex-1 flex items-center gap-2 rounded-xl bg-[#FAF8F5] border border-[#E6E2D8] focus-within:border-[#111827] px-3.5 h-12 transition-colors">
-                        <input
-                          type="text"
-                          value={queryText}
-                          onChange={(e) => onQueryTextChange(e.target.value)}
-                          placeholder="Masalan: Gidroakkumulyator elektr stansiyasi (GAES)..."
-                          aria-label="Mavzu yoki savol"
-                          className="flex-1 min-w-0 bg-transparent text-sm sm:text-[15px] font-medium text-[#111827] placeholder:text-[#78716C] focus:outline-none"
-                        />
+                    <input
+                      id="qInput"
+                      type="text"
+                      enterKeyHint="send"
+                      value={queryText}
+                      onChange={(e) => onQueryTextChange(e.target.value)}
+                      placeholder="Savol yoki mavzu yozing..."
+                      aria-label="Savol yoki mavzu"
+                    />
 
+                    <div className="prompt-foot">
+                      <div className="tool-pills">
                         <button
                           type="button"
-                          onClick={onToggleMic}
-                          aria-label={isListening ? 'Ovoz yozishni to‘xtatish' : 'Ovoz bilan so‘rash'}
-                          title={isListening ? 'Tinglanmoqda...' : 'Ovozli savol'}
-                          className={`w-8 h-8 rounded-lg inline-flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                            isListening
-                              ? 'bg-rose-600 text-white animate-pulse'
-                              : 'bg-[#F0ECE1] hover:bg-[#E6E2D8] text-[#111827]'
-                          }`}
+                          className="soft-btn"
+                          onClick={() => {
+                            showToast('Rasm yuklash ochildi');
+                            onOpenFilePicker();
+                          }}
                         >
-                          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                          Rasm
                         </button>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={isLoading}
-                        aria-label="Doskani ochish"
-                        className="h-12 px-5 rounded-xl bg-[#111827] hover:bg-[#1E293B] text-[#FDE68A] text-sm font-bold inline-flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 transition-colors cursor-pointer whitespace-nowrap shadow-xs"
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>Chizilmoqda...</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Doskani ochish</span>
-                            <ArrowUpRight className="w-4 h-4 text-[#F59E0B]" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    {/* Bottom Toolbar inside Workbench */}
-                    <div className="pt-3 border-t border-[#E6E2D8] flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <div ref={attachMenuRef} className="relative">
-                          <button
-                            type="button"
-                            onClick={() => setAttachMenuOpen((v) => !v)}
-                            aria-expanded={attachMenuOpen}
-                            className="h-8 px-3 rounded-lg bg-[#F0ECE1] hover:bg-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
-                          >
-                            <Plus className="w-3.5 h-3.5 text-[#1D4ED8]" />
-                            <span>Rasm · Video yuklash</span>
-                          </button>
-
-                          {attachMenuOpen && (
-                            <div className="absolute left-0 top-10 z-30 w-56 rounded-xl bg-white border border-[#111827] shadow-xl p-1.5 space-y-0.5">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAttachMenuOpen(false);
-                                  onOpenFilePicker();
-                                }}
-                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
-                              >
-                                <ImageIcon className="w-4 h-4 text-[#1D4ED8] shrink-0" />
-                                <span>Masala rasmini yuklash</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAttachMenuOpen(false);
-                                  videoInputRef.current?.click();
-                                }}
-                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
-                              >
-                                <Film className="w-4 h-4 text-[#D97706] shrink-0" />
-                                <span>MP4 video yuklash</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAttachMenuOpen(false);
-                                  onOpenVideoModal();
-                                }}
-                                className="w-full px-3 py-2 rounded-lg hover:bg-[#FAF8F5] text-left text-xs font-semibold text-[#111827] flex items-center gap-2.5 cursor-pointer"
-                              >
-                                <Link2 className="w-4 h-4 text-[#059669] shrink-0" />
-                                <span>YouTube havola qo‘shish</span>
-                              </button>
-                            </div>
+                        <button
+                          type="button"
+                          className="soft-btn"
+                          onClick={() => {
+                            showToast('Videodan dars rejimi');
+                            onOpenVideoModal();
+                          }}
+                        >
+                          Video
+                        </button>
+                        <button
+                          type="button"
+                          className={`soft-btn ${isListening ? 'listening' : ''}`}
+                          onClick={onToggleMic}
+                          aria-label="Ovozli kiritish"
+                          title="Ovozli savol"
+                        >
+                          {isListening ? (
+                            <MicOff className="w-3.5 h-3.5" />
+                          ) : (
+                            <Mic className="w-3.5 h-3.5" />
                           )}
-                        </div>
-                      </div>
-
-                      {/* Step Count Selector (4..12) */}
-                      <div
-                        role="group"
-                        aria-label="Dars bosqichlari soni (4 dan 12 gacha)"
-                        className="inline-flex items-center gap-2"
-                      >
-                        <span className="text-[11px] font-semibold text-[#57534E] hidden sm:inline">
-                          Bosqichlar:
-                        </span>
-                        <div className="inline-flex items-center rounded-lg bg-[#F0ECE1] border border-[#E6E2D8] p-0.5">
+                        </button>
+                        <div
+                          className="soft-btn"
+                          style={{ padding: '4px 6px', gap: 4 }}
+                          role="group"
+                          aria-label="Dars bosqichlari soni"
+                        >
                           <button
                             type="button"
                             onClick={() =>
                               onLessonStepCountChange(clampStepCount(lessonStepCount - 1))
                             }
                             disabled={lessonStepCount <= 4}
-                            aria-label="Dars sonini kamaytirish"
-                            className="w-7 h-7 rounded-md hover:bg-white disabled:opacity-35 text-[#111827] flex items-center justify-center transition-colors cursor-pointer"
+                            aria-label="Kamaytirish"
+                            style={{
+                              border: 'none',
+                              background: 'transparent',
+                              color: 'inherit',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                            }}
                           >
-                            <Minus className="w-3.5 h-3.5" />
+                            <Minus className="w-3 h-3" />
                           </button>
-                          <span className="min-w-[68px] px-2 text-center font-mono-tabular text-xs font-bold text-[#111827] whitespace-nowrap">
+                          <span style={{ fontSize: 11.5, fontVariantNumeric: 'tabular-nums' }}>
                             {lessonStepCount} qadam
                           </span>
                           <button
@@ -537,277 +796,732 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                               onLessonStepCountChange(clampStepCount(lessonStepCount + 1))
                             }
                             disabled={lessonStepCount >= 12}
-                            aria-label="Dars sonini oshirish"
-                            className="w-7 h-7 rounded-md hover:bg-white disabled:opacity-35 text-[#111827] flex items-center justify-center transition-colors cursor-pointer"
+                            aria-label="Oshirish"
+                            style={{
+                              border: 'none',
+                              background: 'transparent',
+                              color: 'inherit',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                            }}
                           >
-                            <Plus className="w-3.5 h-3.5" />
+                            <Plus className="w-3 h-3" />
                           </button>
                         </div>
                       </div>
+
+                      <button type="submit" className="btn-go" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Boshlash'}
+                      </button>
                     </div>
-                  </form>
-                ) : (
-                  <form onSubmit={handleVideoFormSubmit} className="space-y-3.5">
-                    <div className="font-mono-tabular text-[11px] font-bold tracking-wider text-[#1D4ED8] uppercase">
-                      VIDEO LABORATORIYA // YOUTUBE YOKI MP4 DAN DARS YARATISH
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                      <div className="flex-1 flex items-center gap-2 rounded-xl bg-[#FAF8F5] border border-[#E6E2D8] px-3.5 h-12">
-                        <Link2 className="w-4 h-4 text-[#1D4ED8] shrink-0" />
-                        <input
-                          type="url"
-                          value={youtubeDraft}
-                          onChange={(e) => setYoutubeDraft(e.target.value)}
-                          placeholder="YouTube video havolasini kiriting (https://youtube.com/watch?v=...)..."
-                          aria-label="YouTube video havolasi"
-                          className="flex-1 min-w-0 bg-transparent text-sm text-[#111827] placeholder:text-[#78716C] focus:outline-none"
-                        />
+
+                    {errorMsg && (
+                      <div
+                        style={{
+                          marginTop: 10,
+                          padding: '8px 10px',
+                          borderRadius: 12,
+                          background: 'rgba(225, 29, 72, 0.12)',
+                          color: '#E11D48',
+                          fontSize: 12,
+                          fontWeight: 600,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <span>{errorMsg}</span>
+                        <button
+                          type="button"
+                          onClick={onDismissError}
+                          style={{
+                            border: 'none',
+                            background: 'transparent',
+                            color: 'inherit',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
                       </div>
-                      <button
-                        type="submit"
-                        className="h-12 px-5 rounded-xl bg-[#111827] hover:bg-[#1E293B] text-[#FDE68A] text-sm font-bold inline-flex items-center justify-center gap-2 shrink-0 transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        <span>Tahlil qilish</span>
-                        <ArrowUpRight className="w-4 h-4 text-[#F59E0B]" />
-                      </button>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#E6E2D8] flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => videoInputRef.current?.click()}
-                        className="h-8 px-3.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-xs font-semibold text-[#1D4ED8] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Kompyuterdan MP4 tanlash</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={onOpenUz3DPlayer}
-                        className="h-8 px-3.5 rounded-lg bg-[#F0ECE1] hover:bg-[#E6E2D8] text-xs font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        <Box className="w-3.5 h-3.5 text-[#D97706]" />
-                        <span>Vizual Studiya</span>
-                      </button>
-                    </div>
+                    )}
                   </form>
-                )}
 
-                {errorMsg && (
-                  <div className="mt-3 rounded-xl bg-rose-50 border border-rose-300 px-3.5 py-2.5 text-xs font-medium text-rose-900 flex items-center justify-between gap-2">
-                    <span>{errorMsg}</span>
+                  {/* Emotional Voice Strip (100% preserved + Live Eye-Tracking Emoji Ustoz) */}
+                  <div className={`voice-strip ${playing ? 'playing' : ''}`} id="vStrip">
                     <button
                       type="button"
-                      onClick={onDismissError}
-                      aria-label="Xatoni yopish"
-                      className="p-1 text-rose-700 hover:text-rose-950 cursor-pointer shrink-0"
+                      className="play-fab"
+                      onClick={togglePlay}
+                      aria-label="Ovozni ijro etish"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      {playing ? (
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="6" y="4" width="4" height="16" />
+                          <rect x="14" y="4" width="4" height="16" />
+                        </svg>
+                      ) : (
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="6 4 20 12 6 20 6 4" />
+                        </svg>
+                      )}
+                    </button>
+
+                    <div className="v-body">
+                      <div className="v-head">
+                        <span>Emotsional ustoz ovozi</span>
+                        <div className="eq" aria-hidden="true">
+                          <span />
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                      </div>
+                      <div className="moods">
+                        {(['Jonli', 'Sokin', 'Hayrat'] as const).map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            className={`m-chip ${mood === m ? 'active' : ''}`}
+                            onClick={() => handleSetMood(m)}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ flexShrink: 0 }} title="Ko‘zlar sichqonchani kuzatadi">
+                      <MirvoMentor
+                        size={48}
+                        isSpeaking={playing || isListening}
+                        isListening={isListening}
+                        voiceActivity={playing ? 0.72 : 0.08}
+                        interactive
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick Desktop Workspace Shortcuts */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 8,
+                      marginTop: 12,
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="soft-btn"
+                      onClick={() =>
+                        onSelectQuickTopic(
+                          'Gidroakkumulyator elektr stansiyasi (GAES)',
+                          'GAES stansiya'
+                        )
+                      }
+                    >
+                      GAES stansiya
+                    </button>
+                    <button type="button" className="soft-btn" onClick={onEnterWorkspace}>
+                      Oxirgi doska
+                    </button>
+                    <button
+                      type="button"
+                      className="soft-btn"
+                      onClick={() => onOpenDrawer('library')}
+                    >
+                      Kutubxona (18+)
                     </button>
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* RIGHT COLUMN (5 cols): LIVE INTERACTIVE EYE-TRACKING EMOJI USTOZ STAGE */}
-            <div className="lg:col-span-5 flex">
-              <div className="w-full rounded-3xl bg-[#111827] border-2 border-[#F59E0B] p-5 sm:p-6 text-white flex flex-col justify-between gap-5 shadow-[0_18px_45px_rgba(17,24,39,0.16)] relative overflow-hidden">
-                {/* Top Status Bar inside Dark Studio Card */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1F2937] border border-white/10 font-mono-tabular text-[11px] font-bold text-[#F59E0B]">
-                    <Eye className="w-3.5 h-3.5 text-[#F59E0B]" />
-                    JONLI EMOJI USTOZ · EYE-TRACKING
-                  </span>
-
-                  <span className="font-mono-tabular text-[11px] font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-2.5 py-1 rounded-md">
-                    X:{cursorCoords.x} Y:{cursorCoords.y}
-                  </span>
                 </div>
 
-                {/* Center Stage: Live Eye-Tracking Emoji Ustoz + Speech Callout */}
-                <div className="flex flex-col sm:flex-row items-center gap-5 my-auto py-1">
-                  <div className="relative shrink-0 p-2 rounded-3xl bg-gradient-to-b from-[#1E293B] to-[#0F172A] border border-white/10 shadow-inner">
-                    <MirvoMentor
-                      size={118}
-                      isSpeaking={isListening}
-                      isListening={isListening}
-                      voiceActivity={isListening ? 0.65 : 0.08}
-                      interactive
-                    />
-                  </div>
-
-                  <div className="space-y-2.5 text-center sm:text-left">
-                    <div className="inline-block px-2.5 py-0.5 rounded bg-[#F59E0B]/20 text-[#FDE68A] font-mono-tabular text-[10px] font-bold uppercase tracking-wider">
-                      Sichqonchani harakatlantiring
-                    </div>
-                    <p
-                      className="text-base sm:text-[17px] font-bold text-white leading-snug"
-                      style={{ fontFamily: 'var(--font-display)' }}
+                {/* RIGHT COLUMN (on Desktop) / CENTERPIECE (on Mobile): Live 2.5D Lab */}
+                <div className="lab">
+                  <div className="lab-switcher">
+                    <button
+                      type="button"
+                      className={`lab-btn ${model === 'transformer' ? 'active' : ''}`}
+                      onClick={() => pickModel('transformer')}
                     >
-                      “Salom! Sichqonchani qayerga olib borsangiz, ko‘zim bilan o‘sha nuqtani
-                      kuzatib turaman!”
-                    </p>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      Dars davomida ham doskaning burchagida turib, har bir chizma qismi va
-                      formulaga ko‘zim bilan qarab ovozli tushuntirib beraman.
-                    </p>
+                      Transformator
+                    </button>
+                    <button
+                      type="button"
+                      className={`lab-btn ${model === 'turbine' ? 'active' : ''}`}
+                      onClick={() => pickModel('turbine')}
+                    >
+                      Turbina
+                    </button>
+                    <button
+                      type="button"
+                      className={`lab-btn ${model === 'hydraulic' ? 'active' : ''}`}
+                      onClick={() => pickModel('hydraulic')}
+                    >
+                      Gidravlika
+                    </button>
+                  </div>
+
+                  <div className="svg-box" id="svgBox">
+                    {renderLabSvg(model)}
+                  </div>
+
+                  <div className="readout-pair">
+                    <div className="r-cell">
+                      <span>{labConfig.r1l}</span>
+                      <strong className="cyan">{labConfig.r1v}</strong>
+                    </div>
+                    <div className="r-cell">
+                      <span>{labConfig.r2l}</span>
+                      <strong className="amber">{labConfig.r2v}</strong>
+                    </div>
+                  </div>
+
+                  <div className="sliders">
+                    <div className="sl">
+                      <label htmlFor="sl1">
+                        <span>{labConfig.s1l}</span>
+                        <strong>{labConfig.s1v}</strong>
+                      </label>
+                      <input
+                        id="sl1"
+                        type="range"
+                        min={labConfig.s1Min}
+                        max={labConfig.s1Max}
+                        step={labConfig.s1Step}
+                        value={sl1}
+                        onChange={(e) => setSl1(parseFloat(e.target.value))}
+                      />
+                    </div>
+                    <div className="sl">
+                      <label htmlFor="sl2">
+                        <span>{labConfig.s2l}</span>
+                        <strong>{labConfig.s2v}</strong>
+                      </label>
+                      <input
+                        id="sl2"
+                        type="range"
+                        min={labConfig.s2Min}
+                        max={labConfig.s2Max}
+                        step={labConfig.s2Step}
+                        value={sl2}
+                        onChange={(e) => setSl2(parseFloat(e.target.value))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="lab-open-row">
+                    <span style={{ fontSize: 11.5, color: '#94A3B8' }}>
+                      To‘liq bosqichma-bosqich AI doska va ovozli tahlil
+                    </span>
+                    <button
+                      type="button"
+                      className="lab-open-btn"
+                      onClick={() => openFullLabLesson(model)}
+                    >
+                      Doskada ochish ↗
+                    </button>
                   </div>
                 </div>
-
-                {/* Bottom Quick-Action Footer inside Emoji Ustoz Card */}
-                <div className="pt-3.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-mono-tabular text-[11px] text-slate-300">
-                    Ko‘z vektori: <strong className="text-[#FDE68A]">360° Kursor kuzatuvi</strong>
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onSelectQuickTopic(
-                        'Gidroakkumulyator elektr stansiyasi (GAES)',
-                        'Gidroakkumulyator elektr stansiyasi (GAES)'
-                      )
-                    }
-                    className="h-8 px-3 rounded-lg bg-[#F59E0B] hover:bg-[#D97706] text-[#111827] text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <span>GAES chizmasini sinash</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
-          {/* ==================== 3-COLUMN FIGMA STEM LAB MODULE CARDS ==================== */}
-          <section aria-label="STEM Laboratoriya modullari" className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E6E2D8] pb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono-tabular text-xs font-bold uppercase tracking-wider text-[#111827]">
-                  INTERAKTIV LABORATORIYA MODULLARI
-                </span>
-                <span className="px-2 py-0.5 rounded bg-[#F0ECE1] font-mono-tabular text-[11px] font-semibold text-[#57534E]">
-                  FIGMA DESIGN SYSTEM
-                </span>
+          {/* ==================== TAB 2: DARSLAR (BENTO) ==================== */}
+          {activeTab === 'darslar' && (
+            <section className="tab-view" id="tab-darslar">
+              <div className="top-row">
+                <h1 className="h1" style={{ margin: 0, fontSize: 22 }}>
+                  Fanlar va darslar
+                </h1>
+                <button
+                  type="button"
+                  className="pill-stat"
+                  onClick={() => onOpenDrawer('history')}
+                >
+                  Saqlangan: {totalHistoryCount || 6}
+                </button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                {STUDIO_CHIP_TOPICS.map((chip) => (
+              <div className="filters">
+                {SUBJECT_FILTERS.map((f) => (
                   <button
-                    key={chip.label}
+                    key={f}
                     type="button"
-                    onClick={() => {
-                      if (chip.starterId) {
-                        onSelectStarterCard(chip.starterId);
-                      } else {
-                        onSelectQuickTopic(chip.query, chip.label);
-                      }
-                    }}
-                    className="h-7 px-2.5 rounded-md bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] text-[11px] font-semibold text-[#57534E] transition-colors cursor-pointer whitespace-nowrap"
+                    className={`f-btn ${subjectFilter === f ? 'active' : ''}`}
+                    onClick={() => setSubjectFilter(f)}
                   >
-                    {chip.label}
+                    {f}
                   </button>
                 ))}
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {STUDIO_MODULES.map((mod) => {
-                const IconComp = mod.icon;
-                return (
+              <div className="bento">
+                {showCard(['Fizika']) && (
                   <button
-                    key={mod.id}
                     type="button"
-                    onClick={() => {
-                      if (mod.actionType === 'topic' && mod.query) {
-                        onSelectQuickTopic(mod.query, mod.title);
-                      } else {
-                        onSelectStarterCard(mod.id);
-                      }
-                    }}
-                    className="group text-left rounded-2xl bg-white border border-[#E6E2D8] hover:border-[#111827] p-6 flex flex-col justify-between gap-5 transition-all hover:-translate-y-0.5 shadow-[0_6px_24px_rgba(17,24,39,0.03)] hover:shadow-[0_14px_34px_rgba(17,24,39,0.08)] cursor-pointer"
+                    className="b-card wide dark"
+                    onClick={() => jumpModel('transformer')}
                   >
-                    <div className="space-y-3.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <span
-                          className="font-mono-tabular text-[11px] font-bold tracking-wider uppercase"
-                          style={{ color: mod.accentColor }}
-                        >
-                          {mod.code}
-                        </span>
-                        <span
-                          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: mod.accentBg, color: mod.accentColor }}
-                        >
-                          <IconComp className="w-4 h-4" />
-                        </span>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <h2
-                          className="text-lg font-bold tracking-[-0.025em] text-[#111827] group-hover:text-[#1D4ED8] transition-colors leading-snug"
-                          style={{ fontFamily: 'var(--font-display)' }}
-                        >
-                          {mod.title}
-                        </h2>
-                        <p className="text-[13px] text-[#57534E] leading-relaxed">
-                          {mod.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="pt-3.5 border-t border-[#E6E2D8] flex items-center justify-between gap-2">
-                      <span className="font-mono-tabular text-xs font-bold text-[#111827] bg-[#F5F2EB] border border-[#E6E2D8] px-3 py-1.5 rounded-lg">
-                        {mod.formulaPreview}
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-[#111827] group-hover:text-[#1D4ED8] transition-colors">
-                        <span>Doskada ochish</span>
-                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                      </span>
+                    <div>
+                      <div className="b-kicker">Energetika</div>
+                      <div className="b-title">Transformator va elektromagnit induksiya</div>
+                      <div className="b-sub">12 ta interaktiv 2.5D dars</div>
                     </div>
                   </button>
-                );
-              })}
-            </div>
+                )}
 
-            {/* Bottom Architectural Utility Bar */}
-            <div className="pt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[#57534E]">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => onOpenDrawer('library')}
-                  className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-[#1D4ED8]" />
-                  <span>Barcha darslar kutubxonasi (18+)</span>
-                </button>
+                {showCard(['Fizika']) && (
+                  <button type="button" className="b-card" onClick={() => jumpModel('turbine')}>
+                    <div className="b-kicker">ShES</div>
+                    <div>
+                      <div className="b-title">Shamol turbinasi (Bets)</div>
+                      <div className="b-sub">10 ta dars</div>
+                    </div>
+                  </button>
+                )}
 
-                <button
-                  type="button"
-                  onClick={onEnterWorkspace}
-                  className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#111827] hover:text-white border border-[#E6E2D8] font-semibold text-[#111827] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <span>Oxirgi ochilgan doskaga qaytish</span>
-                </button>
+                {showCard(['Fizika']) && (
+                  <button type="button" className="b-card" onClick={() => jumpModel('hydraulic')}>
+                    <div className="b-kicker">Gidravlika</div>
+                    <div>
+                      <div className="b-title">Gidravlik press (Paskal)</div>
+                      <div className="b-sub">8 ta dars</div>
+                    </div>
+                  </button>
+                )}
 
-                {!userEmail && (
+                {showCard(['Kimyo', 'Biologiya']) && (
                   <button
                     type="button"
-                    onClick={() => onRequestAuth()}
-                    className="h-8 px-3.5 rounded-lg bg-white hover:bg-[#F5F2EB] border border-[#E6E2D8] font-semibold text-[#57534E] hover:text-[#111827] transition-colors cursor-pointer"
+                    className="b-card wide"
+                    onClick={() => {
+                      showToast('Kimyo 2D molekula moduli ochildi');
+                      onSelectStarterCard('caffeine-pubchem-3d');
+                    }}
                   >
-                    Hisobga kirish
+                    <div className="b-kicker">Kimyo va Biologiya</div>
+                    <div>
+                      <div className="b-title">Organik molekulalar va DNK tuzilishi</div>
+                      <div className="b-sub">14 ta 2D vizual tahlil</div>
+                    </div>
+                  </button>
+                )}
+
+                {showCard(['Fizika']) && (
+                  <button
+                    type="button"
+                    className="b-card"
+                    onClick={() =>
+                      onSelectQuickTopic(
+                        'Gidroakkumulyator elektr stansiyasi (GAES)',
+                        'GAES stansiya'
+                      )
+                    }
+                  >
+                    <div className="b-kicker">Gidroenergetika</div>
+                    <div>
+                      <div className="b-title">Gidroakkumulyator (GAES)</div>
+                      <div className="b-sub">P = ρ·g·Q·H·η · 2D sxema</div>
+                    </div>
+                  </button>
+                )}
+
+                {showCard(['Matematika']) && (
+                  <button
+                    type="button"
+                    className="b-card"
+                    onClick={() => onSelectStarterCard('pythagoras-visual')}
+                  >
+                    <div className="b-kicker">Matematika</div>
+                    <div>
+                      <div className="b-title">Pifagor teoremasi va grafiklar</div>
+                      <div className="b-sub">Mafs interaktiv koordinata</div>
+                    </div>
+                  </button>
+                )}
+
+                {showCard(['Biologiya']) && (
+                  <button
+                    type="button"
+                    className="b-card wide"
+                    onClick={() => onSelectStarterCard('photosynthesis-visual')}
+                  >
+                    <div className="b-kicker">Biologiya</div>
+                    <div>
+                      <div className="b-title">Fotosintez va hujayra tuzilishi</div>
+                      <div className="b-sub">Xloroplast va ATP sintezi 2D tahlili</div>
+                    </div>
                   </button>
                 )}
               </div>
+            </section>
+          )}
 
-              <div className="font-mono-tabular text-[11px] text-[#78716C]">
-                FIGMA STUDIO UI · KO‘Z BILAN KUZATUVCHI EMOJI USTOZ · O‘ZBEK TILIDA
+          {/* ==================== TAB 3: REELS (30s VERTICAL LESSONS) ==================== */}
+          {activeTab === 'reels' && (
+            <section className="tab-view" id="tab-reels">
+              <div className="top-row">
+                <h1 className="h1" style={{ margin: 0, fontSize: 22 }}>
+                  Qisqa darslar
+                </h1>
+                <span className="pill-stat">3 / 5 bugun</span>
               </div>
-            </div>
-          </section>
+
+              <div className="reels-layout">
+                <div className="reel-stage">
+                  <div className="reel-progress">
+                    {REELS_DATA.map((item, idx) => (
+                      <div
+                        key={item.id}
+                        className={`reel-bar ${
+                          idx < reelIdx ? 'done' : idx === reelIdx ? 'active' : ''
+                        }`}
+                      >
+                        <span />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="reel-center">
+                    <span className="reel-formula">{activeReel.f}</span>
+                    <div style={{ width: '100%', maxWidth: 270, height: 185 }}>
+                      {renderLabSvg(activeReel.model, true)}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 17,
+                        fontWeight: 800,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {activeReel.t}
+                    </div>
+                  </div>
+
+                  <div className="reel-foot">
+                    <div className="reel-reward">
+                      To‘liq ko‘rilsa: +50 Mirvo Ball va +2 AI Quvvat
+                    </div>
+                    <button type="button" className="btn-go full" onClick={nextReel}>
+                      Keyingi qisqa dars
+                    </button>
+                  </div>
+                </div>
+
+                {/* Desktop Theater Side Panel */}
+                <aside className="reels-aside">
+                  <div
+                    style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 22,
+                      padding: 20,
+                    }}
+                  >
+                    <div className="b-kicker">Qisqa dars tafsiloti</div>
+                    <div className="b-title" style={{ fontSize: 20, marginBottom: 8 }}>
+                      {activeReel.t}
+                    </div>
+                    <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 16 }}>
+                      {activeReel.detail}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-go"
+                      onClick={() => onSelectStarterCard(activeReel.starterId)}
+                    >
+                      To‘liq AI doskada ko‘rish ↗
+                    </button>
+                  </div>
+
+                  <div className="row-group">
+                    {REELS_DATA.map((item, idx) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="row-item"
+                        onClick={() => setReelIdx(idx)}
+                      >
+                        <div>
+                          <strong>
+                            {idx + 1}. {item.t}
+                          </strong>
+                          <span>{item.f}</span>
+                        </div>
+                        <span
+                          style={{
+                            color: idx === reelIdx ? 'var(--accent)' : 'var(--muted)',
+                            fontWeight: 700,
+                          }}
+                        >
+                          {idx === reelIdx ? 'Faol' : 'Ko‘rish'}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </aside>
+              </div>
+            </section>
+          )}
+
+          {/* ==================== TAB 4: PROFIL & REWARDS ==================== */}
+          {activeTab === 'profil' && (
+            <section className="tab-view" id="tab-profil">
+              <div className="top-row">
+                <h1 className="h1" style={{ margin: 0, fontSize: 22 }}>
+                  Profil
+                </h1>
+                <button
+                  type="button"
+                  className="pill-stat"
+                  onClick={() => copyCode('MIRVO2026', 'Taklif kodi nusxalandi: MIRVO2026')}
+                >
+                  MIRVO2026
+                </button>
+              </div>
+
+              <div className="profil-layout">
+                <div>
+                  <button
+                    type="button"
+                    className="pro-banner"
+                    onClick={() => setSheetOpen(true)}
+                  >
+                    <div>
+                      <strong>Mirvo Pro ga o‘ting</strong>
+                      <span>Cheksiz 2.5D dars va emotsional ovoz</span>
+                    </div>
+                    <span className="pro-price-pill">44 100 so‘m</span>
+                  </button>
+
+                  <div className="mini-stats">
+                    <div className="ms-cell">
+                      <strong>{Math.max(24, totalHistoryCount)}</strong>
+                      <span>Darslar</span>
+                    </div>
+                    <div className="ms-cell">
+                      <strong>7 kun</strong>
+                      <span>Seriya</span>
+                    </div>
+                    <div className="ms-cell">
+                      <strong>4</strong>
+                      <span>Do‘stlar</span>
+                    </div>
+                  </div>
+
+                  <div className="row-group">
+                    <button
+                      type="button"
+                      className="row-item"
+                      onClick={() => claimXp(3000, '10% Pro chegirma kuponi')}
+                    >
+                      <div>
+                        <strong>10% Pro chegirma olish</strong>
+                        <span>3 000 Mirvo Ball evaziga</span>
+                      </div>
+                      <span style={{ color: 'var(--accent)', fontWeight: 700 }}>Olish</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="row-item"
+                      onClick={() => {
+                        showToast('O‘qilgan 24 ta dars tarixi');
+                        onOpenDrawer('history');
+                      }}
+                    >
+                      <div>
+                        <strong>O‘qilgan darslar tarixi</strong>
+                        <span>Transformator, Bets qonuni va b.</span>
+                      </div>
+                      <span style={{ color: 'var(--muted)' }}>›</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="row-item"
+                      onClick={() =>
+                        copyCode(
+                          window.location.origin,
+                          'Taklif havolasi nusxalandi (+500 Ball)'
+                        )
+                      }
+                    >
+                      <div>
+                        <strong>Do‘st taklif qilish</strong>
+                        <span>Har bir do‘st uchun +500 Ball</span>
+                      </div>
+                      <span style={{ color: 'var(--muted)' }}>›</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Card (Account, XP Balance, Theme & Voice Settings) */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div
+                    style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 20,
+                      padding: 16,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <MirvoMentor size={52} isSpeaking={false} interactive />
+                      <div>
+                        <strong style={{ display: 'block', fontSize: 15 }}>
+                          {userName || userEmail || 'Mirvo O‘quvchi'}
+                        </strong>
+                        <span style={{ fontSize: 12, color: 'var(--muted)' }}>
+                          Balans: {formatSpaceNumber(xp)} Mirvo Ball
+                        </span>
+                      </div>
+                    </div>
+                    {!userEmail && (
+                      <button
+                        type="button"
+                        className="soft-btn"
+                        onClick={() => onRequestAuth()}
+                      >
+                        Kirish
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="row-group">
+                    <button
+                      type="button"
+                      className="row-item"
+                      onClick={() => onOpenDrawer('settings')}
+                    >
+                      <div>
+                        <strong>Ustoz ovozi va tezligi</strong>
+                        <span>O‘zbekcha TTS sozlamalari</span>
+                      </div>
+                      <span style={{ color: 'var(--muted)' }}>›</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="row-item"
+                      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                    >
+                      <div>
+                        <strong>Mavzu ko‘rinishi</strong>
+                        <span>
+                          Hozirgi rejim: {theme === 'dark' ? 'OLED Qorong‘i' : 'Yorug‘'}
+                        </span>
+                      </div>
+                      <span style={{ color: 'var(--accent)', fontWeight: 700 }}>
+                        Almashtirish
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
-      </main>
+      </div>
+
+      {/* ==================== FLOATING FROSTED BOTTOM DOCK (MOBILE) ==================== */}
+      <div className="dock-box">
+        <nav className="dock" aria-label="Mobil navigatsiya">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`dock-btn ${activeTab === item.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* ==================== BOTTOM SHEET / MODAL: PRO CHECKOUT ==================== */}
+      {sheetOpen && (
+        <div
+          className="sheet-bg"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mirvo Pro obunasi"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSheetOpen(false);
+          }}
+        >
+          <div className="sheet">
+            <div className="handle" />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 14,
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 18,
+                    fontWeight: 800,
+                  }}
+                >
+                  Mirvo Pro (1 oy)
+                </div>
+                <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>
+                  10% kupon qo‘llandi — 44 100 so‘m
+                </div>
+              </div>
+              <button
+                type="button"
+                className="soft-btn"
+                onClick={() => setSheetOpen(false)}
+              >
+                Yopish
+              </button>
+            </div>
+
+            {PAYMENT_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                className={`pay-row ${selectedPay === opt.id ? 'active' : ''}`}
+                onClick={() => setSelectedPay(opt.id)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className="pay-tag" style={{ background: opt.color }}>
+                    {opt.tag}
+                  </span>
+                  <strong>{opt.label}</strong>
+                </div>
+                <span>{selectedPay === opt.id ? '✓' : ''}</span>
+              </button>
+            ))}
+
+            <button
+              type="button"
+              className="btn-go full"
+              style={{ marginTop: 8 }}
+              onClick={() => {
+                setSheetOpen(false);
+                showToast('Mirvo Pro muvaffaqiyatli faollashtirildi');
+              }}
+            >
+              44 100 so‘m to‘lash
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

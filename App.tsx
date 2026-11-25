@@ -1350,7 +1350,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] w-full flex flex-col bg-[#F5F5F7] text-[#1D1D1F] overflow-hidden pt-[env(safe-area-inset-top)]">
+    <div className="h-[100dvh] w-full flex flex-col bg-[var(--bg)] text-[var(--ink)] overflow-hidden pt-[env(safe-area-inset-top)]">
       {/* Hidden shared file input for photo math uploads */}
       <input
         ref={fileInputRef}

@@ -3,16 +3,57 @@
 
 @layer base {
   :root {
-    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+    --backdrop: #E9EDF5;
+    --bg: #F6F7FB;
+    --surface: #FFFFFF;
+    --surface-2: #EEF1F7;
+    --ink: #0B1220;
+    --muted: #55637A;
+    --line: rgba(11, 18, 32, 0.08);
+    --line-strong: rgba(11, 18, 32, 0.14);
+    --accent: #1D4ED8;
+    --accent-press: #1E3A8A;
+    --accent-soft: rgba(29, 78, 216, 0.10);
+    --cyan: #0891B2;
+    --amber: #D97706;
+    --green: #059669;
+    --glass: rgba(255, 255, 255, 0.84);
+    --shadow-phone: 0 28px 70px rgba(11, 18, 32, 0.18);
+
+    --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
-    --apple-canvas: #FAF8F5;
-    --apple-surface: #FFFFFF;
-    --apple-text: #111827;
-    --apple-secondary: #57534E;
-    --apple-accent: #1D4ED8;
-    --apple-accent-hover: #1E40AF;
-    --apple-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    --apple-canvas: var(--bg);
+    --apple-surface: var(--surface);
+    --apple-text: var(--ink);
+    --apple-secondary: var(--muted);
+    --apple-accent: var(--accent);
+    --apple-accent-hover: #2563EB;
+    --apple-ease: var(--ease-out);
+  }
+
+  [data-theme="dark"] {
+    --backdrop: #03060C;
+    --bg: #070B14;
+    --surface: #111827;
+    --surface-2: #192234;
+    --ink: #F8FAFC;
+    --muted: #94A3B8;
+    --line: rgba(248, 250, 252, 0.08);
+    --line-strong: rgba(248, 250, 252, 0.15);
+    --accent: #3B82F6;
+    --accent-press: #1D4ED8;
+    --accent-soft: rgba(59, 130, 246, 0.18);
+    --cyan: #22D3EE;
+    --amber: #FBBF24;
+    --green: #34D399;
+    --glass: rgba(17, 24, 39, 0.82);
+    --shadow-phone: 0 32px 80px rgba(0, 0, 0, 0.72);
   }
 
   html,
@@ -21,13 +62,14 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: var(--font-sans);
-    background-color: #FAF8F5;
-    color: #111827;
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: contain;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
   }
 
   button,
@@ -67,10 +109,10 @@
 }
 
 .apple-glass {
-  background-color: rgba(255, 255, 255, 0.78);
+  background-color: var(--glass);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
 }
 
 .apple-transition {
@@ -612,3 +654,1063 @@
   }
 }
 
+
+/* ==================== MIRVO AI 2026 NATIVE MOBILE + DESKTOP DESIGN SYSTEM ==================== */
+.mirvo-native {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+
+.mirvo-native button,
+.mirvo-native a,
+.mirvo-native [role="button"] {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: inherit;
+}
+
+.mirvo-native button:focus-visible,
+.mirvo-native input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Theme Segmented Switcher */
+.mirvo-native .theme-seg {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.mirvo-native .t-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
+  white-space: nowrap;
+}
+.mirvo-native .t-btn.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* Desktop Sticky Frosted Top Navigation */
+.mirvo-native .desktop-nav-bar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.mirvo-native .desktop-nav-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  height: 68px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.mirvo-native .desktop-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px;
+}
+.mirvo-native .desktop-tab-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out), transform 100ms var(--ease-out);
+}
+.mirvo-native .desktop-tab-btn:hover {
+  color: var(--ink);
+}
+.mirvo-native .desktop-tab-btn:active {
+  transform: scale(0.97);
+}
+.mirvo-native .desktop-tab-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Scrollable Main Stage */
+.mirvo-native .scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px 18px 104px;
+  scrollbar-width: none;
+}
+.mirvo-native .scroll-area::-webkit-scrollbar {
+  display: none;
+}
+.mirvo-native .stage-shell {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.mirvo-native .tab-view {
+  animation: mirvoTabIn 180ms var(--ease-out);
+}
+@keyframes mirvoTabIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Minimal Top Row (Mobile) */
+.mirvo-native .top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.mirvo-native .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.mirvo-native .top-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.mirvo-native .pill-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 110ms var(--ease-out), background-color 140ms var(--ease-out);
+  white-space: nowrap;
+}
+.mirvo-native .pill-stat:active {
+  transform: scale(0.96);
+}
+
+.mirvo-native .h1 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.mirvo-native .lead {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+/* Prompt Input Card (16px min font prevents iOS Safari zoom) */
+.mirvo-native .prompt-card {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  padding: 12px 12px 10px 14px;
+  margin-bottom: 16px;
+  transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+}
+.mirvo-native .prompt-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.mirvo-native .prompt-card input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 16px;
+  outline: none;
+  margin-bottom: 10px;
+}
+.mirvo-native .prompt-card input::placeholder {
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.mirvo-native .prompt-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mirvo-native .tool-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mirvo-native .soft-btn {
+  border: none;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: transform 100ms var(--ease-out), background-color 140ms var(--ease-out);
+  white-space: nowrap;
+}
+.mirvo-native .soft-btn:active {
+  transform: scale(0.96);
+}
+.mirvo-native .soft-btn.listening {
+  background: #E11D48;
+  color: #FFFFFF;
+}
+
+.mirvo-native .btn-go {
+  border: none;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 13px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--accent-press);
+  transition: transform 100ms var(--ease-out), box-shadow 100ms var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.mirvo-native .btn-go:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--accent-press);
+}
+.mirvo-native .btn-go:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mirvo-native .btn-go.full {
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+  border-radius: 15px;
+}
+
+/* CENTERPIECE: Live 2.5D Lab */
+.mirvo-native .lab {
+  background: #0B1220;
+  color: #F8FAFC;
+  border-radius: 24px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+  box-shadow: 0 16px 36px rgba(11, 18, 32, 0.14);
+}
+.mirvo-native .lab-switcher {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.mirvo-native .lab-btn {
+  flex: 1;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #CBD5E1;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 6px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out), transform 100ms var(--ease-out);
+}
+.mirvo-native .lab-btn:active {
+  transform: scale(0.97);
+}
+.mirvo-native .lab-btn.active {
+  background: #FFFFFF;
+  color: #0B1220;
+  font-weight: 700;
+}
+
+.mirvo-native .svg-box {
+  height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.18) 0%, rgba(11, 18, 32, 0) 70%);
+  border-radius: 14px;
+}
+.mirvo-native .svg-box svg {
+  width: 100%;
+  max-width: 310px;
+  height: 100%;
+}
+.mirvo-native .readout-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.mirvo-native .r-cell {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 13px;
+  padding: 8px 11px;
+}
+.mirvo-native .r-cell span {
+  display: block;
+  font-size: 11px;
+  color: #94A3B8;
+  margin-bottom: 2px;
+}
+.mirvo-native .r-cell strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.mirvo-native .r-cell strong.cyan {
+  color: #38BDF8;
+}
+.mirvo-native .r-cell strong.amber {
+  color: #FBBF24;
+}
+
+.mirvo-native .sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.mirvo-native .sl label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #CBD5E1;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.mirvo-native .sl input[type="range"] {
+  width: 100%;
+  accent-color: #38BDF8;
+  height: 6px;
+  cursor: pointer;
+}
+
+.mirvo-native .lab-open-row {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mirvo-native .lab-open-btn {
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.12);
+  color: #E0F2FE;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), transform 100ms var(--ease-out);
+}
+.mirvo-native .lab-open-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+}
+.mirvo-native .lab-open-btn:active {
+  transform: scale(0.97);
+}
+
+/* Floating Glass Emotional Voice Bar */
+.mirvo-native .voice-strip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.mirvo-native .play-fab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ink);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 100ms var(--ease-out);
+}
+.mirvo-native .play-fab:active {
+  transform: scale(0.94);
+}
+.mirvo-native .v-body {
+  flex: 1;
+  min-width: 0;
+}
+.mirvo-native .v-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.mirvo-native .moods {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.mirvo-native .m-chip {
+  border: none;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.mirvo-native .m-chip.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.mirvo-native .eq {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 16px;
+}
+.mirvo-native .eq span {
+  width: 3px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 3px;
+}
+.mirvo-native .voice-strip.playing .eq span {
+  animation: mirvoEq 0.65s infinite ease-in-out alternate;
+}
+.mirvo-native .voice-strip.playing .eq span:nth-child(2) {
+  animation-delay: 0.14s;
+}
+.mirvo-native .voice-strip.playing .eq span:nth-child(3) {
+  animation-delay: 0.28s;
+}
+.mirvo-native .voice-strip.playing .eq span:nth-child(4) {
+  animation-delay: 0.08s;
+}
+@keyframes mirvoEq {
+  from {
+    height: 5px;
+  }
+  to {
+    height: 16px;
+  }
+}
+
+/* Bento Catalog */
+.mirvo-native .filters {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.mirvo-native .filters::-webkit-scrollbar {
+  display: none;
+}
+.mirvo-native .f-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
+}
+.mirvo-native .f-btn.active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: transparent;
+}
+
+.mirvo-native .bento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mirvo-native .b-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 132px;
+  transition: transform 110ms var(--ease-out), border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+}
+.mirvo-native .b-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 10px 26px rgba(11, 18, 32, 0.06);
+}
+.mirvo-native .b-card:active {
+  transform: scale(0.97);
+}
+.mirvo-native .b-card.wide {
+  grid-column: span 2;
+  min-height: 112px;
+}
+.mirvo-native .b-card.dark {
+  background: linear-gradient(135deg, #0F172A, #1E3A8A);
+  color: #FFFFFF;
+  border: none;
+}
+.mirvo-native .b-card.dark .b-sub {
+  color: #93C5FD;
+}
+.mirvo-native .b-kicker {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.mirvo-native .b-card.dark .b-kicker {
+  color: #38BDF8;
+}
+.mirvo-native .b-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 4px;
+  color: inherit;
+}
+.mirvo-native .b-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Vertical Reels Micro-Lesson */
+.mirvo-native .reels-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.mirvo-native .reel-stage {
+  background: linear-gradient(180deg, #0B1220 0%, #172554 100%);
+  color: #FFFFFF;
+  border-radius: 26px;
+  min-height: 530px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.mirvo-native .reel-progress {
+  display: flex;
+  gap: 5px;
+}
+.mirvo-native .reel-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.mirvo-native .reel-bar.done span,
+.mirvo-native .reel-bar.active span {
+  display: block;
+  height: 100%;
+  background: #38BDF8;
+  width: 100%;
+}
+.mirvo-native .reel-bar.active span {
+  width: 65%;
+}
+.mirvo-native .reel-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+.mirvo-native .reel-formula {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FDE68A;
+}
+.mirvo-native .reel-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mirvo-native .reel-reward {
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #FDE68A;
+  padding: 9px 12px;
+  border-radius: 13px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.mirvo-native .reels-aside {
+  display: none;
+}
+
+/* Profile & Clean Rows */
+.mirvo-native .profil-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mirvo-native .pro-banner {
+  background: linear-gradient(135deg, #1E3A8A, #0891B2);
+  color: #FFFFFF;
+  border-radius: 22px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: transform 110ms var(--ease-out);
+}
+.mirvo-native .pro-banner:active {
+  transform: scale(0.98);
+}
+.mirvo-native .pro-banner strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+.mirvo-native .pro-banner span {
+  font-size: 12px;
+  color: #E0F2FE;
+}
+.mirvo-native .pro-price-pill {
+  background: #FFFFFF;
+  color: #0B1220;
+  padding: 8px 12px;
+  border-radius: 11px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mirvo-native .mini-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mirvo-native .ms-cell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 11px 8px;
+  text-align: center;
+}
+.mirvo-native .ms-cell strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+}
+.mirvo-native .ms-cell span {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.mirvo-native .row-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.mirvo-native .row-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  padding: 14px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 140ms var(--ease-out);
+}
+.mirvo-native .row-item:hover {
+  background: var(--surface-2);
+}
+.mirvo-native .row-item:last-child {
+  border-bottom: none;
+}
+.mirvo-native .row-item strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+.mirvo-native .row-item span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Floating Frosted Bottom Dock (Mobile) */
+.mirvo-native .dock-box {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 30;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.mirvo-native .dock {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  padding: 6px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  box-shadow: 0 12px 30px rgba(11, 18, 32, 0.14);
+}
+.mirvo-native .dock-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 46px;
+  border-radius: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out), transform 100ms var(--ease-out);
+}
+.mirvo-native .dock-btn:active {
+  transform: scale(0.95);
+}
+.mirvo-native .dock-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Native iOS-style Bottom Sheet (Mobile) -> Centered Dialog (Desktop) */
+.mirvo-native .sheet-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 11, 20, 0.56);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 60;
+}
+.mirvo-native .sheet {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 28px 28px 0 0;
+  padding: 12px 18px 24px;
+  animation: mirvoSheetIn 260ms var(--ease-drawer);
+  border: 1px solid var(--line);
+}
+@keyframes mirvoSheetIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.mirvo-native .handle {
+  width: 38px;
+  height: 4px;
+  background: var(--line-strong);
+  border-radius: 999px;
+  margin: 0 auto 14px;
+}
+.mirvo-native .pay-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 13px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  margin-bottom: 8px;
+  cursor: pointer;
+  background: transparent;
+  width: 100%;
+  color: var(--ink);
+  text-align: left;
+  transition: border-color 140ms var(--ease-out), background-color 140ms var(--ease-out);
+}
+.mirvo-native .pay-row.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.mirvo-native .pay-tag {
+  padding: 4px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-right: 9px;
+}
+
+/* Native Toast */
+.mirvo-native .toast {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translate(-50%, -10px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  z-index: 80;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 10px 28px rgba(11, 18, 32, 0.22);
+  transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.mirvo-native .toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* SVG Lab Motion (100% preserved) */
+.mirvo-native .flux {
+  stroke-dasharray: 8 6;
+  animation: mirvoFlow 1.1s linear infinite;
+}
+@keyframes mirvoFlow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+.mirvo-native .spin {
+  transform-origin: 140px 82px;
+  animation: mirvoRot 2.2s linear infinite;
+}
+@keyframes mirvoRot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== DESKTOP EXPANSION (>= 1024px) ==================== */
+@media (min-width: 1024px) {
+  .mirvo-native .desktop-nav-bar {
+    display: block;
+  }
+  .mirvo-native .mobile-only-top {
+    display: none;
+  }
+  .mirvo-native .dock-box {
+    display: none;
+  }
+  .mirvo-native .scroll-area {
+    padding: 32px 28px 56px;
+  }
+  .mirvo-native .stage-shell {
+    max-width: 1240px;
+  }
+
+  /* Doska 2-column Desktop Split */
+  .mirvo-native .doska-desktop-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 28px;
+    align-items: start;
+  }
+  .mirvo-native .h1 {
+    font-size: 36px;
+    line-height: 1.12;
+    margin-bottom: 10px;
+  }
+  .mirvo-native .lead {
+    font-size: 15.5px;
+    margin-bottom: 22px;
+  }
+  .mirvo-native .prompt-card {
+    padding: 16px 16px 14px 18px;
+    border-radius: 22px;
+    margin-bottom: 18px;
+  }
+  .mirvo-native .lab {
+    padding: 22px;
+    border-radius: 28px;
+    margin-bottom: 0;
+  }
+  .mirvo-native .svg-box {
+    height: 280px;
+  }
+  .mirvo-native .svg-box svg {
+    max-width: 440px;
+  }
+  .mirvo-native .r-cell {
+    padding: 12px 16px;
+  }
+  .mirvo-native .r-cell strong {
+    font-size: 22px;
+  }
+  .mirvo-native .sliders {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Bento 4-Column Desktop Grid */
+  .mirvo-native .bento {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .mirvo-native .b-card {
+    min-height: 168px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+  .mirvo-native .b-card.wide {
+    grid-column: span 2;
+    min-height: 168px;
+  }
+  .mirvo-native .b-title {
+    font-size: 18px;
+  }
+  .mirvo-native .b-sub {
+    font-size: 13.5px;
+  }
+
+  /* Reels Desktop Theater Layout */
+  .mirvo-native .reels-layout {
+    display: grid;
+    grid-template-columns: 400px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+  .mirvo-native .reel-stage {
+    min-height: 600px;
+  }
+  .mirvo-native .reels-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* Profil Desktop 2-Column Layout */
+  .mirvo-native .profil-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Centered Pro Checkout Modal on Desktop */
+  .mirvo-native .sheet-bg {
+    align-items: center;
+    padding: 24px;
+  }
+  .mirvo-native .sheet {
+    border-radius: 28px;
+    padding: 22px 24px 24px;
+  }
+  .mirvo-native .handle {
+    display: none;
+  }
+  .mirvo-native .toast {
+    top: 82px;
+  }
+}
