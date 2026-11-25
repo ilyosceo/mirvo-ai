@@ -995,13 +995,16 @@ export default function App() {
         error: null,
       });
 
+      const MAX_HTML_PASSES = 10;
       let continueFrom = '';
       let accumulatedUsage = ZERO_TOKEN_USAGE;
       let modelUsed = 'qwen3.8-omni-flash';
       let codeTailAccum = '';
+      let stalledPasses = 0;
 
       try {
-        for (let pass = 1; pass <= 4; pass++) {
+        for (let pass = 1; pass <= MAX_HTML_PASSES; pass++) {
+          const prevLen = continueFrom.length;
           const controller = new AbortController();
           htmlAbortRef.current = controller;
 
@@ -1035,15 +1038,9 @@ export default function App() {
           let gotDone = false;
           let gotPartial = false;
 
-          while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const blocks = buffer.split('\n\n');
-            buffer = blocks.pop() || '';
-
+          const processSseBlocks = (blocks: string[]) => {
             for (const block of blocks) {
-              const lines = block.split('\n');
+              const lines = block.split(/\r?\n/);
               let eventName = 'message';
               let dataStr = '';
               for (const line of lines) {
@@ -1067,9 +1064,10 @@ export default function App() {
                 }));
               } else if (eventName === 'chunk') {
                 const text = String(payload.text || '');
-                codeTailAccum = (codeTailAccum + text).slice(-900);
+                codeTailAccum = (codeTailAccum + text).slice(-1400);
                 setHtmlStreamProgress((prev) => ({
                   ...prev,
+                  pass,
                   totalLines: Number(payload.totalLines) || prev.totalLines,
                   totalChars: Number(payload.totalChars) || prev.totalChars,
                   codeTail: codeTailAccum,
@@ -1081,6 +1079,13 @@ export default function App() {
                 if (payload.token_usage) {
                   accumulatedUsage = mergeTokenUsage(accumulatedUsage, payload.token_usage);
                 }
+                setHtmlStreamProgress((prev) => ({
+                  ...prev,
+                  pass,
+                  totalChars: continueFrom.length,
+                  totalLines: continueFrom.split('\n').length,
+                  statusMessage: `${modelUsed} kodni davom ettirmoqda (${pass + 1}-bosqichga o‘tilmoqda)...`,
+                }));
               } else if (eventName === 'done') {
                 gotDone = true;
                 const finalHtml = String(payload.html || '');
@@ -1128,15 +1133,39 @@ export default function App() {
                 throw new Error(String(payload.error || 'Qwen HTML generatsiyasida xatolik.'));
               }
             }
+          };
+
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              const trailing = buffer + decoder.decode();
+              if (trailing.trim()) {
+                processSseBlocks(trailing.split(/\r?\n\r?\n/));
+              }
+              break;
+            }
+            buffer += decoder.decode(value, { stream: true });
+            const blocks = buffer.split(/\r?\n\r?\n/);
+            buffer = blocks.pop() || '';
+            processSseBlocks(blocks);
+            if (gotDone) return;
           }
 
           if (gotDone) return;
           if (!gotPartial) {
             throw new Error('Oqim kutilmaganda yakunlandi (HTML tugallanmadi).');
           }
+          if (continueFrom.length <= prevLen + 30) {
+            stalledPasses += 1;
+            if (stalledPasses >= 2) {
+              throw new Error('Qwen generatsiyasi oldinga siljimadi. Qayta urinib ko‘ring.');
+            }
+          } else {
+            stalledPasses = 0;
+          }
         }
 
-        throw new Error('HTML 4 bosqichda ham yakunlanmadi. Qayta urinib ko‘ring.');
+        throw new Error(`HTML ${MAX_HTML_PASSES} bosqichda ham yakunlanmadi. Qayta urinib ko‘ring.`);
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') {
           return;

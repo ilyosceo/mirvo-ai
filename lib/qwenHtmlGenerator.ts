@@ -66,10 +66,11 @@ VISUAL & LAYOUT RULES (STRICT):
      - Step 1: Wide overview of the entire cutaway device + clear Uzbek overview explanation.
      - Steps 2..${safeSteps}: Smooth cubic-eased SVG viewBox camera zoom directly onto each major real functional sub-assembly of this specific device, with clear engineering explanation in natural Uzbek (Lotin).
    - Implement browser SpeechSynthesis narration (uz-UZ -> tr -> ru fallback) with reliable fallback setTimeout auto-advance so clicking "Eshitish" smoothly narrates and advances through all ${safeSteps} steps, plus keyboard shortcuts (ArrowLeft, ArrowRight, Space).
-5. OUTPUT FORMAT (CRITICAL):
+5. OUTPUT FORMAT & COMPACT PROCEDURAL CRAFT (CRITICAL):
    - Output ONLY raw HTML starting immediately with <!DOCTYPE html> and ending cleanly with </html>.
    - Do NOT wrap in markdown code fences (\`\`\`html). Do NOT add explanations before or after the HTML.
-   - Write EVERY SINGLE LINE of CSS, SVG definitions, geometry builder, animation loop, and controls completely — never abbreviate or leave TODOs!`;
+   - Write EVERY SINGLE LINE completely — never abbreviate or leave TODOs!
+   - Keep the file clean, smart, and procedural (~18 KB to 28 KB total, ~380 to 620 lines): use reusable JS helper functions (isoBox, isoCylinderZ, loops for cooling fins/gears/coils/waves) instead of hundreds of repetitive hardcoded SVG paths so the entire standalone HTML finishes cleanly and runs smoothly at 60 FPS.`;
 }
 
 export function cleanStreamedHtml(raw: string): string {
@@ -86,6 +87,24 @@ export function cleanStreamedHtml(raw: string): string {
     out = out.slice(0, htmlEnd + 7);
   }
   return out.trim();
+}
+
+function stitchHtmlContinuation(prev: string, rawDelta: string): string {
+  if (!prev) return rawDelta;
+  let delta = rawDelta.replace(/^```(?:html|javascript|js|css)?\s*\r?\n?/i, '');
+  // If model ignored continuation and restarted an entire complete document, use the fresh complete doc
+  if (/^\s*<!doctype\s+html/i.test(delta) && /<\/html>/i.test(delta)) {
+    return delta;
+  }
+  // Remove accidental overlap between the tail of prev and the head of delta (up to 400 chars)
+  const maxCheck = Math.min(400, prev.length, delta.length);
+  for (let len = maxCheck; len >= 16; len--) {
+    if (prev.endsWith(delta.slice(0, len))) {
+      delta = delta.slice(len);
+      break;
+    }
+  }
+  return prev + delta;
 }
 
 export interface StreamHtmlParams {
@@ -138,31 +157,40 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
   }
 
   const systemPrompt = buildGoldStandardHtmlSystemPrompt(stepCount);
-  const messages: Array<{ role: string; content: string }> = [
+  const userPrompt = `Mavzu / Qurilma: "${query}". Aynan shu qurilmaning haqiqiy ichki mexanizmlari ko'rinadigan 30° izometrik 2D SVG kesma modeli, 60 FPS jonli fizik animatsiyasi, ${stepCount} bosqichli smooth viewBox zum kamera tushuntirishi va o'zbekcha ovozli darsini 0 dan to'liq bitta standalone HTML fayl sifatida yarat. Kodni ixcham protsedurali JS funksiyalar (~18-28 KB) bilan yoz, hech qanday qisqartirish yoki placeholder qo'yma va </html> bilan to'liq yakunla!`;
+
+  const isContinuation = continueFrom.trim().length > 0;
+  const fullPrefix =
+    continueFrom.length > 90_000 ? continueFrom.slice(-90_000) : continueFrom;
+
+  type ChatMsg = { role: string; content: string; partial?: boolean };
+  const baseMessages: ChatMsg[] = [
     { role: 'system', content: systemPrompt },
-    {
-      role: 'user',
-      content: `Mavzu / Qurilma: "${query}". Aynan shu qurilmaning haqiqiy ichki mexanizmlari ko'rinadigan 30° izometrik 2D SVG kesma modeli, 60 FPS jonli fizik animatsiyasi, ${stepCount} bosqichli smooth viewBox zum kamera tushuntirishi va o'zbekcha ovozli darsini 0 dan to'liq bitta standalone HTML fayl sifatida yarat. Hech qanday qisqartirish yoki placeholder qo'yma!`,
-    },
+    { role: 'user', content: userPrompt },
   ];
 
-  if (continueFrom.trim().length > 0) {
-    const tail = continueFrom.slice(-5500);
-    messages.push({
-      role: 'assistant',
-      content: tail,
-    });
-    messages.push({
-      role: 'user',
-      content:
-        'Continue the exact HTML document from the exact last character above without repeating anything already written, and finish cleanly through </html>.',
-    });
-  }
+  const partialMessages: ChatMsg[] = isContinuation
+    ? [...baseMessages, { role: 'assistant', content: fullPrefix, partial: true }]
+    : baseMessages;
+
+  const fallbackContinueMessages: ChatMsg[] = isContinuation
+    ? [
+        ...baseMessages,
+        { role: 'assistant', content: fullPrefix },
+        {
+          role: 'user',
+          content:
+            pass >= 5
+              ? 'Continue strictly from the EXACT last character of your assistant message above without repeating anything, finish the remaining STEPS + audio player concisely, and close with </script></body></html>.'
+              : 'Continue strictly from the EXACT last character of your assistant message above. Output ONLY the remaining raw HTML/JS characters to finish through </html>. Do NOT restart from <!DOCTYPE html>, do NOT repeat any code, and do NOT wrap in ``` fences.',
+        },
+      ]
+    : baseMessages;
 
   sendSse(res, 'status', {
     message:
       pass > 1
-        ? `HTML kodi davom ettirilmoqda (${pass}-bosqich)...`
+        ? `HTML kodi uzluksiz davom ettirilmoqda (${pass}-bosqich)...`
         : 'Qwen 3.8 Omni Flash izometrik HTML kodini 0 dan yozmoqda...',
     pass,
   });
@@ -172,207 +200,242 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
 
   for (const baseUrl of baseUrls) {
     for (const modelName of modelsToTry) {
-      const remainingMs = Math.max(8_000, maxRunMs - (Date.now() - startTime));
-      const controller = new AbortController();
-      const abortTimer = setTimeout(() => controller.abort(), remainingMs);
+      const attemptVariants: Array<{ label: string; msgs: ChatMsg[] }> = isContinuation
+        ? [
+            { label: 'partial', msgs: partialMessages },
+            { label: 'continue-turn', msgs: fallbackContinueMessages },
+          ]
+        : [{ label: 'fresh', msgs: baseMessages }];
 
-      try {
-        const lowerModel = modelName.toLowerCase();
-        const isOmni = lowerModel.includes('omni');
-        const supportsThinking = isOmni || lowerModel.includes('qwen3.5');
-        const body: Record<string, unknown> = {
-          model: modelName,
-          messages,
-          stream: true,
-          stream_options: { include_usage: true },
-          temperature: 0.25,
-          max_tokens: 16384,
-        };
-        if (isOmni) {
-          body.modalities = ['text'];
+      let authFailedForEndpoint = false;
+
+      for (const variant of attemptVariants) {
+        const remainingMs = Math.max(8_000, maxRunMs - (Date.now() - startTime));
+        if (remainingMs <= 8_500 && variant.label === 'continue-turn') {
+          break;
         }
-        if (supportsThinking) {
-          if (pass === 1 && !continueFrom.trim()) {
-            body.enable_thinking = true;
-            body.thinking_budget = 2048;
-          } else {
-            body.enable_thinking = false;
-          }
-        }
-
-        const resp = await fetch(`${baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${cleanKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          signal: controller.signal,
-        });
-
-        if (!resp.ok || !resp.body) {
-          clearTimeout(abortTimer);
-          const errText = await resp.text().catch(() => '');
-          const endpointHost = (() => {
-            try {
-              return new URL(baseUrl).host;
-            } catch {
-              return baseUrl;
-            }
-          })();
-          const msg = `${endpointHost} (${modelName}) HTTP ${resp.status}: ${errText.slice(0, 180)}`;
-          lastErrMsg = msg;
-          if (!primaryIntlErr && baseUrl.includes('dashscope-intl')) {
-            primaryIntlErr = msg;
-          }
-          if (resp.status === 401 || resp.status === 403) {
-            break; // try next region endpoint
-          }
-          continue;
-        }
-
-        sendSse(res, 'status', {
-          message: `${modelName} orqali jonli HTML generatsiya qilinmoqda...`,
-          model: modelName,
-          pass,
-        });
-
-        const reader = resp.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let sseBuffer = '';
-        let deltaAccum = '';
-        let chunkBuffer = '';
-        let reasoningChars = 0;
-        let lastReasoningPulseAt = 0;
-        let actualModel = modelName;
-        let finalUsage: DashScopeUsageLike | null = null;
-        let finishedNormally = false;
-        let timedOutSoft = false;
+        const controller = new AbortController();
+        const abortTimer = setTimeout(() => controller.abort(), remainingMs);
 
         try {
-          while (true) {
-            if (Date.now() - startTime >= maxRunMs - 1500) {
-              timedOutSoft = true;
-              controller.abort();
-              break;
+          const lowerModel = modelName.toLowerCase();
+          const isOmni = lowerModel.includes('omni');
+          const supportsThinking = isOmni || lowerModel.includes('qwen3.5');
+          const body: Record<string, unknown> = {
+            model: modelName,
+            messages: variant.msgs,
+            stream: true,
+            stream_options: { include_usage: true },
+            temperature: isContinuation ? 0.15 : 0.25,
+            max_tokens: 16384,
+          };
+          if (isOmni) {
+            body.modalities = ['text'];
+          }
+          if (supportsThinking) {
+            if (pass === 1 && !isContinuation) {
+              body.enable_thinking = true;
+              body.thinking_budget = 1200;
+            } else {
+              body.enable_thinking = false;
             }
-            const { value, done } = await reader.read();
-            if (done) {
-              finishedNormally = true;
-              break;
-            }
-            sseBuffer += decoder.decode(value, { stream: true });
-            const lines = sseBuffer.split(/\r?\n/);
-            sseBuffer = lines.pop() || '';
+          }
 
-            for (const rawLine of lines) {
-              const line = rawLine.trim();
-              if (!line.startsWith('data:')) continue;
-              const dataStr = line.slice(5).trim();
-              if (!dataStr || dataStr === '[DONE]') {
-                finishedNormally = true;
-                continue;
-              }
+          const resp = await fetch(`${baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${cleanKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+          });
+
+          if (!resp.ok || !resp.body) {
+            clearTimeout(abortTimer);
+            const errText = await resp.text().catch(() => '');
+            const endpointHost = (() => {
               try {
-                const parsed = JSON.parse(dataStr);
-                if (parsed.model) actualModel = String(parsed.model);
-                if (parsed.usage) {
-                  finalUsage = parsed.usage as DashScopeUsageLike;
-                }
-                const reasoningPiece = parsed.choices?.[0]?.delta?.reasoning_content;
-                if (typeof reasoningPiece === 'string' && reasoningPiece.length > 0) {
-                  reasoningChars += reasoningPiece.length;
-                  const now = Date.now();
-                  if (now - lastReasoningPulseAt >= 1200) {
-                    lastReasoningPulseAt = now;
-                    sendSse(res, 'status', {
-                      message: `${actualModel} izometrik geometriyani rejalashtirmoqda... (${reasoningChars.toLocaleString()} belgi tahlil)`,
-                      model: actualModel,
-                      pass,
-                    });
-                  }
-                }
-                const piece = parsed.choices?.[0]?.delta?.content;
-                if (typeof piece === 'string' && piece.length > 0) {
-                  deltaAccum += piece;
-                  chunkBuffer += piece;
-                  if (chunkBuffer.length >= 260) {
-                    const combinedLen = continueFrom.length + deltaAccum.length;
-                    const combinedLines = (continueFrom + deltaAccum).split('\n').length;
-                    sendSse(res, 'chunk', {
-                      text: chunkBuffer,
-                      totalChars: combinedLen,
-                      totalLines: combinedLines,
-                    });
-                    chunkBuffer = '';
-                  }
-                }
+                return new URL(baseUrl).host;
               } catch {
-                // ignore partial SSE JSON frames
+                return baseUrl;
               }
+            })();
+            const msg = `${endpointHost} (${modelName}) HTTP ${resp.status}: ${errText.slice(0, 180)}`;
+            lastErrMsg = msg;
+            if (!primaryIntlErr && baseUrl.includes('dashscope-intl')) {
+              primaryIntlErr = msg;
             }
+            if (resp.status === 401 || resp.status === 403) {
+              authFailedForEndpoint = true;
+              break; // try next region endpoint
+            }
+            // If DashScope rejects partial:true on this model (HTTP 400), immediately retry non-partial variant!
+            if (variant.label === 'partial' && resp.status === 400) {
+              continue;
+            }
+            break; // try next model
           }
-        } catch (readErr: unknown) {
-          if (timedOutSoft || (readErr instanceof Error && readErr.name === 'AbortError')) {
-            timedOutSoft = true;
-          } else {
-            throw readErr;
-          }
-        } finally {
-          clearTimeout(abortTimer);
-          try {
-            reader.releaseLock();
-          } catch {}
-        }
 
-        if (chunkBuffer.length > 0) {
-          sendSse(res, 'chunk', {
-            text: chunkBuffer,
-            totalChars: continueFrom.length + deltaAccum.length,
-            totalLines: (continueFrom + deltaAccum).split('\n').length,
-          });
-        }
-
-        const combinedRaw = continueFrom + deltaAccum;
-        const hasClosingHtml = /<\/html>/i.test(combinedRaw);
-        const tokenUsage: TokenUsageInfo = finalUsage
-          ? usageFromDashScope(finalUsage, actualModel)
-          : usageFromDashScope(
-              {
-                // Fallback estimate ONLY if stream aborted before final usage packet
-                prompt_tokens: Math.round(
-                  messages.reduce((acc, m) => acc + m.content.length, 0) / 3.6
-                ),
-                completion_tokens: Math.round(deltaAccum.length / 3.6),
-              },
-              actualModel
-            );
-
-        if (hasClosingHtml) {
-          const cleanHtml = cleanStreamedHtml(combinedRaw);
-          sendSse(res, 'done', {
-            html: cleanHtml,
-            model: actualModel,
-            token_usage: tokenUsage,
-            elapsedMs: Date.now() - startTime,
-          });
-          res.end();
-          return;
-        }
-
-        if (deltaAccum.length > 120 && (timedOutSoft || finishedNormally)) {
-          sendSse(res, 'partial', {
-            htmlSoFar: combinedRaw.replace(/^```(?:html)?\s*/i, ''),
-            model: actualModel,
-            token_usage: tokenUsage,
+          sendSse(res, 'status', {
+            message:
+              pass > 1
+                ? `${modelName} kodni davom ettirmoqda (${pass}-bosqich)...`
+                : `${modelName} orqali jonli HTML generatsiya qilinmoqda...`,
+            model: modelName,
             pass,
           });
-          res.end();
-          return;
+
+          const reader = resp.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let sseBuffer = '';
+          let deltaAccum = '';
+          let chunkBuffer = '';
+          let reasoningChars = 0;
+          let lastReasoningPulseAt = 0;
+          let announcedWriting = false;
+          let actualModel = modelName;
+          let finalUsage: DashScopeUsageLike | null = null;
+          let finishedNormally = false;
+          let timedOutSoft = false;
+
+          try {
+            while (true) {
+              if (Date.now() - startTime >= maxRunMs - 1500) {
+                timedOutSoft = true;
+                controller.abort();
+                break;
+              }
+              const { value, done } = await reader.read();
+              if (done) {
+                finishedNormally = true;
+                break;
+              }
+              sseBuffer += decoder.decode(value, { stream: true });
+              const lines = sseBuffer.split(/\r?\n/);
+              sseBuffer = lines.pop() || '';
+
+              for (const rawLine of lines) {
+                const line = rawLine.trim();
+                if (!line.startsWith('data:')) continue;
+                const dataStr = line.slice(5).trim();
+                if (!dataStr || dataStr === '[DONE]') {
+                  finishedNormally = true;
+                  continue;
+                }
+                try {
+                  const parsed = JSON.parse(dataStr);
+                  if (parsed.model) actualModel = String(parsed.model);
+                  if (parsed.usage) {
+                    finalUsage = parsed.usage as DashScopeUsageLike;
+                  }
+                  const reasoningPiece = parsed.choices?.[0]?.delta?.reasoning_content;
+                  if (typeof reasoningPiece === 'string' && reasoningPiece.length > 0) {
+                    reasoningChars += reasoningPiece.length;
+                    const now = Date.now();
+                    if (now - lastReasoningPulseAt >= 1200) {
+                      lastReasoningPulseAt = now;
+                      sendSse(res, 'status', {
+                        message: `${actualModel} izometrik geometriyani rejalashtirmoqda... (${reasoningChars.toLocaleString()} belgi tahlil)`,
+                        model: actualModel,
+                        pass,
+                      });
+                    }
+                  }
+                  const piece = parsed.choices?.[0]?.delta?.content;
+                  if (typeof piece === 'string' && piece.length > 0) {
+                    if (!announcedWriting) {
+                      announcedWriting = true;
+                      sendSse(res, 'status', {
+                        message: `${actualModel} izometrik HTML kodini yozmoqda (${pass}-bosqich)...`,
+                        model: actualModel,
+                        pass,
+                      });
+                    }
+                    deltaAccum += piece;
+                    chunkBuffer += piece;
+                    if (chunkBuffer.length >= 260) {
+                      const combinedLen = continueFrom.length + deltaAccum.length;
+                      const combinedLines = (continueFrom + deltaAccum).split('\n').length;
+                      sendSse(res, 'chunk', {
+                        text: chunkBuffer,
+                        totalChars: combinedLen,
+                        totalLines: combinedLines,
+                      });
+                      chunkBuffer = '';
+                    }
+                  }
+                } catch {
+                  // ignore partial SSE JSON frames
+                }
+              }
+            }
+          } catch (readErr: unknown) {
+            if (timedOutSoft || (readErr instanceof Error && readErr.name === 'AbortError')) {
+              timedOutSoft = true;
+            } else {
+              throw readErr;
+            }
+          } finally {
+            clearTimeout(abortTimer);
+            try {
+              reader.releaseLock();
+            } catch {}
+          }
+
+          if (chunkBuffer.length > 0) {
+            sendSse(res, 'chunk', {
+              text: chunkBuffer,
+              totalChars: continueFrom.length + deltaAccum.length,
+              totalLines: (continueFrom + deltaAccum).split('\n').length,
+            });
+          }
+
+          const combinedRaw = stitchHtmlContinuation(continueFrom, deltaAccum);
+          const hasClosingHtml = /<\/html>/i.test(combinedRaw);
+          const tokenUsage: TokenUsageInfo = finalUsage
+            ? usageFromDashScope(finalUsage, actualModel)
+            : usageFromDashScope(
+                {
+                  prompt_tokens: Math.round(
+                    variant.msgs.reduce((acc, m) => acc + m.content.length, 0) / 3.6
+                  ),
+                  completion_tokens: Math.round(deltaAccum.length / 3.6),
+                },
+                actualModel
+              );
+
+          if (hasClosingHtml) {
+            const cleanHtml = cleanStreamedHtml(combinedRaw);
+            sendSse(res, 'done', {
+              html: cleanHtml,
+              model: actualModel,
+              token_usage: tokenUsage,
+              elapsedMs: Date.now() - startTime,
+            });
+            res.end();
+            return;
+          }
+
+          if (deltaAccum.length > 20 && (timedOutSoft || finishedNormally)) {
+            sendSse(res, 'partial', {
+              htmlSoFar: combinedRaw.replace(/^```(?:html)?\s*/i, ''),
+              model: actualModel,
+              token_usage: tokenUsage,
+              pass,
+              deltaChars: deltaAccum.length,
+            });
+            res.end();
+            return;
+          }
+        } catch (err: unknown) {
+          clearTimeout(abortTimer);
+          lastErrMsg = err instanceof Error ? err.message : String(err);
         }
-      } catch (err: unknown) {
-        clearTimeout(abortTimer);
-        lastErrMsg = err instanceof Error ? err.message : String(err);
+      }
+
+      if (authFailedForEndpoint) {
+        break;
       }
     }
   }

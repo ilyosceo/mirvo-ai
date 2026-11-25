@@ -4,7 +4,7 @@ import { streamQwenHtmlLesson } from '../../lib/qwenHtmlGenerator.js';
 export const maxDuration = 60;
 
 const app = express();
-app.use(express.json({ limit: '4mb' }));
+app.use(express.json({ limit: '6mb' }));
 
 async function handleHtmlLesson(req: Request, res: Response): Promise<void> {
   const { query = '', stepCount = 5, continueFrom = '', pass = 1 } = req.body || {};
@@ -26,7 +26,7 @@ async function handleHtmlLesson(req: Request, res: Response): Promise<void> {
   }
 
   const safeSteps = Math.max(4, Math.min(6, Number(stepCount) || 5));
-  const safePass = Math.max(1, Math.min(5, Number(pass) || 1));
+  const safePass = Math.max(1, Math.min(12, Number(pass) || 1));
 
   await streamQwenHtmlLesson({
     apiKey: qwenApiKey,

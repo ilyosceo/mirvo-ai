@@ -67,7 +67,7 @@ async function startServer() {
       query: trimmed,
       stepCount: Math.max(4, Math.min(6, Number(stepCount) || 5)),
       continueFrom: String(continueFrom || ''),
-      pass: Math.max(1, Math.min(5, Number(pass) || 1)),
+      pass: Math.max(1, Math.min(12, Number(pass) || 1)),
       res,
       maxRunMs: 180_000,
     });

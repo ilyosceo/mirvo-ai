@@ -44,15 +44,33 @@ function formatElapsed(ms: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-function detectBuildPhase(codeTail: string, totalLines: number): number {
+function detectBuildPhase(codeTail: string, totalLines: number, totalChars: number): number {
   const tail = codeTail.toLowerCase();
-  if (tail.includes('speechsynthesis') || tail.includes('const steps') || totalLines > 460) {
+  if (
+    tail.includes('speechsynthesis') ||
+    tail.includes('const steps') ||
+    tail.includes('</html>') ||
+    totalChars > 16000 ||
+    totalLines > 420
+  ) {
     return 4;
   }
-  if (tail.includes('requestanimationframe') || tail.includes('renderdynamic') || totalLines > 320) {
+  if (
+    tail.includes('requestanimationframe') ||
+    tail.includes('renderdynamic') ||
+    tail.includes('animate(') ||
+    totalChars > 9500 ||
+    totalLines > 260
+  ) {
     return 3;
   }
-  if (tail.includes('isobox') || tail.includes('<svg') || totalLines > 140) {
+  if (
+    tail.includes('isobox') ||
+    tail.includes('isocylinder') ||
+    tail.includes('<svg') ||
+    totalChars > 3000 ||
+    totalLines > 90
+  ) {
     return 2;
   }
   return 1;
@@ -94,7 +112,11 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
 
   const title = lesson?.topicTitle || progress.topicTitle || 'Interaktiv HTML Model';
   const usage = lesson?.tokenUsage;
-  const activePhase = detectBuildPhase(progress.codeTail, progress.totalLines);
+  const activePhase = detectBuildPhase(
+    progress.codeTail,
+    progress.totalLines,
+    progress.totalChars
+  );
 
   return (
     <div className="h-[100dvh] w-full flex flex-col bg-[#FAFAFA] text-[#1F2937] overflow-hidden">
