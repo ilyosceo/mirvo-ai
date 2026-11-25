@@ -62,7 +62,8 @@ export const ThreeDStage: React.FC<ThreeDStageProps> = ({
           focusPart={focusPart}
           dimInactiveParts={dimInactiveParts}
           isPlaying={isPlaying}
-          darkSurface={true}
+          darkSurface={false}
+          showHud={false}
           onAnchorsChange={onAnchorsChange}
         />
       </Suspense>

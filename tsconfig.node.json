@@ -13,5 +13,6 @@
     "strict": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "server.ts", "server/**/*.ts", "api/**/*.ts", "tutor/**/*.ts"]
+  "include": ["vite.config.ts", "server.ts", "server/**/*.ts", "api/**/*.ts", "tutor/**/*.ts"],
+  "exclude": ["node_modules", "dist", "_archive"]
 }

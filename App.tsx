@@ -35,6 +35,7 @@ import { tryLocalDeterministicParse } from './lib/deterministicParser';
 import { findBuiltInCachedLesson } from './lib/lessonMatch';
 import { generateProceduralPrimitives3D } from './lib/objectCatalog';
 import { upgradeDeviceLessonToTrue3D } from './lib/qwenOmni3DDirector';
+import { resolveMachine3DAssembly } from './lib/machine3DCatalog';
 import {
   formatCostUsd,
   formatCostUzsApprox,
@@ -79,7 +80,6 @@ import {
   type TutorLesson,
 } from './types/tutor';
 import { VisualStage } from './components/VisualStage';
-import { TeacherStageActor } from './components/TeacherStageActor';
 import { MirvoMentor } from './components/MirvoMentor';
 import { MirvoLogo } from './components/MirvoLogo';
 import { resolveStepBeats } from './lib/teacherChoreography';
@@ -178,8 +178,8 @@ function buildDefaultSliders(lesson: TutorLesson): Record<string, number> {
 }
 
 function clampLessonStepCount(raw: number): number {
-  if (!Number.isFinite(raw)) return 4;
-  return Math.max(4, Math.min(12, Math.round(raw)));
+  if (!Number.isFinite(raw)) return 5;
+  return Math.max(4, Math.min(6, Math.round(raw)));
 }
 
 export default function App() {
@@ -231,10 +231,10 @@ export default function App() {
   const [queryText, setQueryText] = useState('');
   const [lessonStepCount, setLessonStepCount] = useState<number>(() => {
     try {
-      const saved = Number(window.localStorage.getItem('mirvo_lesson_step_count_v1') || '4');
+      const saved = Number(window.localStorage.getItem('mirvo_lesson_step_count_v1') || '5');
       return clampLessonStepCount(saved);
     } catch {
-      return 4;
+      return 5;
     }
   });
   const [imagePreview, setImagePreview] = useState<{
@@ -938,8 +938,63 @@ export default function App() {
       }
     }
 
+    // Instant open 3D stage + immediate 1st-step intro voice (<1s) so user never stares at a blurry wait screen!
+    const introSpeech = q
+      ? `Hozir ${q} mavzusining asosiy tuzilishini uch o‘lchamli modelda bosqichma-bosqich ko‘rib chiqamiz.`
+      : 'Hozir yuklangan tasvir bo‘yicha uch o‘lchamli model va darsni boshlaymiz.';
+    const instantAssembly = resolveMachine3DAssembly(q || 'transformer');
+    const instantPreviewLesson: TutorLesson = {
+      topic_title: q || '3D Vizual Dars',
+      subject: 'physics',
+      engine: 'threejs',
+      source: 'local-parser',
+      requested_steps: requestedSteps,
+      token_usage: ZERO_TOKEN_USAGE,
+      sliders: [],
+      steps: Array.from({ length: requestedSteps }, (_, idx) => ({
+        step_number: idx + 1,
+        step_title: idx === 0 ? '1. Umumiy tuzilish' : `${idx + 1}-qadam`,
+        speech_text: idx === 0 ? introSpeech : `${q || 'Model'}ning ${idx + 1}-qismi tayyorlanmoqda.`,
+        explanation_uz: idx === 0 ? introSpeech : `${q || 'Model'} detallari yuklanmoqda...`,
+        katex_formulas: [],
+        emoji_emotion: 'explaining' as const,
+        camera: instantAssembly.defaultCamera,
+        focusPart: instantAssembly.partOrder[idx % Math.max(1, instantAssembly.partOrder.length)]?.partId,
+        render_params: {
+          shape: 'composite3d' as const,
+          object_name_uz: q || '3D Model',
+          primitives_3d: instantAssembly.primitives,
+        },
+      })),
+    };
+
+    stopPlayback();
+    setLesson(instantPreviewLesson);
+    lessonStepsRef.current = instantPreviewLesson.steps;
+    setActiveStepIndex(0);
+    activeStepIndexRef.current = 0;
+    setActiveBeatIndex(0);
+    setCameraOverride(instantAssembly.defaultCamera);
+    setBoardMode('detailed');
+    boardModeRef.current = 'detailed';
     setIsLoading(true);
     setViewMode('lesson');
+    viewModeRef.current = 'lesson';
+
+    // Speak 1st-step intro immediately in <1s while Qwen prepares full steps in background
+    if (!isMuted) {
+      voiceEngine.unlockAudio();
+      void voiceEngine.speak(
+        introSpeech,
+        {
+          onStart: () => setIsPlaying(true),
+          onEnd: () => setIsPlaying(false),
+        },
+        true,
+        voiceSettingsRef.current
+      );
+    }
+
     try {
       const res = await fetch('/api/tutor/resolve', {
         method: 'POST',
@@ -1467,9 +1522,9 @@ export default function App() {
             />
           </div>
 
-          {/* Ultra-Slim Glass Top Bar (h-11) */}
-          <header className="h-11 shrink-0 apple-glass border-b border-black/5 px-2.5 sm:px-4 flex items-center justify-between gap-2 z-20">
-            <div className="flex items-center gap-2 min-w-0">
+          {/* Minimal Open Header: ONLY Back Arrow + Topic Title + Step Counter (1/6) */}
+          <header className="h-12 shrink-0 bg-white/90 backdrop-blur-md border-b border-black/[0.06] px-3 sm:px-5 flex items-center justify-between gap-3 z-20">
+            <div className="flex items-center gap-2.5 min-w-0">
               <button
                 type="button"
                 onClick={() => {
@@ -1477,254 +1532,63 @@ export default function App() {
                   setViewMode('home');
                 }}
                 aria-label="Bosh sahifaga qaytish"
-                className="w-8 h-8 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] flex items-center justify-center text-[#1D1D1F] apple-transition shrink-0 cursor-pointer"
+                className="w-8 h-8 rounded-full hover:bg-black/[0.06] flex items-center justify-center text-[#1D1D1F] apple-transition shrink-0 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  stopPlayback();
-                  setViewMode('home');
-                }}
-                className="hidden sm:inline-flex items-center cursor-pointer shrink-0"
-                aria-label="Mirvo AI bosh sahifa"
-              >
-                <MirvoLogo size="sm" />
-              </button>
-              <span className="font-mono-tabular text-[11px] font-semibold text-[#0071E3] shrink-0">
-                {activeStepIndex + 1}/{lesson.steps.length}
-              </span>
-              <span className="truncate max-w-[140px] sm:max-w-[280px] text-xs font-medium text-[#1D1D1F]">
+              <span className="truncate text-sm font-semibold text-[#1D1D1F] tracking-tight">
                 {lesson.topic_title}
               </span>
             </div>
 
-            {/* Right: Essential Board Mode + Collapsible Inspector + Settings */}
-            <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto no-scrollbar">
-              <div
-                role="group"
-                aria-label="Doska rejimi"
-                className="flex items-center gap-0.5 p-0.5 rounded-full bg-black/[0.045] border border-black/[0.04] shrink-0"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleBoardModeChange('detailed')}
-                  aria-pressed={boardMode === 'detailed'}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                    boardMode === 'detailed'
-                      ? 'bg-[#0071E3] text-white shadow-xs'
-                      : 'text-[#6E6E73] hover:text-[#1D1D1F]'
-                  }`}
-                >
-                  <Layers className="w-3 h-3" />
-                  <span>Batafsil</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleBoardModeChange('summary')}
-                  aria-pressed={boardMode === 'summary'}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                    boardMode === 'summary'
-                      ? 'bg-[#0071E3] text-white shadow-xs'
-                      : 'text-[#6E6E73] hover:text-[#1D1D1F]'
-                  }`}
-                >
-                  <FileText className="w-3 h-3" />
-                  <span>Qisqacha</span>
-                </button>
-              </div>
-
-              {boardMode === 'detailed' && isObjectLesson && (
-                <div
-                  role="group"
-                  aria-label="Tasvir o'lchami"
-                  className="flex items-center gap-0.5 p-0.5 rounded-full bg-black/[0.045] border border-black/[0.04] shrink-0"
-                >
-                  <button
-                    type="button"
-                    onClick={() => void handleSwitchObjectDimension('2d')}
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                      lesson.engine === 'svg2d'
-                        ? 'bg-[#111827] text-[#FDE68A]'
-                        : 'text-[#57534E] hover:text-[#111827]'
-                    }`}
-                  >
-                    2D Chizma
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void handleSwitchObjectDimension('3d')}
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-full apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                      lesson.engine === 'threejs' || lesson.engine === 'zdog'
-                        ? 'bg-[#111827] text-[#FDE68A]'
-                        : 'text-[#57534E] hover:text-[#111827]'
-                    }`}
-                  >
-                    3D WebGL
-                  </button>
-                </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {isLoading && (
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#0071E3]">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span className="hidden sm:inline">Yuklanmoqda</span>
+                </span>
               )}
-
-              {/* Live Per-Lesson Token & Cost Pill in Whiteboard Top Bar */}
-              <button
-                type="button"
-                onClick={() => {
-                  setDrawerTab('settings');
-                  setDrawerOpen(true);
-                }}
-                title={
-                  currentLessonUsage.total_tokens > 0
-                    ? `Model: ${currentLessonUsage.model || 'qwen3.8-omni-flash'} | Kirish: ${formatTokenCount(currentLessonUsage.prompt_tokens)} (Kesh: ${formatTokenCount(currentLessonUsage.cached_tokens || 0)}) | Chiqish: ${formatTokenCount(currentLessonUsage.output_tokens)} | Narx: ${formatCostUsd(currentLessonUsage.cost_usd)} (${formatCostUzsApprox(currentLessonUsage.cost_usd)})`
-                    : 'Keshlangan dars — 0 token sarflandi ($0.00)'
-                }
-                className="h-8 px-2.5 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-[11px] font-mono-tabular font-semibold text-[#1D1D1F] inline-flex items-center gap-1 apple-transition cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <Coins className="w-3.5 h-3.5 text-amber-500" />
-                {currentLessonUsage.total_tokens > 0 ? (
-                  <span>
-                    {formatTokenCount(currentLessonUsage.total_tokens)} tok ·{' '}
-                    <span className="text-emerald-600">
-                      {formatCostUsd(currentLessonUsage.cost_usd)}
-                    </span>
-                  </span>
-                ) : (
-                  <span className="text-[#6E6E73]">0 tok (Kesh)</span>
-                )}
-              </button>
-
-              {boardMode === 'detailed' && lesson.engine === 'threejs' && (
-                <button
-                  type="button"
-                  onClick={() => setAutoRotate3D((v) => !v)}
-                  aria-pressed={autoRotate3D}
-                  aria-label="360 daraja aylantirish"
-                  className={`h-8 px-2.5 rounded-full border text-[11px] font-medium inline-flex items-center gap-1 apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                    autoRotate3D
-                      ? 'bg-[#0071E3] border-[#0071E3] text-white'
-                      : 'bg-white/85 border-black/[0.06] text-[#1D1D1F] hover:bg-white'
-                  }`}
-                >
-                  <RotateCw className={`w-3 h-3 ${autoRotate3D ? 'animate-spin' : ''}`} />
-                  <span>360°</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setLessonPanelOpen((v) => !v)}
-                aria-expanded={lessonPanelOpen}
-                aria-label="Tafsilotlar va qo‘shimcha savol"
-                className={`h-8 px-2.5 sm:px-3 rounded-full border text-[11px] font-medium inline-flex items-center gap-1.5 apple-transition cursor-pointer whitespace-nowrap shrink-0 ${
-                  lessonPanelOpen
-                    ? 'bg-[#1D1D1F] border-[#1D1D1F] text-white'
-                    : 'bg-white/85 hover:bg-white border-black/[0.06] text-[#1D1D1F]'
-                }`}
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#0071E3]" />
-                <span className="hidden sm:inline">Tafsilotlar</span>
-                {(lesson.sliders?.length ?? 0) > 0 && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0071E3] shrink-0" aria-hidden="true" />
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setDrawerTab('settings');
-                  setDrawerOpen(true);
-                }}
-                aria-label="Sozlamalar va kutubxona"
-                className="w-8 h-8 rounded-full bg-white/85 hover:bg-white border border-black/[0.06] text-[#6E6E73] hover:text-[#1D1D1F] inline-flex items-center justify-center apple-transition cursor-pointer shrink-0"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-              </button>
+              <span className="font-mono-tabular text-xs font-semibold text-[#0071E3] bg-[#0071E3]/[0.08] px-2.5 py-1 rounded-full">
+                {activeStepIndex + 1}/{lesson.steps.length}
+              </span>
             </div>
           </header>
 
-          {/* FULL-BLEED WHITEBOARD STAGE (~90% OF VIEWPORT) */}
-          <main className="flex-1 min-h-0 p-1.5 sm:p-2.5 w-full overflow-hidden flex flex-col">
+          {/* OPEN, BRIGHT, UNOBSTRUCTED 3D STAGE (~85%+ OF VIEWPORT — NO LABORATORY, NO EMOJI, NO BLUR) */}
+          <main className="flex-1 min-h-0 p-2 sm:p-3 w-full overflow-hidden flex flex-col bg-[#F5F7FA]">
             <section
-              aria-label="Interaktiv Chizma Doskasi"
-              className="relative flex-1 min-h-0 w-full rounded-2xl sm:rounded-3xl apple-freeform-dots border border-black/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col"
+              aria-label="Interaktiv 3D Dars Oynasi"
+              className="relative flex-1 min-h-0 w-full rounded-2xl sm:rounded-3xl border border-black/[0.06] bg-white overflow-hidden flex flex-col"
             >
-              {/* Floating Glass KaTeX Formula Card (top-left, compact) */}
-              {boardMode === 'detailed' &&
-                currentStep.katex_formulas &&
-                currentStep.katex_formulas.length > 0 && (
-                  <div
-                    className={`pointer-events-none absolute top-3 left-3 sm:top-4 sm:left-4 z-10 apple-glass rounded-2xl px-3 py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden ${
-                      isObjectLesson || lesson.engine === 'threejs'
-                        ? 'max-w-[46%] sm:max-w-[38%]'
-                        : 'max-w-[60%] sm:max-w-[52%]'
-                    }`}
-                  >
-                    <KaTeXBlock
-                      latex={currentStep.katex_formulas[0]}
-                      displayMode={false}
-                      className="text-xs sm:text-sm font-semibold text-[#1D1D1F]"
-                    />
-                  </div>
-                )}
-
-              {boardMode === 'summary' ? (
-                <SummaryBoard
-                  lesson={lesson}
+              <div className="relative flex-1 min-h-0">
+                <VisualStage
+                  engine={lesson.engine}
+                  params={currentStep.render_params}
+                  sliderValues={sliderValues}
+                  cameraPreset={cameraOverride}
+                  autoRotate={autoRotate3D}
+                  focusTarget={activeBeat.focus_target}
+                  focusPart={activeBeat.focusPart}
+                  dimInactiveParts={activeBeat.dimInactiveParts}
+                  cameraZoom={activeBeat.cameraZoom ?? activeBeat.camera_zoom}
+                  flowType={activeBeat.flowType}
+                  flowSpeed={activeBeat.flowSpeed}
+                  flowReverse={activeBeat.flowReverse}
+                  stepIndex={activeStepIndex}
+                  beatIndex={activeBeatIndex}
+                  beatProgress={beatProgress}
+                  totalBeats={activeStepBeats.length}
                   isPlaying={isPlaying}
-                  activeConceptIndex={isPlaying ? summaryBeatIndex : null}
-                  onInspectStep={(idx) => handleStepChange(idx, false)}
-                  onSwitchToDetailed={() => handleBoardModeChange('detailed')}
+                  onAnchorsChange={setStageAnchors}
                 />
-              ) : (
-                <div className="relative flex-1 min-h-0">
-                  <VisualStage
-                    engine={lesson.engine}
-                    params={currentStep.render_params}
-                    sliderValues={sliderValues}
-                    cameraPreset={cameraOverride}
-                    autoRotate={autoRotate3D}
-                    focusTarget={activeBeat.focus_target}
-                    focusPart={activeBeat.focusPart}
-                    dimInactiveParts={activeBeat.dimInactiveParts}
-                    cameraZoom={activeBeat.cameraZoom ?? activeBeat.camera_zoom}
-                    flowType={activeBeat.flowType}
-                    flowSpeed={activeBeat.flowSpeed}
-                    flowReverse={activeBeat.flowReverse}
-                    stepIndex={activeStepIndex}
-                    beatIndex={activeBeatIndex}
-                    beatProgress={beatProgress}
-                    totalBeats={activeStepBeats.length}
-                    isPlaying={isPlaying}
-                    onAnchorsChange={setStageAnchors}
-                  />
 
-                  <TeacherStageActor
-                    activeBeat={activeBeat}
-                    anchors={stageAnchors}
-                    isSpeaking={isSpeakingNow}
-                    isPlaying={isPlaying}
-                    isListening={isListening}
-                    mouthOpen={mouthOpen}
-                  />
-
-                  {/* Compact Synchronized Subtitle Pill above Dock */}
-                  <div className="pointer-events-none absolute bottom-16 sm:bottom-[68px] left-3 right-3 z-20 flex justify-center">
-                    <div className="bg-[#1D1D1F]/86 text-white backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-medium leading-snug text-center shadow-[0_8px_24px_rgba(0,0,0,0.16)] max-w-2xl truncate sm:whitespace-normal">
-                      {activeBeat?.sentence || currentStep.explanation_uz}
-                    </div>
+                {/* Clean 1-Line Synchronized Subtitle Pill above Compact Audio Player */}
+                <div className="pointer-events-none absolute bottom-16 sm:bottom-[68px] left-3 right-3 z-20 flex justify-center">
+                  <div className="bg-[#1D1D1F]/88 text-white backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-medium leading-snug text-center shadow-[0_8px_24px_rgba(0,0,0,0.14)] max-w-2xl truncate sm:whitespace-normal">
+                    {activeBeat?.sentence || currentStep.explanation_uz}
                   </div>
                 </div>
-              )}
-
-              {/* AI Generation Loading Overlay */}
-              {isLoading && (
-                <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#F5F5F7]/85 backdrop-blur-sm p-4">
-                  <div className="inline-flex items-center gap-2.5 rounded-full border border-black/[0.06] bg-white px-5 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)] text-xs sm:text-sm font-medium text-[#1D1D1F]">
-                    <Loader2 className="w-4 h-4 animate-spin text-[#0071E3] shrink-0" />
-                    <span>Mirvo AI chizma va dars tuzmoqda...</span>
-                  </div>
-                </div>
-              )}
+              </div>
             </section>
           </main>
 

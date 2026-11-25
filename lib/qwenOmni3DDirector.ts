@@ -317,21 +317,28 @@ export async function generateQwenOmni3DLesson(
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 42_000);
       try {
+        const isOmniModel = modelName.toLowerCase().includes('omni');
+        const requestBody: Record<string, unknown> = {
+          model: modelName,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userContent },
+          ],
+          temperature: 0.25,
+        };
+        if (isOmniModel) {
+          requestBody.modalities = ['text'];
+        } else {
+          requestBody.response_format = { type: 'json_object' };
+        }
+
         const resp = await fetch(`${baseUrl}/chat/completions`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            model: modelName,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userContent },
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.25,
-          }),
+          body: JSON.stringify(requestBody),
           signal: controller.signal,
         });
         clearTimeout(timer);

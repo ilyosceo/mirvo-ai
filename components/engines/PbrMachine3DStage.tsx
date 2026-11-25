@@ -289,6 +289,7 @@ export interface PbrMachine3DStageProps {
   isPlaying?: boolean;
   darkSurface?: boolean;
   compactHud?: boolean;
+  showHud?: boolean;
   onPartSelect?: (partId: string, label?: string, screenPos?: { x: number; y: number }) => void;
   onAnchorsChange?: (anchors: StageAnchorsMap) => void;
 }
@@ -304,8 +305,9 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
   exploded: controlledExploded,
   onExplodedChange,
   isPlaying = true,
-  darkSurface = true,
+  darkSurface = false,
   compactHud = false,
+  showHud = false,
   onPartSelect,
   onAnchorsChange,
 }) => {
@@ -404,6 +406,8 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
     isPlaying,
     orbitAuto,
     resetCameraFlag: false,
+    revealElapsed: 0,
+    lastSignature: '',
   });
 
   stateRef.current.exploded = isExploded;
@@ -646,11 +650,26 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
       bundle.controls.autoRotateSpeed = 1.4;
       bundle.controls.update();
 
-      // Animate parts + explode offsets + emissive focus highlight
-      for (const entry of bundle.entries) {
+      // Advance sequential part-by-part entrance timer (smooth 1-2s assembly reveal, zero blur!)
+      st.revealElapsed += dt;
+
+      // Animate parts + sequential entrance + explode offsets + emissive focus highlight
+      for (let idx = 0; idx < bundle.entries.length; idx++) {
+        const entry = bundle.entries[idx];
+        const staggerDelay = idx * 0.055;
+        const rawProg = clamp01((st.revealElapsed - staggerDelay) / 0.36);
+        const revealEase = 1 - Math.pow(1 - rawProg, 3);
+        const revealScale = Math.max(0.001, revealEase);
+
         entry.object.position
           .copy(entry.basePos)
           .addScaledVector(entry.explodeVec, exp);
+        entry.object.position.y -= (1 - revealEase) * 0.16;
+        entry.object.scale.set(
+          entry.baseScale.x * revealScale,
+          entry.baseScale.y * revealScale,
+          entry.baseScale.z * revealScale
+        );
 
         if (st.isPlaying && entry.animation && entry.animation !== 'none') {
           if (entry.animation === 'spin' || entry.animation === 'spin_reverse') {
@@ -662,7 +681,7 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
           } else if (entry.animation === 'oscillate_x') {
             entry.object.position.x += Math.sin(elapsed * entry.speed * 2.2) * entry.amp;
           } else if (entry.animation === 'pulse_scale') {
-            const s = 1 + Math.sin(elapsed * entry.speed * 2.5) * entry.amp;
+            const s = (1 + Math.sin(elapsed * entry.speed * 2.5) * entry.amp) * revealScale;
             entry.object.scale.set(
               entry.baseScale.x * s,
               entry.baseScale.y * s,
@@ -817,6 +836,12 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
 
     const camDef = cameraPreset || resolvedAssembly.defaultCamera;
     bundle.defaultCamPos.set(camDef[0], camDef[1], camDef[2]);
+
+    const nextSig = `${resolvedAssembly.key}:${resolvedAssembly.titleUz}:${resolvedAssembly.primitives.length}`;
+    if (stateRef.current.lastSignature !== nextSig) {
+      stateRef.current.lastSignature = nextSig;
+      stateRef.current.revealElapsed = 0;
+    }
 
     const partAccum = new Map<string, { sum: THREE.Vector3; count: number; label: string }>();
 
@@ -1235,115 +1260,75 @@ export const PbrMachine3DStage: React.FC<PbrMachine3DStageProps> = ({
       style={{
         background: darkSurface
           ? 'radial-gradient(circle at 50% 38%, #162238 0%, #0B1120 68%, #060913 100%)'
-          : 'radial-gradient(circle at 50% 38%, #FFFFFF 0%, #EEF2F7 72%, #E2E8F0 100%)',
+          : 'radial-gradient(circle at 50% 42%, #FFFFFF 0%, #F5F7FA 72%, #EBF0F6 100%)',
       }}
     >
-      {/* True WebGL Three.js Canvas Mount */}
+      {/* True WebGL Three.js Canvas Mount — Clean, Open, Unobstructed */}
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-      {/* Projected 3D Callout Badges (Visible in Exploded View or Active Step Focus) */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-10">
-        {calloutPins.map((pin) => (
-          <div
-            key={pin.partId}
-            style={{
-              transform: `translate3d(${Math.round(pin.x)}px, ${Math.round(pin.y)}px, 0) translate(-50%, -125%)`,
-            }}
-            className={`absolute left-0 top-0 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-tight whitespace-nowrap backdrop-blur-md border shadow-md transition-opacity duration-200 ${
-              pin.active
-                ? 'bg-sky-500/90 text-white border-sky-300/60'
-                : darkSurface
-                  ? 'bg-slate-900/80 text-slate-100 border-white/15'
-                  : 'bg-white/90 text-slate-800 border-slate-300/80'
-            }`}
-          >
-            {pin.label}
-          </div>
-        ))}
-      </div>
-
-      {/* Top-Left True 3D Engine Badge */}
-      <div className="pointer-events-none absolute top-3 left-3 z-20 flex items-center gap-1.5">
-        <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-semibold backdrop-blur-md border ${
-            darkSurface
-              ? 'bg-slate-900/72 text-sky-300 border-sky-400/25'
-              : 'bg-white/88 text-sky-700 border-slate-200'
-          }`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          WebGL 3D · PBR
-        </span>
-        {selectedPart?.label && (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10.5px] font-semibold bg-amber-500/90 text-slate-950 shadow-sm">
+      {/* Optional Minimal Part Label ONLY when user explicitly taps a named 3D part */}
+      {selectedPart?.label && (
+        <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-20">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#1D1D1F]/85 text-white backdrop-blur-md shadow-sm">
             {selectedPart.label}
           </span>
-        )}
-      </div>
-
-      {/* Top-Right Interactive 3D Controls (Exploded View + 360° Auto-Orbit + Reset) */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={toggleExploded}
-          className={`px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
-            isExploded
-              ? 'bg-sky-500 text-white border-sky-400 shadow-sm'
-              : darkSurface
-                ? 'bg-slate-900/75 text-slate-200 border-white/15 hover:bg-slate-800'
-                : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
-          }`}
-          title="3D detallarni fazoda qismlarga ajratib ko‘rish"
-        >
-          {isExploded ? 'Yig‘ish' : compactHud ? 'Qismlar' : 'Qismlarga ajratish'}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setOrbitAuto((v) => !v)}
-          className={`px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
-            orbitAuto
-              ? 'bg-indigo-500 text-white border-indigo-400'
-              : darkSurface
-                ? 'bg-slate-900/75 text-slate-200 border-white/15 hover:bg-slate-800'
-                : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
-          }`}
-          title="360° avtomatik aylantirish"
-        >
-          360°
-        </button>
-
-        {!compactHud && (
-          <button
-            type="button"
-            onClick={() => {
-              stateRef.current.resetCameraFlag = true;
-              stateRef.current.selectedPartId = '';
-              setSelectedPart(null);
-            }}
-            className={`px-2 py-1 rounded-full text-[11px] font-medium backdrop-blur-md border transition-all cursor-pointer ${
-              darkSurface
-                ? 'bg-slate-900/75 text-slate-300 border-white/15 hover:text-white'
-                : 'bg-white/90 text-slate-600 border-slate-200 hover:text-slate-900'
-            }`}
-            title="Kamerani dastlabki holatga qaytarish"
-          >
-            ↺
-          </button>
-        )}
-      </div>
-
-      {/* Subtle Bottom Hint */}
-      {!compactHud && (
-        <div className="pointer-events-none absolute bottom-2.5 left-3 z-10">
-          <span
-            className={`text-[10.5px] font-medium px-2 py-0.5 rounded-md ${
-              darkSurface ? 'text-slate-400 bg-slate-950/45' : 'text-slate-500 bg-white/65'
-            }`}
-          >
-            Sichqoncha / barmoq bilan 360° aylantiring · Detal ustiga bosing
-          </span>
         </div>
+      )}
+
+      {/* Optional Extended HUD (disabled by default to keep 3D canvas clean and open) */}
+      {showHud && (
+        <>
+          <div className="pointer-events-none absolute inset-0 overflow-hidden z-10">
+            {calloutPins
+              .filter((pin) => !/^[a-z0-9_]+$/.test(pin.label))
+              .map((pin) => (
+                <div
+                  key={pin.partId}
+                  style={{
+                    transform: `translate3d(${Math.round(pin.x)}px, ${Math.round(pin.y)}px, 0) translate(-50%, -125%)`,
+                  }}
+                  className={`absolute left-0 top-0 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-tight whitespace-nowrap backdrop-blur-md border shadow-md transition-opacity duration-200 ${
+                    pin.active
+                      ? 'bg-sky-500/90 text-white border-sky-300/60'
+                      : darkSurface
+                        ? 'bg-slate-900/80 text-slate-100 border-white/15'
+                        : 'bg-white/90 text-slate-800 border-slate-300/80'
+                  }`}
+                >
+                  {pin.label}
+                </div>
+              ))}
+          </div>
+
+          <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleExploded}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
+                isExploded
+                  ? 'bg-sky-500 text-white border-sky-400 shadow-sm'
+                  : darkSurface
+                    ? 'bg-slate-900/75 text-slate-200 border-white/15 hover:bg-slate-800'
+                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
+              }`}
+            >
+              {isExploded ? 'Yig‘ish' : compactHud ? 'Qismlar' : 'Qismlarga ajratish'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOrbitAuto((v) => !v)}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
+                orbitAuto
+                  ? 'bg-indigo-500 text-white border-indigo-400'
+                  : darkSurface
+                    ? 'bg-slate-900/75 text-slate-200 border-white/15 hover:bg-slate-800'
+                    : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white'
+              }`}
+            >
+              360°
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

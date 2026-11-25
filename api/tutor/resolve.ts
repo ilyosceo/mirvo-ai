@@ -28,7 +28,7 @@ async function handleResolveLesson(req: Request, res: Response): Promise<void> {
   } = req.body || {};
 
   const trimmedQuery = String(query || '').trim();
-  const safeCount = Math.max(4, Math.min(12, Number(stepsCount || stepCount || 4)));
+  const safeCount = Math.max(4, Math.min(8, Number(stepsCount || stepCount || 5)));
   const deviceTier = (
     device_tier === 'high' || device_tier === 'mid' ? device_tier : 'low'
   ) as 'low' | 'mid' | 'high';
