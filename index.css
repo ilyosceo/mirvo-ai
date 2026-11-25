@@ -987,16 +987,17 @@
 }
 
 .mirvo-native .svg-box {
-  height: 168px;
+  height: 212px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.18) 0%, rgba(11, 18, 32, 0) 70%);
   border-radius: 14px;
+  overflow: visible;
 }
 .mirvo-native .svg-box svg {
   width: 100%;
-  max-width: 310px;
+  max-width: 420px;
   height: 100%;
 }
 .mirvo-native .readout-pair {
@@ -1636,10 +1637,10 @@
     margin-bottom: 0;
   }
   .mirvo-native .svg-box {
-    height: 280px;
+    height: 295px;
   }
   .mirvo-native .svg-box svg {
-    max-width: 440px;
+    max-width: 560px;
   }
   .mirvo-native .r-cell {
     padding: 12px 16px;

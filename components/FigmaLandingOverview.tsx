@@ -1,7 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Loader2, Mic, MicOff, Minus, Plus, SlidersHorizontal, X } from 'lucide-react';
-import { MirvoMentor } from './MirvoMentor';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  CheckCircle2,
+  Layers,
+  Loader2,
+  Mic,
+  MicOff,
+  Minus,
+  Plus,
+  SlidersHorizontal,
+  Sparkles,
+  Target,
+  X,
+} from 'lucide-react';
+import { IsometricLab25D, LAB_STEPS_BY_MODEL, type LabModel } from './IsometricLab25D';
+import { FloatingEmojiUstoz } from './FloatingEmojiUstoz';
+import { type UstozExpression } from './MirvoMentor';
 import { PWAInstallButton } from './PWAInstallButton';
+import { voiceEngine } from '../lib/voiceEngine';
 import type { SessionTokenStats } from '../lib/tokenUsage';
 
 export interface StarterCardItem {
@@ -52,11 +67,84 @@ interface FigmaLandingOverviewProps {
 }
 
 type NativeTab = 'doska' | 'darslar' | 'reels' | 'profil';
-type LabModel = 'transformer' | 'turbine' | 'hydraulic';
 type ThemeMode = 'light' | 'dark';
 type VoiceMood = 'Jonli' | 'Sokin' | 'Hayrat';
 type SubjectFilter = 'Barchasi' | 'Fizika' | 'Matematika' | 'Kimyo' | 'Biologiya';
 type PayMethod = 'click' | 'payme' | 'uzum' | 'card';
+
+interface MissionSpec {
+  id: string;
+  title: string;
+  rewardXp: number;
+  check: (outputVal: number) => boolean;
+  hint: (outputVal: number) => string;
+}
+
+const MODEL_MISSIONS: Record<LabModel, readonly MissionSpec[]> = {
+  transformer: [
+    {
+      id: 'tr-660',
+      title: 'Chiqish kuchlanishini 660 V ga keltiring',
+      rewardXp: 150,
+      check: (u2) => u2 === 660,
+      hint: (u2) =>
+        u2 > 660
+          ? `Hozir ${u2} V — biroz pasaytiring (masalan, 220 V × 3.0x)`
+          : `Hozir ${u2} V — biroz oshiring (masalan, 220 V × 3.0x)`,
+    },
+    {
+      id: 'tr-1100',
+      title: 'Chiqish kuchlanishini 1 100 V ga keltiring',
+      rewardXp: 200,
+      check: (u2) => u2 === 1100,
+      hint: (u2) =>
+        u2 > 1100
+          ? `Hozir ${u2} V — biroz pasaytiring (masalan, 220 V × 5.0x)`
+          : `Hozir ${u2} V — biroz oshiring (masalan, 220 V × 5.0x)`,
+    },
+  ],
+  turbine: [
+    {
+      id: 'tb-500',
+      title: 'Shamol quvvatini 500–850 kW oralig‘iga olib chiqing',
+      rewardXp: 150,
+      check: (kw) => kw >= 500 && kw <= 850,
+      hint: (kw) =>
+        kw < 500
+          ? `Hozir ${kw} kW — shamol tezligi yoki diametrni oshiring`
+          : `Hozir ${kw} kW — biroz pasaytiring (500–850 kW kerak)`,
+    },
+    {
+      id: 'tb-1200',
+      title: 'Kamida 1 200 kW quvvat ishlab chiqaring',
+      rewardXp: 200,
+      check: (kw) => kw >= 1200,
+      hint: (kw) => `Hozir ${kw} kW — tezlikni oshiring (v³ quvvatni keskin oshiradi!)`,
+    },
+  ],
+  hydraulic: [
+    {
+      id: 'hy-480',
+      title: 'Chiqish kuchini aniq 480 N ga keltiring',
+      rewardXp: 150,
+      check: (f2) => f2 === 480,
+      hint: (f2) =>
+        f2 > 480
+          ? `Hozir ${f2} N — biroz kamaytiring (masalan, 40 N × 12x yoki 60 N × 8x)`
+          : `Hozir ${f2} N — biroz oshiring (masalan, 40 N × 12x yoki 60 N × 8x)`,
+    },
+    {
+      id: 'hy-720',
+      title: 'Chiqish kuchini aniq 720 N ga keltiring',
+      rewardXp: 200,
+      check: (f2) => f2 === 720,
+      hint: (f2) =>
+        f2 > 720
+          ? `Hozir ${f2} N — biroz kamaytiring (masalan, 60 N × 12x)`
+          : `Hozir ${f2} N — biroz oshiring (masalan, 60 N × 12x)`,
+    },
+  ],
+};
 
 interface ReelItem {
   id: string;
@@ -121,6 +209,31 @@ function formatSpaceNumber(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
+function playSuccessChime() {
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + idx * 0.08;
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.exponentialRampToValueAtTime(0.11, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.3);
+    });
+  } catch {
+    // Ignore autoplay-blocked audio
+  }
+}
+
 export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   userEmail,
   userName,
@@ -160,17 +273,59 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   const [sl1, setSl1] = useState<number>(220);
   const [sl2, setSl2] = useState<number>(4);
 
-  const [xp, setXp] = useState<number>(12450);
+  // 2.5D Exploded View + 4-Step Guided Explanation State
+  const [exploded, setExploded] = useState<boolean>(false);
+  const [activeLabStep, setActiveLabStep] = useState<number>(0);
+  const [stepFocusActive, setStepFocusActive] = useState<boolean>(false);
+
+  // Interactive Mini-Missions & Persisted XP
+  const [xp, setXp] = useState<number>(() => {
+    try {
+      const saved = Number(window.localStorage.getItem('mirvo_xp_v1') || '12450');
+      return Number.isFinite(saved) && saved >= 0 ? saved : 12450;
+    } catch {
+      return 12450;
+    }
+  });
+  const [completedMissions, setCompletedMissions] = useState<string[]>(() => {
+    try {
+      const raw = window.localStorage.getItem('mirvo_missions_v1');
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [missionIdxByModel, setMissionIdxByModel] = useState<Record<LabModel, number>>({
+    transformer: 0,
+    turbine: 0,
+    hydraulic: 0,
+  });
+  const [xpFlash, setXpFlash] = useState<string | null>(null);
+
+  // Real Emotional TTS + Free-Flying Emoji Ustoz State
   const [playing, setPlaying] = useState<boolean>(false);
+  const [voiceActivity, setVoiceActivity] = useState<number>(0);
   const [mood, setMood] = useState<VoiceMood>('Jonli');
+  const [ustozExpr, setUstozExpr] = useState<UstozExpression>('happy');
+  const [ustozBubble, setUstozBubble] = useState<string>(
+    'Meni sudrang yoki istalgan qismni bosing — ko‘rsatib tushuntiraman!'
+  );
+  const [flightTarget, setFlightTarget] = useState<{
+    x: number;
+    y: number;
+    side?: 'left' | 'right';
+  } | null>(null);
+  const [clickToFly, setClickToFly] = useState<boolean>(true);
+
   const [subjectFilter, setSubjectFilter] = useState<SubjectFilter>('Barchasi');
   const [reelIdx, setReelIdx] = useState<number>(0);
-
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   const [selectedPay, setSelectedPay] = useState<PayMethod>('click');
   const [toastMsg, setToastMsg] = useState<string>('');
   const [toastVisible, setToastVisible] = useState<boolean>(false);
+
   const toastTimerRef = useRef<number | null>(null);
+  const labStageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -182,15 +337,25 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   }, [theme]);
 
   useEffect(() => {
+    try {
+      window.localStorage.setItem('mirvo_xp_v1', String(xp));
+    } catch {
+      // ignore
+    }
+  }, [xp]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('mirvo_missions_v1', JSON.stringify(completedMissions));
+    } catch {
+      // ignore
+    }
+  }, [completedMissions]);
+
+  useEffect(() => {
     return () => {
       if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        try {
-          window.speechSynthesis.cancel();
-        } catch {
-          // ignore
-        }
-      }
+      voiceEngine.stop();
     };
   }, []);
 
@@ -200,13 +365,177 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     toastTimerRef.current = window.setTimeout(() => {
       setToastVisible(false);
-    }, 2200);
+    }, 2400);
   };
 
   const clampStepCount = (n: number) => Math.max(4, Math.min(12, Math.round(n)));
 
+  // Compute exact 2.5D Lab physics & live dynamic formula
+  const labConfig = useMemo(() => {
+    if (model === 'transformer') {
+      const u2 = Math.round(sl1 * sl2);
+      return {
+        outputVal: u2,
+        formulaSymbol: 'U₂ = U₁ · (N₂ / N₁)',
+        formulaLive: `${sl1} · ${sl2.toFixed(1)} = ${u2} V`,
+        r1l: 'Kirish (U1)',
+        r1v: `${sl1} V`,
+        r2l: 'Chiqish (U2)',
+        r2v: `${u2} V`,
+        s1l: 'Kirish kuchlanishi',
+        s1v: `${sl1} V`,
+        s1Min: 110,
+        s1Max: 380,
+        s1Step: 10,
+        s2l: 'O‘ramlar nisbati',
+        s2v: `${sl2.toFixed(1)}x`,
+        s2Min: 1,
+        s2Max: 6,
+        s2Step: 0.5,
+      };
+    }
+    if (model === 'turbine') {
+      const kw = Math.round(
+        (0.5 * 1.225 * Math.PI * (sl2 * 0.5) ** 2 * sl1 ** 3 * 0.45) / 1000
+      );
+      return {
+        outputVal: kw,
+        formulaSymbol: 'P = ½ · ρ · A · v³ · Cₚ',
+        formulaLive: `${sl1} m/s, Ø${sl2}m = ${kw} kW`,
+        r1l: 'Shamol tezligi',
+        r1v: `${sl1} m/s`,
+        r2l: 'Quvvat (P)',
+        r2v: `${kw} kW`,
+        s1l: 'Shamol tezligi',
+        s1v: `${sl1} m/s`,
+        s1Min: 3,
+        s1Max: 20,
+        s1Step: 1,
+        s2l: 'Parrak diametri',
+        s2v: `${sl2} m`,
+        s2Min: 20,
+        s2Max: 60,
+        s2Step: 5,
+      };
+    }
+    const f2 = Math.round(sl1 * sl2);
+    return {
+      outputVal: f2,
+      formulaSymbol: 'F₂ = F₁ · (S₂ / S₁)',
+      formulaLive: `${sl1} · ${sl2} = ${f2} N`,
+      r1l: 'Kirish (F1)',
+      r1v: `${sl1} N`,
+      r2l: 'Chiqish (F2)',
+      r2v: `${f2} N`,
+      s1l: 'Berilgan kuch (F1)',
+      s1v: `${sl1} N`,
+      s1Min: 10,
+      s1Max: 100,
+      s1Step: 5,
+      s2l: 'Yuza nisbati (S2/S1)',
+      s2v: `${sl2}x`,
+      s2Min: 2,
+      s2Max: 12,
+      s2Step: 1,
+    };
+  }, [model, sl1, sl2]);
+
+  const currentSteps = LAB_STEPS_BY_MODEL[model];
+  const activeStepMeta = currentSteps[activeLabStep] || currentSteps[0];
+
+  const modelMissionList = MODEL_MISSIONS[model];
+  const currentMissionIdx = missionIdxByModel[model] % modelMissionList.length;
+  const activeMission = modelMissionList[currentMissionIdx];
+  const isMissionSolvedNow = activeMission.check(labConfig.outputVal);
+  const isMissionAlreadyClaimed = completedMissions.includes(activeMission.id);
+
+  // Fly Emoji Ustoz smoothly to point at the active 2.5D part inside the lab
+  const flyUstozToStep = (targetModel: LabModel, stepIdx: number) => {
+    const stageEl = labStageRef.current;
+    const stepMeta = LAB_STEPS_BY_MODEL[targetModel][stepIdx];
+    if (!stageEl || !stepMeta) return;
+    const rect = stageEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const partX = rect.left + (rect.width * stepMeta.anchorPct.x) / 100;
+    const partY = rect.top + (rect.height * stepMeta.anchorPct.y) / 100;
+    const placeOnLeft = stepMeta.anchorPct.x > 55;
+
+    setFlightTarget({
+      x: placeOnLeft ? partX - 118 : partX + 26,
+      y: partY - 42,
+      side: placeOnLeft ? 'right' : 'left',
+    });
+    setUstozBubble(`${stepMeta.shortLabel}: ${stepMeta.explanation}`);
+  };
+
+  // Detect interactive Mini-Mission completion -> award XP + celebrate!
+  useEffect(() => {
+    if (!isMissionSolvedNow || isMissionAlreadyClaimed) return;
+    setCompletedMissions((prev) =>
+      prev.includes(activeMission.id) ? prev : [...prev, activeMission.id]
+    );
+    setXp((prev) => prev + activeMission.rewardXp);
+    setXpFlash(`+${activeMission.rewardXp} Ball`);
+    setUstozExpr('proud');
+    setUstozBubble(`Ofarin! Topshiriq bajarildi (+${activeMission.rewardXp} Mirvo Ball)!`);
+    playSuccessChime();
+    showToast(`✓ Topshiriq bajarildi! +${activeMission.rewardXp} Mirvo Ball`);
+    const t = window.setTimeout(() => setXpFlash(null), 2600);
+    return () => window.clearTimeout(t);
+  }, [isMissionSolvedNow, isMissionAlreadyClaimed, activeMission]);
+
+  // Speak with real Uzbek TTS (/api/speech/tts + native fallback) and live lip-sync
+  const speakEmotionalStep = (text: string, chosenMood: VoiceMood) => {
+    const preset =
+      chosenMood === 'Sokin'
+        ? { rate: 0.88, pitch: 0.94, expr: 'calm' as UstozExpression }
+        : chosenMood === 'Hayrat'
+        ? { rate: 1.1, pitch: 1.15, expr: 'amazed' as UstozExpression }
+        : { rate: 1.03, pitch: 1.04, expr: 'happy' as UstozExpression };
+
+    setUstozExpr(preset.expr);
+    setUstozBubble(text);
+    voiceEngine.unlockAudio();
+
+    void voiceEngine.speak(
+      text,
+      {
+        onStart: () => {
+          setPlaying(true);
+        },
+        onTick: (mouthOpen) => {
+          setVoiceActivity(mouthOpen);
+        },
+        onEnd: () => {
+          setPlaying(false);
+          setVoiceActivity(0);
+        },
+      },
+      true,
+      { rate: preset.rate, pitch: preset.pitch, gender: 'auto' }
+    );
+  };
+
+  const handleSelectStep = (stepIdx: number) => {
+    setActiveLabStep(stepIdx);
+    setStepFocusActive(true);
+    const meta = LAB_STEPS_BY_MODEL[model][stepIdx];
+    flyUstozToStep(model, stepIdx);
+    if (playing && meta) {
+      speakEmotionalStep(`${meta.title}. ${meta.explanation}`, mood);
+    } else if (meta) {
+      setUstozExpr(stepIdx === 3 ? 'amazed' : 'thinking');
+    }
+  };
+
   const pickModel = (nextModel: LabModel) => {
+    voiceEngine.stop();
+    setPlaying(false);
+    setVoiceActivity(0);
     setModel(nextModel);
+    setActiveLabStep(0);
+    setStepFocusActive(false);
     if (nextModel === 'transformer') {
       setSl1(220);
       setSl2(4);
@@ -217,15 +546,25 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
       setSl1(40);
       setSl2(6);
     }
+    setUstozExpr('happy');
+    setUstozBubble(
+      nextModel === 'transformer'
+        ? 'Transformator 2.5D modeli! Istalgan qismni bosing yoki slayderni suring.'
+        : nextModel === 'turbine'
+        ? 'Shamol turbinasi 2.5D modeli! Shamol tezligi quvvatni kubik oshiradi.'
+        : 'Paskal gidravlik pressi! Kichik kuch bilan og‘ir yukni ko‘tarib ko‘ring.'
+    );
   };
 
   const jumpModel = (nextModel: LabModel) => {
     setActiveTab('doska');
     pickModel(nextModel);
-    showToast('2.5D model yuklandi');
+    showToast('2.5D izometrik model yuklandi');
   };
 
   const openFullLabLesson = (targetModel: LabModel = model) => {
+    voiceEngine.stop();
+    setPlaying(false);
     if (targetModel === 'transformer') onSelectStarterCard('physics-transformer');
     else if (targetModel === 'turbine') onSelectStarterCard('wind-turbine-energy');
     else onSelectStarterCard('hydraulic-press-pascal');
@@ -243,62 +582,68 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     }
 
     if (queryText.trim() || imagePreview) {
-      showToast('2.5D dars tayyorlandi');
+      voiceEngine.stop();
+      setPlaying(false);
+      showToast('AI 2.5D dars yaratilmoqda...');
       onSubmitPrompt(e);
     } else {
-      pickModel(model);
-      showToast('2.5D dars tayyorlandi');
-    }
-  };
-
-  const speakMoodPreview = (nextPlaying: boolean, nextMood: VoiceMood) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      if (!nextPlaying) return;
-      const sample =
-        model === 'transformer'
-          ? `Transformator kirish kuchlanishi ${sl1} volt, chiqish kuchlanishi ${Math.round(sl1 * sl2)} volt.`
-          : model === 'turbine'
-          ? `Shamol tezligi ${sl1} metr sekund, parrak diametri ${sl2} metr.`
-          : `Paskal qonuni: kirish kuchi ${sl1} nyuton, chiqish kuchi ${Math.round(sl1 * sl2)} nyuton.`;
-      const utter = new SpeechSynthesisUtterance(sample);
-      utter.lang = 'uz-UZ';
-      utter.rate = nextMood === 'Sokin' ? 0.9 : nextMood === 'Hayrat' ? 1.12 : 1.02;
-      utter.pitch = nextMood === 'Hayrat' ? 1.15 : nextMood === 'Sokin' ? 0.94 : 1.0;
-      utter.onend = () => setPlaying(false);
-      utter.onerror = () => setPlaying(false);
-      window.speechSynthesis.speak(utter);
-    } catch {
-      // ignore if speech synthesis unavailable
+      setStepFocusActive(true);
+      flyUstozToStep(model, activeLabStep);
+      showToast('4 qadamli 2.5D tahlil faollashtirildi');
     }
   };
 
   const togglePlay = () => {
-    const next = !playing;
-    setPlaying(next);
-    showToast(next ? 'Emotsional ustoz ovozi boshlandi' : 'Ovoz to‘xtatildi');
-    speakMoodPreview(next, mood);
+    if (playing) {
+      voiceEngine.stop();
+      setPlaying(false);
+      setVoiceActivity(0);
+      showToast('Ovoz to‘xtatildi');
+      return;
+    }
+    setStepFocusActive(true);
+    flyUstozToStep(model, activeLabStep);
+    const spokenLine = `${activeStepMeta.title}. ${activeStepMeta.explanation} Hozirgi natija: ${labConfig.formulaLive}.`;
+    showToast(`Emotsional ustoz ovozi (${mood})`);
+    speakEmotionalStep(spokenLine, mood);
   };
 
   const handleSetMood = (nextMood: VoiceMood) => {
     setMood(nextMood);
+    const expr: UstozExpression =
+      nextMood === 'Sokin' ? 'calm' : nextMood === 'Hayrat' ? 'amazed' : 'happy';
+    setUstozExpr(expr);
     showToast(`Ohang: ${nextMood}`);
-    if (playing) speakMoodPreview(true, nextMood);
+    if (playing) {
+      const spokenLine = `${activeStepMeta.title}. ${activeStepMeta.explanation}`;
+      speakEmotionalStep(spokenLine, nextMood);
+    }
+  };
+
+  const handleNextMission = () => {
+    setMissionIdxByModel((prev) => ({
+      ...prev,
+      [model]: (prev[model] + 1) % modelMissionList.length,
+    }));
+    setUstozExpr('thinking');
+    showToast('Yangi amaliy topshiriq ochildi!');
   };
 
   const nextReel = () => {
     setReelIdx((prev) => (prev + 1) % REELS_DATA.length);
     setXp((prev) => prev + 50);
+    setUstozExpr('proud');
     showToast('+50 Mirvo Ball qo‘shildi');
   };
 
   const claimXp = (cost: number, label: string) => {
     if (xp < cost) {
+      setUstozExpr('alert');
       showToast('Ball yetarli emas');
       return;
     }
     setXp((prev) => prev - cost);
+    setUstozExpr('proud');
     showToast(`${label} olindi`);
   };
 
@@ -309,186 +654,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
     showToast(msg);
   };
 
-  // Compute exact 2.5D Lab parameters (100% preserved formulas & animations)
-  const labConfig = (() => {
-    if (model === 'transformer') {
-      const u2 = Math.round(sl1 * sl2);
-      const dur = Math.max(0.35, 2.0 - sl1 / 250).toFixed(2);
-      const secCount = Math.min(8, Math.max(3, Math.round(sl2 + 2)));
-      return {
-        r1l: 'Kirish (U1)',
-        r1v: `${sl1} V`,
-        r2l: 'Chiqish (U2)',
-        r2v: `${u2} V`,
-        s1l: 'Kirish kuchlanishi',
-        s1v: `${sl1} V`,
-        s1Min: 110,
-        s1Max: 380,
-        s1Step: 10,
-        s2l: 'O‘ramlar nisbati',
-        s2v: `${sl2.toFixed(1)}x`,
-        s2Min: 1,
-        s2Max: 6,
-        s2Step: 0.5,
-        dur,
-        secCount,
-        f2: 0,
-      };
-    }
-    if (model === 'turbine') {
-      const kw = Math.round(
-        (0.5 * 1.225 * Math.PI * (sl2 * 0.5) ** 2 * sl1 ** 3 * 0.45) / 1000
-      );
-      const dur = Math.max(0.38, 5.4 - sl1 * 0.24).toFixed(2);
-      return {
-        r1l: 'Shamol tezligi',
-        r1v: `${sl1} m/s`,
-        r2l: 'Quvvat (P)',
-        r2v: `${kw} kW`,
-        s1l: 'Shamol tezligi',
-        s1v: `${sl1} m/s`,
-        s1Min: 3,
-        s1Max: 20,
-        s1Step: 1,
-        s2l: 'Parrak diametri',
-        s2v: `${sl2} m`,
-        s2Min: 20,
-        s2Max: 60,
-        s2Step: 5,
-        dur,
-        secCount: 0,
-        f2: 0,
-      };
-    }
-    const f2 = Math.round(sl1 * sl2);
-    return {
-      r1l: 'Kirish (F1)',
-      r1v: `${sl1} N`,
-      r2l: 'Chiqish (F2)',
-      r2v: `${f2} N`,
-      s1l: 'Berilgan kuch (F1)',
-      s1v: `${sl1} N`,
-      s1Min: 10,
-      s1Max: 100,
-      s1Step: 5,
-      s2l: 'Yuza nisbati (S2/S1)',
-      s2v: `${sl2}x`,
-      s2Min: 2,
-      s2Max: 12,
-      s2Step: 1,
-      dur: '1.1',
-      secCount: 0,
-      f2,
-    };
-  })();
-
-  const hydraulicP = Math.round((sl1 / 100) * 22);
-  const hydraulicL = Math.round((sl1 / 100) * 14);
   const activeReel = REELS_DATA[reelIdx];
-
-  const renderLabSvg = (targetModel: LabModel, compact = false) => {
-    if (targetModel === 'transformer') {
-      const count = compact ? 6 : labConfig.secCount;
-      const dur = compact ? '1.1s' : `${labConfig.dur}s`;
-      return (
-        <svg viewBox="0 0 280 156" fill="none" aria-label="Transformator 2.5D modeli">
-          <polygon
-            points="58,22 222,22 232,32 232,138 68,138 58,128"
-            fill="#1E293B"
-            stroke="#475569"
-            strokeWidth="1.5"
-          />
-          <rect
-            x="58"
-            y="22"
-            width="164"
-            height="106"
-            rx="10"
-            fill="#334155"
-            stroke="#64748B"
-            strokeWidth="1.5"
-          />
-          <rect x="92" y="46" width="96" height="58" rx="6" fill="#0B1220" />
-          <rect
-            x="74"
-            y="34"
-            width="132"
-            height="82"
-            rx="8"
-            stroke="#38BDF8"
-            strokeWidth="2.5"
-            className="flux"
-            style={{ animationDuration: dur }}
-          />
-          <rect x="48" y="42" width="32" height="9" rx="4.5" fill="#3B82F6" />
-          <rect x="48" y="57" width="32" height="9" rx="4.5" fill="#3B82F6" />
-          <rect x="48" y="72" width="32" height="9" rx="4.5" fill="#3B82F6" />
-          <rect x="48" y="87" width="32" height="9" rx="4.5" fill="#3B82F6" />
-          <rect x="48" y="102" width="32" height="9" rx="4.5" fill="#3B82F6" />
-          {Array.from({ length: count }).map((_, i) => (
-            <rect
-              key={i}
-              x="200"
-              y={36 + i * 11}
-              width="32"
-              height="7"
-              rx="3.5"
-              fill="#F59E0B"
-            />
-          ))}
-          <text x="140" y="79" textAnchor="middle" fill="#38BDF8" fontSize="11" fontWeight="700">
-            Magnit oqimi Φ
-          </text>
-        </svg>
-      );
-    }
-
-    if (targetModel === 'turbine') {
-      const dur = compact ? '2.2s' : `${labConfig.dur}s`;
-      return (
-        <svg viewBox="0 0 280 156" fill="none" aria-label="Shamol turbinasi 2.5D modeli">
-          <path
-            d="M16 52 H92 M10 82 H84 M20 112 H94"
-            stroke="#38BDF8"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="flux"
-            style={{ animationDuration: dur }}
-          />
-          <polygon points="134,152 138,82 142,82 146,152" fill="#CBD5E1" />
-          <g className="spin" style={{ animationDuration: dur }}>
-            <path d="M140 82 L137 20 L145 76 Z" fill="#F8FAFC" />
-            <path d="M140 82 L194 114 L144 88 Z" fill="#F8FAFC" />
-            <path d="M140 82 L86 114 L136 88 Z" fill="#F8FAFC" />
-          </g>
-          <circle cx="140" cy="82" r="7" fill="#3B82F6" stroke="#FFFFFF" strokeWidth="2.5" />
-        </svg>
-      );
-    }
-
-    const p = compact ? 10 : hydraulicP;
-    const l = compact ? 7 : hydraulicL;
-    const f2Display = compact ? 240 : labConfig.f2;
-    return (
-      <svg viewBox="0 0 280 156" fill="none" aria-label="Gidravlik press 2.5D modeli">
-        <path
-          d={`M58 ${44 + p} V126 Q58 138 70 138 H210 Q222 138 222 126 V${60 - l} H174 V112 H92 V${44 + p} Z`}
-          fill="#0EA5E9"
-          fillOpacity="0.45"
-          stroke="#38BDF8"
-          strokeWidth="2.5"
-        />
-        <rect x="58" y={34 + p} width="34" height="12" rx="3" fill="#3B82F6" />
-        <line x1="75" y1={12 + p} x2="75" y2={34 + p} stroke="#93C5FD" strokeWidth="4" />
-        <rect x="174" y={50 - l} width="48" height="12" rx="3" fill="#F59E0B" />
-        <rect x="182" y={28 - l} width="32" height="22" rx="4" fill="#FDE68A" />
-        <text x="198" y={43 - l} textAnchor="middle" fill="#78350F" fontSize="11" fontWeight="800">
-          {f2Display}N
-        </text>
-      </svg>
-    );
-  };
-
   const showCard = (categories: readonly SubjectFilter[]) =>
     subjectFilter === 'Barchasi' || categories.includes(subjectFilter);
 
@@ -555,6 +721,35 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
         {toastMsg}
       </div>
 
+      {/* FREE-FLYING 6-EXPRESSION INTERACTIVE EMOJI USTOZ (Viewport-level, never trapped!) */}
+      <FloatingEmojiUstoz
+        expression={isListening ? 'amazed' : ustozExpr}
+        onChangeExpression={(expr) => {
+          setUstozExpr(expr);
+          const labels: Record<UstozExpression, string> = {
+            happy: 'Quvnoq kayfiyatda o‘rganamiz!',
+            amazed: 'Qarang, qanday ajoyib fizik qonun!',
+            thinking: 'Keling, bu qismni sinchiklab ko‘ramiz...',
+            proud: 'Ofarin! A’lo darajada bajardingiz!',
+            alert: 'Diqqat! Qiymatni biroz to‘g‘rilab ko‘ring.',
+            calm: 'Shoshilmay, sokin ohangda tushuntiraman.',
+          };
+          setUstozBubble(labels[expr]);
+        }}
+        speechBubble={ustozBubble}
+        isSpeaking={playing}
+        voiceActivity={voiceActivity}
+        isListening={isListening}
+        flightTarget={flightTarget}
+        clickToFlyEnabled={clickToFly}
+        onToggleClickToFly={() => {
+          setClickToFly((v) => {
+            showToast(!v ? 'Bosilgan joyga uchish yoqildi' : 'Bosilgan joyga uchish o‘chirildi');
+            return !v;
+          });
+        }}
+      />
+
       {/* ==================== DESKTOP STICKY FROSTED TOP NAV (>= 1024px) ==================== */}
       <header className="desktop-nav-bar">
         <div className="desktop-nav-inner">
@@ -600,11 +795,23 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
               </button>
             </div>
 
-            <button type="button" className="pill-stat" onClick={() => setActiveTab('profil')}>
+            <button
+              type="button"
+              className="pill-stat"
+              style={
+                xpFlash
+                  ? { borderColor: '#F59E0B', background: 'rgba(245, 158, 11, 0.16)' }
+                  : undefined
+              }
+              onClick={() => setActiveTab('profil')}
+            >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" aria-hidden="true">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
               <span>{formatSpaceNumber(xp)}</span>
+              {xpFlash && (
+                <span style={{ color: '#059669', fontSize: 11, fontWeight: 800 }}>{xpFlash}</span>
+              )}
             </button>
 
             <button type="button" className="pill-stat" onClick={() => setSheetOpen(true)}>
@@ -672,7 +879,8 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                 <div>
                   <h1 className="h1">Murakkab mavzularni jonli ko‘ring</h1>
                   <p className="lead">
-                    2.5D interaktiv modellar va emotsional o‘zbekcha ustoz ovozi bilan o‘rganing.
+                    2.5D izometrik modellar, amaliy topshiriqlar va emotsional o‘zbekcha ustoz ovozi
+                    bilan o‘rganing.
                   </p>
 
                   <form className="prompt-card" onSubmit={handleFormSubmit}>
@@ -735,7 +943,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                           type="button"
                           className="soft-btn"
                           onClick={() => {
-                            showToast('Rasm yuklash ochildi');
+                            showToast('Rasm yuklash ochildi (Vision tahlil)');
                             onOpenFilePicker();
                           }}
                         >
@@ -745,7 +953,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                           type="button"
                           className="soft-btn"
                           onClick={() => {
-                            showToast('Videodan dars rejimi');
+                            showToast('Videodan dars rejimi ochildi');
                             onOpenVideoModal();
                           }}
                         >
@@ -848,7 +1056,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     )}
                   </form>
 
-                  {/* Emotional Voice Strip (100% preserved + Live Eye-Tracking Emoji Ustoz) */}
+                  {/* Emotional Voice Strip (Real Uzbek TTS + Mood Sync + Summon Free-Flying Ustoz) */}
                   <div className={`voice-strip ${playing ? 'playing' : ''}`} id="vStrip">
                     <button
                       type="button"
@@ -889,21 +1097,27 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                             {m}
                           </button>
                         ))}
+                        <button
+                          type="button"
+                          className="m-chip"
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.14)',
+                            color: 'var(--amber)',
+                            fontWeight: 700,
+                          }}
+                          onClick={() => {
+                            setStepFocusActive(true);
+                            flyUstozToStep(model, activeLabStep);
+                            showToast('Emoji Ustoz detal oldiga uchib keldi!');
+                          }}
+                        >
+                          ✨ Ustozni chaqir
+                        </button>
                       </div>
-                    </div>
-
-                    <div style={{ flexShrink: 0 }} title="Ko‘zlar sichqonchani kuzatadi">
-                      <MirvoMentor
-                        size={48}
-                        isSpeaking={playing || isListening}
-                        isListening={isListening}
-                        voiceActivity={playing ? 0.72 : 0.08}
-                        interactive
-                      />
                     </div>
                   </div>
 
-                  {/* Quick Desktop Workspace Shortcuts */}
+                  {/* Quick Workspace Links */}
                   <div
                     style={{
                       display: 'flex',
@@ -937,36 +1151,217 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                   </div>
                 </div>
 
-                {/* RIGHT COLUMN (on Desktop) / CENTERPIECE (on Mobile): Live 2.5D Lab */}
+                {/* RIGHT COLUMN: TRUE 2.5D ISOMETRIC LAB + EXPLODED VIEW + 4-STEP SYNC + MINI-MISSION */}
                 <div className="lab">
-                  <div className="lab-switcher">
+                  {/* Top Switcher + Exploded View ("Qismlarga ajratish") Toggle */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      marginBottom: 10,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div className="lab-switcher" style={{ flex: 1, marginBottom: 0 }}>
+                      <button
+                        type="button"
+                        className={`lab-btn ${model === 'transformer' ? 'active' : ''}`}
+                        onClick={() => pickModel('transformer')}
+                      >
+                        Transformator
+                      </button>
+                      <button
+                        type="button"
+                        className={`lab-btn ${model === 'turbine' ? 'active' : ''}`}
+                        onClick={() => pickModel('turbine')}
+                      >
+                        Turbina
+                      </button>
+                      <button
+                        type="button"
+                        className={`lab-btn ${model === 'hydraulic' ? 'active' : ''}`}
+                        onClick={() => pickModel('hydraulic')}
+                      >
+                        Gidravlika
+                      </button>
+                    </div>
+
                     <button
                       type="button"
-                      className={`lab-btn ${model === 'transformer' ? 'active' : ''}`}
-                      onClick={() => pickModel('transformer')}
+                      onClick={() => {
+                        setExploded((v) => {
+                          const next = !v;
+                          setUstozExpr(next ? 'amazed' : 'happy');
+                          setUstozBubble(
+                            next
+                              ? 'Qismlarga ajratildi! Ichki tuzilishni ko‘rish uchun istalgan detalni bosing.'
+                              : 'Qurilma qayta yig‘ildi!'
+                          );
+                          showToast(next ? 'Qismlarga ajratish rejimi yoqildi' : 'Yig‘ilgan ko‘rinish');
+                          return next;
+                        });
+                      }}
+                      aria-pressed={exploded}
+                      style={{
+                        border: exploded
+                          ? '1px solid rgba(250, 204, 21, 0.7)'
+                          : '1px solid rgba(255, 255, 255, 0.16)',
+                        background: exploded
+                          ? 'rgba(250, 204, 21, 0.2)'
+                          : 'rgba(255, 255, 255, 0.08)',
+                        color: exploded ? '#FDE68A' : '#E2E8F0',
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        padding: '8px 10px',
+                        borderRadius: 11,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        whiteSpace: 'nowrap',
+                      }}
                     >
-                      Transformator
-                    </button>
-                    <button
-                      type="button"
-                      className={`lab-btn ${model === 'turbine' ? 'active' : ''}`}
-                      onClick={() => pickModel('turbine')}
-                    >
-                      Turbina
-                    </button>
-                    <button
-                      type="button"
-                      className={`lab-btn ${model === 'hydraulic' ? 'active' : ''}`}
-                      onClick={() => pickModel('hydraulic')}
-                    >
-                      Gidravlika
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>{exploded ? 'Yig‘ish' : 'Qismlarga ajratish'}</span>
                     </button>
                   </div>
 
-                  <div className="svg-box" id="svgBox">
-                    {renderLabSvg(model)}
+                  {/* Live Dynamic Formula Strip synced to sliders */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                      flexWrap: 'wrap',
+                      padding: '7px 12px',
+                      borderRadius: 12,
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(56, 189, 248, 0.22)',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: '#93C5FD',
+                      }}
+                    >
+                      {labConfig.formulaSymbol}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 12.5,
+                        fontWeight: 800,
+                        color: '#FDE68A',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      {labConfig.formulaLive}
+                    </span>
                   </div>
 
+                  {/* TRUE 2.5D ISOMETRIC STAGE (with 4-tone shading + Live Rotating Dial Needle) */}
+                  <div ref={labStageRef} className="svg-box" id="svgBox">
+                    <IsometricLab25D
+                      model={model}
+                      sl1={sl1}
+                      sl2={sl2}
+                      exploded={exploded}
+                      activeStep={activeLabStep}
+                      stepHighlightActive={stepFocusActive}
+                      onSelectStep={handleSelectStep}
+                    />
+                  </div>
+
+                  {/* 4-STEP INTERACTIVE GUIDED EXPLANATION STRIP */}
+                  <div style={{ marginTop: 10 }}>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: 5,
+                        marginBottom: 8,
+                      }}
+                    >
+                      {currentSteps.map((st) => {
+                        const active = stepFocusActive && activeLabStep === st.index;
+                        return (
+                          <button
+                            key={st.partId}
+                            type="button"
+                            onClick={() => handleSelectStep(st.index)}
+                            style={{
+                              border: active
+                                ? '1px solid rgba(56, 189, 248, 0.7)'
+                                : '1px solid rgba(255, 255, 255, 0.09)',
+                              background: active
+                                ? 'rgba(56, 189, 248, 0.22)'
+                                : 'rgba(255, 255, 255, 0.05)',
+                              color: active ? '#FFFFFF' : '#CBD5E1',
+                              fontSize: 11,
+                              fontWeight: 700,
+                              padding: '6px 4px',
+                              borderRadius: 9,
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {st.shortLabel}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 8,
+                        padding: '7px 11px',
+                        borderRadius: 11,
+                        background: 'rgba(15, 23, 42, 0.72)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: 12,
+                        color: '#E2E8F0',
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      <span>
+                        <strong style={{ color: '#38BDF8' }}>{activeStepMeta.title}:</strong>{' '}
+                        {activeStepMeta.explanation}
+                      </span>
+                      {stepFocusActive && (
+                        <button
+                          type="button"
+                          onClick={() => setStepFocusActive(false)}
+                          style={{
+                            border: 'none',
+                            background: 'rgba(255,255,255,0.1)',
+                            color: '#CBD5E1',
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            padding: '4px 8px',
+                            borderRadius: 8,
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
+                          }}
+                        >
+                          Barchasi
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* LIVE TABULAR READOUT PAIR */}
                   <div className="readout-pair">
                     <div className="r-cell">
                       <span>{labConfig.r1l}</span>
@@ -978,6 +1373,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     </div>
                   </div>
 
+                  {/* LIVE INTERACTIVE SLIDERS */}
                   <div className="sliders">
                     <div className="sl">
                       <label htmlFor="sl1">
@@ -1011,9 +1407,72 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     </div>
                   </div>
 
+                  {/* INTERACTIVE PRACTICE MINI-MISSION (+150 MIRVO BALL XP!) */}
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding: '10px 12px',
+                      borderRadius: 14,
+                      background: isMissionSolvedNow
+                        ? 'rgba(16, 185, 129, 0.16)'
+                        : 'rgba(251, 191, 36, 0.11)',
+                      border: isMissionSolvedNow
+                        ? '1px solid rgba(52, 211, 153, 0.5)'
+                        : '1px solid rgba(251, 191, 36, 0.35)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 10,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, flex: 1, minWidth: 200 }}>
+                      {isMissionSolvedNow ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      ) : (
+                        <Target className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      )}
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: '#FFFFFF' }}>
+                          {isMissionSolvedNow
+                            ? `✓ Topshiriq bajarildi! (+${activeMission.rewardXp} Mirvo Ball)`
+                            : `Amaliy topshiriq: ${activeMission.title}`}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#CBD5E1', marginTop: 2 }}>
+                          {isMissionSolvedNow
+                            ? 'Ajoyib! Slayderlarni aniq sozladingiz.'
+                            : activeMission.hint(labConfig.outputVal)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleNextMission}
+                      style={{
+                        border: 'none',
+                        background: isMissionSolvedNow ? '#10B981' : 'rgba(255,255,255,0.12)',
+                        color: '#FFFFFF',
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        padding: '6px 11px',
+                        borderRadius: 9,
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>{isMissionSolvedNow ? 'Keyingi topshiriq →' : `+${activeMission.rewardXp} Ball`}</span>
+                    </button>
+                  </div>
+
+                  {/* Fullscreen AI Whiteboard Launch Row */}
                   <div className="lab-open-row">
                     <span style={{ fontSize: 11.5, color: '#94A3B8' }}>
-                      To‘liq bosqichma-bosqich AI doska va ovozli tahlil
+                      To‘liq ekranli AI chizma doskasi va ovozli dars
                     </span>
                     <button
                       type="button"
@@ -1186,8 +1645,16 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
 
                   <div className="reel-center">
                     <span className="reel-formula">{activeReel.f}</span>
-                    <div style={{ width: '100%', maxWidth: 270, height: 185 }}>
-                      {renderLabSvg(activeReel.model, true)}
+                    <div style={{ width: '100%', maxWidth: 340, height: 205 }}>
+                      <IsometricLab25D
+                        model={activeReel.model}
+                        sl1={activeReel.model === 'turbine' ? 12 : activeReel.model === 'hydraulic' ? 50 : 220}
+                        sl2={activeReel.model === 'turbine' ? 45 : activeReel.model === 'hydraulic' ? 8 : 4}
+                        exploded={false}
+                        activeStep={0}
+                        stepHighlightActive={false}
+                        onSelectStep={() => {}}
+                      />
                     </div>
                     <div
                       style={{
@@ -1307,8 +1774,8 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                       <span>Seriya</span>
                     </div>
                     <div className="ms-cell">
-                      <strong>4</strong>
-                      <span>Do‘stlar</span>
+                      <strong>{completedMissions.length}</strong>
+                      <span>Missiyalar</span>
                     </div>
                   </div>
 
@@ -1329,7 +1796,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                       type="button"
                       className="row-item"
                       onClick={() => {
-                        showToast('O‘qilgan 24 ta dars tarixi');
+                        showToast('O‘qilgan darslar tarixi ochildi');
                         onOpenDrawer('history');
                       }}
                     >
@@ -1373,16 +1840,14 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                       gap: 12,
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <MirvoMentor size={52} isSpeaking={false} interactive />
-                      <div>
-                        <strong style={{ display: 'block', fontSize: 15 }}>
-                          {userName || userEmail || 'Mirvo O‘quvchi'}
-                        </strong>
-                        <span style={{ fontSize: 12, color: 'var(--muted)' }}>
-                          Balans: {formatSpaceNumber(xp)} Mirvo Ball
-                        </span>
-                      </div>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: 15 }}>
+                        {userName || userEmail || 'Mirvo O‘quvchi'}
+                      </strong>
+                      <span style={{ fontSize: 12, color: 'var(--muted)' }}>
+                        Balans: {formatSpaceNumber(xp)} Mirvo Ball · {completedMissions.length} ta
+                        topshiriq bajarildi
+                      </span>
                     </div>
                     {!userEmail && (
                       <button
@@ -1514,6 +1979,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
               style={{ marginTop: 8 }}
               onClick={() => {
                 setSheetOpen(false);
+                setUstozExpr('proud');
                 showToast('Mirvo Pro muvaffaqiyatli faollashtirildi');
               }}
             >

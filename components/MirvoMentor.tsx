@@ -1,6 +1,8 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import type { TeacherDepth, TutorPose } from '../types/tutor';
 
+export type UstozExpression = 'happy' | 'amazed' | 'thinking' | 'proud' | 'alert' | 'calm';
+
 export interface MirvoMentorProps {
   isSpeaking: boolean;
   isDrawing?: boolean;
@@ -18,6 +20,8 @@ export interface MirvoMentorProps {
   lookVector?: { x: number; y: number };
   focusActive?: boolean;
   interactive?: boolean;
+  expression?: UstozExpression;
+  pointingSide?: 'left' | 'right' | null;
 }
 
 function clampVal(v: number, min: number, max: number): number {
@@ -40,6 +44,8 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
   lookVector,
   focusActive = false,
   interactive = false,
+  expression = 'happy',
+  pointingSide = null,
 }) => {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const faceGradId = `ustoz-face-${uid}`;
@@ -291,25 +297,44 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
           <ellipse cx="27" cy="69" rx="6.5" ry="3.8" fill="#EA580C" opacity="0.34" />
           <ellipse cx="85" cy="69" rx="6.5" ry="3.8" fill="#EA580C" opacity="0.34" />
 
-          {/* Expressive Eyebrows that lift slightly when speaking or looking up */}
-          <path
-            d={`M 29 ${41 + leftOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)} Q 40 ${
-              36 + leftOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
-            } 49 ${41 + leftOffsetY * 0.35}`}
-            fill="none"
-            stroke="#78350F"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-          />
-          <path
-            d={`M 63 ${41 + rightOffsetY * 0.35} Q 72 ${
-              36 + rightOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
-            } 83 ${41 + rightOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)}`}
-            fill="none"
-            stroke="#78350F"
-            strokeWidth="2.6"
-            strokeLinecap="round"
-          />
+          {/* Expressive Eyebrows adapting to all 6 emotions */}
+          {expression === 'alert' ? (
+            <>
+              <path d="M 28 38 L 49 44" fill="none" stroke="#78350F" strokeWidth="3" strokeLinecap="round" />
+              <path d="M 84 38 L 63 44" fill="none" stroke="#78350F" strokeWidth="3" strokeLinecap="round" />
+            </>
+          ) : expression === 'thinking' ? (
+            <>
+              <path d="M 29 42 Q 40 40 49 42" fill="none" stroke="#78350F" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M 63 39 Q 73 32 84 37" fill="none" stroke="#78350F" strokeWidth="2.8" strokeLinecap="round" />
+            </>
+          ) : expression === 'amazed' ? (
+            <>
+              <path d="M 28 37 Q 39 29 50 37" fill="none" stroke="#78350F" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M 62 37 Q 73 29 84 37" fill="none" stroke="#78350F" strokeWidth="2.8" strokeLinecap="round" />
+            </>
+          ) : (
+            <>
+              <path
+                d={`M 29 ${41 + leftOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)} Q 40 ${
+                  36 + leftOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
+                } 49 ${41 + leftOffsetY * 0.35}`}
+                fill="none"
+                stroke="#78350F"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+              />
+              <path
+                d={`M 63 ${41 + rightOffsetY * 0.35} Q 72 ${
+                  36 + rightOffsetY * 0.35 - (isSpeaking ? 2.5 : 0)
+                } 83 ${41 + rightOffsetY * 0.35 - (isSpeaking ? 1.8 : 0)}`}
+                fill="none"
+                stroke="#78350F"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+              />
+            </>
+          )}
 
           {/* LEFT EYE SOCKET + GLASSES FRAME */}
           <circle
@@ -342,7 +367,13 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
           <path d="M 19 53 L 26.8 55" stroke="#111827" strokeWidth="2.4" strokeLinecap="round" />
           <path d="M 85.2 55 L 93 53" stroke="#111827" strokeWidth="2.4" strokeLinecap="round" />
 
-          {isBlinking ? (
+          {expression === 'proud' ? (
+            <>
+              {/* Joyful proud smiling arc eyes ^ ^ */}
+              <path d="M 31 58 Q 40 48 49 58" fill="none" stroke="#111827" strokeWidth="3.2" strokeLinecap="round" />
+              <path d="M 63 58 Q 72 48 81 58" fill="none" stroke="#111827" strokeWidth="3.2" strokeLinecap="round" />
+            </>
+          ) : isBlinking ? (
             <>
               <path
                 d="M 30 56 Q 40 60 50 56"
@@ -367,10 +398,15 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
                   transform: `translate(${leftOffsetX.toFixed(2)}px, ${leftOffsetY.toFixed(2)}px)`,
                 }}
               >
-                <circle cx="40" cy="56" r="6.6" fill={`url(#${irisGradId})`} />
-                <circle cx="40" cy="56" r="3.6" fill="#090D16" />
-                <circle cx="37.8" cy="53.6" r="2.1" fill="#FFFFFF" />
-                <circle cx="42.1" cy="58.2" r="0.9" fill="#FFFFFF" opacity="0.75" />
+                <circle
+                  cx="40"
+                  cy="56"
+                  r={expression === 'amazed' ? 7.8 : 6.6}
+                  fill={`url(#${irisGradId})`}
+                />
+                <circle cx="40" cy="56" r={expression === 'amazed' ? 4.3 : 3.6} fill="#090D16" />
+                <circle cx="37.8" cy="53.6" r="2.2" fill="#FFFFFF" />
+                <circle cx="42.1" cy="58.2" r="1.0" fill="#FFFFFF" opacity="0.82" />
               </g>
 
               {/* RIGHT IRIS + PUPIL + CATCHLIGHT (Follows Mouse Cursor!) */}
@@ -379,15 +415,28 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
                   transform: `translate(${rightOffsetX.toFixed(2)}px, ${rightOffsetY.toFixed(2)}px)`,
                 }}
               >
-                <circle cx="72" cy="56" r="6.6" fill={`url(#${irisGradId})`} />
-                <circle cx="72" cy="56" r="3.6" fill="#090D16" />
-                <circle cx="69.8" cy="53.6" r="2.1" fill="#FFFFFF" />
-                <circle cx="74.1" cy="58.2" r="0.9" fill="#FFFFFF" opacity="0.75" />
+                <circle
+                  cx="72"
+                  cy="56"
+                  r={expression === 'amazed' ? 7.8 : 6.6}
+                  fill={`url(#${irisGradId})`}
+                />
+                <circle cx="72" cy="56" r={expression === 'amazed' ? 4.3 : 3.6} fill="#090D16" />
+                <circle cx="69.8" cy="53.6" r="2.2" fill="#FFFFFF" />
+                <circle cx="74.1" cy="58.2" r="1.0" fill="#FFFFFF" opacity="0.82" />
               </g>
+
+              {/* Calm relaxed half-eyelids */}
+              {expression === 'calm' && (
+                <>
+                  <path d="M 27.5 52 Q 40 55 52.5 52" fill="#FBBF24" stroke="#111827" strokeWidth="1.6" />
+                  <path d="M 59.5 52 Q 72 55 84.5 52" fill="#FBBF24" stroke="#111827" strokeWidth="1.6" />
+                </>
+              )}
             </>
           )}
 
-          {/* EXPRESSIVE MOUTH: Lip-Sync when speaking, warm friendly smile when idle */}
+          {/* EXPRESSIVE MOUTH: Lip-Sync when speaking + 6 distinct emotional poses */}
           {isSpeaking ? (
             <g>
               <rect
@@ -409,14 +458,47 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
                 />
               )}
             </g>
-          ) : isListening ? (
-            <circle
+          ) : isListening || expression === 'amazed' ? (
+            <ellipse
               cx="56"
-              cy="77"
-              r="5.2"
+              cy="78"
+              rx="6.2"
+              ry="7.2"
               fill="#7C2D12"
               stroke="#111827"
               strokeWidth="2.2"
+            />
+          ) : expression === 'proud' ? (
+            <path
+              d="M 40 73 Q 56 89 72 73 Z"
+              fill="#7C2D12"
+              stroke="#111827"
+              strokeWidth="2.4"
+              strokeLinejoin="round"
+            />
+          ) : expression === 'thinking' ? (
+            <path
+              d="M 46 78 Q 55 75 64 79"
+              fill="none"
+              stroke="#111827"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          ) : expression === 'alert' ? (
+            <path
+              d="M 44 81 Q 50 75 56 80 T 68 79"
+              fill="none"
+              stroke="#991B1B"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+          ) : expression === 'calm' ? (
+            <path
+              d="M 45 76 Q 56 81 67 76"
+              fill="none"
+              stroke="#111827"
+              strokeWidth="2.8"
+              strokeLinecap="round"
             />
           ) : (
             <path
@@ -428,6 +510,54 @@ export const MirvoMentor: React.FC<MirvoMentorProps> = ({
             />
           )}
         </g>
+
+        {/* Emotion Micro-Props (Sparkles / Thought ? / Alert !) */}
+        {(expression === 'proud' || expression === 'amazed') && (
+          <g>
+            <path
+              d="M 96 20 L 99 26 L 105 29 L 99 32 L 96 38 L 93 32 L 87 29 L 93 26 Z"
+              fill="#FACC15"
+            />
+            <circle cx="16" cy="34" r="3.2" fill="#38BDF8" />
+          </g>
+        )}
+        {expression === 'thinking' && (
+          <g>
+            <circle cx="96" cy="24" r="10" fill="#1E293B" stroke="#38BDF8" strokeWidth="1.6" />
+            <text x="96" y="28.5" textAnchor="middle" fill="#38BDF8" fontSize="13" fontWeight="900">
+              ?
+            </text>
+          </g>
+        )}
+        {expression === 'alert' && (
+          <g>
+            <circle cx="96" cy="24" r="10" fill="#DC2626" stroke="#FEF08A" strokeWidth="1.6" />
+            <text x="96" y="28.5" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900">
+              !
+            </text>
+          </g>
+        )}
+
+        {/* Animated Pointing Hand when pointing directly at a 2.5D part */}
+        {pointingSide && (
+          <g
+            transform={
+              pointingSide === 'left' ? 'translate(-14, 62)' : 'translate(92, 62) scale(-1, 1)'
+            }
+          >
+            <rect
+              x="0"
+              y="6"
+              width="20"
+              height="9"
+              rx="4.5"
+              fill="#FEF08A"
+              stroke="#B45309"
+              strokeWidth="1.8"
+            />
+            <circle cx="2" cy="10.5" r="3" fill="#38BDF8" />
+          </g>
+        )}
       </svg>
     </div>
   );
