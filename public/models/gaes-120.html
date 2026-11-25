@@ -1,0 +1,2316 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAES · Gidroakkumulyatsion elektr stansiyasi — Anatomy</title>
+  <style>
+    /* =========================================================================
+       1. ANATOMY DESIGN SYSTEM & EXACT ISO.CSS TOKENS
+       ========================================================================= */
+    .iso {
+      --anatomy-page: #0b0b0b;
+      --anatomy-card: #131313;
+      --anatomy-text: #a3a3a3;
+      --anatomy-strong: #e6e6e6;
+      --anatomy-muted: #6e6e6e;
+      --anatomy-paper: #131313;
+      --anatomy-face: #1b1b1b;
+      --anatomy-top: #1c1c1c;
+      --anatomy-shade-0: #0f0f0f;
+      --anatomy-shade-1: #121212;
+      --anatomy-shade-2: #151515;
+      --anatomy-shade-3: #181818;
+      --anatomy-lit-top: #262626;
+      --anatomy-lit-shade: #1d1d1d;
+      --anatomy-hi: #d4d4d4;
+      --anatomy-mid: #6a6a6a;
+      --anatomy-lo: #3e3e3e;
+      --anatomy-faint: #2a2a2a;
+      --anatomy-lit: #ffffff;
+      --anatomy-halo: #050505;
+      --anatomy-halo-opacity: .9;
+      --anatomy-dot: #e6e6e6;
+      --anatomy-water-top: #1d2732;
+      --anatomy-water-side: #16202a;
+      --anatomy-water-edge: #6b9bff;
+      --anatomy-weight: .6px;
+      --anatomy-ease: cubic-bezier(.32, .72, 0, 1);
+      --anatomy-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --anatomy-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    }
+
+    .iso[data-theme="light"] {
+      --anatomy-page: #f2f2ef;
+      --anatomy-card: #fbfbfa;
+      --anatomy-text: #57575a;
+      --anatomy-strong: #18181a;
+      --anatomy-muted: #8c8c90;
+      --anatomy-paper: #fbfbfa;
+      --anatomy-face: #ffffff;
+      --anatomy-top: #ffffff;
+      --anatomy-shade-0: #dcdcd9;
+      --anatomy-shade-1: #e5e5e2;
+      --anatomy-shade-2: #ededea;
+      --anatomy-shade-3: #f4f4f1;
+      --anatomy-lit-top: #ffffff;
+      --anatomy-lit-shade: #eeeeeb;
+      --anatomy-hi: #26262a;
+      --anatomy-mid: #8a8a8f;
+      --anatomy-lo: #b4b4b8;
+      --anatomy-faint: #d4d4d6;
+      --anatomy-lit: #000000;
+      --anatomy-halo: #8a8a80;
+      --anatomy-halo-opacity: .32;
+      --anatomy-dot: #3a3a3e;
+      --anatomy-water-top: #dde5ec;
+      --anatomy-water-side: #c6d3df;
+      --anatomy-water-edge: #5d748a;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--anatomy-page);
+      color: var(--anatomy-text);
+      font-family: var(--anatomy-sans);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 220ms var(--anatomy-ease), color 220ms var(--anatomy-ease);
+    }
+
+    .page-shell {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 20px 18px 44px;
+    }
+
+    /* Subtle header bar outside the Anatomy card */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--anatomy-mono);
+      font-size: 11px;
+      letter-spacing: .06em;
+      color: var(--anatomy-muted);
+    }
+
+    .topbar-id {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .topbar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--anatomy-strong);
+      opacity: .75;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      border: 1px solid var(--anatomy-faint);
+      background: var(--anatomy-card);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .theme-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--anatomy-muted);
+      font-family: var(--anatomy-mono);
+      font-size: 10.5px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 180ms var(--anatomy-ease), color 180ms var(--anatomy-ease);
+    }
+
+    .theme-btn[aria-pressed="true"] {
+      background: var(--anatomy-strong);
+      color: var(--anatomy-card);
+    }
+
+    .theme-btn:focus-visible {
+      outline: 1px solid var(--anatomy-muted);
+      outline-offset: 2px;
+    }
+
+    /* =========================================================================
+       2. ANATOMY FIGURE & PLATE FRAMING
+       ========================================================================= */
+    .iso-figure {
+      margin: 0;
+    }
+
+    .iso-plate {
+      position: relative;
+      padding: 46px 20px 44px;
+      border-radius: 0;
+      background: var(--anatomy-card);
+      box-shadow: 0 0 0 1px var(--anatomy-mid);
+      --anatomy-paper: var(--anatomy-card);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
+      cursor: ew-resize;
+    }
+
+    .iso-plate:focus-visible {
+      outline: 1px solid var(--anatomy-strong);
+      outline-offset: 5px;
+    }
+
+    .iso-plate-corners {
+      position: absolute;
+      inset: 16px 18px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .iso-plate-corner {
+      position: absolute;
+      color: var(--anatomy-muted);
+      font-family: var(--anatomy-mono);
+      font-size: 10.5px;
+      line-height: 1.25;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .iso-plate-corner[data-corner="fig"] {
+      top: 0;
+      left: 0;
+      color: var(--anatomy-text);
+    }
+
+    .iso-plate-corner[data-corner="title"] {
+      top: 0;
+      right: 0;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .iso-plate-corner[data-corner="hint"] {
+      bottom: 0;
+      left: 0;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .iso-plate-corner[data-corner="readout"] {
+      right: 0;
+      bottom: 0;
+      color: var(--anatomy-strong);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .03em;
+    }
+
+    /* =========================================================================
+       3. ANATOMY SVG PRIMITIVES (EXACT LINE WEIGHTS & TONES)
+       ========================================================================= */
+    .iso-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      margin: 0 auto;
+    }
+
+    .iso-svg path,
+    .iso-svg circle,
+    .iso-svg line,
+    .iso-svg polyline {
+      vector-effect: non-scaling-stroke;
+    }
+
+    .iso-fill {
+      fill: var(--anatomy-paper);
+      stroke: none;
+    }
+
+    .iso-solid[data-lit] > .iso-fill {
+      fill: var(--anatomy-face);
+    }
+
+    .iso-shade,
+    .iso-top {
+      stroke: none;
+    }
+
+    .iso-shade[data-shade="0"] { fill: var(--anatomy-shade-0); }
+    .iso-shade[data-shade="1"] { fill: var(--anatomy-shade-1); }
+    .iso-shade[data-shade="2"] { fill: var(--anatomy-shade-2); }
+    .iso-shade[data-shade="3"] { fill: var(--anatomy-shade-3); }
+    .iso-top { fill: var(--anatomy-top); }
+
+    .iso-solid[data-lit] > .iso-top { fill: var(--anatomy-lit-top); }
+    .iso-solid[data-lit] > .iso-shade { fill: var(--anatomy-lit-shade); }
+    .iso-solid[data-lit] > .iso-edge { stroke: var(--anatomy-lit); stroke-width: .75px; }
+
+    /* Seamless smooth shading for cylinders / curved shells */
+    .iso-solid[data-seamless] > .iso-shade,
+    .iso-solid[data-seamless] > .iso-top {
+      stroke-width: .4;
+      stroke-linejoin: round;
+    }
+    .iso-solid[data-seamless] > .iso-shade[data-shade="0"] { stroke: var(--anatomy-shade-0); }
+    .iso-solid[data-seamless] > .iso-shade[data-shade="1"] { stroke: var(--anatomy-shade-1); }
+    .iso-solid[data-seamless] > .iso-shade[data-shade="2"] { stroke: var(--anatomy-shade-2); }
+    .iso-solid[data-seamless] > .iso-shade[data-shade="3"] { stroke: var(--anatomy-shade-3); }
+    .iso-solid[data-seamless] > .iso-top { stroke: var(--anatomy-top); }
+
+    /* Water prism muted slate tint */
+    .iso-water > .iso-fill { fill: var(--anatomy-water-side); }
+    .iso-water > .iso-top { fill: var(--anatomy-water-top); }
+    .iso-water > .iso-shade[data-shade="0"],
+    .iso-water > .iso-shade[data-shade="1"] { fill: var(--anatomy-water-side); }
+    .iso-water > .iso-shade[data-shade="2"],
+    .iso-water > .iso-shade[data-shade="3"] { fill: var(--anatomy-water-top); opacity: .78; }
+    .iso-water > .iso-edge { stroke: var(--anatomy-water-edge); stroke-width: .6px; }
+    .iso-water > .iso-crease { stroke: var(--anatomy-water-edge); opacity: .65; }
+
+    .water-ripple {
+      fill: none;
+      stroke: var(--anatomy-water-edge);
+      stroke-width: .55px;
+      stroke-linecap: round;
+      opacity: .52;
+    }
+
+    .iso-halo {
+      fill: var(--anatomy-halo);
+      stroke: none;
+      filter: blur(9px);
+      opacity: var(--anatomy-halo-opacity);
+      transform: translateY(3px);
+    }
+
+    .iso-line {
+      fill: none;
+      stroke: var(--anatomy-lo);
+      stroke-width: var(--anatomy-weight);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .iso-line[data-tone="hi"] { stroke: var(--anatomy-hi); }
+    .iso-line[data-tone="mid"] { stroke: var(--anatomy-mid); }
+    .iso-line[data-tone="lo"] { stroke: var(--anatomy-lo); }
+    .iso-line[data-tone="faint"] { stroke: var(--anatomy-faint); }
+    .iso-line[data-tone="lit"] { stroke: var(--anatomy-lit); stroke-width: .9px; }
+    .iso-line[data-tone="water"] { stroke: var(--anatomy-water-edge); }
+    .iso-line[data-dashed] { stroke-dasharray: 3.2 3.2; }
+    .iso-line[data-dotted] { stroke-dasharray: .01 3.4; stroke-width: 1px; }
+
+    .iso-wire-end {
+      fill: var(--anatomy-paper);
+      stroke: var(--anatomy-mid);
+      stroke-width: var(--anatomy-weight);
+    }
+
+    .iso-dots circle {
+      fill: var(--anatomy-dot);
+      stroke: none;
+      opacity: .38;
+    }
+    .iso-dots[data-tone="hi"] circle { opacity: .82; }
+    .iso-dots[data-tone="mid"] circle { opacity: .48; }
+    .iso-dots[data-tone="lo"] circle { opacity: .24; }
+    .iso-dots[data-tone="faint"] circle { opacity: .14; }
+
+    .iso-face-text {
+      fill: var(--anatomy-mid);
+      font-family: var(--anatomy-mono);
+      letter-spacing: .08em;
+      font-weight: 500;
+    }
+
+    /* Tube shading classes */
+    .tb-body { fill: var(--anatomy-shade-2); stroke: none; }
+    .tb-shine { fill: var(--anatomy-top); stroke: none; }
+    .tb-shade { fill: var(--anatomy-shade-0); stroke: none; }
+
+    /* Cutaway glass tint (ultra subtle) */
+    .glass-pane {
+      fill: var(--anatomy-top);
+      opacity: .16;
+      stroke: none;
+    }
+
+    /* =========================================================================
+       4. INTEGRATED MINIMAL CONTROL BAR (ANATOMY MONOSPACE AESTHETIC)
+       ========================================================================= */
+    .iso-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 16px;
+      padding: 10px 16px;
+      background: var(--anatomy-card);
+      box-shadow: 0 0 0 1px var(--anatomy-mid);
+      margin-top: -1px; /* flush hairline join with .iso-plate */
+    }
+
+    .mode-group {
+      display: inline-flex;
+      border: 1px solid var(--anatomy-faint);
+      background: var(--anatomy-page);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--anatomy-text);
+      font-family: var(--anatomy-mono);
+      font-size: 11px;
+      letter-spacing: .04em;
+      padding: 7px 11px;
+      min-height: 34px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 180ms var(--anatomy-ease), color 180ms var(--anatomy-ease);
+    }
+
+    .mode-btn:hover {
+      color: var(--anatomy-strong);
+    }
+
+    .mode-btn[data-active="true"] {
+      background: var(--anatomy-strong);
+      color: var(--anatomy-card);
+    }
+
+    .mode-btn:focus-visible {
+      outline: 1px solid var(--anatomy-strong);
+      outline-offset: 2px;
+    }
+
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1 1 210px;
+      min-width: 190px;
+      font-family: var(--anatomy-mono);
+      font-size: 10.5px;
+      color: var(--anatomy-muted);
+      letter-spacing: .04em;
+    }
+
+    .slider-label {
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .slider-val {
+      min-width: 44px;
+      text-align: right;
+      color: var(--anatomy-strong);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .iso-range {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 18px;
+      background: transparent;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .iso-range:focus-visible {
+      outline: 1px solid var(--anatomy-muted);
+      outline-offset: 3px;
+    }
+
+    .iso-range::-webkit-slider-runnable-track {
+      height: 1px;
+      background: var(--anatomy-lo);
+    }
+
+    .iso-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 14px;
+      margin-top: -6.5px;
+      background: var(--anatomy-card);
+      border: 1px solid var(--anatomy-strong);
+      border-radius: 1px;
+      transition: transform 140ms var(--anatomy-ease);
+    }
+
+    .iso-range::-webkit-slider-thumb:hover {
+      background: var(--anatomy-strong);
+    }
+
+    .iso-range::-moz-range-track {
+      height: 1px;
+      background: var(--anatomy-lo);
+    }
+
+    .iso-range::-moz-range-thumb {
+      width: 10px;
+      height: 14px;
+      background: var(--anatomy-card);
+      border: 1px solid var(--anatomy-strong);
+      border-radius: 1px;
+    }
+
+    /* =========================================================================
+       5. ANATOMY LEGEND & CAPTION
+       ========================================================================= */
+    .iso-legend {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--anatomy-muted);
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .iso-keys {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      font-size: 12px;
+      color: var(--anatomy-text);
+    }
+
+    .iso-key {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .iso-swatch {
+      width: 16px;
+      height: 10px;
+      flex: none;
+      overflow: visible;
+    }
+
+    .iso-swatch path {
+      fill: none;
+      stroke: var(--anatomy-hi);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .iso-swatch[data-mark="raised"] path { stroke: var(--anatomy-mid); }
+    .iso-swatch[data-mark="lit"] path { stroke: var(--anatomy-lit); stroke-width: 1.2; }
+    .iso-swatch[data-mark="dim"] path { stroke: var(--anatomy-lo); }
+    .iso-swatch[data-mark="dashed"] path {
+      stroke: var(--anatomy-water-edge);
+      stroke-dasharray: 3 2.5;
+    }
+    .iso-swatch-crease { stroke: var(--anatomy-lo) !important; }
+
+    .iso-caption {
+      margin: 0;
+      color: var(--anatomy-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .iso-caption strong {
+      color: var(--anatomy-text);
+      font-weight: 500;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* =========================================================================
+       6. RESPONSIVE MOBILE ADJUSTMENTS (DOWN TO 390PX)
+       ========================================================================= */
+    @media (max-width: 600px) {
+      .page-shell {
+        padding: 14px 10px 32px;
+      }
+
+      .iso-plate {
+        padding: 46px 6px 64px;
+        overflow: hidden;
+      }
+
+      .iso-plate .iso-svg {
+        width: 108%;
+        margin-left: -4%;
+      }
+
+      .iso-plate-corners {
+        inset: 12px 12px;
+      }
+
+      .iso-plate-corner {
+        font-size: 9.5px;
+      }
+
+      .iso-plate-corner[data-corner="hint"] {
+        bottom: 18px;
+      }
+
+      .iso-plate-corner[data-corner="readout"] {
+        left: 0;
+        right: auto;
+        bottom: 0;
+      }
+
+      .iso-controls {
+        padding: 10px 12px;
+      }
+
+      .mode-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .mode-btn {
+        flex: 1;
+        padding: 8px 6px;
+        font-size: 10.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .iso-plate, .theme-btn, .mode-btn {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body class="iso" data-theme="light">
+  <main class="page-shell">
+    <!-- Minimal top bar outside the Anatomy card -->
+    <header class="topbar">
+      <div class="topbar-id">
+        <span class="topbar-dot" aria-hidden="true"></span>
+        <span>ANATOMY · TEXNIK MODEL · GAES-120</span>
+      </div>
+      <div class="theme-toggle" role="group" aria-label="Mavzuni tanlash">
+        <button type="button" class="theme-btn" id="btn-light" aria-pressed="true">Yorug‘</button>
+        <button type="button" class="theme-btn" id="btn-dark" aria-pressed="false">Tungi</button>
+      </div>
+    </header>
+
+    <figure class="iso-figure">
+      <!-- Anatomy Framed Plate -->
+      <div
+        class="iso-plate"
+        id="gaes-stage"
+        tabindex="0"
+        role="slider"
+        aria-label="GAES ish rejimini boshqarish: o‘ng va chap strelkalar yuklamani o‘zgartiradi, 1 generatsiya, 2 yoki bo‘shliq kutish, 3 nasos rejimi"
+        aria-valuemin="-100"
+        aria-valuemax="100"
+        aria-valuenow="92"
+        aria-valuetext="Generatsiya rejimi"
+      >
+        <div class="iso-plate-corners" aria-hidden="true">
+          <span class="iso-plate-corner" data-corner="fig">RAS. 01</span>
+          <span class="iso-plate-corner" data-corner="title">GAES · GIDROAKKUMULYATSION STANSIYA</span>
+          <span class="iso-plate-corner" data-corner="hint">REJIMNI TANLANG YOKI SURING · ←/→ · BO‘SHLIQ</span>
+          <span class="iso-plate-corner" data-corner="readout" data-readout>GENERATSIYA · +112.4 MVt · 119.5 m · +294 ayl/daq</span>
+        </div>
+
+        <!-- Master Isometric SVG Canvas (viewBox 680 x 420) -->
+        <svg
+          id="gaes-svg"
+          class="iso-svg"
+          viewBox="0 0 680 420"
+          role="img"
+          aria-label="Gidroakkumulyatsion elektr stansiyasi (GAES) ning izometrik kesma modeli: yuqori va quyi havzalar, bosimli quvur, sharli klapan, qaytarma Frensis turbinasi va generatori, kuch transformatori hamda quvvat o‘lchagich"
+        ></svg>
+
+        <div class="sr-only" aria-live="polite" id="gaes-live"></div>
+      </div>
+
+      <!-- Integrated Minimal Control Bar -->
+      <div class="iso-controls" role="region" aria-label="Stansiya boshqaruv paneli">
+        <div class="mode-group" role="group" aria-label="Ish rejimlari">
+          <button type="button" class="mode-btn" id="mode-gen" data-mode="gen" data-active="true">Generatsiya (+)</button>
+          <button type="button" class="mode-btn" id="mode-idle" data-mode="idle" data-active="false">Kutish (0)</button>
+          <button type="button" class="mode-btn" id="mode-pump" data-mode="pump" data-active="false">Nasos (−)</button>
+        </div>
+
+        <label class="slider-group" for="load-slider">
+          <span class="slider-label">Yuklama</span>
+          <input
+            type="range"
+            id="load-slider"
+            class="iso-range"
+            min="-100"
+            max="100"
+            step="1"
+            value="92"
+            aria-label="Yuklama darajasi foizda"
+          />
+          <span class="slider-val" id="slider-val">+92%</span>
+        </label>
+      </div>
+
+      <!-- Anatomy Legend & Uzbek Caption -->
+      <figcaption class="iso-legend">
+        <div class="iso-keys">
+          <span class="iso-key">
+            <svg class="iso-swatch" data-mark="raised" viewBox="0 0 16 10" aria-hidden="true">
+              <path d="M1 7.5 L8 9.5 L15 7.5 L15 2.5 L8 0.5 L1 2.5 Z" />
+              <path class="iso-swatch-crease" d="M1 2.5 L8 4.5 L15 2.5 M8 4.5 L8 9.5" />
+            </svg>
+            <span>Konstruksiya va havzalar</span>
+          </span>
+          <span class="iso-key">
+            <svg class="iso-swatch" data-mark="lit" viewBox="0 0 16 10" aria-hidden="true">
+              <path d="M1 7.5 L8 9.5 L15 7.5 L15 2.5 L8 0.5 L1 2.5 Z" />
+              <path d="M1 2.5 L8 4.5 L15 2.5" />
+            </svg>
+            <span>Qaytarma turbina-generator va strelka</span>
+          </span>
+          <span class="iso-key">
+            <svg class="iso-swatch" data-mark="dashed" viewBox="0 0 16 10" aria-hidden="true">
+              <path d="M1 5 L15 5" />
+            </svg>
+            <span>Bosimli quvurdagi suv oqimi</span>
+          </span>
+          <span class="iso-key">
+            <svg class="iso-swatch" data-mark="dim" viewBox="0 0 16 10" aria-hidden="true">
+              <path d="M2 8 L2 2 L14 2 L14 8" />
+            </svg>
+            <span>Transformator va shinalar</span>
+          </span>
+        </div>
+
+        <p class="iso-caption">
+          <strong>Ishlash prinsipi:</strong> GAES yirik gidravlik akkumulyator vazifasini bajaradi.
+          Tungi soatlarda tarmoqdagi ortiqcha va arzon elektr energiyasi hisobiga qaytarma agregat <strong>nasos rejimida</strong> ishlab, suvni quyi havzadan yuqori havzaga ko‘taradi va potensial energiya sifatida zaxiralaydi.
+          Kunduzgi pik yuklama paytida esa suv bosimli quvur orqali pastga tushirilib, Frensis turbinasi va generatorni aylantiradi hamda tarmoqqa tezkor quvvat uzatadi (to‘liq sikl FIK ≈ 78%).
+        </p>
+      </figcaption>
+    </figure>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+
+    /* =========================================================================
+       SECTION 1: VECTOR & MATHEMATICAL ISOMETRIC GEOMETRY ENGINE (ISO-KIT CORE)
+       ========================================================================= */
+    const NS = "http://www.w3.org/2000/svg";
+    const DEG = Math.PI / 180;
+    const f1 = (n) => Math.round(n * 10) / 10;
+
+    const add3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+    const sub3 = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+    const mul3 = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+    const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const cross3 = (a, b) => [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0]
+    ];
+    const len3 = (a) => Math.hypot(a[0], a[1], a[2]);
+    const unit3 = (a) => {
+      const l = len3(a) || 1;
+      return [a[0] / l, a[1] / l, a[2] / l];
+    };
+
+    function cameraOf(P) {
+      const a = (P.azimuth ?? 42) * DEG;
+      const e = (P.elevation ?? 30) * DEG;
+      const ca = Math.cos(a), sa = Math.sin(a);
+      const ce = Math.cos(e), se = Math.sin(e);
+      return {
+        ca, sa, ce, se,
+        V: [ce * ca, ce * sa, se],
+        Vxy: [ca, sa],
+        R: [sa, -ca, 0],
+        D: [se * ca, se * sa, -ce],
+        L: unit3([-0.26, 0.72, 0.64])
+      };
+    }
+
+    function iso(pt, P) {
+      const c = P._c || (P._c = cameraOf(P));
+      const sx = P.origin[0] + P.scale * (pt[0] * c.sa - pt[1] * c.ca);
+      const sy = P.origin[1] + P.scale * ((pt[0] * c.ca + pt[1] * c.sa) * c.se - pt[2] * c.ce);
+      return [sx, sy];
+    }
+
+    function depthOf(pt, P) {
+      const c = P._c || (P._c = cameraOf(P));
+      return dot3(pt, c.V);
+    }
+
+    function translateAlong(P, d) {
+      const p0 = iso([0, 0, 0], P);
+      const p1 = iso(d, P);
+      return `translate(${f1(p1[0] - p0[0])} ${f1(p1[1] - p0[1])})`;
+    }
+
+    function fitProjection(points, width, height, { pad = 28, headroom = 6, azimuth = 42, elevation = 30 } = {}) {
+      const unitP = { origin: [0, 0], scale: 1, azimuth, elevation };
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const pt of points) {
+        const [x, y] = iso(pt, unitP);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+      const spanX = Math.max(1, maxX - minX);
+      const spanY = Math.max(1, maxY - minY);
+      const scale = Math.min((width - pad * 2) / spanX, (height - pad * 2 - headroom) / spanY);
+      const origin = [
+        width * 0.5 - ((minX + maxX) * 0.5) * scale,
+        (height + headroom) * 0.5 - ((minY + maxY) * 0.5) * scale
+      ];
+      return { origin, scale, azimuth, elevation };
+    }
+
+    function boxCorners(plan, z0, z1) {
+      const { x, y, w, d } = plan;
+      return [
+        [x, y, z0], [x + w, y, z0], [x + w, y + d, z0], [x, y + d, z0],
+        [x, y, z1], [x + w, y, z1], [x + w, y + d, z1], [x, y + d, z1]
+      ];
+    }
+
+    function toneBucket(normal, P) {
+      const c = P._c || (P._c = cameraOf(P));
+      const s = dot3(normal, c.L);
+      if (s > 0.42) return 3;
+      if (s > 0.08) return 2;
+      if (s > -0.26) return 1;
+      return 0;
+    }
+
+    function polyD(pts, closed = true) {
+      if (!pts.length) return "";
+      let d = `M${f1(pts[0][0])} ${f1(pts[0][1])}`;
+      for (let i = 1; i < pts.length; i++) {
+        d += `L${f1(pts[i][0])} ${f1(pts[i][1])}`;
+      }
+      return closed ? d + "Z" : d;
+    }
+
+    function segD(a, b) {
+      return `M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}`;
+    }
+
+    function hullOf(points) {
+      const pts = points.slice().sort((a, b) => (a[0] - b[0]) || (a[1] - b[1]));
+      if (pts.length <= 2) return pts;
+      const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const lower = [];
+      for (const p of pts) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+        lower.push(p);
+      }
+      const upper = [];
+      for (let i = pts.length - 1; i >= 0; i--) {
+        const p = pts[i];
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+        upper.push(p);
+      }
+      lower.pop();
+      upper.pop();
+      return lower.concat(upper);
+    }
+
+    function roundedPlan(plan, steps = 6) {
+      const { x, y, w, d } = plan;
+      const r = Math.min(plan.r || 0, w * 0.5, d * 0.5);
+      if (r <= 0.05) {
+        return [[x, y], [x + w, y], [x + w, y + d], [x, y + d]];
+      }
+      const pts = [];
+      const corners = [
+        [x + w - r, y + r, -Math.PI / 2, 0],
+        [x + w - r, y + d - r, 0, Math.PI / 2],
+        [x + r, y + d - r, Math.PI / 2, Math.PI],
+        [x + r, y + r, Math.PI, Math.PI * 1.5]
+      ];
+      for (const [cx, cy, a0, a1] of corners) {
+        for (let i = 0; i <= steps; i++) {
+          const t = a0 + (a1 - a0) * (i / steps);
+          pts.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
+        }
+      }
+      return pts;
+    }
+
+    function circleRing(cx, cy, r, steps = 32) {
+      const pts = [];
+      for (let i = 0; i < steps; i++) {
+        const t = (i / steps) * Math.PI * 2;
+        pts.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
+      }
+      return pts;
+    }
+
+    function insetPlan(plan, by) {
+      const w = Math.max(1, plan.w - by * 2);
+      const d = Math.max(1, plan.d - by * 2);
+      const r = Math.max(0, (plan.r || 0) - by * 0.85);
+      return { x: plan.x + by, y: plan.y + by, w, d, r };
+    }
+
+    function cornersOf(plan, inset) {
+      return [
+        [plan.x + inset, plan.y + inset],
+        [plan.x + plan.w - inset, plan.y + inset],
+        [plan.x + plan.w - inset, plan.y + plan.d - inset],
+        [plan.x + inset, plan.y + plan.d - inset]
+      ];
+    }
+
+    function extrude(ring, z, h, P, { bevel = 0, seamless = false } = {}) {
+      const c = P._c || (P._c = cameraOf(P));
+      const n = ring.length;
+      const B = ring.map(([x, y]) => iso([x, y, z], P));
+      const T = ring.map(([x, y]) => iso([x, y, z + h], P));
+      const hull = hullOf(B.concat(T));
+      const shades = ["", "", "", ""];
+      const vis = new Array(n);
+
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        const dx = ring[j][0] - ring[i][0];
+        const dy = ring[j][1] - ring[i][1];
+        const l = Math.hypot(dx, dy);
+        if (l < 1e-6) { vis[i] = false; continue; }
+        const nx = dy / l, ny = -dx / l;
+        const facing = nx * c.Vxy[0] + ny * c.Vxy[1];
+        vis[i] = facing > 0.002;
+        if (vis[i]) {
+          const b = toneBucket([nx, ny, 0], P);
+          shades[b] += polyD([T[i], T[j], B[j], B[i]], true);
+        }
+      }
+
+      let crease = "";
+      let i = 0;
+      while (i < n) {
+        if (!vis[i]) { i++; continue; }
+        let start = i;
+        while (i < n && vis[i]) i++;
+        let run = [T[start]];
+        for (let k = start; k < i; k++) run.push(T[(k + 1) % n]);
+        crease += polyD(run, false);
+      }
+
+      let bevelD = "";
+      if (bevel > 0) {
+        const insetPts = [];
+        for (let k = 0; k < n; k++) {
+          const prev = ring[(k - 1 + n) % n];
+          const curr = ring[k];
+          const next = ring[(k + 1) % n];
+          const d1x = curr[0] - prev[0], d1y = curr[1] - prev[1];
+          const l1 = Math.hypot(d1x, d1y) || 1;
+          const d2x = next[0] - curr[0], d2y = next[1] - curr[1];
+          const l2 = Math.hypot(d2x, d2y) || 1;
+          const n1x = -d1y / l1, n1y = d1x / l1;
+          const n2x = -d2y / l2, n2y = d2x / l2;
+          let bx = n1x + n2x, by = n1y + n2y;
+          const bl = Math.hypot(bx, by) || 1;
+          bx /= bl; by /= bl;
+          const cosHalf = Math.max(0.5, bx * n1x + by * n1y);
+          const dist = bevel / cosHalf;
+          insetPts.push(iso([curr[0] + bx * dist, curr[1] + by * dist, z + h], P));
+        }
+        bevelD = polyD(insetPts, true);
+      }
+
+      return {
+        fill: polyD(hull, true),
+        outline: polyD(hull, true),
+        top: polyD(T, true),
+        shades,
+        crease,
+        bevel: bevelD,
+        seamless
+      };
+    }
+
+    function slabOf(plan, z, h, P, steps = 6, bevel = 0) {
+      return extrude(roundedPlan(plan, steps), z, h, P, { bevel });
+    }
+
+    function cylinder(cx, cy, r, z, h, P, steps = 32, bevel = 0) {
+      return extrude(circleRing(cx, cy, r, steps), z, h, P, { bevel, seamless: true });
+    }
+
+    function haloOf(plan, z, h, P) {
+      const ring = roundedPlan(plan, 6);
+      const pts = ring.map(([x, y]) => iso([x, y, z], P));
+      return polyD(hullOf(pts), true);
+    }
+
+    function planOutline(plan, z, P, steps = 6) {
+      const pts = roundedPlan(plan, steps).map(([x, y]) => iso([x, y, z], P));
+      return polyD(pts, true);
+    }
+
+    function ringPath(cx, cy, r, z, P, steps = 32) {
+      const pts = circleRing(cx, cy, r, steps).map(([x, y]) => iso([x, y, z], P));
+      return polyD(pts, true);
+    }
+
+    function lineOnTop(a, b, z, P) {
+      return segD(iso([a[0], a[1], z], P), iso([b[0], b[1], z], P));
+    }
+
+    function segment3(a, b, P) {
+      return segD(iso(a, P), iso(b, P));
+    }
+
+    function sideArc(cx, cy, r, z, P, steps = 28) {
+      const c = P._c || (P._c = cameraOf(P));
+      const phi = Math.atan2(c.Vxy[1], c.Vxy[0]);
+      const pts = [];
+      const trim = 0.025;
+      for (let i = 0; i <= steps; i++) {
+        const t = (phi - Math.PI * 0.5 + trim) + (Math.PI - trim * 2) * (i / steps);
+        pts.push(iso([cx + r * Math.cos(t), cy + r * Math.sin(t), z], P));
+      }
+      return polyD(pts, false);
+    }
+
+    function sideSeam(plan, z, P, steps = 6) {
+      const c = P._c || (P._c = cameraOf(P));
+      const ring = roundedPlan(plan, steps);
+      const n = ring.length;
+      const vis = [];
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        const dx = ring[j][0] - ring[i][0], dy = ring[j][1] - ring[i][1];
+        const l = Math.hypot(dx, dy) || 1;
+        vis[i] = ((dy / l) * c.Vxy[0] + (-dx / l) * c.Vxy[1]) > 0.002;
+      }
+      let out = "";
+      let i = 0;
+      while (i < n) {
+        if (!vis[i]) { i++; continue; }
+        const start = i;
+        while (i < n && vis[i]) i++;
+        const pts = [iso([ring[start][0], ring[start][1], z], P)];
+        for (let k = start; k < i; k++) {
+          const p = ring[(k + 1) % n];
+          pts.push(iso([p[0], p[1], z], P));
+        }
+        out += polyD(pts, false);
+      }
+      return out;
+    }
+
+    function knurl(cx, cy, r, z0, z1, count, P) {
+      const c = P._c || (P._c = cameraOf(P));
+      let d = "";
+      for (let i = 0; i < count; i++) {
+        const t = (i / count) * Math.PI * 2;
+        const facing = Math.cos(t) * c.Vxy[0] + Math.sin(t) * c.Vxy[1];
+        if (facing > 0.14) {
+          const x = cx + r * Math.cos(t), y = cy + r * Math.sin(t);
+          d += segD(iso([x, y, z0], P), iso([x, y, z1], P));
+        }
+      }
+      return d;
+    }
+
+    function fadedRibs(cx, cy, r, z0, z1, count, P, { fade = [0.08, 0.48], tone = "mid", seams = true } = {}) {
+      const c = P._c || (P._c = cameraOf(P));
+      const buckets = new Map();
+      for (let i = 0; i < count; i++) {
+        const t = (i / count) * Math.PI * 2;
+        const facing = Math.cos(t) * c.Vxy[0] + Math.sin(t) * c.Vxy[1];
+        if (facing <= fade[0]) continue;
+        const u = Math.min(1, (facing - fade[0]) / (fade[1] - fade[0]));
+        const alpha = Math.round((u * u * (3 - 2 * u)) * 20) / 20;
+        if (alpha < 0.05) continue;
+        const x = cx + r * Math.cos(t), y = cy + r * Math.sin(t);
+        const seg = segD(iso([x, y, z0], P), iso([x, y, z1], P));
+        buckets.set(alpha, (buckets.get(alpha) || "") + seg);
+      }
+      let out = "";
+      if (seams) {
+        out += lineSvg(sideArc(cx, cy, r, z0, P, 32), { tone: "lo" });
+        out += lineSvg(sideArc(cx, cy, r, z1, P, 32), { tone: "lo" });
+      }
+      for (const [alpha, d] of buckets.entries()) {
+        out += `<g opacity="${alpha}">${lineSvg(d, { tone })}</g>`;
+      }
+      return out;
+    }
+
+    function topTicks(from, to, step, every, edgeY, z, [minorLen, majorLen], P) {
+      let minor = "", major = "";
+      let idx = 0;
+      for (let x = from; x <= to + 1e-6; x += step, idx++) {
+        const isMaj = idx % every === 0;
+        const len = isMaj ? majorLen : minorLen;
+        const s = lineOnTop([x, edgeY], [x, edgeY - len], z, P);
+        if (isMaj) major += s; else minor += s;
+      }
+      return { minor, major };
+    }
+
+    function sideTicksZ(x, y, z0, z1, step, every, [minorLen, majorLen], P, dir = [1, 0]) {
+      let minor = "", major = "";
+      let idx = 0;
+      for (let z = z0; z <= z1 + 1e-6; z += step, idx++) {
+        const isMaj = idx % every === 0;
+        const len = isMaj ? majorLen : minorLen;
+        const s = segment3([x, y, z], [x + dir[0] * len, y + dir[1] * len, z], P);
+        if (isMaj) major += s; else minor += s;
+      }
+      return { minor, major };
+    }
+
+    function radialTicks(cx, cy, r, count, every, z, [minorLen, majorLen], P, from = 0, span = Math.PI * 2) {
+      let minor = "", major = "";
+      const closed = Math.abs(span - Math.PI * 2) < 1e-4;
+      const limit = closed ? count - 1 : count;
+      for (let i = 0; i <= limit; i++) {
+        const t = from + span * (i / count);
+        const dx = Math.sin(t), dy = -Math.cos(t);
+        const isMaj = i % every === 0;
+        const len = isMaj ? majorLen : minorLen;
+        const s = lineOnTop(
+          [cx + dx * r, cy + dy * r],
+          [cx + dx * (r - len), cy + dy * (r - len)],
+          z, P
+        );
+        if (isMaj) major += s; else minor += s;
+      }
+      return { minor, major };
+    }
+
+    function topMatrix(at, z, P) {
+      const o = iso([at[0], at[1], z], P);
+      const px = iso([at[0] + 1, at[1], z], P);
+      const py = iso([at[0], at[1] + 1, z], P);
+      const a = px[0] - o[0], b = px[1] - o[1];
+      const c = py[0] - o[0], d = py[1] - o[1];
+      return `matrix(${f1(a)} ${f1(b)} ${f1(c)} ${f1(d)} ${f1(o[0])} ${f1(o[1])})`;
+    }
+
+    function dotGrid(cx, cy, cols, rows, gap, z, P) {
+      const pts = [];
+      const x0 = cx - ((cols - 1) * gap) * 0.5;
+      const y0 = cy - ((rows - 1) * gap) * 0.5;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          pts.push(iso([x0 + c * gap, y0 + r * gap, z], P));
+        }
+      }
+      return pts;
+    }
+
+    /* =========================================================================
+       SECTION 2: ARBITRARY-AXIS TUBES, FLANGES & SPHERES
+       ========================================================================= */
+    function frameAlong(origin, axis, P) {
+      const c = P._c || (P._c = cameraOf(P));
+      const a = unit3(axis);
+      let side = cross3(c.V, a);
+      if (len3(side) < 1e-4) side = cross3([0, 0, 1], a);
+      side = unit3(side);
+      let front = unit3(cross3(a, side));
+      if (dot3(front, c.V) < 0) {
+        front = mul3(front, -1);
+        side = mul3(side, -1);
+      }
+      return { o: origin, a, u: side, v: front };
+    }
+
+    function tubeSegmentSvg(p0, p1, r, P, { tone = "hi", steps = 20, cap0 = false, cap1 = false, inner = "" } = {}) {
+      const c = P._c || (P._c = cameraOf(P));
+      const F = frameAlong(p0, sub3(p1, p0), P);
+      const L = len3(sub3(p1, p0));
+      const pt = (s, t) => add3(
+        add3(F.o, mul3(F.a, s)),
+        add3(mul3(F.u, r * Math.cos(t)), mul3(F.v, r * Math.sin(t)))
+      );
+
+      const f0 = dot3(mul3(F.a, -1), c.V) > 0.01;
+      const f1v = dot3(F.a, c.V) > 0.01;
+
+      const arc0 = [], arc1 = [];
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const t1 = f1v ? -u * Math.PI : u * Math.PI;
+        arc1.push(iso(pt(L, t1), P));
+        const t0 = f0 ? (Math.PI + u * Math.PI) : (Math.PI - u * Math.PI);
+        arc0.push(iso(pt(0, t0), P));
+      }
+      const silhouette = polyD(arc1.concat(arc0), true);
+
+      const shades = ["", "", "", ""];
+      for (let i = 0; i < steps; i++) {
+        const tA = (i / steps) * Math.PI;
+        const tB = ((i + 1) / steps) * Math.PI;
+        const tM = (tA + tB) * 0.5;
+        const nrm = add3(mul3(F.u, Math.cos(tM)), mul3(F.v, Math.sin(tM)));
+        const b = toneBucket(nrm, P);
+        const q = [
+          iso(pt(0, tA), P),
+          iso(pt(L, tA), P),
+          iso(pt(L, tB), P),
+          iso(pt(0, tB), P)
+        ];
+        shades[b] += polyD(q, true);
+      }
+
+      let capMarkup = "";
+      if (cap0 && f0) {
+        const ring0 = [];
+        for (let i = 0; i < steps * 2; i++) ring0.push(iso(pt(0, (i / (steps * 2)) * Math.PI * 2), P));
+        capMarkup += `<path class="iso-top" d="${polyD(ring0, true)}"/>`;
+        capMarkup += `<path class="iso-line" data-tone="lo" d="${polyD(ring0, true)}"/>`;
+      }
+      if (cap1 && f1v) {
+        const ring1 = [];
+        for (let i = 0; i < steps * 2; i++) ring1.push(iso(pt(L, (i / (steps * 2)) * Math.PI * 2), P));
+        capMarkup += `<path class="iso-top" d="${polyD(ring1, true)}"/>`;
+        capMarkup += `<path class="iso-line" data-tone="lo" d="${polyD(ring1, true)}"/>`;
+      }
+
+      const sideL = segD(iso(pt(0, 0), P), iso(pt(L, 0), P));
+      const sideR = segD(iso(pt(0, Math.PI), P), iso(pt(L, Math.PI), P));
+      const frontArc0 = [], frontArc1 = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = (i / steps) * Math.PI;
+        frontArc0.push(iso(pt(0, t), P));
+        frontArc1.push(iso(pt(L, t), P));
+      }
+
+      let out = `<g class="iso-solid" data-seamless>`;
+      out += `<path class="iso-fill" d="${silhouette}"/>`;
+      for (let b = 0; b < 4; b++) {
+        if (shades[b]) out += `<path class="iso-shade" data-shade="${b}" d="${shades[b]}"/>`;
+      }
+      out += capMarkup;
+      out += inner;
+      out += `<path class="iso-line iso-edge" data-tone="${tone}" d="${sideL}${sideR}${cap0 ? "" : polyD(frontArc0, false)}${cap1 ? "" : polyD(frontArc1, false)}"/>`;
+      out += `</g>`;
+      return out;
+    }
+
+    function flangeAlongSvg(center, axis, r, thickness, P, { tone = "hi", bolts = 6, lit = false } = {}) {
+      const c = P._c || (P._c = cameraOf(P));
+      const F = frameAlong(center, axis, P);
+      const half = thickness * 0.5;
+      const steps = 28;
+      const ringA = [], ringB = [];
+      for (let i = 0; i < steps; i++) {
+        const t = (i / steps) * Math.PI * 2;
+        const rad = add3(mul3(F.u, r * Math.cos(t)), mul3(F.v, r * Math.sin(t)));
+        ringA.push(iso(add3(add3(F.o, mul3(F.a, -half)), rad), P));
+        ringB.push(iso(add3(add3(F.o, mul3(F.a, half)), rad), P));
+      }
+      const hull = polyD(hullOf(ringA.concat(ringB)), true);
+
+      const shades = ["", "", "", ""];
+      const halfSteps = 14;
+      for (let i = 0; i < halfSteps; i++) {
+        const t0 = (i / halfSteps) * Math.PI;
+        const t1 = ((i + 1) / halfSteps) * Math.PI;
+        const tm = (t0 + t1) * 0.5;
+        const nrm = add3(mul3(F.u, Math.cos(tm)), mul3(F.v, Math.sin(tm)));
+        const b = toneBucket(nrm, P);
+        const p = (s, t) => iso(add3(add3(F.o, mul3(F.a, s)), add3(mul3(F.u, r * Math.cos(t)), mul3(F.v, r * Math.sin(t)))), P);
+        shades[b] += polyD([p(-half, t0), p(half, t0), p(half, t1), p(-half, t1)], true);
+      }
+
+      const aFace = dot3(F.a, c.V);
+      const visFace = Math.abs(aFace) > 0.08 ? (aFace > 0 ? ringB : ringA) : null;
+      const faceS = aFace > 0 ? half : -half;
+      let faceMarkup = "";
+      if (visFace) {
+        const faceN = aFace > 0 ? F.a : mul3(F.a, -1);
+        const fb = toneBucket(faceN, P);
+        faceMarkup += fb >= 3
+          ? `<path class="iso-top" d="${polyD(visFace, true)}"/>`
+          : `<path class="iso-shade" data-shade="${fb}" d="${polyD(visFace, true)}"/>`;
+        faceMarkup += `<path class="iso-line" data-tone="lo" d="${polyD(visFace, true)}"/>`;
+        if (bolts > 0 && Math.abs(aFace) > 0.22) {
+          const bPts = [];
+          for (let i = 0; i < bolts; i++) {
+            const t = (i / bolts) * Math.PI * 2 + 0.3;
+            const br = r * 0.78;
+            const wp = add3(add3(F.o, mul3(F.a, faceS)), add3(mul3(F.u, br * Math.cos(t)), mul3(F.v, br * Math.sin(t))));
+            bPts.push(iso(wp, P));
+          }
+          faceMarkup += dotsSvg(bPts, { size: 0.75, tone: "mid" });
+        }
+      }
+
+      let out = `<g class="iso-solid" data-seamless${lit ? " data-lit" : ""}>`;
+      out += `<path class="iso-fill" d="${hull}"/>`;
+      for (let b = 0; b < 4; b++) {
+        if (shades[b]) out += `<path class="iso-shade" data-shade="${b}" d="${shades[b]}"/>`;
+      }
+      out += faceMarkup;
+      out += `<path class="iso-line iso-edge" data-tone="${tone}" d="${hull}"/>`;
+      out += `</g>`;
+      return out;
+    }
+
+    function sphereSvg(center, r, P, { tone = "hi", id = "sp", lit = false } = {}) {
+      const sc = iso(center, P);
+      const sr = r * P.scale;
+      const cx = f1(sc[0]), cy = f1(sc[1]), rad = f1(sr);
+      const hx = f1(sc[0] - sr * 0.32), hy = f1(sc[1] - sr * 0.34);
+      let out = `<g class="iso-solid"${lit ? " data-lit" : ""}>`;
+      out += `<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${rad}"/></clipPath>`;
+      out += `<circle class="iso-fill" cx="${cx}" cy="${cy}" r="${rad}"/>`;
+      out += `<g clip-path="url(#${id})">`;
+      out += `<circle class="iso-shade" data-shade="0" cx="${cx}" cy="${cy}" r="${rad}"/>`;
+      out += `<circle class="iso-shade" data-shade="1" cx="${f1(sc[0] - sr * 0.12)}" cy="${f1(sc[1] - sr * 0.14)}" r="${f1(sr * 0.94)}"/>`;
+      out += `<circle class="iso-shade" data-shade="2" cx="${f1(sc[0] - sr * 0.24)}" cy="${f1(sc[1] - sr * 0.26)}" r="${f1(sr * 0.78)}"/>`;
+      out += `<circle class="iso-top" cx="${hx}" cy="${hy}" r="${f1(sr * 0.44)}"/>`;
+      out += `</g>`;
+      out += `<circle class="iso-line iso-edge" data-tone="${tone}" cx="${cx}" cy="${cy}" r="${rad}"/>`;
+      out += `</g>`;
+      return out;
+    }
+
+    function solidSvg(paths, { tone = "hi", crease = "faint", lit = false, water = false, inner = "", className = "" } = {}) {
+      const cls = ["iso-solid", water ? "iso-water" : "", className].filter(Boolean).join(" ");
+      let out = `<g class="${cls}"${lit ? " data-lit" : ""}${paths.seamless ? " data-seamless" : ""}>`;
+      out += `<path class="iso-fill" d="${paths.fill}"/>`;
+      for (let b = 0; b < 4; b++) {
+        if (paths.shades[b]) {
+          out += `<path class="iso-shade" data-shade="${b}" d="${paths.shades[b]}"/>`;
+        }
+      }
+      if (paths.top) out += `<path class="iso-top" d="${paths.top}"/>`;
+      if (paths.crease && crease !== "none") {
+        out += `<path class="iso-line iso-crease" data-tone="${crease}" d="${paths.crease}"/>`;
+      }
+      if (paths.bevel) {
+        out += `<path class="iso-line" data-tone="faint" d="${paths.bevel}"/>`;
+      }
+      if (inner) out += inner;
+      out += `<path class="iso-line iso-edge" data-tone="${lit ? "lit" : tone}" d="${paths.outline}"/>`;
+      out += `</g>`;
+      return out;
+    }
+
+    function lineSvg(d, { tone = "lo", dashed = false, dotted = false, className = "" } = {}) {
+      if (!d) return "";
+      return `<path class="iso-line${className ? " " + className : ""}" data-tone="${tone}"${dashed ? " data-dashed" : ""}${dotted ? " data-dotted" : ""} d="${d}"/>`;
+    }
+
+    function dotsSvg(points, { size = 0.7, tone = "mid" } = {}) {
+      if (!points.length) return "";
+      let out = `<g class="iso-dots" data-tone="${tone}">`;
+      for (const p of points) {
+        const op = p.length > 2 ? ` opacity="${p[2]}"` : "";
+        out += `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="${size}"${op}/>`;
+      }
+      return out + `</g>`;
+    }
+
+    function wireSvg(points3, P, { tone = "mid", size = 1.4 } = {}) {
+      const pts = points3.map((p) => iso(p, P));
+      const start = pts[0], end = pts[pts.length - 1];
+      return `<g class="iso-wire" data-tone="${tone}">` +
+        lineSvg(polyD(pts, false), { tone }) +
+        `<circle class="iso-wire-end" cx="${f1(start[0])}" cy="${f1(start[1])}" r="${size}"/>` +
+        `<circle class="iso-wire-end" cx="${f1(end[0])}" cy="${f1(end[1])}" r="${size}"/>` +
+        `</g>`;
+    }
+
+    /* =========================================================================
+       SECTION 4: GAES MACHINE DIMENSIONS & CAMERA PROJECTION FIT
+       ========================================================================= */
+    const W = 680, H_VB = 420;
+    const PLATE = { x: -155, y: -88, w: 310, d: 176, r: 8 };
+    const UP = { x: -144, y: -76, w: 80, d: 72, zDeck: 88, zFloor: 94, zTop: 140, wall: 4.5 };
+    const PH = { cx: 54, cy: -40 };
+    const LO = { x: 92, y: -52, w: 56, d: 94, zBase: 12, zFloor: 15, zTop: 38, wall: 4.2 };
+    const TR = { x: 4, y: 14, w: 42, d: 34, zBase: 15, h: 28 };
+    const DIAL = { postX: -106, postY: 46, cx: -74, cy: 46, r: 21, z: 31, h: 9 };
+
+    const PEN = {
+      p0: [-64, -40, 102],
+      p1: [-52, -40, 102],
+      p2: [6,   -40, 26],
+      vL: [13,  -40, 26],
+      vC: [20,  -40, 26],
+      vR: [27,  -40, 26],
+      pIn:[36,  -40, 26],
+      r: 5.4
+    };
+
+    const fitPts = [
+      ...boxCorners(PLATE, -5, 12),
+      ...boxCorners({ x: UP.x, y: UP.y, w: UP.w, d: UP.d }, UP.zDeck, UP.zTop),
+      [UP.x + UP.w - 8, -40, 165],
+      [PH.cx, PH.cy, 102],
+      [LO.x + LO.w, LO.y + LO.d, LO.zTop],
+      [DIAL.cx, DIAL.cy, DIAL.z + DIAL.h + 4]
+    ];
+    const P = fitProjection(fitPts, W, H_VB, { pad: 24, headroom: 8, azimuth: 42, elevation: 30 });
+
+    /* =========================================================================
+       SECTION 5: BUILD COMPLETE STATIC + DYNAMIC-SLOT SVG SCENE (PAINTER ORDER)
+       ========================================================================= */
+    function buildStaticScene() {
+      const parts = [];
+
+      parts.push(`<path class="iso-halo" d="${haloOf(PLATE, -5.5, 12, P)}"/>`);
+
+      const feetPts = cornersOf(PLATE, 20).sort((a, b) => depthOf([a[0], a[1], 0], P) - depthOf([b[0], b[1], 0], P));
+      for (const [fx, fy] of feetPts) {
+        parts.push(solidSvg(cylinder(fx, fy, 8.2, -5.2, 2.0, P, 24), { tone: "lo", crease: "faint" }));
+        parts.push(solidSvg(cylinder(fx, fy, 6.2, -3.2, 3.2, P, 24), { tone: "mid", crease: "none" }));
+      }
+
+      const baseInner =
+        lineSvg(planOutline(insetPlan(PLATE, 5.5), 12, P, 6), { tone: "faint" }) +
+        lineSvg(sideSeam(PLATE, 6, P, 6), { tone: "faint" });
+      parts.push(solidSvg(slabOf(PLATE, 0, 12, P, 6, 1.4), { tone: "mid", crease: "lo", inner: baseInner }));
+
+      for (const [sx, sy] of cornersOf(PLATE, 10.5)) {
+        parts.push(lineSvg(ringPath(sx, sy, 2.4, 12, P, 16), { tone: "lo" }));
+        parts.push(dotsSvg([iso([sx, sy, 12], P)], { size: 0.65, tone: "mid" }));
+      }
+
+      const ruler = { x: -124, y: 74, w: 204, d: 7.5, r: 1 };
+      const rTicks = topTicks(ruler.x + 4, ruler.x + ruler.w - 4, 4, 5, ruler.y + ruler.d - 0.6, 12.7, [2.1, 3.8], P);
+      const rulerInner = lineSvg(rTicks.minor, { tone: "lo" }) + lineSvg(rTicks.major, { tone: "mid" });
+      parts.push(solidSvg(slabOf(ruler, 12, 0.7, P, 3), { tone: "lo", crease: "none", inner: rulerInner }));
+
+      const labelPlan = { x: 96, y: 63, w: 46, d: 18, r: 1.5 };
+      const lblInner =
+        lineSvg(planOutline(insetPlan(labelPlan, 1.8), 12.9, P, 3), { tone: "faint" }) +
+        lineSvg(lineOnTop([101, 75.5], [134, 75.5], 12.9, P), { tone: "lo" }) +
+        lineSvg(lineOnTop([101, 77.6], [125, 77.6], 12.9, P), { tone: "faint" }) +
+        dotsSvg([iso([99.5, 66.5, 12.9], P), iso([138.5, 66.5, 12.9], P)], { size: 0.65, tone: "mid" }) +
+        `<g transform="${topMatrix([101.5, 72.2], 12.9, P)}"><text class="iso-face-text" font-size="6.1">GAES-120</text></g>`;
+      parts.push(solidSvg(slabOf(labelPlan, 12, 0.9, P, 3), { tone: "lo", crease: "none", inner: lblInner }));
+
+      const colCoords = [
+        [-136, -68],
+        [-72,  -68],
+        [-136, -12],
+        [-72,  -12]
+      ];
+
+      const drawColumn = (cx, cy) => {
+        let s = "";
+        s += solidSvg(cylinder(cx, cy, 6.2, 12, 2.6, P, 20), { tone: "lo", crease: "faint" });
+        s += solidSvg(cylinder(cx, cy, 3.8, 14.6, 73.4, P, 20), {
+          tone: "mid",
+          crease: "none",
+          inner: lineSvg(sideArc(cx, cy, 3.8, 48, P, 16) + sideArc(cx, cy, 3.8, 70, P, 16), { tone: "faint" })
+        });
+        const bPts = [];
+        for (let i = 0; i < 4; i++) {
+          const a = i * Math.PI * 0.5 + 0.4;
+          bPts.push(iso([cx + 4.9 * Math.cos(a), cy + 4.9 * Math.sin(a), 14.6], P));
+        }
+        s += dotsSvg(bPts, { size: 0.55, tone: "mid" });
+        return s;
+      };
+
+      parts.push(drawColumn(colCoords[0][0], colCoords[0][1]));
+      parts.push(solidSvg(slabOf({ x: -136, y: -70, w: 64, d: 4, r: 0.6 }, 46, 3.4, P, 2), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -138, y: -68, w: 4, d: 56, r: 0.6 }, 46, 3.4, P, 2), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -136, y: -70, w: 64, d: 4, r: 0.6 }, 83, 3.8, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -138, y: -68, w: 4, d: 56, r: 0.6 }, 83, 3.8, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(drawColumn(colCoords[1][0], colCoords[1][1]));
+      parts.push(drawColumn(colCoords[2][0], colCoords[2][1]));
+      parts.push(solidSvg(slabOf({ x: -74, y: -68, w: 4, d: 56, r: 0.6 }, 46, 3.4, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -136, y: -14, w: 64, d: 4, r: 0.6 }, 46, 3.4, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -74, y: -68, w: 4, d: 56, r: 0.6 }, 83, 3.8, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: -136, y: -14, w: 64, d: 4, r: 0.6 }, 83, 3.8, P, 2), { tone: "mid", crease: "faint" }));
+      parts.push(drawColumn(colCoords[3][0], colCoords[3][1]));
+
+      const deckPlan = { x: UP.x - 2.5, y: UP.y - 2.5, w: UP.w + 5, d: UP.d + 5, r: 3.5 };
+      parts.push(solidSvg(slabOf(deckPlan, UP.zDeck, 6, P, 4, 0.9), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(sideSeam(deckPlan, UP.zDeck + 3, P, 4), { tone: "faint" })
+      }));
+
+      const upInnerPlan = {
+        x: UP.x + UP.wall,
+        y: UP.y + UP.wall,
+        w: UP.w - UP.wall * 2,
+        d: UP.d - UP.wall * 2,
+        r: 1.5
+      };
+      parts.push(solidSvg(slabOf(upInnerPlan, UP.zFloor, 3, P, 2), { tone: "lo", crease: "none" }));
+
+      parts.push(solidSvg(slabOf({ x: UP.x, y: UP.y, w: UP.wall, d: UP.d, r: 1 }, UP.zFloor, UP.zTop - UP.zFloor, P, 2), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(sideSeam({ x: UP.x, y: UP.y, w: UP.wall, d: UP.d, r: 1 }, 118, P, 2), { tone: "faint" })
+      }));
+      parts.push(solidSvg(slabOf({ x: UP.x + UP.wall, y: UP.y, w: UP.w - UP.wall, d: UP.wall, r: 1 }, UP.zFloor, UP.zTop - UP.zFloor, P, 2), {
+        tone: "mid",
+        crease: "lo"
+      }));
+
+      parts.push(`<g id="dyn-upper-water"></g>`);
+
+      const upWallX = { x: UP.x + UP.w - UP.wall, y: UP.y + UP.wall, w: UP.wall, d: UP.d - UP.wall, r: 1 };
+      parts.push(solidSvg(slabOf(upWallX, UP.zFloor, UP.zTop - UP.zFloor, P, 2), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(sideSeam(upWallX, 118, P, 2), { tone: "faint" })
+      }));
+
+      const yFront = UP.y + UP.d - UP.wall;
+      parts.push(solidSvg(slabOf({ x: UP.x + UP.wall, y: yFront, w: UP.w - UP.wall * 2, d: UP.wall, r: 0.6 }, UP.zFloor, 9, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      parts.push(solidSvg(slabOf({ x: UP.x, y: yFront, w: 13, d: UP.wall, r: 0.8 }, UP.zFloor + 9, UP.zTop - UP.zFloor - 9, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      const upPierR = { x: UP.x + UP.w - 17, y: yFront, w: 17, d: UP.wall, r: 0.8 };
+      const upScale = sideTicksZ(UP.x + UP.w - 14.5, UP.y + UP.d, 104, 136, 4, 4, [2.2, 4.2], P, [1, 0]);
+      const upGlassSlot = polyD([
+        iso([UP.x + UP.w - 14.5, UP.y + UP.d, 103.5], P),
+        iso([UP.x + UP.w - 14.5, UP.y + UP.d, 136.5], P)
+      ], false);
+      parts.push(solidSvg(slabOf(upPierR, UP.zFloor + 9, UP.zTop - UP.zFloor - 9, P, 2), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(upGlassSlot, { tone: "lo" }) +
+          lineSvg(upScale.minor, { tone: "lo" }) +
+          lineSvg(upScale.major, { tone: "hi" })
+      }));
+
+      const gPanePts = [
+        iso([UP.x + 13, UP.y + UP.d, 103], P),
+        iso([UP.x + UP.w - 17, UP.y + UP.d, 103], P),
+        iso([UP.x + UP.w - 17, UP.y + UP.d, UP.zTop - 2], P),
+        iso([UP.x + 13, UP.y + UP.d, UP.zTop - 2], P)
+      ];
+      parts.push(`<path class="glass-pane" d="${polyD(gPanePts, true)}"/>`);
+      parts.push(lineSvg(
+        segment3([UP.x + 13, UP.y + UP.d, UP.zTop - 2], [UP.x + UP.w - 17, UP.y + UP.d, UP.zTop - 2], P),
+        { tone: "lo" }
+      ));
+
+      parts.push(`<g id="dyn-upper-float"></g>`);
+
+      const gX = UP.x + UP.w - 5.5, gY = -40;
+      parts.push(solidSvg(slabOf({ x: gX - 5.5, y: gY - 7, w: 11, d: 14, r: 1.5 }, UP.zTop, 5, P, 3), { tone: "hi", crease: "lo" }));
+      parts.push(solidSvg(cylinder(gX, gY, 3.8, UP.zTop + 5, 3.5, P, 20), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(cylinder(gX, gY, 1.8, UP.zTop + 8.5, 13, P, 16), {
+        tone: "hi",
+        crease: "none",
+        inner: lineSvg(
+          sideArc(gX, gY, 1.8, UP.zTop + 12, P, 12) +
+          sideArc(gX, gY, 1.8, UP.zTop + 15, P, 12) +
+          sideArc(gX, gY, 1.8, UP.zTop + 18, P, 12),
+          { tone: "faint" }
+        )
+      }));
+      parts.push(solidSvg(cylinder(gX, gY, 7.2, UP.zTop + 21.5, 2.4, P, 28, 0.5), {
+        tone: "hi",
+        crease: "lo",
+        inner: lineSvg(knurl(gX, gY, 7.2, UP.zTop + 21.5, UP.zTop + 23.9, 28, P), { tone: "lo" }) +
+          lineSvg(ringPath(gX, gY, 3.2, UP.zTop + 23.9, P, 18), { tone: "lo" })
+      }));
+
+      const penPt = (t) => [
+        PEN.p1[0] + (PEN.p2[0] - PEN.p1[0]) * t,
+        PEN.p1[1],
+        PEN.p1[2] + (PEN.p2[2] - PEN.p1[2]) * t
+      ];
+      const penAxis = unit3(sub3(PEN.p2, PEN.p1));
+
+      const sp1 = penPt(0.28);
+      const p1Top = sp1[2] - PEN.r - 1.2;
+      parts.push(solidSvg(slabOf({ x: sp1[0] - 9, y: -49, w: 18, d: 18, r: 2 }, 12, 6, P, 3), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: sp1[0] - 6.5, y: -46.5, w: 13, d: 13, r: 1.5 }, 18, p1Top - 18, P, 3), {
+        tone: "mid",
+        crease: "faint",
+        inner: lineSvg(sideSeam({ x: sp1[0] - 6.5, y: -46.5, w: 13, d: 13, r: 1.5 }, 44, P, 3), { tone: "faint" })
+      }));
+      parts.push(solidSvg(slabOf({ x: sp1[0] - 7.5, y: -47.5, w: 15, d: 15, r: 1.5 }, p1Top - 3, 4.2, P, 3), { tone: "hi", crease: "lo" }));
+
+      const sp2 = penPt(0.68);
+      const p2Top = sp2[2] - PEN.r - 1.2;
+      parts.push(solidSvg(slabOf({ x: sp2[0] - 9, y: -49, w: 18, d: 18, r: 2 }, 12, 6, P, 3), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: sp2[0] - 6.5, y: -46.5, w: 13, d: 13, r: 1.5 }, 18, Math.max(8, p2Top - 18), P, 3), {
+        tone: "mid", crease: "faint"
+      }));
+      parts.push(solidSvg(slabOf({ x: sp2[0] - 7.5, y: -47.5, w: 15, d: 15, r: 1.5 }, p2Top - 3, 4.2, P, 3), { tone: "hi", crease: "lo" }));
+
+      parts.push(solidSvg(slabOf({ x: PEN.vC[0] - 10, y: -50, w: 20, d: 20, r: 2 }, 12, 7.5, P, 3), { tone: "lo", crease: "faint" }));
+
+      parts.push(flangeAlongSvg(PEN.p0, [1, 0, 0], PEN.r + 3.2, 3.2, P, { tone: "hi", bolts: 6 }));
+      parts.push(tubeSegmentSvg(PEN.p0, PEN.p1, PEN.r, P, { tone: "hi" }));
+      parts.push(sphereSvg(PEN.p1, PEN.r + 0.6, P, { tone: "hi", id: "elb-top" }));
+
+      const cuts = [0, 0.25, 0.50, 0.75, 1.0];
+      for (let i = 0; i < cuts.length - 1; i++) {
+        const a = penPt(cuts[i]);
+        const b = penPt(cuts[i + 1]);
+        parts.push(tubeSegmentSvg(a, b, PEN.r, P, { tone: "hi" }));
+        if (i < cuts.length - 2) {
+          parts.push(flangeAlongSvg(b, penAxis, PEN.r + 2.6, 2.8, P, { tone: "hi", bolts: 6 }));
+        }
+      }
+
+      parts.push(sphereSvg(PEN.p2, PEN.r + 0.6, P, { tone: "hi", id: "elb-bot" }));
+      parts.push(tubeSegmentSvg(PEN.p2, PEN.vL, PEN.r, P, { tone: "hi" }));
+
+      parts.push(flangeAlongSvg(PEN.vL, [1, 0, 0], PEN.r + 3.4, 3.0, P, { tone: "hi", bolts: 6 }));
+      parts.push(sphereSvg(PEN.vC, 8.8, P, { tone: "hi", id: "valve-body" }));
+      parts.push(flangeAlongSvg(PEN.vR, [1, 0, 0], PEN.r + 3.4, 3.0, P, { tone: "hi", bolts: 6 }));
+
+      parts.push(solidSvg(cylinder(PEN.vC[0], PEN.vC[1], 5.2, 34, 2.6, P, 22), { tone: "mid", crease: "faint" }));
+      parts.push(solidSvg(cylinder(PEN.vC[0], PEN.vC[1], 4.2, 36.6, 10.4, P, 22, 0.4), {
+        tone: "hi",
+        crease: "lo",
+        inner: lineSvg(sideArc(PEN.vC[0], PEN.vC[1], 4.2, 42, P, 18), { tone: "faint" })
+      }));
+      parts.push(lineSvg(ringPath(PEN.vC[0], PEN.vC[1], 2.2, 47, P, 16), { tone: "lo" }));
+
+      const rodClipPts = [
+        iso([PEN.vC[0] - 6, PEN.vC[1] + 6, 47], P),
+        iso([PEN.vC[0] + 6, PEN.vC[1] - 6, 47], P),
+        iso([PEN.vC[0] + 6, PEN.vC[1] - 6, 65], P),
+        iso([PEN.vC[0] - 6, PEN.vC[1] + 6, 65], P)
+      ];
+      const rodPaths = cylinder(PEN.vC[0], PEN.vC[1], 1.7, 39, 15, P, 18, 0.3);
+      parts.push(
+        `<clipPath id="valve-rod-clip"><path d="${polyD(rodClipPts, true)}"/></clipPath>` +
+        `<g clip-path="url(#valve-rod-clip)"><g id="dyn-valve-rod">${solidSvg(rodPaths, { tone: "lit", lit: true, crease: "lo" })}</g></g>`
+      );
+
+      parts.push(tubeSegmentSvg(PEN.vR, PEN.pIn, PEN.r, P, { tone: "hi" }));
+
+      const c = cameraOf(P);
+      const flowShift = mul3(c.V, PEN.r + 0.45);
+      const flowPts = [PEN.p0, PEN.p1, PEN.p2, PEN.pIn].map((pt) => iso(add3(pt, flowShift), P));
+      parts.push(`<path id="dyn-penstock-flow" class="iso-line" data-tone="water" stroke-dasharray="4 5" d="${polyD(flowPts, false)}" style="stroke-width:1.15px;opacity:0.85;"/>`);
+
+      const phBase = { x: 34, y: -61, w: 42, d: 42, r: 4 };
+      parts.push(solidSvg(slabOf(phBase, 12, 8.5, P, 4, 0.9), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(planOutline(insetPlan(phBase, 3.5), 20.5, P, 4), { tone: "faint" }) +
+          lineSvg(sideSeam(phBase, 16, P, 4), { tone: "faint" })
+      }));
+
+      const dt0 = [PH.cx + 12, PH.cy, 18.5];
+      const dt1 = [LO.x + 1, PH.cy, 18.5];
+      parts.push(tubeSegmentSvg(dt0, dt1, 5.0, P, { tone: "hi" }));
+      parts.push(flangeAlongSvg([LO.x, PH.cy, 18.5], [1, 0, 0], 7.4, 2.6, P, { tone: "hi", bolts: 6 }));
+      const dtFlowPts = [dt0, dt1].map((pt) => iso(add3(pt, mul3(c.V, 5.4)), P));
+      parts.push(`<path id="dyn-draft-flow" class="iso-line" data-tone="water" stroke-dasharray="3.5 4.5" d="${polyD(dtFlowPts, false)}" style="stroke-width:1.05px;opacity:0.8;"/>`);
+
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 20.5, 20.5, 11.5, P, 40, 0.6), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(sideArc(PH.cx, PH.cy, 20.5, 26.2, P, 32), { tone: "faint" })
+      }));
+      const cavRing = circleRing(PH.cx, PH.cy, 16.5, 36).map(([x, y]) => iso([x, y, 32.1], P));
+      parts.push(`<path class="iso-shade" data-shade="0" d="${polyD(cavRing, true)}"/>`);
+      parts.push(lineSvg(polyD(cavRing, true), { tone: "hi" }));
+
+      const volBolts = [];
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        volBolts.push(iso([PH.cx + 18.6 * Math.cos(a), PH.cy + 18.6 * Math.sin(a), 32.1], P));
+      }
+      parts.push(dotsSvg(volBolts, { size: 0.65, tone: "mid" }));
+
+      parts.push(`<g id="dyn-francis-runner"></g>`);
+
+      const pedR = 16.2;
+      const pedAngs = [-Math.PI * 0.75, -Math.PI * 0.25, Math.PI * 0.75, Math.PI * 0.25];
+      const pedPts = pedAngs
+        .map((a) => [PH.cx + pedR * Math.cos(a), PH.cy + pedR * Math.sin(a)])
+        .sort((a, b) => depthOf([a[0], a[1], 42], P) - depthOf([b[0], b[1], 42], P));
+
+      for (let i = 0; i < 2; i++) {
+        parts.push(solidSvg(cylinder(pedPts[i][0], pedPts[i][1], 2.1, 32, 23, P, 14), { tone: "mid", crease: "none" }));
+      }
+
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 3.6, 33, 22, P, 24), { tone: "hi", crease: "none" }));
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 9.2, 40.5, 6.2, P, 28, 0.5), {
+        tone: "hi",
+        crease: "lo",
+        inner: lineSvg(sideArc(PH.cx, PH.cy, 9.2, 43.6, P, 24), { tone: "faint" })
+      }));
+      const tbBolts = [];
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2 + 0.2;
+        tbBolts.push(iso([PH.cx + 7.2 * Math.cos(a), PH.cy + 7.2 * Math.sin(a), 46.7], P));
+      }
+      parts.push(dotsSvg(tbBolts, { size: 0.55, tone: "mid" }));
+
+      for (let i = 2; i < 4; i++) {
+        parts.push(solidSvg(cylinder(pedPts[i][0], pedPts[i][1], 2.1, 32, 23, P, 14), { tone: "mid", crease: "none" }));
+      }
+
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 21.2, 54.5, 3.5, P, 40, 0.6), { tone: "mid", crease: "lo" }));
+
+      const statorInner = fadedRibs(PH.cx, PH.cy, 19.2, 61.5, 81.5, 36, P, { fade: [0.08, 0.48], tone: "lo", seams: true });
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 19.2, 58, 27, P, 44, 0.7), {
+        tone: "hi",
+        crease: "lo",
+        inner: statorInner
+      }));
+
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 16.8, 85, 3.2, P, 36), { tone: "mid", crease: "lo" }));
+      parts.push(solidSvg(slabOf({ x: PH.cx - 17.5, y: PH.cy - 2.4, w: 35, d: 4.8, r: 0.8 }, 87.2, 2.8, P, 2), { tone: "hi", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: PH.cx - 2.4, y: PH.cy - 17.5, w: 4.8, d: 35, r: 0.8 }, 87.2, 2.8, P, 2), { tone: "hi", crease: "faint" }));
+
+      const excDots = dotGrid(PH.cx, PH.cy, 4, 4, 2.6, 98.5, P);
+      parts.push(solidSvg(cylinder(PH.cx, PH.cy, 9.6, 90, 8.5, P, 32, 0.7), {
+        tone: "hi",
+        crease: "lo",
+        inner: lineSvg(sideArc(PH.cx, PH.cy, 9.6, 94.2, P, 24), { tone: "faint" }) +
+          lineSvg(ringPath(PH.cx, PH.cy, 7.6, 98.5, P, 28), { tone: "lo" }) +
+          dotsSvg(excDots, { size: 0.52, tone: "mid" })
+      }));
+
+      const tBox = { x: PH.cx - 11, y: PH.cy + 16.5, w: 14, d: 7.5, r: 1.2 };
+      parts.push(solidSvg(slabOf(tBox, 64, 11, P, 3, 0.4), {
+        tone: "hi",
+        crease: "lo",
+        inner: lineSvg(sideSeam(tBox, 69.5, P, 3), { tone: "faint" })
+      }));
+
+      parts.push(solidSvg(slabOf({
+        x: LO.x + LO.wall, y: LO.y + LO.wall, w: LO.w - LO.wall * 2, d: LO.d - LO.wall * 2, r: 1.5
+      }, LO.zBase, 3, P, 2), { tone: "lo", crease: "none" }));
+
+      parts.push(solidSvg(slabOf({ x: LO.x, y: LO.y, w: LO.wall, d: LO.d, r: 1 }, LO.zBase, LO.zTop - LO.zBase, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      parts.push(solidSvg(slabOf({ x: LO.x + LO.wall, y: LO.y, w: LO.w - LO.wall, d: LO.wall, r: 1 }, LO.zBase, LO.zTop - LO.zBase, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+
+      parts.push(`<g id="dyn-lower-water"></g>`);
+
+      const loWallX = LO.x + LO.w - LO.wall;
+      parts.push(solidSvg(slabOf({ x: loWallX, y: LO.y + LO.wall, w: LO.wall, d: 24, r: 0.8 }, LO.zBase, LO.zTop - LO.zBase, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      parts.push(solidSvg(slabOf({ x: loWallX, y: LO.y + 28.2, w: LO.wall, d: 34, r: 0.5 }, LO.zBase, LO.zTop - LO.zBase - 4.5, P, 2), {
+        tone: "hi", crease: "lo"
+      }));
+      parts.push(solidSvg(slabOf({ x: loWallX, y: LO.y + 62.2, w: LO.wall, d: LO.d - 62.2, r: 0.8 }, LO.zBase, LO.zTop - LO.zBase, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+
+      const loYFront = LO.y + LO.d - LO.wall;
+      parts.push(solidSvg(slabOf({ x: LO.x + LO.wall, y: loYFront, w: LO.w - LO.wall * 2, d: LO.wall, r: 0.6 }, LO.zBase, 6, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      parts.push(solidSvg(slabOf({ x: LO.x, y: loYFront, w: 12, d: LO.wall, r: 0.8 }, LO.zBase + 6, LO.zTop - LO.zBase - 6, P, 2), {
+        tone: "mid", crease: "lo"
+      }));
+      const loPierR = { x: LO.x + LO.w - 14, y: loYFront, w: 14, d: LO.wall, r: 0.8 };
+      const loScale = sideTicksZ(LO.x + LO.w - 11.5, LO.y + LO.d, 17, 35, 3, 3, [2.0, 3.8], P, [1, 0]);
+      parts.push(solidSvg(slabOf(loPierR, LO.zBase + 6, LO.zTop - LO.zBase - 6, P, 2), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(segment3([LO.x + LO.w - 11.5, LO.y + LO.d, 16.5], [LO.x + LO.w - 11.5, LO.y + LO.d, 35.5], P), { tone: "lo" }) +
+          lineSvg(loScale.minor, { tone: "lo" }) +
+          lineSvg(loScale.major, { tone: "hi" })
+      }));
+
+      const loPanePts = [
+        iso([LO.x + 12, LO.y + LO.d, LO.zBase + 6], P),
+        iso([LO.x + LO.w - 14, LO.y + LO.d, LO.zBase + 6], P),
+        iso([LO.x + LO.w - 14, LO.y + LO.d, LO.zTop - 1.5], P),
+        iso([LO.x + 12, LO.y + LO.d, LO.zTop - 1.5], P)
+      ];
+      parts.push(`<path class="glass-pane" d="${polyD(loPanePts, true)}"/>`);
+      parts.push(lineSvg(
+        segment3([LO.x + 12, LO.y + LO.d, LO.zTop - 1.5], [LO.x + LO.w - 14, LO.y + LO.d, LO.zTop - 1.5], P),
+        { tone: "lo" }
+      ));
+      parts.push(`<g id="dyn-lower-float"></g>`);
+
+      parts.push(solidSvg(slabOf({ x: TR.x - 2, y: TR.y + 4, w: TR.w + 4, d: 4.5, r: 0.8 }, 12, 3, P, 2), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(slabOf({ x: TR.x - 2, y: TR.y + TR.d - 8.5, w: TR.w + 4, d: 4.5, r: 0.8 }, 12, 3, P, 2), { tone: "lo", crease: "faint" }));
+
+      const trPlan = { x: TR.x, y: TR.y, w: TR.w, d: TR.d, r: 2.5 };
+      parts.push(solidSvg(slabOf(trPlan, TR.zBase, TR.h, P, 4, 0.8), {
+        tone: "mid",
+        crease: "lo",
+        inner: lineSvg(sideSeam(trPlan, TR.zBase + TR.h - 4.5, P, 4), { tone: "faint" }) +
+          lineSvg(planOutline(insetPlan(trPlan, 3), TR.zBase + TR.h, P, 4), { tone: "faint" })
+      }));
+
+      for (let i = 0; i < 5; i++) {
+        const fx = TR.x + 5 + i * 7.6;
+        parts.push(solidSvg(slabOf({ x: fx, y: TR.y + TR.d, w: 2.4, d: 4.5, r: 0.5 }, TR.zBase + 3, TR.h - 7, P, 2), {
+          tone: "lo", crease: "faint"
+        }));
+      }
+
+      const conY = TR.y + 8;
+      const conZ = TR.zBase + TR.h + 7.2;
+      parts.push(solidSvg(slabOf({ x: TR.x + 9, y: conY - 1.2, w: 2.4, d: 2.4, r: 0.4 }, TR.zBase + TR.h, 5.5, P, 2), { tone: "lo", crease: "none" }));
+      parts.push(solidSvg(slabOf({ x: TR.x + 30, y: conY - 1.2, w: 2.4, d: 2.4, r: 0.4 }, TR.zBase + TR.h, 5.5, P, 2), { tone: "lo", crease: "none" }));
+      parts.push(tubeSegmentSvg([TR.x + 6, conY, conZ], [TR.x + 35, conY, conZ], 4.2, P, { tone: "mid", cap0: true, cap1: true }));
+
+      const bushXs = [TR.x + 10, TR.x + 21, TR.x + 32];
+      const bushY = TR.y + 22;
+      const bushTopZ = TR.zBase + TR.h + 11.2;
+      for (const bx of bushXs) {
+        parts.push(solidSvg(cylinder(bx, bushY, 3.2, TR.zBase + TR.h, 2.0, P, 18), { tone: "lo", crease: "none" }));
+        parts.push(solidSvg(cylinder(bx, bushY, 2.5, TR.zBase + TR.h + 2.0, 2.8, P, 18), { tone: "hi", crease: "faint" }));
+        parts.push(solidSvg(cylinder(bx, bushY, 2.2, TR.zBase + TR.h + 4.8, 2.8, P, 18), { tone: "hi", crease: "faint" }));
+        parts.push(solidSvg(cylinder(bx, bushY, 1.9, TR.zBase + TR.h + 7.6, 2.6, P, 18), { tone: "hi", crease: "faint" }));
+        parts.push(solidSvg(cylinder(bx, bushY, 1.1, TR.zBase + TR.h + 10.2, 1.4, P, 14), { tone: "hi", crease: "none" }));
+      }
+
+      for (let i = 0; i < 3; i++) {
+        const tx = PH.cx - 8 + i * 4.0;
+        const ty = PH.cy + 24;
+        const tz = 68.5;
+        const bx = bushXs[i];
+        const midY = 6 + i * 3.8;
+        parts.push(wireSvg([
+          [tx, ty, tz],
+          [tx, midY, tz],
+          [bx, midY, bushTopZ + 5.5 - i * 1.4],
+          [bx, bushY, bushTopZ + 5.5 - i * 1.4],
+          [bx, bushY, bushTopZ + 0.4]
+        ], P, { tone: "mid", size: 1.25 }));
+      }
+
+      parts.push(solidSvg(cylinder(DIAL.postX, DIAL.postY, 6.2, 12, 3.2, P, 24), { tone: "lo", crease: "faint" }));
+      parts.push(solidSvg(cylinder(DIAL.postX, DIAL.postY, 3.5, 15.2, 31, P, 24), {
+        tone: "mid",
+        crease: "none",
+        inner: lineSvg(sideArc(DIAL.postX, DIAL.postY, 3.5, 25, P, 16) + sideArc(DIAL.postX, DIAL.postY, 3.5, 42, P, 16), { tone: "faint" })
+      }));
+
+      const clPlan = { x: DIAL.postX - 6.5, y: DIAL.postY - 6.5, w: 13, d: 13, r: 2.2 };
+      parts.push(solidSvg(slabOf(clPlan, 29.5, 11, P, 4, 0.5), { tone: "mid", crease: "lo" }));
+      parts.push(solidSvg(slabOf({ x: DIAL.postX - 1.5, y: DIAL.postY + 6.5, w: 3, d: 3.5, r: 0.4 }, 33.5, 3, P, 2), { tone: "lo", crease: "none" }));
+      parts.push(flangeAlongSvg([DIAL.postX, DIAL.postY + 11.5, 35], [0, 1, 0], 3.2, 3.6, P, { tone: "hi", bolts: 0 }));
+
+      parts.push(solidSvg(slabOf({ x: DIAL.postX + 6, y: DIAL.postY - 3, w: 12, d: 6, r: 1 }, 32.5, 5, P, 2), { tone: "mid", crease: "faint" }));
+
+      const dTop = DIAL.z + DIAL.h;
+      const dTicks = radialTicks(
+        DIAL.cx, DIAL.cy, DIAL.r - 2.6, 40, 5, dTop, [1.5, 3.2], P,
+        -125 * DEG, 250 * DEG
+      );
+      const zeroMark = lineOnTop(
+        [DIAL.cx, DIAL.cy - (DIAL.r - 2.4)],
+        [DIAL.cx, DIAL.cy - (DIAL.r - 6.8)],
+        dTop, P
+      );
+      const signL = lineOnTop([DIAL.cx - 10.5, DIAL.cy - 2.5], [DIAL.cx - 7.5, DIAL.cy - 2.5], dTop, P);
+      const signR =
+        lineOnTop([DIAL.cx + 7.5, DIAL.cy - 2.5], [DIAL.cx + 10.5, DIAL.cy - 2.5], dTop, P) +
+        lineOnTop([DIAL.cx + 9.0, DIAL.cy - 4.0], [DIAL.cx + 9.0, DIAL.cy - 1.0], dTop, P);
+
+      const dialInner =
+        lineSvg(knurl(DIAL.cx, DIAL.cy, DIAL.r, dTop - 3.4, dTop, 72, P), { tone: "lo" }) +
+        lineSvg(sideArc(DIAL.cx, DIAL.cy, DIAL.r, dTop - 3.4, P, 40), { tone: "faint" }) +
+        lineSvg(ringPath(DIAL.cx, DIAL.cy, DIAL.r - 2.0, dTop, P, 56), { tone: "lo" }) +
+        lineSvg(dTicks.minor, { tone: "lo" }) +
+        lineSvg(dTicks.major, { tone: "mid" }) +
+        lineSvg(zeroMark, { tone: "hi" }) +
+        lineSvg(signL + signR, { tone: "mid" });
+
+      parts.push(solidSvg(cylinder(DIAL.cx, DIAL.cy, DIAL.r, DIAL.z, DIAL.h, P, 56, 0.7), {
+        tone: "hi",
+        crease: "lo",
+        inner: dialInner
+      }));
+
+      parts.push(`<path id="dyn-dial-needle" class="iso-line" data-tone="lit" style="stroke-width:1.25px;" d=""/>`);
+      parts.push(solidSvg(cylinder(DIAL.cx, DIAL.cy, 2.2, dTop, 1.1, P, 18), { tone: "hi", crease: "none" }));
+
+      return parts.join("");
+    }
+
+    function renderWaterPrism(plan, zBottom, zTop, phase, flowSpeed) {
+      const h = Math.max(1.2, zTop - zBottom);
+      const paths = slabOf(plan, zBottom, h, P, 2);
+
+      let ripples = "";
+      const marginX = 6, marginY = 6;
+      const amp = Math.min(1, Math.abs(flowSpeed) * 1.2);
+      for (let i = 0; i < 3; i++) {
+        const ry = plan.y + marginY + (plan.d - marginY * 2) * ((i + 0.5) / 3);
+        const shift = Math.sin(phase * 2.2 + i * 1.9) * 2.4 * amp;
+        const x0 = plan.x + marginX + Math.max(0, shift);
+        const x1 = plan.x + plan.w - marginX + Math.min(0, shift);
+        ripples += `<path class="water-ripple" d="${lineOnTop([x0, ry], [x1, ry], zBottom + h, P)}"/>`;
+      }
+      return solidSvg(paths, { tone: "water", crease: "water", water: true, inner: ripples });
+    }
+
+    function renderFrancisRunner(angle) {
+      const zMid = 32.3;
+      const rOut = 14.2;
+      const rHub = 5.0;
+      let out = "";
+
+      let bladeBack = "";
+      let bladeFront = "";
+      for (let i = 0; i < 8; i++) {
+        const a0 = angle + (i / 8) * Math.PI * 2;
+        const pHub = [PH.cx + rHub * Math.cos(a0), PH.cy + rHub * Math.sin(a0), zMid];
+        const aMid = a0 - 0.30;
+        const aTip = a0 - 0.68;
+        const pMid = [PH.cx + (rHub + 4.8) * Math.cos(aMid), PH.cy + (rHub + 4.8) * Math.sin(aMid), zMid];
+        const pTip = [PH.cx + rOut * Math.cos(aTip), PH.cy + rOut * Math.sin(aTip), zMid];
+        const pts = [iso(pHub, P), iso(pMid, P), iso(pTip, P)];
+        const d = `M${f1(pts[0][0])} ${f1(pts[0][1])}Q${f1(pts[1][0])} ${f1(pts[1][1])} ${f1(pts[2][0])} ${f1(pts[2][1])}`;
+        bladeFront += d;
+        const ptsLow = [
+          iso([pHub[0], pHub[1], zMid - 1.4], P),
+          iso([pMid[0], pMid[1], zMid - 1.4], P),
+          iso([pTip[0], pTip[1], zMid - 1.4], P)
+        ];
+        bladeBack += `M${f1(ptsLow[0][0])} ${f1(ptsLow[0][1])}Q${f1(ptsLow[1][0])} ${f1(ptsLow[1][1])} ${f1(ptsLow[2][0])} ${f1(ptsLow[2][1])}`;
+      }
+
+      out += lineSvg(ringPath(PH.cx, PH.cy, rOut, zMid, P, 36), { tone: "lit" });
+      out += lineSvg(bladeBack, { tone: "mid" });
+      out += `<path class="iso-line" data-tone="lit" style="stroke-width:1.05px;" d="${bladeFront}"/>`;
+      out += solidSvg(cylinder(PH.cx, PH.cy, rHub, zMid - 1.2, 2.2, P, 20), { tone: "lit", lit: true, crease: "lo" });
+
+      const mTip = [PH.cx + 3.6 * Math.cos(angle), PH.cy + 3.6 * Math.sin(angle)];
+      out += lineSvg(lineOnTop([PH.cx, PH.cy], mTip, zMid + 1.0, P), { tone: "lit" });
+      return out;
+    }
+
+    function renderDialNeedle(powerMW) {
+      const clamped = Math.max(-150, Math.min(150, powerMW));
+      const ang = (clamped / 150) * 125 * DEG;
+      const dx = Math.sin(ang), dy = -Math.cos(ang);
+      const dTop = DIAL.z + DIAL.h + 0.35;
+      const tail = [DIAL.cx - dx * 4.5, DIAL.cy - dy * 4.5];
+      const tip = [DIAL.cx + dx * (DIAL.r - 4.4), DIAL.cy + dy * (DIAL.r - 4.4)];
+      return lineOnTop(tail, tip, dTop, P);
+    }
+
+    function renderLevelFloat(x, y, z) {
+      const p0 = iso([x - 1.6, y, z], P);
+      const p1 = iso([x + 3.2, y, z], P);
+      return `<path class="iso-line" data-tone="lit" style="stroke-width:1.3px;" d="${segD(p0, p1)}"/>`;
+    }
+
+    const svgEl = document.getElementById("gaes-svg");
+    const stageEl = document.getElementById("gaes-stage");
+    const readoutEl = stageEl.querySelector("[data-readout]");
+    const liveEl = document.getElementById("gaes-live");
+    const sliderEl = document.getElementById("load-slider");
+    const sliderValEl = document.getElementById("slider-val");
+    const modeBtns = Array.from(document.querySelectorAll(".mode-btn"));
+    const btnLight = document.getElementById("btn-light");
+    const btnDark = document.getElementById("btn-dark");
+
+    try {
+      svgEl.innerHTML = buildStaticScene();
+    } catch (err) {
+      console.error("GAES SVG build error:", err);
+    }
+
+    const dynUpperWater = document.getElementById("dyn-upper-water");
+    const dynLowerWater = document.getElementById("dyn-lower-water");
+    const dynUpperFloat = document.getElementById("dyn-upper-float");
+    const dynLowerFloat = document.getElementById("dyn-lower-float");
+    const dynPenFlow = document.getElementById("dyn-penstock-flow");
+    const dynDraftFlow = document.getElementById("dyn-draft-flow");
+    const dynValveRod = document.getElementById("dyn-valve-rod");
+    const dynRunner = document.getElementById("dyn-francis-runner");
+    const dynNeedle = document.getElementById("dyn-dial-needle");
+
+    const UP_WATER_PLAN = {
+      x: UP.x + UP.wall + 0.4,
+      y: UP.y + UP.wall + 0.4,
+      w: UP.w - UP.wall * 2 - 0.8,
+      d: UP.d - UP.wall * 2 - 0.8,
+      r: 1.0
+    };
+    const LO_WATER_PLAN = {
+      x: LO.x + LO.wall + 0.4,
+      y: LO.y + LO.wall + 0.4,
+      w: LO.w - LO.wall * 2 - 0.8,
+      d: LO.d - LO.wall * 2 - 0.8,
+      r: 1.0
+    };
+
+    function settleSpring(st, target, dt, seconds, calm) {
+      if (calm) {
+        st.x = target;
+        st.v = 0;
+        return false;
+      }
+      const w = 1 / seconds;
+      const sub = 4;
+      const h = dt / sub;
+      for (let i = 0; i < sub; i++) {
+        st.v += (w * w * (target - st.x) - 2 * w * st.v) * h;
+        st.x += st.v * h;
+      }
+      if (Math.abs(target - st.x) < 1e-4 && Math.abs(st.v) < 1e-4) {
+        st.x = target;
+        st.v = 0;
+        return false;
+      }
+      return true;
+    }
+
+    function needleSpring(st, target, dt, stiffness, damping, calm) {
+      if (calm) {
+        st.x = target;
+        st.v = 0;
+        return false;
+      }
+      const sub = 4;
+      const h = dt / sub;
+      for (let i = 0; i < sub; i++) {
+        const a = stiffness * (target - st.x) - damping * st.v;
+        st.v += a * h;
+        st.x += st.v * h;
+      }
+      if (Math.abs(target - st.x) < 1e-3 && Math.abs(st.v) < 1e-3) {
+        st.x = target;
+        st.v = 0;
+        return false;
+      }
+      return true;
+    }
+
+    const stillQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const state = {
+      level: 0.72,
+      uCmd: 0.92,
+      flowQ: { x: 105.8, v: 0 },
+      valve: { x: 1, v: 0 },
+      needle: { x: 112, v: 0 },
+      runnerAngle: 0,
+      flowDash: 0,
+      rippleClock: 0,
+      touring: !stillQuery.matches,
+      tourClock: 0,
+      idleTimer: 0,
+      manualHold: false,
+      lastPhase: ""
+    };
+
+    const MINUS = "\u2212";
+    const fmtSigned = (n, dec = 1) => {
+      const abs = Math.abs(n).toFixed(dec);
+      if (Math.abs(n) < 0.05) return (dec ? (0).toFixed(dec) : "0");
+      return (n < 0 ? MINUS : "+") + abs;
+    };
+
+    function syncControlUI(u) {
+      const pct = Math.round(u * 100);
+      sliderEl.value = String(pct);
+      sliderValEl.textContent = (pct > 0 ? "+" : pct < 0 ? MINUS : "") + Math.abs(pct) + "%";
+      stageEl.setAttribute("aria-valuenow", String(pct));
+
+      let activeMode = "idle";
+      if (u > 0.05) activeMode = "gen";
+      else if (u < -0.05) activeMode = "pump";
+
+      for (const btn of modeBtns) {
+        btn.setAttribute("data-active", String(btn.dataset.mode === activeMode));
+      }
+    }
+
+    function setCommand(u, fromUser = true) {
+      state.uCmd = Math.max(-1, Math.min(1, u));
+      if (fromUser) {
+        state.touring = false;
+        state.manualHold = true;
+        state.idleTimer = 0;
+        const label = state.uCmd > 0.05
+          ? `Generatsiya rejimi, ${Math.round(state.uCmd * 100)} foiz`
+          : state.uCmd < -0.05
+          ? `Nasos rejimi, ${Math.round(Math.abs(state.uCmd) * 100)} foiz`
+          : "Kutish rejimi, 0 MVt";
+        stageEl.setAttribute("aria-valuetext", label);
+      }
+      syncControlUI(state.uCmd);
+      runLoop();
+    }
+
+    function tourTargetAt(t) {
+      const c = t % 21.5;
+      if (c < 8.0) return 0.92;
+      if (c < 11.0) return 0.0;
+      if (c < 19.0) return -0.92;
+      return 0.0;
+    }
+
+    function stepPhysics(dt, calm) {
+      if (state.manualHold && !calm) {
+        state.idleTimer += dt;
+      }
+
+      if (state.touring && !calm) {
+        state.tourClock += dt;
+        if (state.tourClock > 1.5) {
+          const tCmd = tourTargetAt(state.tourClock - 1.5);
+          if (Math.abs(tCmd - state.uCmd) > 0.01) {
+            state.uCmd = tCmd;
+            syncControlUI(state.uCmd);
+          }
+        }
+      }
+
+      let uEff = state.uCmd;
+      if (uEff > 0 && state.level <= 0.19) {
+        const factor = Math.max(0, (state.level - 0.15) / 0.04);
+        uEff *= factor;
+        if (state.touring && state.level <= 0.155) {
+          state.tourClock = 12.5;
+        }
+      } else if (uEff < 0 && state.level >= 0.86) {
+        const factor = Math.max(0, (0.90 - state.level) / 0.04);
+        uEff *= factor;
+        if (state.touring && state.level >= 0.895) {
+          state.tourClock = 1.6;
+        }
+      }
+
+      const targetQ = uEff * 115;
+      settleSpring(state.flowQ, targetQ, dt, 0.36, calm);
+      const Q = Math.abs(state.flowQ.x) < 0.15 ? 0 : state.flowQ.x;
+
+      if (!calm && Math.abs(Q) > 0.01) {
+        state.level = Math.max(0.15, Math.min(0.90, state.level - (Q / 115) * 0.046 * dt));
+      }
+
+      const headH = 104 + 24 * state.level;
+
+      const powerMW = Q >= 0
+        ? (0.89 * 9.81 * Q * headH) / 1000
+        : (9.81 * Q * headH) / (1000 * 0.88);
+
+      const rpm = (Q / 115) * 300;
+      if (!calm) {
+        state.runnerAngle += (rpm / 60) * Math.PI * 2 * dt * 0.34;
+        state.flowDash -= (Q / 115) * 44 * dt;
+        state.rippleClock += dt;
+      }
+
+      const valveTarget = Math.abs(Q) > 2.0 ? 1 : 0;
+      settleSpring(state.valve, valveTarget, dt, 0.24, calm);
+
+      needleSpring(state.needle, powerMW, dt, 190, 19, calm);
+
+      return { Q, headH, powerMW, rpm };
+    }
+
+    function drawFrame(metrics) {
+      const { Q, headH, powerMW, rpm } = metrics;
+
+      const zUpTop = (UP.zFloor + 3) + (0.14 + state.level * 0.82) * (UP.zTop - UP.zFloor - 7);
+      dynUpperWater.innerHTML = renderWaterPrism(UP_WATER_PLAN, UP.zFloor + 3, zUpTop, state.rippleClock, Q / 115);
+      dynUpperFloat.innerHTML = renderLevelFloat(UP.x + UP.w - 14.5, UP.y + UP.d, Math.max(104, Math.min(136, zUpTop)));
+
+      const lowerFrac = Math.max(0.15, Math.min(0.90, 1.05 - state.level));
+      const zLoTop = (LO.zFloor) + (0.14 + lowerFrac * 0.82) * (LO.zTop - LO.zFloor - 4);
+      dynLowerWater.innerHTML = renderWaterPrism(LO_WATER_PLAN, LO.zFloor, zLoTop, -state.rippleClock * 0.9, Q / 115);
+      dynLowerFloat.innerHTML = renderLevelFloat(LO.x + LO.w - 11.5, LO.y + LO.d, Math.max(17, Math.min(35, zLoTop)));
+
+      const flowOpacity = Math.min(0.88, Math.abs(Q) / 28);
+      dynPenFlow.style.opacity = flowOpacity.toFixed(2);
+      dynDraftFlow.style.opacity = (flowOpacity * 0.9).toFixed(2);
+      dynPenFlow.setAttribute("stroke-dashoffset", f1(state.flowDash));
+      dynDraftFlow.setAttribute("stroke-dashoffset", f1(state.flowDash));
+
+      const liftZ = state.valve.x * 6.2;
+      dynValveRod.setAttribute("transform", translateAlong(P, [0, 0, liftZ]));
+
+      dynRunner.innerHTML = renderFrancisRunner(state.runnerAngle);
+      dynNeedle.setAttribute("d", renderDialNeedle(state.needle.x));
+
+      let phase = "KUTISH";
+      if (Q > 2.5) phase = "GENERATSIYA";
+      else if (Q < -2.5) phase = "NASOS REJIMI";
+
+      readoutEl.textContent =
+        `${phase} · ${fmtSigned(powerMW, 1)} MVt · ${headH.toFixed(1)} m · ${fmtSigned(rpm, 0)} ayl/daq`;
+
+      if (phase !== state.lastPhase) {
+        state.lastPhase = phase;
+        liveEl.textContent = `${phase}: ${fmtSigned(powerMW, 1)} megavatt, napor ${headH.toFixed(1)} metr`;
+      }
+    }
+
+    let rafId = 0;
+    let lastTs = 0;
+    let visible = true;
+
+    function tick(now) {
+      const dt = lastTs ? Math.min((now - lastTs) / 1000, 1 / 30) : 1 / 60;
+      lastTs = now;
+      const calm = stillQuery.matches;
+      const metrics = stepPhysics(dt, calm);
+      drawFrame(metrics);
+
+      const settled =
+        !state.touring &&
+        Math.abs(state.flowQ.x) < 0.05 &&
+        Math.abs(state.flowQ.v) < 1e-4 &&
+        Math.abs(state.valve.v) < 1e-4 &&
+        Math.abs(state.needle.v) < 1e-3 &&
+        Math.abs(state.uCmd) < 0.01;
+
+      if (visible && !calm && !settled) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        rafId = 0;
+      }
+    }
+
+    function runLoop() {
+      if (stillQuery.matches) {
+        drawFrame(stepPhysics(1 / 60, true));
+        return;
+      }
+      if (!rafId && visible) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        visible = entries[entries.length - 1].isIntersecting;
+        if (visible) runLoop();
+      }, { rootMargin: "120px 0px" }).observe(stageEl);
+    }
+
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const m = btn.dataset.mode;
+        if (m === "gen") setCommand(0.92, true);
+        else if (m === "pump") setCommand(-0.92, true);
+        else setCommand(0, true);
+      });
+    });
+
+    sliderEl.addEventListener("input", () => {
+      setCommand(Number(sliderEl.value) / 100, true);
+    });
+
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartU = 0;
+
+    stageEl.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0 && e.pointerType === "mouse") return;
+      dragging = true;
+      dragStartX = e.clientX;
+      dragStartU = state.uCmd;
+      stageEl.setPointerCapture(e.pointerId);
+      state.touring = false;
+      state.manualHold = true;
+    });
+
+    stageEl.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const rect = stageEl.getBoundingClientRect();
+      const dx = (e.clientX - dragStartX) / Math.max(160, rect.width * 0.55);
+      setCommand(dragStartU + dx * 2, true);
+    });
+
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      try { stageEl.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    stageEl.addEventListener("pointerup", endDrag);
+    stageEl.addEventListener("pointercancel", endDrag);
+
+    stageEl.addEventListener("keydown", (e) => {
+      const step = e.shiftKey ? 0.35 : 0.15;
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+        e.preventDefault();
+        setCommand(state.uCmd + step, true);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        e.preventDefault();
+        setCommand(state.uCmd - step, true);
+      } else if (e.key === "1") {
+        e.preventDefault();
+        setCommand(0.92, true);
+      } else if (e.key === "2" || e.key === " ") {
+        e.preventDefault();
+        setCommand(Math.abs(state.uCmd) < 0.05 ? 0.92 : 0, true);
+      } else if (e.key === "3") {
+        e.preventDefault();
+        setCommand(-0.92, true);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setCommand(0.92, true);
+      }
+    });
+
+    function setTheme(theme) {
+      document.body.setAttribute("data-theme", theme);
+      btnLight.setAttribute("aria-pressed", String(theme === "light"));
+      btnDark.setAttribute("aria-pressed", String(theme === "dark"));
+    }
+    btnLight.addEventListener("click", () => setTheme("light"));
+    btnDark.addEventListener("click", () => setTheme("dark"));
+
+    stillQuery.addEventListener?.("change", () => {
+      state.touring = !stillQuery.matches && !state.manualHold;
+      runLoop();
+    });
+
+    syncControlUI(state.uCmd);
+    drawFrame(stepPhysics(0, true));
+    window.addEventListener("load", runLoop);
+    runLoop();
+  })();
+  </script>
+</body>
+</html>

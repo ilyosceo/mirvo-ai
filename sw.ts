@@ -88,9 +88,27 @@ registerRoute(
       return Response.error();
     },
     {
-      denylist: [/^\/api\//, /^\/__aistudio/],
+      denylist: [/^\/api\//, /^\/__aistudio/, /^\/models\//],
     }
   )
+);
+
+// 1b. Standalone Interactive HTML Models (/models/*.html) — never fall back to SPA index.html
+registerRoute(
+  ({ request, url }) =>
+    request.method === 'GET' && url.pathname.startsWith('/models/'),
+  new StaleWhileRevalidate({
+    cacheName: 'mirvo-html-models-v1',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 60 * 60 * 24 * 90,
+      }),
+    ],
+  })
 );
 
 // 2. Google Fonts (Inter + IBM Plex Mono)

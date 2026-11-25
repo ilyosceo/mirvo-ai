@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mikroto‘lqinli pech qanday ishlaydi?</title>
+  <style>
+    /* =========================================================================
+       MINIMALIST TECHNICAL PAPER AESTHETIC — ZERO CLUTTER, HIGH CONTRAST
+       ========================================================================= */
+    :root {
+      --bg-page: #fafafa;
+      --ink: #1f2937;
+      --ink-soft: #4b5563;
+      --ink-muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --subtitle-bg: rgba(17, 24, 39, 0.92);
+      --player-bg: #ffffff;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 45%, #ffffff 0%, #fafafa 62%, #f3f4f6 100%);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Full-height 3-band layout: slim top bar, ~85% clean canvas, compact bottom controls */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* =========================================================================
+       1. ULTRA-MINIMAL TOP BAR
+       ========================================================================= */
+    .top-bar {
+      height: 54px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      background: rgba(250, 250, 250, 0.86);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10;
+      flex: none;
+    }
+
+    .lesson-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .step-counter {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-variant-numeric: tabular-nums;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    /* =========================================================================
+       2. CENTER ISOMETRIC SVG VIEWPORT (~85% OF SCREEN)
+       ========================================================================= */
+    .stage-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px 124px;
+      position: relative;
+    }
+
+    #ovenSvg {
+      width: 100%;
+      height: 100%;
+      max-width: 1040px;
+      max-height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Crisp technical ink line styles */
+    .ink {
+      stroke: #1f2937;
+      stroke-width: 1.05px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .ink-thin {
+      stroke: #374151;
+      stroke-width: 0.7px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .ink-faint {
+      stroke: #9ca3af;
+      stroke-width: 0.6px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    /* Clickable assemblies inside the SVG */
+    .clickable-part {
+      cursor: pointer;
+      transition: filter 220ms ease;
+    }
+
+    .clickable-part:hover {
+      filter: drop-shadow(0 0 3px rgba(37, 99, 235, 0.25));
+    }
+
+    /* Gentle highlight ring on active assembly — never washes out inactive parts */
+    .part-highlight {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 1.8px;
+      stroke-dasharray: 5 4;
+      opacity: 0;
+      transition: opacity 280ms ease;
+      pointer-events: none;
+    }
+
+    .is-active .part-highlight {
+      opacity: 0.85;
+    }
+
+    /* Microwave 2.45 GHz animated waves */
+    .mw-wave-glow {
+      fill: none;
+      stroke: #38bdf8;
+      stroke-width: 4.5px;
+      stroke-linecap: round;
+      opacity: 0.24;
+      pointer-events: none;
+    }
+
+    .mw-wave-line {
+      fill: none;
+      stroke: #0284c7;
+      stroke-width: 1.65px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .mw-wave-dash {
+      fill: none;
+      stroke: #0ea5e9;
+      stroke-width: 1.9px;
+      stroke-linecap: round;
+      stroke-dasharray: 7 11;
+      pointer-events: none;
+    }
+
+    .mw-bounce-line {
+      fill: none;
+      stroke: #0284c7;
+      stroke-width: 1.8px;
+      stroke-linecap: round;
+      stroke-dasharray: 5 7;
+      pointer-events: none;
+    }
+
+    /* Warm amber cathode glow */
+    .cathode-glow {
+      fill: #f59e0b;
+      filter: blur(5px);
+      pointer-events: none;
+    }
+
+    /* Gentle steam curls */
+    .steam-path {
+      fill: none;
+      stroke: #64748b;
+      stroke-width: 1.35px;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    /* =========================================================================
+       3. BOTTOM FLOATING SUBTITLE & HIGH-CONTRAST AUDIO PLAYER
+       ========================================================================= */
+    .bottom-dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Dark crisp subtitle pill */
+    .subtitle-pill {
+      pointer-events: auto;
+      max-width: 680px;
+      background: var(--subtitle-bg);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 10px 18px;
+      font-size: 13.5px;
+      line-height: 1.48;
+      text-align: center;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.22);
+      transition: opacity 180ms ease;
+    }
+
+    /* Clean white floating player card with dark high-contrast icons */
+    .player-pill {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--player-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10);
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #1f2937;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 140ms ease, color 140ms ease;
+      padding: 0;
+    }
+
+    .icon-btn:hover {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .icon-btn:focus-visible,
+    .play-btn:focus-visible,
+    .speed-btn:focus-visible,
+    .step-dot:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .icon-btn svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .play-btn {
+      appearance: none;
+      border: 0;
+      background: var(--primary);
+      color: #ffffff;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 140ms ease, transform 100ms ease;
+      white-space: nowrap;
+    }
+
+    .play-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .play-btn:active {
+      transform: scale(0.98);
+    }
+
+    .play-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* 5 clickable step indicator dots */
+    .dots-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 6px;
+    }
+
+    .step-dot {
+      appearance: none;
+      border: 0;
+      padding: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #d1d5db;
+      cursor: pointer;
+      transition: all 200ms ease;
+    }
+
+    .step-dot:hover {
+      background: #9ca3af;
+    }
+
+    .step-dot.active {
+      width: 22px;
+      background: var(--primary);
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 2px;
+    }
+
+    .speed-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: #1f2937;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      height: 30px;
+      padding: 0 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background-color 140ms ease;
+      min-width: 48px;
+    }
+
+    .speed-btn:hover {
+      background: #f3f4f6;
+    }
+
+    /* =========================================================================
+       MOBILE RESPONSIVENESS
+       ========================================================================= */
+    @media (max-width: 600px) {
+      .top-bar {
+        height: 48px;
+        padding: 0 14px;
+      }
+
+      .lesson-title {
+        font-size: 13.5px;
+      }
+
+      .stage-wrap {
+        padding: 4px 6px 142px;
+      }
+
+      .bottom-dock {
+        bottom: 10px;
+        gap: 8px;
+        padding: 0 8px;
+      }
+
+      .subtitle-pill {
+        font-size: 12px;
+        padding: 8px 13px;
+        border-radius: 12px;
+      }
+
+      .player-pill {
+        gap: 3px;
+        padding: 5px 7px;
+      }
+
+      .icon-btn {
+        width: 30px;
+        height: 30px;
+      }
+
+      .play-btn {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 12px;
+      }
+
+      .dots-group {
+        gap: 4px;
+        padding: 0 3px;
+      }
+
+      .step-dot.active {
+        width: 16px;
+      }
+
+      .speed-btn {
+        height: 28px;
+        padding: 0 7px;
+        font-size: 10.5px;
+        min-width: 42px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 1. Ultra-Minimal Top Bar -->
+    <header class="top-bar">
+      <h1 class="lesson-title">Mikroto‘lqinli pech qanday ishlaydi?</h1>
+      <span class="step-counter" id="stepCounter">1 / 5</span>
+    </header>
+
+    <!-- 2. Bright Uncluttered Isometric 2D SVG Viewport -->
+    <main class="stage-wrap">
+      <svg
+        id="ovenSvg"
+        viewBox="72 -18 660 518"
+        role="img"
+        aria-label="Mikroto‘lqinli pechning jonli izometrik 2D kesma chizmasi"
+      >
+        <defs>
+          <!-- Soft ground shadow filter -->
+          <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
+
+          <!-- Warm subtle cavity lamp radial glow -->
+          <radialGradient id="cavityGlow" cx="50%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#fef3c7" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Translucent pale-blue glass turntable gradient -->
+          <linearGradient id="glassPlatter" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.72" />
+            <stop offset="50%" stop-color="#bae6fd" stop-opacity="0.52" />
+            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.65" />
+          </linearGradient>
+
+          <!-- Warm soup/water gradient inside bowl -->
+          <linearGradient id="waterSurface" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.88" />
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.78" />
+          </linearGradient>
+
+          <!-- Fine Isometric Perforated Faraday Metal Mesh Pattern -->
+          <pattern id="faradayMesh" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="skewY(30)">
+            <rect width="7" height="7" fill="#1f2937" fill-opacity="0.06" />
+            <circle cx="3.5" cy="3.5" r="1.45" fill="#ffffff" fill-opacity="0.85" stroke="#1f2937" stroke-width="0.65" />
+          </pattern>
+
+          <!-- Stronger Faraday mesh used on Step 5 -->
+          <pattern id="faradayMeshActive" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="skewY(30)">
+            <rect width="7" height="7" fill="#1e293b" fill-opacity="0.24" />
+            <circle cx="3.5" cy="3.5" r="1.55" fill="#ffffff" fill-opacity="0.92" stroke="#1f2937" stroke-width="0.85" />
+          </pattern>
+
+          <!-- Subtle metallic hatching for transformer iron laminations -->
+          <pattern id="ironLaminations" width="4" height="4" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="2" x2="4" y2="2" stroke="#6b7280" stroke-width="0.6" />
+          </pattern>
+        </defs>
+
+        <!-- Procedural Isometric Layers (populated cleanly in strict back-to-front painter's order) -->
+        <g id="layerShadow"></g>
+        <g id="layerShellBack"></g>
+        <g id="layerCavityBack"></g>
+        <g id="layerTurntable" class="clickable-part" data-step="4"></g>
+        <g id="layerWavesCavity"></g>
+        <g id="layerSteamAndMolecules" class="clickable-part" data-step="4"></g>
+        <g id="layerPartition"></g>
+        <g id="layerElectronics" class="clickable-part" data-step="2"></g>
+        <g id="layerWaveguide" class="clickable-part" data-step="3"></g>
+        <g id="layerFrontDoor" class="clickable-part" data-step="5"></g>
+        <g id="layerControlBezel"></g>
+      </svg>
+    </main>
+
+    <!-- 3. Bottom Subtitle & Floating Audio Player -->
+    <footer class="bottom-dock">
+      <div class="subtitle-pill" id="subtitleBox" aria-live="polite">
+        Mikroto‘lqinli pech ovqatni tashqaridan qizdirmaydi — u ichki magnetron orqali 2.45 GGs chastotali to‘lqinlar yuborib, taomdagi suv molekulalarini ichkaridan isitadi.
+      </div>
+
+      <div class="player-pill" role="group" aria-label="Dars va ovoz boshqaruvi">
+        <button type="button" class="icon-btn" id="btnPrev" title="Oldingi qadam (←)" aria-label="Oldingi qadam">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+        </button>
+
+        <button type="button" class="icon-btn" id="btnReplay" title="Qayta eshitish" aria-label="Qayta eshitish">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+        </button>
+
+        <button type="button" class="play-btn" id="btnPlay" aria-label="Eshitish yoki pauza">
+          <svg id="playIcon" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" /></svg>
+          <span id="playLabel">Eshitish</span>
+        </button>
+
+        <div class="dots-group" id="dotsGroup" role="tablist" aria-label="Dars qadamlari"></div>
+
+        <button type="button" class="icon-btn" id="btnNext" title="Keyingi qadam (→)" aria-label="Keyingi qadam">
+          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+        </button>
+
+        <span class="divider" aria-hidden="true"></span>
+
+        <button type="button" class="icon-btn" id="btnMute" title="Ovozni o‘chirish / yoqish" aria-label="Ovoz">
+          <svg id="muteIcon" viewBox="0 0 24 24">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+        </button>
+
+        <button type="button" class="speed-btn" id="btnSpeed" title="O‘qish tezligi">1.0x</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =======================================================================
+         1. EXACT 30° ISOMETRIC PROJECTION & SOLID 4-TONE GEOMETRY BUILDERS
+         ======================================================================= */
+      const COS30 = Math.cos(Math.PI / 6); // 0.8660254
+      const SIN30 = 0.5;
+      const SCALE = 2.05;
+      const OX = 355;
+      const OY = 206;
+
+      // Exact isometric projection: +x down-right, +y down-left, +z straight up
+      function iso(x, y, z) {
+        return [
+          OX + (x - y) * COS30 * SCALE,
+          OY + (x + y) * SIN30 * SCALE - z * SCALE
+        ];
+      }
+
+      const r1 = (n) => Math.round(n * 10) / 10;
+
+      function ptsStr(pts) {
+        return pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join(" ");
+      }
+
+      function polyD(pts, closed = true) {
+        let d = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+        for (let i = 1; i < pts.length; i++) d += `L${r1(pts[i][0])},${r1(pts[i][1])}`;
+        return closed ? d + "Z" : d;
+      }
+
+      function line3D(a, b) {
+        const p0 = iso(a[0], a[1], a[2]);
+        const p1 = iso(b[0], b[1], b[2]);
+        return `M${r1(p0[0])},${r1(p0[1])}L${r1(p1[0])},${r1(p1[1])}`;
+      }
+
+      // 4-tone architectural color palettes: { top, left (+y), right (+x), stroke }
+      const PALETTES = {
+        shell:   { top: "#ffffff", left: "#f4f5f7", right: "#e6e8ec", cls: "ink" },
+        cavity:  { top: "#f9fafb", left: "#eef0f4", right: "#dfe3ea", cls: "ink-thin" },
+        steel:   { top: "#f3f4f6", left: "#e2e6ec", right: "#d1d5db", cls: "ink" },
+        dark:    { top: "#4b5563", left: "#374151", right: "#1f2937", cls: "ink" },
+        rubber:  { top: "#6b7280", left: "#4b5563", right: "#374151", cls: "ink-thin" },
+        copper:  { top: "#e59866", left: "#d47a44", right: "#b85c2a", cls: "ink-thin" },
+        fin:     { top: "#ffffff", left: "#e5e7eb", right: "#cfd5df", cls: "ink-thin" },
+        duct:    { top: "#f8fafc", left: "#e2e8f0", right: "#cbd5e1", cls: "ink" },
+        ceramic: { top: "#ffffff", left: "#f3f4f6", right: "#e5e7eb", cls: "ink" }
+      };
+
+      // Solid shaded isometric box (visible faces: +z top, +y left-front, +x right-front)
+      function isoBox(x0, x1, y0, y1, z0, z1, palName = "shell", opts = {}) {
+        const pal = PALETTES[palName] || PALETTES.shell;
+        const cls = opts.cls || pal.cls;
+        const p001 = iso(x0, y0, z1), p101 = iso(x1, y0, z1), p111 = iso(x1, y1, z1), p011 = iso(x0, y1, z1);
+        const p100 = iso(x1, y0, z0), p110 = iso(x1, y1, z0), p010 = iso(x0, y1, z0);
+
+        let html = "";
+        // Left-front (+y) face
+        if (!opts.skipFront) {
+          html += `<polygon class="${cls}" fill="${opts.leftFill || pal.left}" points="${ptsStr([p010, p110, p111, p011])}"/>`;
+        }
+        // Right-front (+x) face
+        if (!opts.skipRight) {
+          html += `<polygon class="${cls}" fill="${opts.rightFill || pal.right}" points="${ptsStr([p110, p100, p101, p111])}"/>`;
+        }
+        // Top (+z) face
+        if (!opts.skipTop) {
+          html += `<polygon class="${cls}" fill="${opts.topFill || pal.top}" points="${ptsStr([p001, p101, p111, p011])}"/>`;
+        }
+        return html;
+      }
+
+      // Solid vertical isometric cylinder (z0 -> z1)
+      function isoCylinderZ(cx, cy, r, z0, z1, palName = "steel", steps = 28, opts = {}) {
+        const pal = PALETTES[palName] || PALETTES.steel;
+        const cls = opts.cls || pal.cls;
+        const topPts = [];
+        const botPts = [];
+        for (let i = 0; i < steps; i++) {
+          const a = (i / steps) * Math.PI * 2;
+          const x = cx + Math.cos(a) * r;
+          const y = cy + Math.sin(a) * r;
+          topPts.push(iso(x, y, z1));
+          botPts.push(iso(x, y, z0));
+        }
+
+        // Visible side faces are where outward normal dot (+1, +1) > 0 => cos(a) + sin(a) > 0 => a in [-PI/4, 3*PI/4]
+        let sides = "";
+        for (let i = 0; i < steps; i++) {
+          const j = (i + 1) % steps;
+          const midA = ((i + 0.5) / steps) * Math.PI * 2;
+          const vis = Math.cos(midA) + Math.sin(midA);
+          if (vis > -0.02) {
+            const fill = Math.cos(midA) > Math.sin(midA) ? pal.right : pal.left;
+            sides += `<polygon fill="${fill}" stroke="${fill}" stroke-width="0.4" points="${ptsStr([botPts[i], botPts[j], topPts[j], topPts[i]])}"/>`;
+          }
+        }
+
+        // Silhouette vertical edges at a = -PI/4 and a = 3*PI/4
+        const silA = -Math.PI / 4;
+        const silB = (3 * Math.PI) / 4;
+        const sA0 = iso(cx + Math.cos(silA) * r, cy + Math.sin(silA) * r, z0);
+        const sA1 = iso(cx + Math.cos(silA) * r, cy + Math.sin(silA) * r, z1);
+        const sB0 = iso(cx + Math.cos(silB) * r, cy + Math.sin(silB) * r, z0);
+        const sB1 = iso(cx + Math.cos(silB) * r, cy + Math.sin(silB) * r, z1);
+
+        // Bottom visible rim arc
+        const rimPts = [];
+        for (let k = 0; k <= 16; k++) {
+          const a = silA + (k / 16) * Math.PI;
+          rimPts.push(iso(cx + Math.cos(a) * r, cy + Math.sin(a) * r, z0));
+        }
+
+        const outline = `<path class="${cls}" fill="none" d="${polyD(rimPts, false)} M${r1(sA0[0])},${r1(sA0[1])}L${r1(sA1[0])},${r1(sA1[1])} M${r1(sB0[0])},${r1(sB0[1])}L${r1(sB1[0])},${r1(sB1[1])}"/>`;
+        const topCap = opts.skipTop ? "" : `<path class="${cls}" fill="${opts.topFill || pal.top}" d="${polyD(topPts, true)}"/>`;
+        return sides + outline + topCap;
+      }
+
+      // Isometric circle ring points on horizontal plane z
+      function isoCirclePts(cx, cy, r, z, steps = 32) {
+        const pts = [];
+        for (let i = 0; i < steps; i++) {
+          const a = (i / steps) * Math.PI * 2;
+          pts.push(iso(cx + Math.cos(a) * r, cy + Math.sin(a) * r, z));
+        }
+        return pts;
+      }
+
+      /* =======================================================================
+         2. BUILD COMPLETE CUTAWAY MICROWAVE OVEN (STRICT PAINTER'S ORDER)
+         ======================================================================= */
+      function buildStaticMicrowave() {
+        /* --- LAYER 1: SOFT GROUND SHADOW & 4 RUBBER FEET --- */
+        {
+          const sh = [iso(-2, -2, -5), iso(150, -2, -5), iso(150, 94, -5), iso(-2, 94, -5)];
+          let html = `<polygon fill="#1f2937" opacity="0.10" filter="url(#softShadow)" points="${ptsStr(sh)}"/>`;
+          // 4 rubber feet sorted back-to-front by (x + y)
+          for (const [fx, fy] of [[14, 14], [134, 14], [14, 80], [134, 80]]) {
+            html += isoCylinderZ(fx, fy, 5.5, -5, 0, "rubber", 16, { skipTop: true });
+          }
+          document.getElementById("layerShadow").innerHTML = html;
+        }
+
+        /* --- LAYER 2: BASE CHASSIS & REAR/LEFT STRUCTURAL SHELL WALLS --- */
+        {
+          let html = "";
+          // Main base chassis plate
+          html += isoBox(0, 148, 0, 92, 0, 6, "shell");
+          // Subtle base ventilation slots on right-side base rim
+          let vSlots = "";
+          for (let i = 0; i < 6; i++) {
+            vSlots += line3D([148.1, 18 + i * 10, 2], [148.1, 24 + i * 10, 2]);
+          }
+          html += `<path class="ink-faint" fill="none" d="${vSlots}"/>`;
+
+          // Back outer housing wall (y = 0..4, full width x = 0..148, height z = 6..86)
+          html += isoBox(0, 148, 0, 4, 6, 86, "shell");
+
+          // Left outer housing wall (x = 0..4, depth y = 4..88, height z = 6..86)
+          html += isoBox(0, 4, 4, 88, 6, 86, "shell");
+
+          // Clean architectural cutaway roof rim along back & left edge (shows real sheet-metal thickness)
+          html += isoBox(0, 148, 0, 12, 82, 86, "shell");
+          html += isoBox(0, 12, 12, 88, 82, 86, "shell");
+
+          document.getElementById("layerShellBack").innerHTML = html;
+        }
+
+        /* --- LAYER 3: COOKING CAVITY INTERIOR WALLS & FLOOR --- */
+        {
+          let html = "";
+          // Recessed metallic cavity floor
+          html += isoBox(4, 104, 4, 88, 6, 8, "cavity", { skipFront: true, skipRight: true });
+
+          // Cavity inner back wall face (y = 4, x = 4..104, z = 8..82)
+          const bw = [iso(4, 4, 8), iso(104, 4, 8), iso(104, 4, 82), iso(4, 4, 82)];
+          html += `<polygon class="ink-thin" fill="#f3f4f6" points="${ptsStr(bw)}"/>`;
+
+          // Cavity inner left wall face (x = 4, y = 4..88, z = 8..82)
+          const lw = [iso(4, 4, 8), iso(4, 88, 8), iso(4, 88, 82), iso(4, 4, 82)];
+          html += `<polygon class="ink-thin" fill="#e8ebf0" points="${ptsStr(lw)}"/>`;
+
+          // Subtle stamped cavity wall panel ribs & vent dots on inner back wall
+          let seams = "";
+          seams += line3D([4, 4, 44], [104, 4, 44]);
+          seams += line3D([4, 44, 8], [4, 44, 82]);
+          for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 5; c++) {
+              const p = iso(22 + c * 5, 4.2, 64 - r * 5);
+              html += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="1.15" fill="#9ca3af"/>`;
+            }
+          }
+          html += `<path class="ink-faint" fill="none" d="${seams}"/>`;
+
+          // Subtle warm overhead cavity lamp glow
+          const glowPos = iso(54, 44, 44);
+          html += `<ellipse cx="${r1(glowPos[0])}" cy="${r1(glowPos[1])}" rx="92" ry="62" fill="url(#cavityGlow)" pointer-events="none"/>`;
+
+          // Under-tray turntable roller track ring (static on floor z = 8.2)
+          const trackOuter = isoCirclePts(54, 48, 22, 8.3, 28);
+          const trackInner = isoCirclePts(54, 48, 18.5, 8.3, 28);
+          html += `<path class="ink-faint" fill="none" d="${polyD(trackOuter, true)} ${polyD(trackInner, true)}"/>`;
+          // Central drive coupler hub
+          html += isoCylinderZ(54, 48, 4.5, 8, 10.6, "steel", 16);
+
+          document.getElementById("layerCavityBack").innerHTML = html;
+        }
+
+        /* --- LAYER 4: TURNTABLE, GLASS PLATTER & CERAMIC BOWL (DYNAMIC ROTATING GROUP) --- */
+        {
+          let html = "";
+          // Active highlight ring around turntable (shown subtly on Step 4)
+          html += `<path class="part-highlight" d="${polyD(isoCirclePts(54, 48, 36.5, 11.2, 36), true)}"/>`;
+
+          // Dynamic group for rotating glass platter & rollers (updated in animation loop)
+          html += `<g id="turntableDynamic"></g>`;
+
+          // White Ceramic Bowl sitting in the center of the glass platter (z = 12.2..28)
+          // Tapered curved ceramic bowl built from stacked smooth isometric rings
+          const bowlRings = [
+            { z: 12.2, r: 10.5 },
+            { z: 16.5, r: 14.2 },
+            { z: 22.0, r: 16.8 },
+            { z: 27.5, r: 17.8 }
+          ];
+          const steps = 28;
+          for (let s = 0; s < bowlRings.length - 1; s++) {
+            const A = bowlRings[s], B = bowlRings[s + 1];
+            const ptsA = isoCirclePts(54, 48, A.r, A.z, steps);
+            const ptsB = isoCirclePts(54, 48, B.r, B.z, steps);
+            for (let i = 0; i < steps; i++) {
+              const j = (i + 1) % steps;
+              const midA = ((i + 0.5) / steps) * Math.PI * 2;
+              if (Math.cos(midA) + Math.sin(midA) > -0.04) {
+                const fill = Math.cos(midA) > Math.sin(midA) ? "#e5e7eb" : "#f5f6f8";
+                html += `<polygon fill="${fill}" stroke="${fill}" stroke-width="0.4" points="${ptsStr([ptsA[i], ptsA[j], ptsB[j], ptsB[i]])}"/>`;
+              }
+            }
+          }
+          // Crisp outer bowl silhouette curve & rim
+          const rimOuter = isoCirclePts(54, 48, 17.8, 27.5, 32);
+          const rimInner = isoCirclePts(54, 48, 16.0, 27.5, 32);
+          const waterPts = isoCirclePts(54, 48, 15.2, 24.8, 32);
+          const baseArc = [];
+          for (let k = 0; k <= 16; k++) {
+            const a = -Math.PI / 4 + (k / 16) * Math.PI;
+            baseArc.push(iso(54 + Math.cos(a) * 10.5, 48 + Math.sin(a) * 10.5, 12.2));
+          }
+          // Left and right smooth curved silhouette sides of bowl
+          const sideL = bowlRings.map((rb) => iso(54 + Math.cos(3 * Math.PI / 4) * rb.r, 48 + Math.sin(3 * Math.PI / 4) * rb.r, rb.z));
+          const sideR = bowlRings.map((rb) => iso(54 + Math.cos(-Math.PI / 4) * rb.r, 48 + Math.sin(-Math.PI / 4) * rb.r, rb.z));
+
+          html += `<path class="ink" fill="none" d="${polyD(baseArc, false)} ${polyD(sideL, false)} ${polyD(sideR, false)}"/>`;
+          // Bowl inner wall + rim + warm water/soup surface
+          html += `<path class="ink" fill="#ffffff" d="${polyD(rimOuter, true)}"/>`;
+          html += `<path class="ink-thin" fill="#e5e7eb" d="${polyD(rimInner, true)}"/>`;
+          html += `<path class="ink-thin" fill="url(#waterSurface)" d="${polyD(waterPts, true)}"/>`;
+
+          // Subtle concentric ripple ring on water surface
+          html += `<path id="waterRipple" fill="none" stroke="#ffffff" stroke-width="1.1" opacity="0.6" d="${polyD(isoCirclePts(54, 48, 8.5, 25.0, 24), true)}"/>`;
+
+          document.getElementById("layerTurntable").innerHTML = html;
+        }
+
+        /* --- LAYER 5: INNER STEEL PARTITION WALL (STEPPED CUTAWAY SO CAVITY IS UNOBSTRUCTED) --- */
+        {
+          let html = "";
+          // Rear full-height partition section (y = 4..34, z = 6..82)
+          html += isoBox(104, 108, 4, 34, 6, 82, "steel");
+          // Lower cutaway bulkhead along y = 34..88 (height z = 6..20) showing clear bay separation without blocking turntable!
+          html += isoBox(104, 108, 34, 88, 6, 20, "steel");
+          // Upper-right waveguide entry frame + pale amber-gray Mica Cover Window on cavity side
+          html += isoBox(104, 108, 34, 60, 62, 82, "steel");
+          const mica = [iso(103.7, 39, 64), iso(103.7, 57, 64), iso(103.7, 57, 77), iso(103.7, 39, 77)];
+          html += `<polygon class="ink-thin" fill="#e7e5e4" points="${ptsStr(mica)}"/>`;
+          document.getElementById("layerPartition").innerHTML = html;
+        }
+
+        /* --- LAYER 6: RIGHT ELECTRONICS BAY (HV TRANSFORMER, CAPACITOR, FAN & FINNED MAGNETRON) --- */
+        {
+          let html = "";
+          // Active highlight box around electronics bay (Step 2)
+          const hl = [iso(110, 8, 6), iso(145, 8, 6), iso(145, 70, 6), iso(110, 70, 6)];
+          html += `<polygon class="part-highlight" points="${ptsStr(hl)}"/>`;
+
+          // 6A. Rear Cooling Fan behind back vent (x = 128, y = 6, z = 54)
+          html += isoBox(116, 140, 4.5, 8.5, 42, 66, "steel");
+          html += `<g id="coolingFanDynamic"></g>`;
+
+          // 6B. High-Voltage Transformer (220V -> 4000V) at bottom-rear (x = 113..141, y = 12..38, z = 6..34)
+          // Laminated silicon-steel iron core
+          html += isoBox(113, 141, 12, 38, 6, 34, "steel", { rightFill: "url(#ironLaminations)" });
+          // Copper Primary & Secondary coil windings wrapped around core center
+          html += isoBox(111, 143, 18, 32, 11, 29, "copper");
+          let coilLines = "";
+          for (let z = 14; z <= 26; z += 3) {
+            coilLines += line3D([111, 32.1, z], [143, 32.1, z]);
+            coilLines += line3D([143.1, 18, z], [143.1, 32, z]);
+          }
+          html += `<path class="ink-thin" fill="none" d="${coilLines}"/>`;
+
+          // 6C. Cylindrical High-Voltage Capacitor beside transformer (x = 123, y = 55, z = 6..32)
+          html += isoCylinderZ(123, 55, 8.5, 6, 32, "steel", 22);
+          // Twin ceramic HV terminals on capacitor top
+          html += isoCylinderZ(120, 53, 1.8, 32, 36.5, "ceramic", 10);
+          html += isoCylinderZ(126, 57, 1.8, 32, 36.5, "ceramic", 10);
+
+          // High-voltage red/dark insulated jumper cables connecting Transformer -> Capacitor -> Magnetron
+          const hv1 = [iso(136, 32, 26), iso(138, 44, 34), iso(126, 57, 36)];
+          const hv2 = [iso(120, 53, 36), iso(118, 48, 42), iso(122, 46, 46)];
+          html += `<path fill="none" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round" d="${polyD(hv1, false)} ${polyD(hv2, false)}"/>`;
+
+          // 6D. DETAILED FINNED MAGNETRON (x = 114..142, y = 34..62, z = 42..72)
+          // Mounting bracket connecting magnetron to partition wall
+          html += isoBox(108, 118, 42, 54, 44, 48, "steel");
+
+          // Lower dark ferrite ring magnet
+          html += isoCylinderZ(128, 48, 11.5, 42, 47.5, "dark", 24);
+
+          // Copper cylindrical anode core inside cooling fins
+          html += isoCylinderZ(128, 48, 6.2, 47.5, 66.5, "copper", 20);
+
+          // Warm amber glowing cathode/filament pulse inside magnetron core
+          const glowC = iso(128, 48, 57);
+          html += `<circle id="cathodePulse" class="cathode-glow" cx="${r1(glowC[0])}" cy="${r1(glowC[1])}" r="14" opacity="0.55"/>`;
+
+          // 6 Stacked Aluminum Cooling Fins around the copper anode
+          for (let f = 0; f < 6; f++) {
+            const fz = 48.8 + f * 3.1;
+            html += isoBox(115, 141, 35, 61, fz, fz + 1.35, "fin");
+          }
+
+          // Upper dark ferrite ring magnet
+          html += isoCylinderZ(128, 48, 11.5, 66.5, 72, "dark", 24);
+
+          // Ceramic insulator collar + Protruding Copper Coaxial Antenna feeding UP into Waveguide!
+          html += isoCylinderZ(128, 48, 5.2, 72, 75.5, "ceramic", 18);
+          html += isoCylinderZ(128, 48, 2.8, 75.5, 81.5, "copper", 16);
+
+          document.getElementById("layerElectronics").innerHTML = html;
+        }
+
+        /* --- LAYER 7: CUTAWAY RECTANGULAR METAL WAVEGUIDE (TOP-RIGHT DUCT) --- */
+        {
+          let html = "";
+          // Waveguide runs horizontally from above magnetron (x = 135) to cooking cavity entry (x = 88)
+          // y = 40..56, z = 75..85 — cutaway front-top so internal cyan/blue waves are crystal clear!
+          // Bottom floor of waveguide duct
+          html += isoBox(88, 136, 40, 56, 75, 76.6, "duct");
+          // Back wall of waveguide duct
+          html += isoBox(88, 136, 40, 41.8, 76.6, 85.2, "duct");
+          // Right end cap above magnetron
+          html += isoBox(134.2, 136, 41.8, 56, 76.6, 85.2, "duct");
+          // Cutaway front rim lip (low height so you see right inside the channel)
+          html += isoBox(88, 136, 54.4, 56, 76.6, 79.4, "duct");
+          // Short top overhang lip at rear so thickness reads immediately
+          html += isoBox(88, 136, 40, 45.5, 84.0, 85.4, "duct");
+
+          // Active highlight outline around waveguide (Step 3)
+          const wgHl = [iso(86, 39, 86), iso(138, 39, 86), iso(138, 57, 86), iso(86, 57, 86)];
+          html += `<polygon class="part-highlight" points="${ptsStr(wgHl)}"/>`;
+
+          // Dynamic sinusoidal waves inside the waveguide duct
+          html += `<g id="wavesWaveguideDynamic"></g>`;
+
+          document.getElementById("layerWaveguide").innerHTML = html;
+        }
+
+        /* --- LAYER 8: FRONT CUTAWAY DOOR WITH FARADAY PERFORATED MESH SHIELD --- */
+        {
+          let html = "";
+          // Outer door bezel perimeter (x = 2..103, y = 88..93, z = 6..84) built as 4 clean frame bars
+          // so the window inside is genuinely transparent!
+          // Bottom frame bar
+          html += isoBox(2, 103, 88, 93, 6, 15, "shell");
+          // Left frame bar
+          html += isoBox(2, 12, 88, 93, 15, 75, "shell");
+          // Right frame bar
+          html += isoBox(92, 103, 88, 93, 15, 75, "shell");
+          // Top frame bar
+          html += isoBox(2, 103, 88, 93, 75, 84, "shell");
+
+          // Inner Viewing Glass + Perforated Faraday Metal Mesh Shield (x = 12..92, y = 90.5, z = 15..75)
+          const winPts = [iso(12, 90.5, 15), iso(92, 90.5, 15), iso(92, 90.5, 75), iso(12, 90.5, 75)];
+          // Crystal glass subtle reflection tint
+          html += `<polygon fill="#e0f2fe" fill-opacity="0.12" points="${ptsStr(winPts)}"/>`;
+          // Fine Faraday perforated mesh screen (switches opacity/crispness on Step 5!)
+          html += `<polygon id="faradayScreen" class="ink-thin" fill="url(#faradayMesh)" fill-opacity="0.34" points="${ptsStr(winPts)}"/>`;
+
+          // Subtle diagonal glass glare streaks
+          const g1 = [iso(22, 91, 68), iso(36, 91, 68), iso(24, 91, 22), iso(16, 91, 22)];
+          html += `<polygon fill="#ffffff" opacity="0.22" points="${ptsStr(g1)}" pointer-events="none"/>`;
+
+          // Ergonomic vertical door handle (x = 95..100, y = 93..99, z = 22..68)
+          html += isoBox(96, 99.5, 93, 98.5, 23, 27, "steel");
+          html += isoBox(96, 99.5, 93, 98.5, 63, 67, "steel");
+          html += isoBox(95.5, 100, 96.5, 100, 22, 68, "shell");
+
+          // Active highlight around door Faraday mesh (Step 5)
+          const dHl = [iso(10, 93.2, 13), iso(94, 93.2, 13), iso(94, 93.2, 77), iso(10, 93.2, 77)];
+          html += `<polygon class="part-highlight" points="${ptsStr(dHl)}"/>`;
+
+          // Step 5 Animated Bounce-Back Reflection Waves (inside the mesh showing 12 cm waves reflected safely inward)
+          html += `<g id="faradayBounceDynamic" opacity="0"></g>`;
+
+          document.getElementById("layerFrontDoor").innerHTML = html;
+        }
+
+        /* --- LAYER 9: SLEEK FRONT-RIGHT CONTROL BEZEL (DISPLAY, DIAL & START BUTTON) --- */
+        {
+          let html = "";
+          // Control panel front plate (x = 105..148, y = 88..93, z = 6..84)
+          html += isoBox(105, 148, 88, 93, 6, 84, "shell");
+
+          // Recessed digital LCD display (x = 112..141, y = 93.1, z = 60..74)
+          const lcd = [iso(112, 93.2, 60), iso(141, 93.2, 60), iso(141, 93.2, 74), iso(112, 93.2, 74)];
+          html += `<polygon class="ink-thin" fill="#111827" points="${ptsStr(lcd)}"/>`;
+
+          // Isometric affine-transformed crisp "01:30" digital timer inside LCD
+          const p0 = iso(126.5, 93.3, 65.2);
+          const px = iso(127.5, 93.3, 65.2);
+          const pz = iso(126.5, 93.3, 66.2);
+          const a = px[0] - p0[0], b = px[1] - p0[1];
+          const c = -(pz[0] - p0[0]), d = -(pz[1] - p0[1]);
+          html += `<g transform="matrix(${a.toFixed(4)} ${b.toFixed(4)} ${c.toFixed(4)} ${d.toFixed(4)} ${r1(p0[0])} ${r1(p0[1])})">`;
+          html += `<text id="ovenTimerText" x="0" y="0" text-anchor="middle" fill="#38bdf8" font-family="ui-monospace, monospace" font-size="8.2" font-weight="700" letter-spacing="0.6">01:30</text>`;
+          html += `</g>`;
+
+          // Sleek isometric rotary power/timer dial at (126.5, 93, 41)
+          const dialBase = [];
+          const dialFront = [];
+          for (let i = 0; i < 20; i++) {
+            const ang = (i / 20) * Math.PI * 2;
+            const dx = Math.cos(ang) * 9.5;
+            const dz = Math.sin(ang) * 9.5;
+            dialBase.push(iso(126.5 + dx, 93.2, 41 + dz));
+            dialFront.push(iso(126.5 + dx, 96.5, 41 + dz));
+          }
+          html += `<path class="ink-thin" fill="#e5e7eb" d="${polyD(dialBase, true)}"/>`;
+          html += `<path class="ink" fill="#ffffff" d="${polyD(dialFront, true)}"/>`;
+          // Indicator notch on rotary knob
+          html += `<path class="ink" fill="none" d="${line3D([126.5, 96.6, 44], [126.5, 96.6, 49.2])}"/>`;
+
+          // Start & Stop tactile buttons below dial
+          const btn1 = [iso(113, 93.3, 18), iso(125, 93.3, 18), iso(125, 93.3, 25), iso(113, 93.3, 25)];
+          const btn2 = [iso(128, 93.3, 18), iso(140, 93.3, 18), iso(140, 93.3, 25), iso(128, 93.3, 25)];
+          html += `<polygon class="ink-thin" fill="#f3f4f6" points="${ptsStr(btn1)}"/>`;
+          html += `<polygon class="ink-thin" fill="#2563eb" points="${ptsStr(btn2)}"/>`;
+
+          document.getElementById("layerControlBezel").innerHTML = html;
+        }
+      }
+
+      /* =======================================================================
+         3. DYNAMIC 60 FPS ANIMATIONS (TURNTABLE, 2.45 GHz WAVES, H₂O, STEAM, FAN)
+         ======================================================================= */
+      function buildSinusoidal3DWave(pStart, pEnd, amp, freq, phase, samples = 36, upAxis = [0, 0, 1]) {
+        const pts = [];
+        for (let i = 0; i <= samples; i++) {
+          const t = i / samples;
+          const bx = pStart[0] + (pEnd[0] - pStart[0]) * t;
+          const by = pStart[1] + (pEnd[1] - pStart[1]) * t;
+          const bz = pStart[2] + (pEnd[2] - pStart[2]) * t;
+          const env = Math.sin(t * Math.PI); // Smooth tapered start & end
+          const w = Math.sin(t * freq * Math.PI * 2 - phase) * amp * (0.25 + 0.75 * env);
+          pts.push(iso(bx + upAxis[0] * w, by + upAxis[1] * w, bz + upAxis[2] * w));
+        }
+        return polyD(pts, false);
+      }
+
+      // 5 Polar H₂O Molecule anchors floating cleanly over/inside the heated bowl
+      const MOLECULES = [
+        { x: 46, y: 45, z: 28, ph: 0.0 },
+        { x: 56, y: 42, z: 31, ph: 1.4 },
+        { x: 63, y: 50, z: 27, ph: 2.7 },
+        { x: 51, y: 54, z: 26, ph: 4.1 },
+        { x: 54, y: 47, z: 35, ph: 5.3 }
+      ];
+
+      function renderDynamicFrame(tSec, activeStep) {
+        /* 1) Rotating Isometric Glass Turntable + Under-Roller Wheels */
+        {
+          const rot = tSec * 0.65;
+          const el = document.getElementById("turntableDynamic");
+          let html = "";
+
+          // 3 tiny roller wheels turning beneath the glass tray
+          for (let i = 0; i < 3; i++) {
+            const a = rot * 0.5 + (i * Math.PI * 2) / 3;
+            const rp = iso(54 + Math.cos(a) * 20, 48 + Math.sin(a) * 20, 9.6);
+            html += `<circle cx="${r1(rp[0])}" cy="${r1(rp[1])}" r="2.7" fill="#d1d5db" stroke="#374151" stroke-width="0.7"/>`;
+          }
+
+          // Glass Platter thickness rim + translucent top ellipse
+          const platterBot = isoCirclePts(54, 48, 33, 10.6, 36);
+          const platterTop = isoCirclePts(54, 48, 33, 12.2, 36);
+          html += `<path class="ink-thin" fill="#bae6fd" fill-opacity="0.45" d="${polyD(platterBot, true)}"/>`;
+          html += `<path class="ink" fill="url(#glassPlatter)" d="${polyD(platterTop, true)}"/>`;
+
+          // Rotating radial glass ribs & bevel ticks so isometric rotation is unmistakably smooth
+          let ribs = "";
+          for (let i = 0; i < 8; i++) {
+            const a = rot + (i * Math.PI * 2) / 8;
+            const pIn = [54 + Math.cos(a) * 18.5, 48 + Math.sin(a) * 18.5, 12.3];
+            const pOut = [54 + Math.cos(a) * 31.5, 48 + Math.sin(a) * 31.5, 12.3];
+            ribs += line3D(pIn, pOut);
+          }
+          html += `<path stroke="#0284c7" stroke-opacity="0.34" stroke-width="1" stroke-linecap="round" fill="none" d="${ribs}"/>`;
+          // Inner glass ring
+          html += `<path stroke="#ffffff" stroke-opacity="0.7" stroke-width="1" fill="none" d="${polyD(isoCirclePts(54, 48, 25, 12.35, 28), true)}"/>`;
+
+          el.innerHTML = html;
+        }
+
+        /* 2) Spinning Rear Cooling Fan Impeller */
+        {
+          const fanEl = document.getElementById("coolingFanDynamic");
+          const ang = tSec * 7.5;
+          const c = iso(128, 8.7, 54);
+          let fHtml = `<circle cx="${r1(c[0])}" cy="${r1(c[1])}" r="3.4" fill="#4b5563" stroke="#1f2937" stroke-width="0.8"/>`;
+          for (let i = 0; i < 5; i++) {
+            const a = ang + (i * Math.PI * 2) / 5;
+            const tip = iso(128 + Math.cos(a) * 9.5, 8.7, 54 + Math.sin(a) * 9.5);
+            const side = iso(128 + Math.cos(a + 0.35) * 6.5, 8.7, 54 + Math.sin(a + 0.35) * 6.5);
+            fHtml += `<polygon fill="#9ca3af" stroke="#374151" stroke-width="0.6" points="${ptsStr([c, tip, side])}"/>`;
+          }
+          fanEl.innerHTML = fHtml;
+        }
+
+        /* 3) Warm Amber Magnetron Cathode Pulse */
+        {
+          const pulse = document.getElementById("cathodePulse");
+          if (pulse) {
+            const baseOp = activeStep === 2 ? 0.72 : 0.42;
+            const op = baseOp + 0.22 * Math.sin(tSec * 6.5);
+            const rad = (activeStep === 2 ? 16 : 12.5) + 2.2 * Math.sin(tSec * 6.5);
+            pulse.setAttribute("opacity", op.toFixed(2));
+            pulse.setAttribute("r", rad.toFixed(1));
+          }
+        }
+
+        /* 4) Animated 2.45 GHz Microwaves inside Waveguide Duct */
+        {
+          const phase = tSec * 9.5;
+          const wgPath1 = buildSinusoidal3DWave([128, 48, 80.5], [91, 48, 79.5], 2.9, 3.2, phase, 38, [0, 0.3, 1]);
+          const wgPath2 = buildSinusoidal3DWave([128, 48, 80.5], [91, 48, 79.5], 2.2, 3.2, phase + 1.4, 34, [0, 1, 0.2]);
+          const wOp = activeStep === 3 ? 1.0 : 0.85;
+          document.getElementById("wavesWaveguideDynamic").innerHTML =
+            `<g opacity="${wOp}">` +
+            `<path class="mw-wave-glow" d="${wgPath1}"/>` +
+            `<path class="mw-wave-line" d="${wgPath1}"/>` +
+            `<path class="mw-wave-dash" stroke-dashoffset="${(-tSec * 46).toFixed(1)}" d="${wgPath2}"/>` +
+            `</g>`;
+        }
+
+        /* 5) Animated 2.45 GHz Microwaves Reflecting Inside Cooking Cavity Toward Food */
+        {
+          const phase = tSec * 8.5;
+          // Beam 1: Mica window (101, 48, 71) -> direct to bowl (54, 48, 27)
+          const b1 = buildSinusoidal3DWave([101, 48, 71], [56, 48, 29], 3.4, 3.5, phase, 36, [0, 0.4, 1]);
+          // Beam 2: Mica window -> bounces off inner left wall (7, 46, 54) -> hits bowl (52, 48, 28)
+          const b2a = buildSinusoidal3DWave([101, 46, 70], [8, 44, 54], 2.8, 4.0, phase + 0.8, 34, [0, 0, 1]);
+          const b2b = buildSinusoidal3DWave([8, 44, 54], [48, 48, 28], 2.5, 2.8, phase + 2.2, 28, [0, 0, 1]);
+          // Beam 3: Mica window -> bounces off back wall (44, 7, 50) -> hits bowl
+          const b3a = buildSinusoidal3DWave([100, 44, 69], [46, 7, 50], 2.4, 3.4, phase + 1.6, 30, [0, 0, 1]);
+          const b3b = buildSinusoidal3DWave([46, 7, 50], [54, 44, 29], 2.3, 2.5, phase + 3.0, 26, [0, 0, 1]);
+
+          const cavOp = activeStep === 3 || activeStep === 4 ? 0.95 : 0.62;
+          document.getElementById("layerWavesCavity").innerHTML =
+            `<g opacity="${cavOp}">` +
+            `<path class="mw-wave-glow" d="${b1}"/>` +
+            `<path class="mw-wave-line" d="${b1}"/>` +
+            `<path class="mw-wave-dash" opacity="0.85" stroke-dashoffset="${(-tSec * 42).toFixed(1)}" d="${b2a} ${b2b}"/>` +
+            `<path class="mw-wave-dash" opacity="0.65" stroke-dashoffset="${(-tSec * 38).toFixed(1)}" d="${b3a} ${b3b}"/>` +
+            `</g>`;
+        }
+
+        /* 6) Vibrating Polar H₂O Dipole Molecules & Rising Warm Steam Curls */
+        {
+          let html = "";
+
+          // Gentle rising translucent warm steam curls above bowl
+          for (let s = 0; s < 3; s++) {
+            const cycle = (tSec * 0.36 + s * 0.33) % 1;
+            const zBase = 28 + cycle * 22;
+            const sx0 = 49 + s * 5;
+            const sy0 = 46 + (s % 2) * 4;
+            const op = Math.sin(cycle * Math.PI) * (activeStep === 4 ? 0.65 : 0.42);
+            const p0 = iso(sx0, sy0, zBase);
+            const p1 = iso(sx0 + Math.sin(tSec * 2 + s) * 2.5, sy0, zBase + 6);
+            const p2 = iso(sx0 - Math.sin(tSec * 2 + s) * 2.5, sy0, zBase + 12);
+            const d = `M${r1(p0[0])},${r1(p0[1])} Q${r1(p1[0])},${r1(p1[1])} ${r1(p2[0])},${r1(p2[1])}`;
+            html += `<path class="steam-path" opacity="${op.toFixed(2)}" d="${d}"/>`;
+          }
+
+          // H₂O Polar Dipole Molecules oscillating rapidly in sync with 2.45 GHz field (prominent on Step 4)
+          const molOp = activeStep === 4 ? 1.0 : 0.32;
+          html += `<g opacity="${molOp}">`;
+          for (const m of MOLECULES) {
+            const center = iso(m.x, m.y, m.z);
+            // Rapid dipole flip oscillation synchronized to microwave field
+            const osc = Math.sin(tSec * 14 + m.ph) * 0.95;
+            const ox = center[0], oy = center[1];
+            const h1x = ox + Math.cos(osc - 0.92) * 6.2;
+            const h1y = oy + Math.sin(osc - 0.92) * 6.2;
+            const h2x = ox + Math.cos(osc + 0.92) * 6.2;
+            const h2y = oy + Math.sin(osc + 0.92) * 6.2;
+
+            // Thermal vibration aura on Step 4
+            if (activeStep === 4) {
+              html += `<circle cx="${r1(ox)}" cy="${r1(oy)}" r="${(7.5 + Math.abs(osc) * 2).toFixed(1)}" fill="#f97316" opacity="0.16"/>`;
+            }
+            // Covalent O-H bond lines
+            html += `<line x1="${r1(ox)}" y1="${r1(oy)}" x2="${r1(h1x)}" y2="${r1(h1y)}" stroke="#1f2937" stroke-width="1.2"/>`;
+            html += `<line x1="${r1(ox)}" y1="${r1(oy)}" x2="${r1(h2x)}" y2="${r1(h2y)}" stroke="#1f2937" stroke-width="1.2"/>`;
+            // Red Oxygen atom (δ-) + two Blue Hydrogen atoms (δ+)
+            html += `<circle cx="${r1(ox)}" cy="${r1(oy)}" r="3.6" fill="#ef4444" stroke="#7f1d1d" stroke-width="0.75"/>`;
+            html += `<circle cx="${r1(h1x)}" cy="${r1(h1y)}" r="2.2" fill="#3b82f6" stroke="#1e3a8a" stroke-width="0.65"/>`;
+            html += `<circle cx="${r1(h2x)}" cy="${r1(h2y)}" r="2.2" fill="#3b82f6" stroke="#1e3a8a" stroke-width="0.65"/>`;
+          }
+          html += `</g>`;
+
+          document.getElementById("layerSteamAndMolecules").innerHTML = html;
+        }
+
+        /* 7) Step 5 Faraday Mesh Safe Bounce-Back Reflection Demonstration */
+        {
+          const screen = document.getElementById("faradayScreen");
+          const bounceEl = document.getElementById("faradayBounceDynamic");
+          if (activeStep === 5) {
+            screen.setAttribute("fill", "url(#faradayMeshActive)");
+            screen.setAttribute("fill-opacity", "0.86");
+            bounceEl.setAttribute("opacity", "1");
+
+            const ph = tSec * 8.5;
+            // Incoming microwave hitting inner door mesh at (52, 88, 46) and reflecting safely BACK inward!
+            const inWave = buildSinusoidal3DWave([72, 62, 54], [52, 87, 46], 2.8, 2.5, ph, 24, [0, 0, 1]);
+            const outWave = buildSinusoidal3DWave([52, 87, 46], [30, 58, 38], 2.8, 2.5, ph + 1.5, 24, [0, 0, 1]);
+            const hitPt = iso(52, 87, 46);
+            const ringR = 5 + ((tSec * 18) % 10);
+            const ringOp = Math.max(0, 1 - (ringR - 5) / 10);
+
+            // Straight golden light ray passing safely OUT through the tiny holes of the mesh
+            const lightIn = iso(66, 74, 58);
+            const lightOut = iso(66, 108, 58);
+
+            bounceEl.innerHTML =
+              `<path class="mw-wave-glow" d="${inWave} ${outWave}"/>` +
+              `<path class="mw-bounce-line" stroke-dashoffset="${(-tSec * 36).toFixed(1)}" d="${inWave}"/>` +
+              `<path class="mw-bounce-line" stroke-dashoffset="${(-tSec * 36).toFixed(1)}" d="${outWave}"/>` +
+              `<circle cx="${r1(hitPt[0])}" cy="${r1(hitPt[1])}" r="${ringR.toFixed(1)}" fill="none" stroke="#0284c7" stroke-width="1.6" opacity="${ringOp.toFixed(2)}"/>` +
+              `<line x1="${r1(lightIn[0])}" y1="${r1(lightIn[1])}" x2="${r1(lightOut[0])}" y2="${r1(lightOut[1])}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.85"/>`;
+          } else {
+            screen.setAttribute("fill", "url(#faradayMesh)");
+            screen.setAttribute("fill-opacity", "0.34");
+            bounceEl.setAttribute("opacity", "0");
+          }
+        }
+      }
+
+      /* =======================================================================
+         4. 5 CONCISE UZBEK LESSON STEPS & SMOOTH CUBIC-EASED viewBox CAMERA
+         ======================================================================= */
+      const STEPS = [
+        {
+          id: 1,
+          vb: [72, -18, 660, 518],
+          partLayer: null,
+          durationMs: 7500,
+          text: "Mikroto‘lqinli pech ovqatni tashqaridan qizdirmaydi — u ichki magnetron orqali 2.45 GGs chastotali to‘lqinlar yuborib, taomdagi suv molekulalarini ichkaridan isitadi."
+        },
+        {
+          id: 2,
+          vb: [348, 128, 326, 256],
+          partLayer: "layerElectronics",
+          durationMs: 7800,
+          text: "Yuqori kuchlanishli transformator elektr tokini 4000 voltgacha ko‘taradi; magnetron esa bu energiyani 2.45 gigagersli mikroto‘lqinlarga aylantiradi."
+        },
+        {
+          id: 3,
+          vb: [280, 62, 336, 264],
+          partLayer: "layerWaveguide",
+          durationMs: 7500,
+          text: "Magnetron antennasidan chiqqan elektromagnit to‘lqinlar metall to‘lqin o‘tkazgich kanali bo‘ylab yo‘naltirilib, to‘g‘ridan-to‘g‘ri pishirish kamerasiga uzatiladi."
+        },
+        {
+          id: 4,
+          vb: [204, 114, 324, 254],
+          partLayer: "layerTurntable",
+          durationMs: 8200,
+          text: "Mikroto‘lqinlar taomdagi suv molekulalarini soniyasiga milliardlab marta tebratib ishqalanish issiqligi hosil qiladi; aylanuvchi likopcha esa har bir nuqtani bir tekis qizdiradi."
+        },
+        {
+          id: 5,
+          vb: [132, 108, 328, 258],
+          partLayer: "layerFrontDoor",
+          durationMs: 8200,
+          text: "Eshik oynasidagi mayda teshikli metall to‘r Faraday qafasi vazifasini bajaradi: yorug‘lik bemalol o‘tadi, ammo uzunligi 12 santimetrli mikroto‘lqinlar tashqariga chiqolmay ichkariga qaytadi."
+        }
+      ];
+
+      const SPEEDS = [1.0, 1.2, 0.85];
+      const state = {
+        stepIdx: 0,
+        playing: false,
+        muted: false,
+        speedIdx: 0,
+        vbCurrent: [...STEPS[0].vb],
+        vbFrom: [...STEPS[0].vb],
+        vbTo: [...STEPS[0].vb],
+        vbAnimStart: 0,
+        vbAnimDur: 760
+      };
+
+      const svgEl = document.getElementById("ovenSvg");
+      const counterEl = document.getElementById("stepCounter");
+      const subtitleEl = document.getElementById("subtitleBox");
+      const playBtn = document.getElementById("btnPlay");
+      const playIcon = document.getElementById("playIcon");
+      const playLabel = document.getElementById("playLabel");
+      const muteIcon = document.getElementById("muteIcon");
+      const speedBtn = document.getElementById("btnSpeed");
+      const dotsGroup = document.getElementById("dotsGroup");
+
+      // Build 5 clickable step indicator dots
+      const dotEls = STEPS.map((s, idx) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "step-dot" + (idx === 0 ? " active" : "");
+        b.setAttribute("aria-label", `${idx + 1}-qadam`);
+        b.addEventListener("click", () => goToStep(idx, state.playing));
+        dotsGroup.appendChild(b);
+        return b;
+      });
+
+      /* =======================================================================
+         5. AUDIO NARRATION (SPEECHSYNTHESIS + RELIABLE TIMED AUTO-ADVANCE)
+         ======================================================================= */
+      let stepTimer = 0;
+
+      function clearPlaybackTimers() {
+        clearTimeout(stepTimer);
+        stepTimer = 0;
+        if ("speechSynthesis" in window) {
+          try { window.speechSynthesis.cancel(); } catch (_) {}
+        }
+      }
+
+      function pickBestVoice() {
+        if (!("speechSynthesis" in window)) return null;
+        const voices = window.speechSynthesis.getVoices() || [];
+        return (
+          voices.find((v) => /^uz/i.test(v.lang)) ||
+          voices.find((v) => /^tr/i.test(v.lang)) ||
+          voices.find((v) => /^ru/i.test(v.lang)) ||
+          voices[0] ||
+          null
+        );
+      }
+
+      function narrateActiveStep() {
+        clearPlaybackTimers();
+        if (!state.playing) return;
+
+        const step = STEPS[state.stepIdx];
+        const rate = SPEEDS[state.speedIdx];
+        const fallbackMs = Math.round(step.durationMs / rate);
+
+        const advanceNext = () => {
+          if (!state.playing) return;
+          if (state.stepIdx < STEPS.length - 1) {
+            goToStep(state.stepIdx + 1, true);
+          } else {
+            setPlaying(false);
+          }
+        };
+
+        // Fallback timer guarantees smooth progression even if browser TTS is missing or blocked
+        stepTimer = setTimeout(advanceNext, fallbackMs);
+
+        if (!state.muted && "speechSynthesis" in window) {
+          try {
+            const utter = new SpeechSynthesisUtterance(step.text);
+            const voice = pickBestVoice();
+            if (voice) {
+              utter.voice = voice;
+              utter.lang = voice.lang;
+            } else {
+              utter.lang = "uz-UZ";
+            }
+            utter.rate = rate;
+            utter.onend = () => {
+              if (!state.playing) return;
+              clearTimeout(stepTimer);
+              stepTimer = setTimeout(advanceNext, 750);
+            };
+            window.speechSynthesis.speak(utter);
+          } catch (_) {
+            // Silent timer fallback already running
+          }
+        }
+      }
+
+      function setPlaying(on) {
+        state.playing = on;
+        if (on) {
+          playIcon.innerHTML = `<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>`;
+          playLabel.textContent = "Pauza";
+          narrateActiveStep();
+        } else {
+          clearPlaybackTimers();
+          playIcon.innerHTML = `<polygon points="6,4 20,12 6,20"/>`;
+          playLabel.textContent = "Eshitish";
+        }
+      }
+
+      function goToStep(idx, keepPlaying = false) {
+        const clamped = ((idx % STEPS.length) + STEPS.length) % STEPS.length;
+        state.stepIdx = clamped;
+        const step = STEPS[clamped];
+
+        // Start smooth cubic-eased viewBox transition
+        state.vbFrom = [...state.vbCurrent];
+        state.vbTo = [...step.vb];
+        state.vbAnimStart = performance.now();
+
+        // Update UI counter, dots & subtitle
+        counterEl.textContent = `${clamped + 1} / ${STEPS.length}`;
+        subtitleEl.textContent = step.text;
+        dotEls.forEach((d, i) => d.classList.toggle("active", i === clamped));
+
+        // Gently highlight active assembly without dimming the rest
+        ["layerElectronics", "layerWaveguide", "layerTurntable", "layerFrontDoor"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.toggle("is-active", id === step.partLayer);
+        });
+
+        if (keepPlaying) {
+          narrateActiveStep();
+        } else {
+          setPlaying(false);
+        }
+      }
+
+      /* =======================================================================
+         6. EVENT BINDINGS (PLAYER, CLICKABLE SVG PARTS & KEYBOARD)
+         ======================================================================= */
+      document.getElementById("btnPrev").addEventListener("click", () => goToStep(state.stepIdx - 1, state.playing));
+      document.getElementById("btnNext").addEventListener("click", () => goToStep(state.stepIdx + 1, state.playing));
+      document.getElementById("btnReplay").addEventListener("click", () => {
+        if (!state.playing) setPlaying(true);
+        else narrateActiveStep();
+      });
+
+      playBtn.addEventListener("click", () => {
+        if (!state.playing && state.stepIdx === STEPS.length - 1) {
+          goToStep(0, false);
+        }
+        setPlaying(!state.playing);
+      });
+
+      document.getElementById("btnMute").addEventListener("click", () => {
+        state.muted = !state.muted;
+        if (state.muted) {
+          muteIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
+          if ("speechSynthesis" in window) {
+            try { window.speechSynthesis.cancel(); } catch (_) {}
+          }
+        } else {
+          muteIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>`;
+          if (state.playing) narrateActiveStep();
+        }
+      });
+
+      speedBtn.addEventListener("click", () => {
+        state.speedIdx = (state.speedIdx + 1) % SPEEDS.length;
+        const rate = SPEEDS[state.speedIdx];
+        speedBtn.textContent = `${rate.toFixed(rate === 0.85 ? 2 : 1)}x`;
+        if (state.playing) narrateActiveStep();
+      });
+
+      // Click directly on any major microwave component to focus it
+      document.querySelectorAll(".clickable-part").forEach((el) => {
+        el.addEventListener("click", () => {
+          const targetStep = Number(el.dataset.step) - 1;
+          if (!Number.isNaN(targetStep)) goToStep(targetStep, state.playing);
+        });
+      });
+
+      // Keyboard navigation: Left/Right arrows & Spacebar
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          goToStep(state.stepIdx + 1, state.playing);
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          goToStep(state.stepIdx - 1, state.playing);
+        } else if (e.key === " ") {
+          e.preventDefault();
+          setPlaying(!state.playing);
+        }
+      });
+
+      /* =======================================================================
+         7. MAIN 60 FPS ANIMATION & SMOOTH viewBox INTERPOLATION LOOP
+         ======================================================================= */
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      const startTs = performance.now();
+
+      function tick(now) {
+        // 1) Interpolate SVG viewBox camera smoothly
+        if (state.vbAnimStart > 0) {
+          const raw = Math.min(1, (now - state.vbAnimStart) / state.vbAnimDur);
+          const e = easeInOutCubic(raw);
+          for (let i = 0; i < 4; i++) {
+            state.vbCurrent[i] = state.vbFrom[i] + (state.vbTo[i] - state.vbFrom[i]) * e;
+          }
+          svgEl.setAttribute("viewBox", state.vbCurrent.map((v) => v.toFixed(2)).join(" "));
+          if (raw >= 1) state.vbAnimStart = 0;
+        }
+
+        // 2) Update live physical animations (turntable, waves, molecules, steam, fan, cathode)
+        const tSec = (now - startTs) / 1000;
+        renderDynamicFrame(tSec, STEPS[state.stepIdx].id);
+
+        requestAnimationFrame(tick);
+      }
+
+      // Initialize voices list in Chromium browsers
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.getVoices();
+      }
+
+      // Build geometry and start immediately
+      buildStaticMicrowave();
+      goToStep(0, false);
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

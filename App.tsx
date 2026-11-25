@@ -41,11 +41,24 @@ import {
   formatCostUzsApprox,
   formatTokenCount,
   loadSessionTokenStats,
+  mergeTokenUsage,
   recordSessionTokenStats,
   resetSessionTokenStats,
   ZERO_TOKEN_USAGE,
   type SessionTokenStats,
 } from './lib/tokenUsage';
+import {
+  cleanTopicTitleUz,
+  findCuratedHtmlModel,
+  findGeneratedHtmlCache,
+  normalizeHtmlTopicQuery,
+  saveGeneratedHtmlCache,
+} from './data/htmlModelsLibrary';
+import {
+  HtmlLessonViewer,
+  type HtmlLessonState,
+  type HtmlStreamProgress,
+} from './components/HtmlLessonViewer';
 import {
   findSavedLesson,
   loadActiveSessionSnapshot,
@@ -190,7 +203,21 @@ export default function App() {
 
   const [initialSession] = useState(() => loadActiveSessionSnapshot());
 
-  const [viewMode, setViewMode] = useState<'home' | 'lesson' | 'uz3d'>('home');
+  const [viewMode, setViewMode] = useState<'home' | 'lesson' | 'uz3d' | 'html-lesson'>('home');
+  const [activeHtmlLesson, setActiveHtmlLesson] = useState<HtmlLessonState | null>(null);
+  const [htmlStreamProgress, setHtmlStreamProgress] = useState<HtmlStreamProgress>({
+    active: false,
+    topicTitle: '',
+    statusMessage: '',
+    pass: 1,
+    totalLines: 0,
+    totalChars: 0,
+    codeTail: '',
+    startedAt: 0,
+    error: null,
+  });
+  const htmlAbortRef = useRef<AbortController | null>(null);
+  const lastHtmlQueryRef = useRef<string>('');
   const [uz3dLesson, setUz3dLesson] = useState<Uz3DLessonResponse | null>(
     () => initialSession?.uz3dLesson || MOCK_UZ3D_LESSONS[0]
   );
@@ -313,7 +340,7 @@ export default function App() {
 
   useEffect(() => {
     saveActiveSessionSnapshot({
-      viewMode,
+      viewMode: viewMode === 'html-lesson' ? 'home' : viewMode,
       lesson,
       activeStepIndex,
       uz3dLesson,
@@ -875,6 +902,261 @@ export default function App() {
 
   const totalHistoryCount = mergedSavedLessons.length + legacyOnlyHistory.length;
 
+  const cancelHtmlStream = useCallback(() => {
+    htmlAbortRef.current?.abort();
+    htmlAbortRef.current = null;
+    setHtmlStreamProgress((prev) => ({ ...prev, active: false }));
+  }, []);
+
+  const openOrGenerateHtmlLesson = useCallback(
+    async (rawQuery: string, forceRegenerate = false, stepCountOverride?: number) => {
+      const q = rawQuery.trim();
+      if (!q) return;
+
+      stopPlayback();
+      cancelHtmlStream();
+      lastHtmlQueryRef.current = q;
+
+      const requestedSteps = clampLessonStepCount(stepCountOverride ?? lessonStepCount);
+      const cleanTitle = cleanTopicTitleUz(q);
+
+      // 1. Instant match from curated Gold-Standard HTML models (0ms, 0 tokens)
+      if (!forceRegenerate) {
+        const curated = findCuratedHtmlModel(q);
+        if (curated) {
+          setActiveHtmlLesson({
+            topicTitle: curated.titleUz,
+            sourceLabel: 'library',
+            publicPath: curated.publicPath,
+            tokenUsage: ZERO_TOKEN_USAGE,
+          });
+          setHtmlStreamProgress({
+            active: false,
+            topicTitle: curated.titleUz,
+            statusMessage: '',
+            pass: 1,
+            totalLines: 0,
+            totalChars: 0,
+            codeTail: '',
+            startedAt: Date.now(),
+            error: null,
+          });
+          setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
+          setQueryText('');
+          setViewMode('html-lesson');
+          viewModeRef.current = 'html-lesson';
+          return;
+        }
+
+        // 2. Instant match from previously Qwen-generated HTML cache in localStorage (0ms, 0 tokens)
+        const cachedHtml = findGeneratedHtmlCache(q);
+        if (cachedHtml && cachedHtml.html) {
+          setActiveHtmlLesson({
+            topicTitle: cachedHtml.topicTitle,
+            sourceLabel: 'cache',
+            htmlContent: cachedHtml.html,
+            modelUsed: cachedHtml.model,
+            tokenUsage: ZERO_TOKEN_USAGE,
+          });
+          setHtmlStreamProgress({
+            active: false,
+            topicTitle: cachedHtml.topicTitle,
+            statusMessage: '',
+            pass: 1,
+            totalLines: 0,
+            totalChars: 0,
+            codeTail: '',
+            startedAt: Date.now(),
+            error: null,
+          });
+          setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
+          setQueryText('');
+          setViewMode('html-lesson');
+          viewModeRef.current = 'html-lesson';
+          return;
+        }
+      }
+
+      // 3. Zero-to-HTML streaming generation via Qwen (supports multi-pass continuation without 60s Vercel timeout!)
+      const startedAt = Date.now();
+      setActiveHtmlLesson(null);
+      setQueryText('');
+      setViewMode('html-lesson');
+      viewModeRef.current = 'html-lesson';
+      setHtmlStreamProgress({
+        active: true,
+        topicTitle: cleanTitle,
+        statusMessage: 'Qwen 3.8 Omni Flash izometrik HTML kodini 0 dan yozmoqda...',
+        pass: 1,
+        totalLines: 0,
+        totalChars: 0,
+        codeTail: '',
+        startedAt,
+        error: null,
+      });
+
+      let continueFrom = '';
+      let accumulatedUsage = ZERO_TOKEN_USAGE;
+      let modelUsed = 'qwen3.8-omni-flash';
+      let codeTailAccum = '';
+
+      try {
+        for (let pass = 1; pass <= 4; pass++) {
+          const controller = new AbortController();
+          htmlAbortRef.current = controller;
+
+          const res = await fetch('/api/tutor/html-lesson', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: q,
+              stepCount: requestedSteps,
+              continueFrom,
+              pass,
+            }),
+            signal: controller.signal,
+          });
+
+          if (!res.ok) {
+            const errPayload = await safeParseJsonOrNull<{ error?: string }>(res);
+            throw new Error(
+              errPayload?.error || `Server xatosi (HTTP ${res.status})`
+            );
+          }
+
+          const contentType = res.headers.get('content-type') || '';
+          if (!contentType.includes('text/event-stream') || !res.body) {
+            throw new Error('Server oqimli javob (SSE) qaytarmadi.');
+          }
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let buffer = '';
+          let gotDone = false;
+          let gotPartial = false;
+
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const blocks = buffer.split('\n\n');
+            buffer = blocks.pop() || '';
+
+            for (const block of blocks) {
+              const lines = block.split('\n');
+              let eventName = 'message';
+              let dataStr = '';
+              for (const line of lines) {
+                if (line.startsWith('event:')) eventName = line.slice(6).trim();
+                else if (line.startsWith('data:')) dataStr += line.slice(5).trim();
+              }
+              if (!dataStr) continue;
+
+              let payload: any;
+              try {
+                payload = JSON.parse(dataStr);
+              } catch {
+                continue;
+              }
+
+              if (eventName === 'status') {
+                setHtmlStreamProgress((prev) => ({
+                  ...prev,
+                  statusMessage: payload.message || prev.statusMessage,
+                  pass: payload.pass || pass,
+                }));
+              } else if (eventName === 'chunk') {
+                const text = String(payload.text || '');
+                codeTailAccum = (codeTailAccum + text).slice(-900);
+                setHtmlStreamProgress((prev) => ({
+                  ...prev,
+                  totalLines: Number(payload.totalLines) || prev.totalLines,
+                  totalChars: Number(payload.totalChars) || prev.totalChars,
+                  codeTail: codeTailAccum,
+                }));
+              } else if (eventName === 'partial') {
+                gotPartial = true;
+                continueFrom = String(payload.htmlSoFar || '');
+                if (payload.model) modelUsed = String(payload.model);
+                if (payload.token_usage) {
+                  accumulatedUsage = mergeTokenUsage(accumulatedUsage, payload.token_usage);
+                }
+              } else if (eventName === 'done') {
+                gotDone = true;
+                const finalHtml = String(payload.html || '');
+                if (payload.model) modelUsed = String(payload.model);
+                if (payload.token_usage) {
+                  accumulatedUsage = mergeTokenUsage(accumulatedUsage, payload.token_usage);
+                }
+                if (!finalHtml || finalHtml.length < 200) {
+                  throw new Error('Qwen bo‘sh yoki tugallanmagan HTML qaytardi.');
+                }
+
+                saveGeneratedHtmlCache({
+                  key: normalizeHtmlTopicQuery(q) || q.toLowerCase(),
+                  topicTitle: cleanTitle,
+                  html: finalHtml,
+                  model: modelUsed,
+                  createdAt: new Date().toISOString(),
+                  tokens: {
+                    prompt_tokens: accumulatedUsage.prompt_tokens,
+                    cached_tokens: accumulatedUsage.cached_tokens || 0,
+                    output_tokens: accumulatedUsage.output_tokens,
+                    total_tokens: accumulatedUsage.total_tokens,
+                    cost_usd: accumulatedUsage.cost_usd,
+                  },
+                });
+
+                setSessionTokenStats((prev) =>
+                  recordSessionTokenStats(prev, accumulatedUsage, cleanTitle)
+                );
+                setActiveHtmlLesson({
+                  topicTitle: cleanTitle,
+                  sourceLabel: 'qwen-generated',
+                  htmlContent: finalHtml,
+                  modelUsed,
+                  tokenUsage: accumulatedUsage,
+                });
+                setHtmlStreamProgress((prev) => ({
+                  ...prev,
+                  active: false,
+                  error: null,
+                }));
+                htmlAbortRef.current = null;
+                return;
+              } else if (eventName === 'error') {
+                throw new Error(String(payload.error || 'Qwen HTML generatsiyasida xatolik.'));
+              }
+            }
+          }
+
+          if (gotDone) return;
+          if (!gotPartial) {
+            throw new Error('Oqim kutilmaganda yakunlandi (HTML tugallanmadi).');
+          }
+        }
+
+        throw new Error('HTML 4 bosqichda ham yakunlanmadi. Qayta urinib ko‘ring.');
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        const msg =
+          err instanceof Error
+            ? err.message
+            : 'Qwen orqali HTML yaratishda kutilmagan xatolik yuz berdi.';
+        setHtmlStreamProgress((prev) => ({
+          ...prev,
+          active: false,
+          error: msg,
+        }));
+      } finally {
+        htmlAbortRef.current = null;
+      }
+    },
+    [cancelHtmlStream, lessonStepCount, stopPlayback]
+  );
+
   const resolveQuery = async (
     rawQuery: string,
     withImage = imagePreview,
@@ -890,6 +1172,7 @@ export default function App() {
     setErrorMsg(null);
 
     if (!withImage && q) {
+      // Pure math expressions (e.g. y = x^2, sin(x)) keep instant deterministic math graphs
       const localLesson = tryLocalDeterministicParse(q);
       if (localLesson && (requestedSteps <= 4 || localLesson.steps.length >= requestedSteps)) {
         const freeLesson = { ...localLesson, token_usage: ZERO_TOKEN_USAGE };
@@ -900,43 +1183,13 @@ export default function App() {
         return;
       }
 
-      const builtInLesson = findBuiltInCachedLesson(q);
-      if (builtInLesson && (requestedSteps <= 4 || builtInLesson.steps.length >= requestedSteps)) {
-        const upgradedBuiltIn = upgradeDeviceLessonToTrue3D(builtInLesson, q);
-        const freeLesson = {
-          ...upgradedBuiltIn,
-          source: 'cache' as const,
-          token_usage: ZERO_TOKEN_USAGE,
-        };
-        setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
-        saveLessonToCache(q, freeLesson);
-        setQueryText('');
-        loadLesson(freeLesson, true);
-        return;
-      }
-
-      const cachedSaved = findSavedLesson(mergedSavedLessons, q);
-      const isFreshSaved3D =
-        cachedSaved &&
-        (cachedSaved.engine === 'threejs' ||
-          cachedSaved.subject === 'math' ||
-          cachedSaved.subject === 'geometry');
-      if (
-        cachedSaved &&
-        isFreshSaved3D &&
-        (requestedSteps <= 4 || cachedSaved.steps.length >= requestedSteps)
-      ) {
-        const freeLesson = {
-          ...cachedSaved,
-          token_usage: cachedSaved.token_usage ?? ZERO_TOKEN_USAGE,
-        };
-        setSessionTokenStats((prev) => recordSessionTokenStats(prev, ZERO_TOKEN_USAGE));
-        saveLessonToCache(q, freeLesson);
-        setQueryText('');
-        loadLesson(freeLesson, true);
-        return;
-      }
+      // ALL devices, machines, stations, physics, anatomy & technical topics ->
+      // Curated Gold-Standard HTML Library -> Cached HTML -> Qwen Zero-to-HTML Streaming Generator!
+      await openOrGenerateHtmlLesson(q, false, requestedSteps);
+      return;
     }
+
+    // Image-based vision query path below:
 
     // Instant open 3D stage + immediate 1st-step intro voice (<1s) so user never stares at a blurry wait screen!
     const introSpeech = q
@@ -1492,6 +1745,27 @@ export default function App() {
           onEnterWorkspace={() => loadLesson(lesson || CACHED_LESSONS[0], false)}
           onLogout={() => void logout()}
         />
+      ) : viewMode === 'html-lesson' ? (
+        <HtmlLessonViewer
+          lesson={activeHtmlLesson}
+          progress={htmlStreamProgress}
+          onBack={() => {
+            cancelHtmlStream();
+            setViewMode('home');
+            viewModeRef.current = 'home';
+          }}
+          onCancelStream={cancelHtmlStream}
+          onRetry={() => {
+            if (lastHtmlQueryRef.current) {
+              void openOrGenerateHtmlLesson(lastHtmlQueryRef.current, true);
+            }
+          }}
+          onRegenerate={() => {
+            if (lastHtmlQueryRef.current) {
+              void openOrGenerateHtmlLesson(lastHtmlQueryRef.current, true);
+            }
+          }}
+        />
       ) : viewMode === 'uz3d' ? (
         <Uz3DLessonPlayer
           initialLesson={uz3dLesson}
@@ -1598,7 +1872,7 @@ export default function App() {
               <div
                 role="toolbar"
                 aria-label="Dars boshqaruv paneli"
-                className="apple-glass rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.12)] px-2 sm:px-3 py-1 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar"
+                className="bg-white/95 border border-black/[0.08] text-[#1D1D1F] backdrop-blur-md rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.12)] px-2 sm:px-3 py-1 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar"
               >
                 <button
                   type="button"

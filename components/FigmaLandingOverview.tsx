@@ -12,6 +12,10 @@ import {
 import { PbrMachine3DStage } from './engines/PbrMachine3DStage';
 import { PWAInstallButton } from './PWAInstallButton';
 import {
+  HTML_MODELS_LIBRARY,
+  loadGeneratedHtmlCache,
+} from '../data/htmlModelsLibrary';
+import {
   formatCostUsd,
   formatCostUzsApprox,
   formatTokenCount,
@@ -154,14 +158,21 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
   });
 
   const [activeTab, setActiveTab] = useState<NativeTab>('doska');
-  const [model, setModel] = useState<LabModel>('transformer');
-  const [sl1, setSl1] = useState<number>(220);
-  const [sl2, setSl2] = useState<number>(3.5);
+  const [previewModelId, setPreviewModelId] = useState<string>(HTML_MODELS_LIBRARY[0].id);
   const [subjectFilter, setSubjectFilter] = useState<SubjectFilter>('Barchasi');
   const [reelIdx, setReelIdx] = useState<number>(0);
   const [toastMsg, setToastMsg] = useState<string>('');
   const [toastVisible, setToastVisible] = useState<boolean>(false);
   const toastTimerRef = useRef<number | null>(null);
+
+  const generatedHtmlModels = useMemo(
+    () => loadGeneratedHtmlCache(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sessionTokenStats.total_tokens, sessionTokenStats.ai_requests]
+  );
+
+  const activePreviewModel =
+    HTML_MODELS_LIBRARY.find((m) => m.id === previewModelId) || HTML_MODELS_LIBRARY[0];
 
   const lessonTokenLogs = useMemo(
     () => loadLessonTokenLogs(),
@@ -195,93 +206,8 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
 
   const clampStepCount = (n: number) => Math.max(4, Math.min(6, Math.round(n)));
 
-  const sliderConfig = useMemo(() => {
-    if (model === 'turbine') {
-      return {
-        s1l: 'Shamol tezligi',
-        s1v: `${sl1} m/s`,
-        s1Min: 3,
-        s1Max: 20,
-        s1Step: 1,
-        s2l: 'Parrak diametri',
-        s2v: `${sl2} m`,
-        s2Min: 20,
-        s2Max: 60,
-        s2Step: 5,
-      };
-    }
-    if (model === 'hydraulic') {
-      return {
-        s1l: 'Kirish kuchi (F1)',
-        s1v: `${sl1} N`,
-        s1Min: 10,
-        s1Max: 100,
-        s1Step: 5,
-        s2l: 'Yuza nisbati (S2/S1)',
-        s2v: `${sl2}x`,
-        s2Min: 2,
-        s2Max: 12,
-        s2Step: 1,
-      };
-    }
-    if (model === 'gaes') {
-      return {
-        s1l: 'Bosim balandligi (H)',
-        s1v: `${sl1} m`,
-        s1Min: 40,
-        s1Max: 220,
-        s1Step: 10,
-        s2l: 'Oqim rejimi',
-        s2v: `${sl2 > 0 ? '+' : ''}${sl2}%`,
-        s2Min: -100,
-        s2Max: 100,
-        s2Step: 10,
-      };
-    }
-    return {
-      s1l: 'Kirish kuchlanishi',
-      s1v: `${sl1} V`,
-      s1Min: 110,
-      s1Max: 380,
-      s1Step: 10,
-      s2l: 'O‘ramlar nisbati',
-      s2v: `${sl2.toFixed(1)}x`,
-      s2Min: 1,
-      s2Max: 6,
-      s2Step: 0.5,
-    };
-  }, [model, sl1, sl2]);
-
-  const pickModel = (nextModel: LabModel) => {
-    setModel(nextModel);
-    if (nextModel === 'transformer') {
-      setSl1(220);
-      setSl2(3.5);
-    } else if (nextModel === 'turbine') {
-      setSl1(10);
-      setSl2(40);
-    } else if (nextModel === 'gaes') {
-      setSl1(120);
-      setSl2(85);
-    } else {
-      setSl1(40);
-      setSl2(6);
-    }
-  };
-
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const v = queryText.trim().toLowerCase();
-    if (v.includes('gaes') || v.includes('gidroakkum') || v.includes('ges')) {
-      pickModel('gaes');
-    } else if (v.includes('shamol') || v.includes('turbin')) {
-      pickModel('turbine');
-    } else if (v.includes('gidrav') || v.includes('paskal') || v.includes('press')) {
-      pickModel('hydraulic');
-    } else if (v.includes('transformator') || v.includes('induksiya')) {
-      pickModel('transformer');
-    }
-
     if (queryText.trim() || imagePreview) {
       onSubmitPrompt(e);
     } else {
@@ -348,8 +274,6 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
       ),
     },
   ];
-
-  const isDark = theme === 'dark';
 
   return (
     <div className="mirvo-native flex-1 min-h-0 flex flex-col relative overflow-hidden">
@@ -692,96 +616,72 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                   </div>
                 </div>
 
-                {/* RIGHT COLUMN: Clean Open 3D Stage (NO Emoji, NO Speech Bubble, NO Lab Chrome) + Basic Sliders */}
+                {/* RIGHT COLUMN: Live Gold-Standard Standalone HTML Showcase */}
                 <div
                   style={{
                     background: 'var(--surface)',
                     border: '1px solid var(--line)',
                     borderRadius: 24,
-                    padding: 16,
+                    padding: 14,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 14,
+                    gap: 10,
                   }}
                 >
                   <div
                     style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {HTML_MODELS_LIBRARY.map((item) => {
+                        const active = item.id === activePreviewModel.id;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => setPreviewModelId(item.id)}
+                            className={`f-btn ${active ? 'active' : ''}`}
+                            style={{ padding: '6px 12px', fontSize: 12 }}
+                          >
+                            {item.id === 'microwave-oven' ? 'Mikroto‘lqinli pech' : 'GAES-120'}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="soft-btn"
+                      onClick={() =>
+                        onSelectQuickTopic(activePreviewModel.titleUz, activePreviewModel.titleUz)
+                      }
+                    >
+                      To‘liq ekranda ochish ↗
+                    </button>
+                  </div>
+
+                  <div
+                    style={{
                       width: '100%',
-                      height: 360,
+                      height: 460,
                       borderRadius: 18,
                       overflow: 'hidden',
                       border: '1px solid var(--line)',
+                      background: '#fafafa',
                     }}
                   >
-                    <PbrMachine3DStage
-                      machineKey={model === 'hydraulic' ? 'hydraulics' : model}
-                      sliderValues={
-                        model === 'transformer'
-                          ? { u1: sl1, turns_ratio: sl2 }
-                          : model === 'turbine'
-                            ? { wind_speed: sl1, blade_r: sl2 }
-                            : model === 'gaes'
-                              ? {
-                                  head: sl1,
-                                  flow: Math.abs(sl2),
-                                  mode: sl2 < -5 ? -1 : sl2 > 5 ? 1 : 0,
-                                }
-                              : { force_in: sl1, area_ratio: sl2 }
-                      }
-                      isPlaying={true}
-                      darkSurface={isDark}
-                      showHud={false}
+                    <iframe
+                      key={activePreviewModel.publicPath}
+                      src={activePreviewModel.publicPath}
+                      title={activePreviewModel.titleUz}
+                      style={{ width: '100%', height: '100%', border: 0, display: 'block' }}
+                      sandbox="allow-scripts allow-same-origin"
                     />
-                  </div>
-
-                  {/* Basic Control Sliders Only */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                      gap: 14,
-                    }}
-                  >
-                    <div className="sl">
-                      <label
-                        htmlFor="sl1"
-                        style={{ color: 'var(--ink)', fontSize: 12.5, fontWeight: 600 }}
-                      >
-                        <span>{sliderConfig.s1l}</span>
-                        <strong style={{ fontVariantNumeric: 'tabular-nums' }}>
-                          {sliderConfig.s1v}
-                        </strong>
-                      </label>
-                      <input
-                        id="sl1"
-                        type="range"
-                        min={sliderConfig.s1Min}
-                        max={sliderConfig.s1Max}
-                        step={sliderConfig.s1Step}
-                        value={sl1}
-                        onChange={(e) => setSl1(parseFloat(e.target.value))}
-                      />
-                    </div>
-                    <div className="sl">
-                      <label
-                        htmlFor="sl2"
-                        style={{ color: 'var(--ink)', fontSize: 12.5, fontWeight: 600 }}
-                      >
-                        <span>{sliderConfig.s2l}</span>
-                        <strong style={{ fontVariantNumeric: 'tabular-nums' }}>
-                          {sliderConfig.s2v}
-                        </strong>
-                      </label>
-                      <input
-                        id="sl2"
-                        type="range"
-                        min={sliderConfig.s2Min}
-                        max={sliderConfig.s2Max}
-                        step={sliderConfig.s2Step}
-                        value={sl2}
-                        onChange={(e) => setSl2(parseFloat(e.target.value))}
-                      />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -818,16 +718,52 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
               </div>
 
               <div className="bento">
+                {/* Curated Gold-Standard Standalone HTML Models */}
+                {HTML_MODELS_LIBRARY.map((item, idx) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`b-card ${idx === 0 ? 'wide dark' : ''}`}
+                    onClick={() => onSelectQuickTopic(item.titleUz, item.titleUz)}
+                  >
+                    <div>
+                      <div className="b-kicker">{item.category} · HTML Model</div>
+                      <div className="b-title">{item.titleUz}</div>
+                      <div className="b-sub">{item.subtitleUz}</div>
+                    </div>
+                  </button>
+                ))}
+
+                {/* User's Previously Qwen-Generated Cached HTML Models */}
+                {generatedHtmlModels.map((gen) => (
+                  <button
+                    key={gen.key}
+                    type="button"
+                    className="b-card"
+                    onClick={() => onSelectQuickTopic(gen.topicTitle, gen.topicTitle)}
+                  >
+                    <div>
+                      <div className="b-kicker">Qwen HTML · Saqlangan</div>
+                      <div className="b-title">{gen.topicTitle}</div>
+                      <div className="b-sub">
+                        {gen.tokens
+                          ? `${formatTokenCount(gen.tokens.total_tokens)} tok · ${formatCostUsd(gen.tokens.cost_usd)}`
+                          : 'Keshda tayyor'}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+
                 {showCard(['Fizika']) && (
                   <button
                     type="button"
-                    className="b-card wide dark"
-                    onClick={() => onSelectStarterCard('physics-transformer')}
+                    className="b-card"
+                    onClick={() => onSelectQuickTopic('Transformator qanday ishlaydi?', 'Transformator')}
                   >
                     <div>
                       <div className="b-kicker">Energetika</div>
                       <div className="b-title">Transformator va elektromagnit induksiya</div>
-                      <div className="b-sub">3D model va ovozli tushuntirish</div>
+                      <div className="b-sub">Qwen HTML model yaratish</div>
                     </div>
                   </button>
                 )}

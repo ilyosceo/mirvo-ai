@@ -3,6 +3,7 @@ import express from 'express';
 import { GoogleGenAI } from '@google/genai';
 import { createTutorResolveRouter } from './tutor/resolve.js';
 import { generateQwenOmni3DLesson } from './lib/qwenOmni3DDirector.js';
+import { streamQwenHtmlLesson } from './lib/qwenHtmlGenerator.js';
 import {
   applyRateLimitHeaders,
   checkIpRateLimit,
@@ -46,6 +47,30 @@ async function startServer() {
   const { router: tutorRouter } = createTutorResolveRouter({
     dataDir: process.cwd(),
     getGeminiClient,
+  });
+
+  app.post('/api/tutor/html-lesson', async (req, res) => {
+    const qwenApiKey =
+      process.env.QWEN_API_KEY?.trim() || process.env.DASHSCOPE_API_KEY?.trim();
+    const { query = '', stepCount = 5, continueFrom = '', pass = 1 } = req.body || {};
+    const trimmed = String(query || '').trim();
+    if (!trimmed) {
+      res.status(400).json({ error: 'Mavzu nomi kiritilishi shart.' });
+      return;
+    }
+    if (!qwenApiKey) {
+      res.status(503).json({ error: 'QWEN_API_KEY sozlanmagan.' });
+      return;
+    }
+    await streamQwenHtmlLesson({
+      apiKey: qwenApiKey,
+      query: trimmed,
+      stepCount: Math.max(4, Math.min(6, Number(stepCount) || 5)),
+      continueFrom: String(continueFrom || ''),
+      pass: Math.max(1, Math.min(5, Number(pass) || 1)),
+      res,
+      maxRunMs: 180_000,
+    });
   });
 
   app.post('/api/tutor/resolve', async (req, res, next) => {
