@@ -4,15 +4,26 @@ import { usageFromDashScope, type DashScopeUsageLike } from './tokenUsage.js';
 
 const DASHSCOPE_ENDPOINTS = [
   'https://dashscope-intl.aliyuncs.com/compatible-mode/v1',
+  'https://dashscope-us.aliyuncs.com/compatible-mode/v1',
+  'https://cn-hongkong.dashscope.aliyuncs.com/compatible-mode/v1',
   'https://dashscope.aliyuncs.com/compatible-mode/v1',
 ];
 
 const DEFAULT_HTML_MODELS = [
   'qwen3.8-omni-flash',
+  'qwen3.5-plus',
   'qwen-plus',
-  'qwen3-coder-plus',
-  'qwen-max',
+  'qwen3.5-omni-flash',
 ] as const;
+
+export function sanitizeQwenApiKey(raw: string): string {
+  return (raw || '')
+    .trim()
+    .replace(/^['"`]+|['"`]+$/g, '')
+    .replace(/^Bearer\s+/i, '')
+    .replace(/[\r\n]+/g, '')
+    .trim();
+}
 
 export function buildGoldStandardHtmlSystemPrompt(stepCount = 5): string {
   const safeSteps = Math.max(4, Math.min(6, stepCount));
@@ -103,6 +114,7 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
     maxRunMs = 51_000,
   } = params;
 
+  const cleanKey = sanitizeQwenApiKey(apiKey);
   const startTime = Date.now();
   const nodeEnv = (
     globalThis as { process?: { env?: Record<string, string | undefined> } }
@@ -156,6 +168,7 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
   });
 
   let lastErrMsg = 'Qwen API bilan bog‘lanib bo‘lmadi.';
+  let primaryIntlErr = '';
 
   for (const baseUrl of baseUrls) {
     for (const modelName of modelsToTry) {
@@ -164,7 +177,9 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
       const abortTimer = setTimeout(() => controller.abort(), remainingMs);
 
       try {
-        const isOmni = modelName.toLowerCase().includes('omni');
+        const lowerModel = modelName.toLowerCase();
+        const isOmni = lowerModel.includes('omni');
+        const supportsThinking = isOmni || lowerModel.includes('qwen3.5');
         const body: Record<string, unknown> = {
           model: modelName,
           messages,
@@ -176,11 +191,19 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
         if (isOmni) {
           body.modalities = ['text'];
         }
+        if (supportsThinking) {
+          if (pass === 1 && !continueFrom.trim()) {
+            body.enable_thinking = true;
+            body.thinking_budget = 2048;
+          } else {
+            body.enable_thinking = false;
+          }
+        }
 
         const resp = await fetch(`${baseUrl}/chat/completions`, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${cleanKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(body),
@@ -190,9 +213,20 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
         if (!resp.ok || !resp.body) {
           clearTimeout(abortTimer);
           const errText = await resp.text().catch(() => '');
-          lastErrMsg = `DashScope (${modelName}) HTTP ${resp.status}: ${errText.slice(0, 180)}`;
+          const endpointHost = (() => {
+            try {
+              return new URL(baseUrl).host;
+            } catch {
+              return baseUrl;
+            }
+          })();
+          const msg = `${endpointHost} (${modelName}) HTTP ${resp.status}: ${errText.slice(0, 180)}`;
+          lastErrMsg = msg;
+          if (!primaryIntlErr && baseUrl.includes('dashscope-intl')) {
+            primaryIntlErr = msg;
+          }
           if (resp.status === 401 || resp.status === 403) {
-            break; // try next endpoint (intl vs cn)
+            break; // try next region endpoint
           }
           continue;
         }
@@ -208,6 +242,8 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
         let sseBuffer = '';
         let deltaAccum = '';
         let chunkBuffer = '';
+        let reasoningChars = 0;
+        let lastReasoningPulseAt = 0;
         let actualModel = modelName;
         let finalUsage: DashScopeUsageLike | null = null;
         let finishedNormally = false;
@@ -242,6 +278,19 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
                 if (parsed.model) actualModel = String(parsed.model);
                 if (parsed.usage) {
                   finalUsage = parsed.usage as DashScopeUsageLike;
+                }
+                const reasoningPiece = parsed.choices?.[0]?.delta?.reasoning_content;
+                if (typeof reasoningPiece === 'string' && reasoningPiece.length > 0) {
+                  reasoningChars += reasoningPiece.length;
+                  const now = Date.now();
+                  if (now - lastReasoningPulseAt >= 1200) {
+                    lastReasoningPulseAt = now;
+                    sendSse(res, 'status', {
+                      message: `${actualModel} izometrik geometriyani rejalashtirmoqda... (${reasoningChars.toLocaleString()} belgi tahlil)`,
+                      model: actualModel,
+                      pass,
+                    });
+                  }
                 }
                 const piece = parsed.choices?.[0]?.delta?.content;
                 if (typeof piece === 'string' && piece.length > 0) {
@@ -328,8 +377,13 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
     }
   }
 
+  const finalDiagnostic = primaryIntlErr || lastErrMsg;
+  const authHint =
+    /HTTP 401|invalid_api_key/i.test(finalDiagnostic)
+      ? ' — Vercel Environment Variables ichidagi QWEN_API_KEY qiymatini yangilab, Redeploy qiling.'
+      : '';
   sendSse(res, 'error', {
-    error: `Qwen HTML generatsiyasi muvaffaqiyatsiz tugadi: ${lastErrMsg}`,
+    error: `Qwen HTML generatsiyasi muvaffaqiyatsiz tugadi: ${finalDiagnostic}${authHint}`,
   });
   res.end();
 }
