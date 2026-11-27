@@ -199,21 +199,45 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
 
   let lastErrMsg = 'Qwen API bilan bog‘lanib bo‘lmadi.';
   let primaryIntlErr = '';
+  let authenticatedRegion = false;
 
   for (const baseUrl of baseUrls) {
+    if (authenticatedRegion) {
+      // Once we confirmed the API key works on a regional endpoint (e.g. Singapore),
+      // NEVER jump to other regions (US/HK/Beijing) which would return misleading 401 errors!
+      break;
+    }
+
     for (const modelName of modelsToTry) {
-      const attemptVariants: Array<{ label: string; msgs: ChatMsg[] }> = isContinuation
+      if (Date.now() - startTime >= maxRunMs - 5000) {
+        break;
+      }
+
+      const attemptVariants: Array<{
+        label: string;
+        msgs: ChatMsg[];
+        disableThinking: boolean;
+        maxTokens: number;
+      }> = isContinuation
         ? [
-            { label: 'partial', msgs: partialMessages },
-            { label: 'continue-turn', msgs: fallbackContinueMessages },
+            { label: 'partial', msgs: partialMessages, disableThinking: true, maxTokens: 16384 },
+            {
+              label: 'continue-turn',
+              msgs: fallbackContinueMessages,
+              disableThinking: true,
+              maxTokens: 16384,
+            },
           ]
-        : [{ label: 'fresh', msgs: baseMessages }];
+        : [
+            { label: 'fast-no-think', msgs: baseMessages, disableThinking: true, maxTokens: 16384 },
+            { label: 'compat-8k', msgs: baseMessages, disableThinking: false, maxTokens: 8192 },
+          ];
 
       let authFailedForEndpoint = false;
 
       for (const variant of attemptVariants) {
-        const remainingMs = Math.max(8_000, maxRunMs - (Date.now() - startTime));
-        if (remainingMs <= 8_500 && variant.label === 'continue-turn') {
+        const remainingMs = maxRunMs - (Date.now() - startTime);
+        if (remainingMs <= 5000) {
           break;
         }
         const controller = new AbortController();
@@ -222,25 +246,19 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
         try {
           const lowerModel = modelName.toLowerCase();
           const isOmni = lowerModel.includes('omni');
-          const supportsThinking = isOmni || lowerModel.includes('qwen3.5');
           const body: Record<string, unknown> = {
             model: modelName,
             messages: variant.msgs,
             stream: true,
             stream_options: { include_usage: true },
             temperature: isContinuation ? 0.15 : 0.25,
-            max_tokens: lowerModel.includes('qwen4') ? 32768 : 16384,
+            max_tokens: variant.maxTokens,
           };
           if (isOmni) {
             body.modalities = ['text'];
           }
-          if (supportsThinking) {
-            if (pass === 1 && !isContinuation) {
-              body.enable_thinking = true;
-              body.thinking_budget = 1200;
-            } else {
-              body.enable_thinking = false;
-            }
+          if (variant.disableThinking) {
+            body.enable_thinking = false;
           }
 
           const resp = await fetch(`${baseUrl}/chat/completions`, {
@@ -268,16 +286,25 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
             if (!primaryIntlErr && baseUrl.includes('dashscope-intl')) {
               primaryIntlErr = msg;
             }
-            if (resp.status === 401 || resp.status === 403) {
+            const isInvalidKey =
+              resp.status === 401 ||
+              (resp.status === 403 && /invalid_api_key|incorrect api key/i.test(errText));
+            if (isInvalidKey) {
               authFailedForEndpoint = true;
               break; // try next region endpoint
             }
-            // If DashScope rejects partial:true on this model (HTTP 400), immediately retry non-partial variant!
-            if (variant.label === 'partial' && resp.status === 400) {
+            // Key IS valid for this region! Lock onto this region so we never get fake 401s elsewhere.
+            authenticatedRegion = true;
+
+            // If HTTP 400 (e.g. model rejected partial:true or enable_thinking or max_tokens:16384), retry fallback variant!
+            if (resp.status === 400) {
               continue;
             }
-            break; // try next model
+            break; // e.g. 404 model_not_found or 403 model unpurchased -> try next model on SAME region
           }
+
+          // 200 OK -> lock onto this region permanently for this request!
+          authenticatedRegion = true;
 
           sendSse(res, 'status', {
             message:
@@ -327,6 +354,15 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
                 }
                 try {
                   const parsed = JSON.parse(dataStr);
+                  if (parsed.error) {
+                    const errMsg =
+                      typeof parsed.error === 'object' && parsed.error?.message
+                        ? String(parsed.error.message)
+                        : JSON.stringify(parsed.error);
+                    lastErrMsg = `${actualModel} stream error: ${errMsg}`;
+                    finishedNormally = false;
+                    break;
+                  }
                   if (parsed.model) actualModel = String(parsed.model);
                   if (parsed.usage) {
                     finalUsage = parsed.usage as DashScopeUsageLike;

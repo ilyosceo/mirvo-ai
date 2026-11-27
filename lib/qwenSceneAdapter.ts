@@ -358,50 +358,65 @@ export async function adaptMirvoSceneWithQwen(params: {
   ];
 
   let lastErr = 'Qwen Scene Adapter bilan bog‘lanib bo‘lmadi.';
+  let authenticatedRegion = false;
 
   for (const baseUrl of baseUrls) {
+    if (authenticatedRegion) break;
+    let authFailedForRegion = false;
+
     for (const modelName of ADAPTER_MODELS) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 46_000);
+      if (authFailedForRegion) break;
 
-      try {
-        const lower = modelName.toLowerCase();
-        const isOmni = lower.includes('omni');
-        const supportsThinking = isOmni || lower.includes('qwen3.5');
+      for (const disableThinking of [true, false]) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 46_000);
 
-        const body: Record<string, unknown> = {
-          model: modelName,
-          messages,
-          stream: true,
-          stream_options: { include_usage: true },
-          temperature: 0.22,
-          max_tokens: 6500,
-        };
-        if (isOmni) {
-          body.modalities = ['text'];
-        }
-        if (supportsThinking) {
-          body.enable_thinking = true;
-          body.thinking_budget = 900;
-        }
+        try {
+          const lower = modelName.toLowerCase();
+          const isOmni = lower.includes('omni');
 
-        const resp = await fetch(`${baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${cleanKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          signal: controller.signal,
-        });
+          const body: Record<string, unknown> = {
+            model: modelName,
+            messages,
+            stream: true,
+            stream_options: { include_usage: true },
+            temperature: 0.22,
+            max_tokens: 6500,
+          };
+          if (isOmni) {
+            body.modalities = ['text'];
+          }
+          if (disableThinking) {
+            body.enable_thinking = false;
+          }
 
-        if (!resp.ok || !resp.body) {
-          clearTimeout(timer);
-          const errText = await resp.text().catch(() => '');
-          lastErr = `${modelName} HTTP ${resp.status}: ${errText.slice(0, 180)}`;
-          if (resp.status === 401 || resp.status === 403) break;
-          continue;
-        }
+          const resp = await fetch(`${baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${cleanKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+          });
+
+          if (!resp.ok || !resp.body) {
+            clearTimeout(timer);
+            const errText = await resp.text().catch(() => '');
+            lastErr = `${modelName} HTTP ${resp.status}: ${errText.slice(0, 180)}`;
+            const isInvalidKey =
+              resp.status === 401 ||
+              (resp.status === 403 && /invalid_api_key|incorrect api key/i.test(errText));
+            if (isInvalidKey) {
+              authFailedForRegion = true;
+              break;
+            }
+            authenticatedRegion = true;
+            if (resp.status === 400 && disableThinking) continue;
+            break;
+          }
+
+          authenticatedRegion = true;
 
         const reader = resp.body.getReader();
         const decoder = new TextDecoder('utf-8');
@@ -554,9 +569,10 @@ export async function adaptMirvoSceneWithQwen(params: {
           modelUsed: actualModel,
           tokenUsage,
         };
-      } catch (err: unknown) {
-        clearTimeout(timer);
-        lastErr = err instanceof Error ? err.message : String(err);
+        } catch (err: unknown) {
+          clearTimeout(timer);
+          lastErr = err instanceof Error ? err.message : String(err);
+        }
       }
     }
   }
