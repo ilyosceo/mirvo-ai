@@ -13,13 +13,16 @@ import { resolveMachine3DAssembly } from './machine3DCatalog.js';
 import { usageFromDashScope, type DashScopeUsageLike } from './tokenUsage.js';
 
 export const DEFAULT_QWEN_OMNI_MODELS = [
+  'qwen4-max',
+  'qwen3.5-plus',
   'qwen3.8-omni-flash',
-  'qwen3-omni-flash',
   'qwen-plus',
 ] as const;
 
 const DASHSCOPE_ENDPOINTS = [
   'https://dashscope-intl.aliyuncs.com/compatible-mode/v1',
+  'https://dashscope-us.aliyuncs.com/compatible-mode/v1',
+  'https://cn-hongkong.dashscope.aliyuncs.com/compatible-mode/v1',
   'https://dashscope.aliyuncs.com/compatible-mode/v1',
 ];
 

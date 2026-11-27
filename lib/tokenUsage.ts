@@ -1,16 +1,84 @@
 import type { TokenUsageInfo } from '../types/tutor.js';
 
-// Official Qwen 3.8 Omni Flash rates on Alibaba Cloud DashScope (USD per 1M tokens)
+export interface QwenModelRateSpec {
+  id: string;
+  label: string;
+  inputPer1M: number;
+  cachedPer1M: number;
+  cacheWritePer1M: number;
+  outputPer1M: number;
+}
+
+/**
+ * Official Alibaba Cloud Model Studio (Singapore / International) Pay-As-You-Go USD rates per 1M tokens.
+ */
+export const QWEN4_MAX_RATES: QwenModelRateSpec = {
+  id: 'qwen4-max',
+  label: 'Qwen 4 Max',
+  inputPer1M: 1.5,
+  cachedPer1M: 0.075,
+  cacheWritePer1M: 1.875,
+  outputPer1M: 4.5,
+};
+
 export const QWEN_OMNI_INPUT_RATE_PER_1M = 0.15;
 export const QWEN_OMNI_CACHED_INPUT_RATE_PER_1M = 0.016;
 export const QWEN_OMNI_OUTPUT_RATE_PER_1M = 0.47;
 
 // Gemini Flash fallback rates (USD per 1M tokens)
-export const GEMINI_INPUT_RATE_PER_1M = 0.30;
+export const GEMINI_INPUT_RATE_PER_1M = 0.3;
 export const GEMINI_CACHED_INPUT_RATE_PER_1M = 0.03;
-export const GEMINI_OUTPUT_RATE_PER_1M = 2.50;
+export const GEMINI_OUTPUT_RATE_PER_1M = 2.5;
 
 export const APPROX_USD_TO_UZS = 12850;
+
+export function getQwenModelRates(model?: string): QwenModelRateSpec {
+  const m = (model || 'qwen4-max').toLowerCase().trim();
+  if (m.includes('qwen4') || m === 'qwen-4-max') {
+    return QWEN4_MAX_RATES;
+  }
+  if (m.includes('max')) {
+    return {
+      id: model || 'qwen-max',
+      label: 'Qwen Max',
+      inputPer1M: 2.0,
+      cachedPer1M: 0.2,
+      cacheWritePer1M: 2.5,
+      outputPer1M: 6.0,
+    };
+  }
+  if (m.includes('qwen3.5-plus')) {
+    return {
+      id: model || 'qwen3.5-plus',
+      label: 'Qwen 3.5 Plus',
+      inputPer1M: 0.4,
+      cachedPer1M: 0.04,
+      cacheWritePer1M: 0.5,
+      outputPer1M: 2.4,
+    };
+  }
+  if (m.includes('plus')) {
+    return {
+      id: model || 'qwen-plus',
+      label: 'Qwen Plus',
+      inputPer1M: 0.4,
+      cachedPer1M: 0.04,
+      cacheWritePer1M: 0.5,
+      outputPer1M: 1.2,
+    };
+  }
+  if (m.includes('omni')) {
+    return {
+      id: model || 'qwen3.8-omni-flash',
+      label: 'Qwen 3.8 Omni Flash',
+      inputPer1M: QWEN_OMNI_INPUT_RATE_PER_1M,
+      cachedPer1M: QWEN_OMNI_CACHED_INPUT_RATE_PER_1M,
+      cacheWritePer1M: 0.1875,
+      outputPer1M: QWEN_OMNI_OUTPUT_RATE_PER_1M,
+    };
+  }
+  return QWEN4_MAX_RATES;
+}
 
 export const ZERO_TOKEN_USAGE: TokenUsageInfo = {
   prompt_tokens: 0,
@@ -38,6 +106,7 @@ export interface DashScopeUsageLike {
   cached_tokens?: number;
   prompt_tokens_details?: {
     cached_tokens?: number;
+    cache_creation_input_tokens?: number;
     audio_tokens?: number;
     image_tokens?: number;
   };
@@ -50,27 +119,30 @@ export interface DashScopeUsageLike {
 export function calculateQwenCostUsd(params: {
   prompt_tokens: number;
   cached_tokens?: number;
+  cache_creation_tokens?: number;
   output_tokens: number;
   model?: string;
 }): number {
+  const rates = getQwenModelRates(params.model);
   const cached = Math.max(0, params.cached_tokens ?? 0);
-  const uncachedInput = Math.max(0, params.prompt_tokens - cached);
+  const cacheWrite = Math.max(0, params.cache_creation_tokens ?? 0);
+  const uncachedInput = Math.max(0, params.prompt_tokens - cached - cacheWrite);
+  // Note: DashScope completion_tokens already includes reasoning_tokens
   const output = Math.max(0, params.output_tokens);
 
-  const isMax = (params.model || '').toLowerCase().includes('max');
-  const inRate = isMax ? 2.0 : QWEN_OMNI_INPUT_RATE_PER_1M;
-  const cacheRate = isMax ? 0.25 : QWEN_OMNI_CACHED_INPUT_RATE_PER_1M;
-  const outRate = isMax ? 6.0 : QWEN_OMNI_OUTPUT_RATE_PER_1M;
-
   const cost =
-    (uncachedInput * inRate + cached * cacheRate + output * outRate) / 1_000_000;
+    (uncachedInput * rates.inputPer1M +
+      cached * rates.cachedPer1M +
+      cacheWrite * rates.cacheWritePer1M +
+      output * rates.outputPer1M) /
+    1_000_000;
 
   return Math.round(cost * 1_000_000) / 1_000_000;
 }
 
 export function usageFromDashScope(
   usage?: DashScopeUsageLike | null,
-  model = 'qwen3.8-omni-flash'
+  model = 'qwen4-max'
 ): TokenUsageInfo {
   if (!usage) {
     return { ...ZERO_TOKEN_USAGE, llm_calls: 1, model };
@@ -79,6 +151,10 @@ export function usageFromDashScope(
   const cached_tokens = Math.max(
     0,
     Number(usage.prompt_tokens_details?.cached_tokens ?? usage.cached_tokens ?? 0)
+  );
+  const cache_creation_tokens = Math.max(
+    0,
+    Number(usage.prompt_tokens_details?.cache_creation_input_tokens ?? 0)
   );
   const output_tokens = Math.max(
     0,
@@ -102,6 +178,7 @@ export function usageFromDashScope(
     cost_usd: calculateQwenCostUsd({
       prompt_tokens,
       cached_tokens,
+      cache_creation_tokens,
       output_tokens,
       model,
     }),
@@ -154,7 +231,9 @@ export function usageFromGeminiMetadata(
   };
 }
 
-export function mergeTokenUsage(...items: Array<TokenUsageInfo | undefined | null>): TokenUsageInfo {
+export function mergeTokenUsage(
+  ...items: Array<TokenUsageInfo | undefined | null>
+): TokenUsageInfo {
   let prompt_tokens = 0;
   let cached_tokens = 0;
   let output_tokens = 0;
@@ -196,16 +275,16 @@ export function formatTokenCount(count: number): string {
 export function formatCostUsd(costUsd: number): string {
   const safe = Math.max(0, costUsd || 0);
   if (safe === 0) return '$0.00';
-  if (safe < 0.0001) return '<$0.0001';
-  if (safe < 0.01) return `$${safe.toFixed(4)}`;
+  if (safe < 0.0001) return `$${safe.toFixed(5)}`;
+  if (safe < 1) return `$${safe.toFixed(4)}`;
   return `$${safe.toFixed(3)}`;
 }
 
 export function formatCostUzsApprox(costUsd: number): string {
   const uzs = Math.max(0, costUsd || 0) * APPROX_USD_TO_UZS;
   if (uzs <= 0) return '0 so‘m';
-  if (uzs < 1) return '<1 so‘m';
-  return `~${formatTokenCount(Math.round(uzs))} so‘m`;
+  if (uzs < 1) return `${uzs.toFixed(2)} so‘m`;
+  return `${formatTokenCount(Math.round(uzs))} so‘m`;
 }
 
 export interface LessonTokenLogEntry {
@@ -215,6 +294,8 @@ export interface LessonTokenLogEntry {
   prompt_tokens: number;
   cached_tokens: number;
   output_tokens: number;
+  thoughts_tokens?: number;
+  llm_calls?: number;
   total_tokens: number;
   cost_usd: number;
   createdAt: string;
@@ -264,10 +345,12 @@ export function appendLessonTokenLog(
   const entry: LessonTokenLogEntry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     topic: topic || 'Dars',
-    model: safe.model || (safe.total_tokens > 0 ? 'qwen3.8-omni-flash' : 'cache (0 token)'),
+    model: safe.model || (safe.total_tokens > 0 ? 'qwen4-max' : 'cache (0 token)'),
     prompt_tokens: safe.prompt_tokens || 0,
     cached_tokens: safe.cached_tokens || 0,
     output_tokens: safe.output_tokens || 0,
+    thoughts_tokens: safe.thoughts_tokens || 0,
+    llm_calls: safe.llm_calls || (safe.total_tokens > 0 ? 1 : 0),
     total_tokens: safe.total_tokens || 0,
     cost_usd: safe.cost_usd || 0,
     createdAt: new Date().toISOString(),

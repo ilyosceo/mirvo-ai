@@ -10,10 +10,10 @@ const DASHSCOPE_ENDPOINTS = [
 ];
 
 const DEFAULT_HTML_MODELS = [
-  'qwen3.8-omni-flash',
+  'qwen4-max',
   'qwen3.5-plus',
+  'qwen3.8-omni-flash',
   'qwen-plus',
-  'qwen3.5-omni-flash',
 ] as const;
 
 export function sanitizeQwenApiKey(raw: string): string {
@@ -193,7 +193,7 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
     message:
       pass > 1
         ? `HTML kodi uzluksiz davom ettirilmoqda (${pass}-bosqich)...`
-        : 'Qwen 3.8 Omni Flash izometrik HTML kodini 0 dan yozmoqda...',
+        : 'Qwen 4 Max izometrik HTML kodini 0 dan yozmoqda...',
     pass,
   });
 
@@ -229,7 +229,7 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
             stream: true,
             stream_options: { include_usage: true },
             temperature: isContinuation ? 0.15 : 0.25,
-            max_tokens: 16384,
+            max_tokens: lowerModel.includes('qwen4') ? 32768 : 16384,
           };
           if (isOmni) {
             body.modalities = ['text'];

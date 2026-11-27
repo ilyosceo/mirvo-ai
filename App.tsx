@@ -1040,7 +1040,7 @@ export default function App() {
             steps: data.steps,
             parts: data.parts,
             baseModelId: curated.id,
-            model: data.modelUsed || 'qwen3.8-omni-flash',
+            model: data.modelUsed || 'qwen4-max',
             createdAt: new Date().toISOString(),
             tokens: {
               prompt_tokens: usage.prompt_tokens,
@@ -1097,7 +1097,7 @@ export default function App() {
         active: true,
         mode: 'full-html',
         topicTitle: cleanTitle,
-        statusMessage: 'Qwen 3.8 Omni Flash izometrik HTML kodini 0 dan yozmoqda...',
+        statusMessage: 'Qwen 4 Max izometrik HTML kodini 0 dan yozmoqda...',
         pass: 1,
         totalLines: 0,
         totalChars: 0,
@@ -1109,7 +1109,7 @@ export default function App() {
       const MAX_HTML_PASSES = 10;
       let continueFrom = '';
       let accumulatedUsage = ZERO_TOKEN_USAGE;
-      let modelUsed = 'qwen3.8-omni-flash';
+      let modelUsed = 'qwen4-max';
       let codeTailAccum = '';
       let stalledPasses = 0;
 

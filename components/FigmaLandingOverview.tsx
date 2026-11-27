@@ -568,7 +568,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                         }}
                       >
                         <Coins className="w-3.5 h-3.5 text-amber-500" />
-                        Token hisoblagich
+                        Qwen 4 Max · Token va Pul Hisoblagich
                       </span>
                       <button
                         type="button"
@@ -1062,7 +1062,7 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     </span>
                   </div>
                   <div style={{ fontSize: 11.5, color: 'var(--muted)', marginBottom: 12 }}>
-                    Qwen 3.8 Omni Flash · Kirish $0.15/1M · Kesh $0.016/1M · Chiqish $0.47/1M
+                    Qwen 4 Max rasmiy tarifi · Kirish $1.50/1M · Kesh $0.075/1M · Chiqish $4.50/1M
                   </div>
 
                   {lessonTokenLogs.length === 0 ? (

@@ -20,6 +20,7 @@ import {
   formatCostUsd,
   formatCostUzsApprox,
   formatTokenCount,
+  getQwenModelRates,
 } from '../lib/tokenUsage';
 import { voiceEngine } from '../lib/voiceEngine';
 
@@ -126,6 +127,7 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
   const [speedIdx, setSpeedIdx] = useState(0);
   const [exploded, setExploded] = useState(false);
   const [clickedPartSubtitle, setClickedPartSubtitle] = useState<string | null>(null);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const playingRef = useRef(false);
   const stepIdxRef = useRef(0);
@@ -415,24 +417,98 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
                 </button>
               )}
 
-              <span
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F9FAFB] border border-[#E5E7EB] text-[11px] font-mono font-semibold text-[#374151]"
-                title={
-                  usage && usage.total_tokens > 0
-                    ? `Model: ${lesson.modelUsed || usage.model || 'qwen3.8-omni-flash'} | Kirish: ${formatTokenCount(usage.prompt_tokens)} (Kesh: ${formatTokenCount(usage.cached_tokens || 0)}) | Chiqish: ${formatTokenCount(usage.output_tokens)} | ${formatCostUzsApprox(usage.cost_usd)}`
-                    : 'Kutubxona / keshdan ochildi — 0 token'
-                }
-              >
-                <Coins className="w-3.5 h-3.5 text-amber-500" />
-                {usage && usage.total_tokens > 0 ? (
-                  <span>
-                    {formatTokenCount(usage.total_tokens)} tok ·{' '}
-                    <span className="text-emerald-600">{formatCostUsd(usage.cost_usd)}</span>
-                  </span>
-                ) : (
-                  <span className="text-[#6B7280]">{sourceBadgeText}</span>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowReceipt((v) => !v)}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-[11px] font-mono font-semibold text-[#374151] cursor-pointer transition-colors"
+                  title="Batafsil token va xarajat chekini ko‘rish"
+                >
+                  <Coins className="w-3.5 h-3.5 text-amber-500" />
+                  {usage && usage.total_tokens > 0 ? (
+                    <span>
+                      {formatTokenCount(usage.total_tokens)} tok ·{' '}
+                      <span className="text-emerald-600">
+                        {formatCostUsd(usage.cost_usd)} ({formatCostUzsApprox(usage.cost_usd)})
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="text-[#6B7280]">{sourceBadgeText}</span>
+                  )}
+                </button>
+
+                {showReceipt && (
+                  <div className="absolute right-0 top-10 w-80 bg-white border border-[#E5E7EB] rounded-2xl p-4 shadow-[0_16px_40px_rgba(15,23,42,0.12)] z-40 text-xs text-[#1F2937]">
+                    {(() => {
+                      const activeModel =
+                        lesson.modelUsed || usage?.model || 'qwen4-max';
+                      const rates = getQwenModelRates(activeModel);
+                      const hasTokens = Boolean(usage && usage.total_tokens > 0);
+                      return (
+                        <div className="flex flex-col gap-2.5">
+                          <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-2">
+                            <strong className="text-[12.5px] text-[#111827]">
+                              Aniq Token va Xarajat Cheki
+                            </strong>
+                            <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#2563EB] font-mono text-[10.5px] font-semibold">
+                              {hasTokens ? activeModel : '0 token'}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col gap-1.5 font-mono text-[11.5px]">
+                            <div className="flex justify-between">
+                              <span className="text-[#6B7280]">Kirish (Prompt):</span>
+                              <strong>{formatTokenCount(usage?.prompt_tokens || 0)} tok</strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#6B7280]">Shundan keshdan (95% arzon):</span>
+                              <strong className="text-blue-600">
+                                {formatTokenCount(usage?.cached_tokens || 0)} tok
+                              </strong>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#6B7280]">Chiqish (Output):</span>
+                              <strong>{formatTokenCount(usage?.output_tokens || 0)} tok</strong>
+                            </div>
+                            {(usage?.thoughts_tokens || 0) > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-[#6B7280]">Shundan fikrlash:</span>
+                                <span>{formatTokenCount(usage?.thoughts_tokens || 0)} tok</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between border-t border-[#F3F4F6] pt-1.5">
+                              <span className="font-sans font-semibold text-[#111827]">
+                                Jami token:
+                              </span>
+                              <strong className="text-[#111827]">
+                                {formatTokenCount(usage?.total_tokens || 0)} tok
+                              </strong>
+                            </div>
+                            <div className="flex justify-between items-baseline bg-emerald-50/80 border border-emerald-200/70 rounded-xl px-2.5 py-2 mt-0.5">
+                              <span className="font-sans font-semibold text-emerald-900">
+                                Aniq xarajat:
+                              </span>
+                              <div className="text-right">
+                                <div className="font-bold text-emerald-700 text-[13px]">
+                                  {formatCostUsd(usage?.cost_usd || 0)}
+                                </div>
+                                <div className="text-[10.5px] text-emerald-700/80">
+                                  ≈ {formatCostUzsApprox(usage?.cost_usd || 0)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="text-[10.5px] text-[#6B7280] leading-snug pt-0.5">
+                            Rasmiy {rates.label} tarifi: Kirish ${rates.inputPer1M}/1M · Kesh $
+                            {rates.cachedPer1M}/1M · Chiqish ${rates.outputPer1M}/1M
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 )}
-              </span>
+              </div>
 
               {lesson.htmlContent && (
                 <button

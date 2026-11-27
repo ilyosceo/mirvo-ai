@@ -18,10 +18,10 @@ const DASHSCOPE_ENDPOINTS = [
 ];
 
 const ADAPTER_MODELS = [
-  'qwen3.8-omni-flash',
+  'qwen4-max',
   'qwen3.5-plus',
+  'qwen3.8-omni-flash',
   'qwen-plus',
-  'qwen3.5-omni-flash',
 ] as const;
 
 export interface AddonPartSpec {
