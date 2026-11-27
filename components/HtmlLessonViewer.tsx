@@ -1,23 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Coins, Download, Loader2, RefreshCw } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Coins,
+  Download,
+  Layers,
+  Loader2,
+  Pause,
+  Play,
+  RefreshCw,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
+import type { MirvoLessonStep, MirvoPartMeta } from '../data/htmlModelsLibrary';
 import type { TokenUsageInfo } from '../types/tutor';
 import {
   formatCostUsd,
   formatCostUzsApprox,
   formatTokenCount,
 } from '../lib/tokenUsage';
+import { voiceEngine } from '../lib/voiceEngine';
 
 export interface HtmlLessonState {
   topicTitle: string;
-  sourceLabel: 'library' | 'cache' | 'qwen-generated';
+  kind?: 'mirvo-scene' | 'self-contained';
+  sourceLabel:
+    | 'library'
+    | 'cache'
+    | 'scene-focus'
+    | 'scene-addon'
+    | 'qwen-generated';
   publicPath?: string;
   htmlContent?: string;
+  steps?: MirvoLessonStep[];
+  parts?: MirvoPartMeta[];
   tokenUsage?: TokenUsageInfo;
   modelUsed?: string;
 }
 
 export interface HtmlStreamProgress {
   active: boolean;
+  mode?: 'scene-adapt' | 'full-html';
   topicTitle: string;
   statusMessage: string;
   pass: number;
@@ -37,6 +62,8 @@ interface HtmlLessonViewerProps {
   onRegenerate: () => void;
 }
 
+const SPEEDS = [1.0, 1.2, 0.85] as const;
+
 function formatElapsed(ms: number): string {
   const sec = Math.max(0, Math.floor(ms / 1000));
   const m = Math.floor(sec / 60);
@@ -44,7 +71,11 @@ function formatElapsed(ms: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-function detectBuildPhase(codeTail: string, totalLines: number, totalChars: number): number {
+function detectBuildPhase(
+  codeTail: string,
+  totalLines: number,
+  totalChars: number
+): number {
   const tail = codeTail.toLowerCase();
   if (
     tail.includes('speechsynthesis') ||
@@ -85,6 +116,206 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
   onRegenerate,
 }) => {
   const [elapsedMs, setElapsedMs] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const iframeReadyRef = useRef(false);
+
+  // MirvoScene external step / audio / explode state
+  const [stepIdx, setStepIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [speedIdx, setSpeedIdx] = useState(0);
+  const [exploded, setExploded] = useState(false);
+  const [clickedPartSubtitle, setClickedPartSubtitle] = useState<string | null>(null);
+
+  const playingRef = useRef(false);
+  const stepIdxRef = useRef(0);
+  const mutedRef = useRef(false);
+  const speedIdxRef = useRef(0);
+  const muteTimerRef = useRef<number | null>(null);
+
+  playingRef.current = playing;
+  stepIdxRef.current = stepIdx;
+  mutedRef.current = muted;
+  speedIdxRef.current = speedIdx;
+
+  const isMirvoScene =
+    lesson?.kind === 'mirvo-scene' && Array.isArray(lesson.steps) && lesson.steps.length > 0;
+  const steps = isMirvoScene ? lesson!.steps! : [];
+
+  const postToScene = useCallback((msg: Record<string, unknown>) => {
+    try {
+      iframeRef.current?.contentWindow?.postMessage(msg, '*');
+    } catch {
+      // ignore cross-frame race
+    }
+  }, []);
+
+  const syncSceneStep = useCallback(
+    (idx: number) => {
+      if (!isMirvoScene || !steps[idx]) return;
+      const s = steps[idx];
+      postToScene({ type: 'SET_AUTO_TOUR', enabled: false });
+
+      if (typeof s.explode === 'number') {
+        const shouldExplode = s.explode > 0.3;
+        setExploded(shouldExplode);
+        postToScene({ type: 'EXPLODE', amount: shouldExplode ? 1 : 0 });
+      }
+
+      if (s.isAddonPart && s.focusPart && s.focusPart !== 'full') {
+        postToScene({
+          type: 'MIRVO_ADDON_FOCUS',
+          partId: s.focusPart,
+          svgX: s.svgX,
+          svgY: s.svgY,
+          zoom: s.zoom || 1.65,
+        });
+      } else if (!s.focusPart || s.focusPart === 'full') {
+        postToScene({ type: 'HIGHLIGHT', partId: null });
+        postToScene({ type: 'FOCUS', target: 'full' });
+      } else {
+        postToScene({ type: 'HIGHLIGHT', partId: s.focusPart });
+        postToScene({ type: 'FOCUS', target: s.focusPart });
+      }
+    },
+    [isMirvoScene, postToScene, steps]
+  );
+
+  const stopSceneAudio = useCallback(() => {
+    if (muteTimerRef.current !== null) {
+      window.clearTimeout(muteTimerRef.current);
+      muteTimerRef.current = null;
+    }
+    voiceEngine.stop();
+  }, []);
+
+  const playStepNarration = useCallback(
+    (idx: number) => {
+      stopSceneAudio();
+      if (!playingRef.current || !steps[idx]) return;
+      const step = steps[idx];
+      const rate = SPEEDS[speedIdxRef.current];
+
+      const advance = () => {
+        if (!playingRef.current) return;
+        if (idx < steps.length - 1) {
+          const next = idx + 1;
+          setStepIdx(next);
+          setClickedPartSubtitle(null);
+          syncSceneStep(next);
+          playStepNarration(next);
+        } else {
+          setPlaying(false);
+        }
+      };
+
+      if (mutedRef.current) {
+        const words = step.textUz.split(/\s+/).length;
+        const waitMs = Math.max(3500, Math.round(((words * 420 + 900) / rate)));
+        muteTimerRef.current = window.setTimeout(advance, waitMs);
+        return;
+      }
+
+      void voiceEngine.speak(
+        step.textUz,
+        {
+          onEnd: () => {
+            if (!playingRef.current) return;
+            muteTimerRef.current = window.setTimeout(advance, 550);
+          },
+        },
+        true,
+        rate
+      );
+    },
+    [steps, stopSceneAudio, syncSceneStep]
+  );
+
+  const goToSceneStep = useCallback(
+    (nextIdx: number, keepPlaying = false) => {
+      if (!steps.length) return;
+      const clamped = ((nextIdx % steps.length) + steps.length) % steps.length;
+      setStepIdx(clamped);
+      setClickedPartSubtitle(null);
+      syncSceneStep(clamped);
+      if (keepPlaying) {
+        setPlaying(true);
+        playingRef.current = true;
+        playStepNarration(clamped);
+      } else {
+        setPlaying(false);
+        stopSceneAudio();
+      }
+    },
+    [playStepNarration, steps.length, stopSceneAudio, syncSceneStep]
+  );
+
+  // Reset playback state whenever a new lesson opens
+  useEffect(() => {
+    stopSceneAudio();
+    setPlaying(false);
+    setStepIdx(0);
+    setExploded(false);
+    setClickedPartSubtitle(null);
+    iframeReadyRef.current = false;
+    return () => {
+      stopSceneAudio();
+    };
+  }, [lesson?.topicTitle, lesson?.publicPath, lesson?.htmlContent, stopSceneAudio]);
+
+  // Listen to PART_CLICK events sent from inside the MirvoScene iframe
+  useEffect(() => {
+    if (!isMirvoScene) return;
+    const onMessage = (ev: MessageEvent) => {
+      const data = ev.data;
+      if (!data || typeof data !== 'object' || data.type !== 'PART_CLICK') return;
+      const clickedId = String(data.partId || '');
+      const nameUz = String(data.nameUz || clickedId);
+      const foundIdx = steps.findIndex((s) => s.focusPart === clickedId);
+      if (foundIdx >= 0) {
+        goToSceneStep(foundIdx, playingRef.current);
+      } else {
+        setPlaying(false);
+        stopSceneAudio();
+        setClickedPartSubtitle(`${nameUz} — tanlangan modul tafsiloti.`);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [goToSceneStep, isMirvoScene, steps, stopSceneAudio]);
+
+  // Keyboard shortcuts for MirvoScene viewer
+  useEffect(() => {
+    if (!isMirvoScene || progress.active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToSceneStep(stepIdxRef.current + 1, playingRef.current);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToSceneStep(stepIdxRef.current - 1, playingRef.current);
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        if (playingRef.current) {
+          setPlaying(false);
+          stopSceneAudio();
+        } else {
+          const targetIdx =
+            stepIdxRef.current >= steps.length - 1 ? 0 : stepIdxRef.current;
+          goToSceneStep(targetIdx, true);
+        }
+      } else if (e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+        setExploded((prev) => {
+          const next = !prev;
+          postToScene({ type: 'EXPLODE', amount: next ? 1 : 0 });
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goToSceneStep, isMirvoScene, postToScene, progress.active, steps.length, stopSceneAudio]);
 
   useEffect(() => {
     if (!progress.active) return;
@@ -101,13 +332,21 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const slug = lesson.topicTitle
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/gi, '_')
-      .replace(/^_+|_+$/g, '') || 'mirvo_model';
+    const slug =
+      lesson.topicTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/gi, '_')
+        .replace(/^_+|_+$/g, '') || 'mirvo_model';
     a.download = `${slug}.html`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const toggleExplode = () => {
+    const next = !exploded;
+    setExploded(next);
+    postToScene({ type: 'SET_AUTO_TOUR', enabled: false });
+    postToScene({ type: 'EXPLODE', amount: next ? 1 : 0 });
   };
 
   const title = lesson?.topicTitle || progress.topicTitle || 'Interaktiv HTML Model';
@@ -117,15 +356,26 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
     progress.totalLines,
     progress.totalChars
   );
+  const currentStep = steps[stepIdx] || steps[0];
+
+  const sourceBadgeText =
+    lesson?.sourceLabel === 'scene-addon'
+      ? 'Shablon + AI Modul'
+      : lesson?.sourceLabel === 'scene-focus'
+        ? 'Shablon + AI Tahlil'
+        : lesson?.sourceLabel === 'library'
+          ? 'Saqlangan · 0 tok'
+          : 'Kesh · 0 tok';
 
   return (
-    <div className="h-[100dvh] w-full flex flex-col bg-[#FAFAFA] text-[#1F2937] overflow-hidden">
+    <div className="h-[100dvh] w-full flex flex-col bg-[#FFFFFF] text-[#1F2937] overflow-hidden">
       {/* Slim Non-Overlapping Top Bar */}
       <header className="h-12 shrink-0 bg-white border-b border-black/[0.07] px-3 sm:px-5 flex items-center justify-between gap-3 z-20">
         <div className="flex items-center gap-2.5 min-w-0">
           <button
             type="button"
             onClick={() => {
+              stopSceneAudio();
               if (progress.active) onCancelStream();
               onBack();
             }}
@@ -137,11 +387,34 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
           <span className="truncate text-sm font-semibold text-[#1F2937] tracking-tight">
             {title}
           </span>
+          {!progress.active && isMirvoScene && steps.length > 0 && (
+            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#F9FAFB] border border-[#E5E7EB] text-[11.5px] font-mono font-semibold text-[#374151] shrink-0">
+              {stepIdx + 1} / {steps.length}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           {!progress.active && lesson && (
             <>
+              {isMirvoScene && (
+                <button
+                  type="button"
+                  onClick={toggleExplode}
+                  title="Qismlarga ajratib ko‘rish (E)"
+                  className={`h-8 px-2.5 rounded-full border text-[11.5px] font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    exploded
+                      ? 'bg-[#2563EB] border-[#2563EB] text-white'
+                      : 'bg-[#F9FAFB] hover:bg-[#F3F4F6] border-[#E5E7EB] text-[#1F2937]'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">
+                    {exploded ? 'Yig‘ish' : 'Qismlarga ajratish'}
+                  </span>
+                </button>
+              )}
+
               <span
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F9FAFB] border border-[#E5E7EB] text-[11px] font-mono font-semibold text-[#374151]"
                 title={
@@ -157,9 +430,7 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
                     <span className="text-emerald-600">{formatCostUsd(usage.cost_usd)}</span>
                   </span>
                 ) : (
-                  <span className="text-[#6B7280]">
-                    {lesson.sourceLabel === 'library' ? 'Saqlangan · 0 tok' : 'Kesh · 0 tok'}
-                  </span>
+                  <span className="text-[#6B7280]">{sourceBadgeText}</span>
                 )}
               </span>
 
@@ -178,8 +449,11 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
               {lesson.sourceLabel !== 'library' && (
                 <button
                   type="button"
-                  onClick={onRegenerate}
-                  title="Qwen bilan qaytadan 0 dan yaratish"
+                  onClick={() => {
+                    stopSceneAudio();
+                    onRegenerate();
+                  }}
+                  title="Qwen bilan qaytadan tahlil qilish / yaratish"
                   className="h-8 px-2.5 rounded-full bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] text-[11px] font-medium text-[#1F2937] inline-flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -191,7 +465,7 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
         </div>
       </header>
 
-      {/* Main Content: Live Streaming Build View OR Full-Viewport Standalone HTML Iframe */}
+      {/* Main Content */}
       <main className="flex-1 min-h-0 relative w-full flex flex-col">
         {progress.active ? (
           <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-[radial-gradient(circle_at_50%_45%,#ffffff_0%,#fafafa_65%,#f3f4f6_100%)]">
@@ -211,54 +485,61 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
                 </span>
               </div>
 
-              {/* 4 Real Generation Phases */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11.5px]">
-                {[
-                  { id: 1, label: '1. Dizayn va CSS' },
-                  { id: 2, label: '2. Izometrik SVG' },
-                  { id: 3, label: '3. 60 FPS animatsiya' },
-                  { id: 4, label: '4. 5 qadam va ovoz' },
-                ].map((step) => {
-                  const done = activePhase > step.id;
-                  const current = activePhase === step.id;
-                  return (
-                    <div
-                      key={step.id}
-                      className={`px-2.5 py-2 rounded-xl border font-medium transition-colors ${
-                        done
-                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                          : current
-                            ? 'bg-blue-50 border-blue-200 text-blue-700'
-                            : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]'
-                      }`}
-                    >
-                      {step.label}
-                    </div>
-                  );
-                })}
-              </div>
+              {progress.mode === 'scene-adapt' ? (
+                <p className="m-0 text-xs text-[#4B5563] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3.5 leading-relaxed">
+                  Tayyor professional shablon <strong>100% saqlanib qoladi</strong> — Qwen 0 dan
+                  qayta yozmasdan, savolingizga javob beruvchi zum ketma-ketligini va kerak bo‘lsa
+                  qo‘shimcha SVG modulni tayyor shablonga ulayapti (~8–20 soniya).
+                </p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11.5px]">
+                    {[
+                      { id: 1, label: '1. Dizayn va CSS' },
+                      { id: 2, label: '2. Izometrik SVG' },
+                      { id: 3, label: '3. 60 FPS animatsiya' },
+                      { id: 4, label: '4. 5 qadam va ovoz' },
+                    ].map((step) => {
+                      const done = activePhase > step.id;
+                      const current = activePhase === step.id;
+                      return (
+                        <div
+                          key={step.id}
+                          className={`px-2.5 py-2 rounded-xl border font-medium transition-colors ${
+                            done
+                              ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                              : current
+                                ? 'bg-blue-50 border-blue-200 text-blue-700'
+                                : 'bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]'
+                          }`}
+                        >
+                          {step.label}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-              {/* Live Metrics Row */}
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#4B5563] font-mono bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3.5 py-2.5">
-                <span>
-                  Yozildi: <strong className="text-[#111827]">{progress.totalLines}</strong> qator (
-                  {(progress.totalChars / 1024).toFixed(1)} KB)
-                </span>
-                <span>Bosqich: #{progress.pass}</span>
-              </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#4B5563] font-mono bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3.5 py-2.5">
+                    <span>
+                      Yozildi: <strong className="text-[#111827]">{progress.totalLines}</strong>{' '}
+                      qator ({(progress.totalChars / 1024).toFixed(1)} KB)
+                    </span>
+                    <span>Bosqich: #{progress.pass}</span>
+                  </div>
 
-              {/* Honest Live Code Stream Preview (Last 6 lines) */}
-              {progress.codeTail && (
-                <pre className="m-0 p-3 rounded-xl bg-[#0F172A] text-[#94A3B8] text-[11px] leading-relaxed font-mono overflow-hidden max-h-28 whitespace-pre-wrap break-all">
-                  {progress.codeTail.split('\n').slice(-6).join('\n')}
-                </pre>
+                  {progress.codeTail && (
+                    <pre className="m-0 p-3 rounded-xl bg-[#0F172A] text-[#94A3B8] text-[11px] leading-relaxed font-mono overflow-hidden max-h-28 whitespace-pre-wrap break-all">
+                      {progress.codeTail.split('\n').slice(-6).join('\n')}
+                    </pre>
+                  )}
+
+                  <p className="m-0 text-xs text-[#6B7280] leading-relaxed">
+                    Yangi qurilma uchun izometrik animatsiyali HTML kod yaratilmoqda — murakkab
+                    qurilmalar uchun 2–4 daqiqa vaqt olishi mumkin. Tayyor bo‘lishi bilan
+                    brauzeringizga saqlanadi.
+                  </p>
+                </>
               )}
-
-              <p className="m-0 text-xs text-[#6B7280] leading-relaxed">
-                Sifatli izometrik animatsiyali HTML kod 0 dan yozilmoqda — odatda 1–3 daqiqa vaqt
-                oladi. Tayyor bo‘lishi bilan brauzeringizga saqlanadi va keyingi safar 0.1 soniyada
-                ochiladi.
-              </p>
 
               <div className="flex justify-end">
                 <button
@@ -280,10 +561,10 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
               <h2 className="text-base font-bold text-[#111827] m-0">
                 HTML yaratishda xatolik yuz berdi
               </h2>
-              <p className="text-xs text-red-600 m-0 leading-relaxed break-words">
+              <p className="text-xs text-red-600 leading-relaxed m-0 break-words">
                 {progress.error}
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5 pt-1">
                 <button
                   type="button"
                   onClick={onRetry}
@@ -303,21 +584,166 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
           </div>
         ) : lesson?.publicPath ? (
           <iframe
+            ref={iframeRef}
             key={lesson.publicPath}
             src={lesson.publicPath}
             title={lesson.topicTitle}
-            className="flex-1 w-full h-full border-0 bg-[#FAFAFA]"
+            onLoad={() => {
+              iframeReadyRef.current = true;
+              if (isMirvoScene) {
+                window.setTimeout(() => syncSceneStep(stepIdxRef.current), 60);
+              }
+            }}
+            className={`w-full flex-1 border-0 bg-white ${isMirvoScene ? 'pb-28' : ''}`}
             sandbox="allow-scripts allow-same-origin"
           />
         ) : lesson?.htmlContent ? (
           <iframe
+            ref={iframeRef}
             key={`${lesson.topicTitle}-${lesson.htmlContent.length}`}
             srcDoc={lesson.htmlContent}
             title={lesson.topicTitle}
-            className="flex-1 w-full h-full border-0 bg-[#FAFAFA]"
+            onLoad={() => {
+              iframeReadyRef.current = true;
+              if (isMirvoScene) {
+                window.setTimeout(() => syncSceneStep(stepIdxRef.current), 60);
+              }
+            }}
+            className={`w-full flex-1 border-0 bg-white ${isMirvoScene ? 'pb-28' : ''}`}
             sandbox="allow-scripts allow-same-origin"
           />
         ) : null}
+
+        {/* Floating Subtitle + High-Contrast White Audio Player Dock for Modular MirvoScene Models */}
+        {!progress.active && !progress.error && isMirvoScene && currentStep && (
+          <footer className="pointer-events-none absolute inset-x-0 bottom-3.5 px-3 sm:px-6 flex flex-col items-center gap-2.5 z-20">
+            <div
+              aria-live="polite"
+              className="pointer-events-auto max-w-[700px] w-full sm:w-auto bg-[#111827]/92 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-[13px] sm:text-[13.5px] leading-relaxed text-center shadow-[0_8px_24px_rgba(17,24,39,0.18)] backdrop-blur-md"
+            >
+              {currentStep.titleUz && !clickedPartSubtitle && (
+                <span className="font-semibold text-[#93C5FD] mr-1.5">
+                  {currentStep.titleUz}:
+                </span>
+              )}
+              <span>{clickedPartSubtitle || currentStep.textUz}</span>
+            </div>
+
+            <div
+              role="group"
+              aria-label="Dars va ovoz boshqaruvi"
+              className="pointer-events-auto bg-white border border-[#E5E7EB] rounded-full px-2.5 py-1.5 shadow-[0_8px_28px_rgba(15,23,42,0.09)] flex items-center gap-1.5 sm:gap-2"
+            >
+              <button
+                type="button"
+                onClick={() => goToSceneStep(stepIdx - 1, playing)}
+                title="Oldingi qadam (←)"
+                aria-label="Oldingi qadam"
+                className="w-8 h-8 rounded-full hover:bg-[#F3F4F6] flex items-center justify-center text-[#1F2937] cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => goToSceneStep(stepIdx, true)}
+                title="Qayta eshitish"
+                aria-label="Qayta eshitish"
+                className="w-8 h-8 rounded-full hover:bg-[#F3F4F6] flex items-center justify-center text-[#1F2937] cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (playing) {
+                    setPlaying(false);
+                    stopSceneAudio();
+                  } else {
+                    const startIdx = stepIdx >= steps.length - 1 ? 0 : stepIdx;
+                    goToSceneStep(startIdx, true);
+                  }
+                }}
+                className="h-9 px-4 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[12.5px] font-semibold inline-flex items-center gap-1.5 shadow-sm cursor-pointer transition-colors"
+              >
+                {playing ? (
+                  <>
+                    <Pause className="w-3.5 h-3.5 fill-current" />
+                    <span>Pauza</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Eshitish</span>
+                  </>
+                )}
+              </button>
+
+              <div className="flex items-center gap-1.5 px-1.5" role="tablist">
+                {steps.map((s, idx) => (
+                  <button
+                    key={`${s.focusPart}-${idx}`}
+                    type="button"
+                    onClick={() => goToSceneStep(idx, playing)}
+                    title={s.titleUz}
+                    aria-label={`${idx + 1}-qadam: ${s.titleUz}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      idx === stepIdx
+                        ? 'w-5 bg-[#2563EB]'
+                        : 'w-2 bg-[#D1D5DB] hover:bg-[#9CA3AF]'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => goToSceneStep(stepIdx + 1, playing)}
+                title="Keyingi qadam (→)"
+                aria-label="Keyingi qadam"
+                className="w-8 h-8 rounded-full hover:bg-[#F3F4F6] flex items-center justify-center text-[#1F2937] cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              <span className="w-px h-4 bg-[#E5E7EB] mx-0.5" aria-hidden="true" />
+
+              <button
+                type="button"
+                onClick={() => {
+                  const nextMuted = !muted;
+                  setMuted(nextMuted);
+                  mutedRef.current = nextMuted;
+                  if (playing) {
+                    playStepNarration(stepIdx);
+                  }
+                }}
+                title={muted ? 'Ovozni yoqish' : 'Ovozni o‘chirish'}
+                aria-label="Ovoz"
+                className="w-8 h-8 rounded-full hover:bg-[#F3F4F6] flex items-center justify-center text-[#1F2937] cursor-pointer"
+              >
+                {muted ? <VolumeX className="w-4 h-4 text-[#6B7280]" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const nextSpd = (speedIdx + 1) % SPEEDS.length;
+                  setSpeedIdx(nextSpd);
+                  speedIdxRef.current = nextSpd;
+                  if (playing) {
+                    playStepNarration(stepIdx);
+                  }
+                }}
+                title="O‘qish tezligi"
+                className="h-7 px-2.5 rounded-full bg-[#F9FAFB] hover:bg-[#F3F4F6] border border-[#E5E7EB] font-mono text-[11.5px] font-semibold text-[#1F2937] cursor-pointer"
+              >
+                {SPEEDS[speedIdx].toFixed(SPEEDS[speedIdx] === 0.85 ? 2 : 1)}x
+              </button>
+            </div>
+          </footer>
+        )}
       </main>
     </div>
   );

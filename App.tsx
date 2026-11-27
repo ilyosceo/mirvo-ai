@@ -51,6 +51,8 @@ import {
   cleanTopicTitleUz,
   findCuratedHtmlModel,
   findGeneratedHtmlCache,
+  HTML_MODELS_LIBRARY,
+  isSpecificSceneQuestion,
   normalizeHtmlTopicQuery,
   saveGeneratedHtmlCache,
 } from './data/htmlModelsLibrary';
@@ -919,15 +921,19 @@ export default function App() {
 
       const requestedSteps = clampLessonStepCount(stepCountOverride ?? lessonStepCount);
       const cleanTitle = cleanTopicTitleUz(q);
+      const curated = findCuratedHtmlModel(q);
+      const specificSceneQuery = curated ? isSpecificSceneQuestion(q, curated) : false;
 
-      // 1. Instant match from curated Gold-Standard HTML models (0ms, 0 tokens)
       if (!forceRegenerate) {
-        const curated = findCuratedHtmlModel(q);
-        if (curated) {
+        // 1a. Direct overview match on any of the 14 Gold-Standard HTML models (<0.1s, 0 tokens)
+        if (curated && !specificSceneQuery) {
           setActiveHtmlLesson({
             topicTitle: curated.titleUz,
+            kind: curated.kind,
             sourceLabel: 'library',
             publicPath: curated.publicPath,
+            steps: curated.defaultSteps,
+            parts: curated.parts,
             tokenUsage: ZERO_TOKEN_USAGE,
           });
           setHtmlStreamProgress({
@@ -948,13 +954,20 @@ export default function App() {
           return;
         }
 
-        // 2. Instant match from previously Qwen-generated HTML cache in localStorage (0ms, 0 tokens)
+        // 1b. Previously generated or scene-adapted lesson in localStorage cache (<0.1s, 0 tokens)
         const cachedHtml = findGeneratedHtmlCache(q);
-        if (cachedHtml && cachedHtml.html) {
+        if (cachedHtml && (cachedHtml.html || cachedHtml.baseModelId)) {
+          const baseEntry = cachedHtml.baseModelId
+            ? HTML_MODELS_LIBRARY.find((m) => m.id === cachedHtml.baseModelId)
+            : undefined;
           setActiveHtmlLesson({
             topicTitle: cachedHtml.topicTitle,
+            kind: cachedHtml.kind || (cachedHtml.steps ? 'mirvo-scene' : 'self-contained'),
             sourceLabel: 'cache',
-            htmlContent: cachedHtml.html,
+            publicPath: !cachedHtml.html && baseEntry ? baseEntry.publicPath : undefined,
+            htmlContent: cachedHtml.html || undefined,
+            steps: cachedHtml.steps,
+            parts: cachedHtml.parts,
             modelUsed: cachedHtml.model,
             tokenUsage: ZERO_TOKEN_USAGE,
           });
@@ -977,7 +990,104 @@ export default function App() {
         }
       }
 
-      // 3. Zero-to-HTML streaming generation via Qwen (supports multi-pass continuation without 60s Vercel timeout!)
+      // 2. Smart Non-Destructive MirvoScene Adaptation (Tier 1 Focus-Only OR Tier 2 SVG Addon Layer!)
+      //    Example: "GESga daryo nega kerak?" -> keeps 100% of 1,800-line GES Francis HTML and attaches river_dam module!
+      if (curated && curated.kind === 'mirvo-scene' && (specificSceneQuery || forceRegenerate)) {
+        const startedAt = Date.now();
+        const controller = new AbortController();
+        htmlAbortRef.current = controller;
+
+        setActiveHtmlLesson(null);
+        setQueryText('');
+        setViewMode('html-lesson');
+        viewModeRef.current = 'html-lesson';
+        setHtmlStreamProgress({
+          active: true,
+          mode: 'scene-adapt',
+          topicTitle: cleanTitle,
+          statusMessage: `"${curated.titleUz}" shabloniga savolingiz moslashtirilmoqda...`,
+          pass: 1,
+          totalLines: 0,
+          totalChars: 0,
+          codeTail: '',
+          startedAt,
+          error: null,
+        });
+
+        try {
+          const res = await fetch('/api/tutor/html-scene-adapt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: q,
+              modelId: curated.id,
+              stepCount: requestedSteps,
+            }),
+            signal: controller.signal,
+          });
+
+          const data = await safeParseJsonOrNull<any>(res);
+          if (!res.ok || !data) {
+            throw new Error(data?.error || `Shablon tahlilida xatolik (HTTP ${res.status})`);
+          }
+
+          const usage = data.token_usage || ZERO_TOKEN_USAGE;
+          saveGeneratedHtmlCache({
+            key: normalizeHtmlTopicQuery(q) || q.toLowerCase(),
+            topicTitle: data.lessonTitleUz || cleanTitle,
+            html: data.patchedHtml || '',
+            kind: 'mirvo-scene',
+            steps: data.steps,
+            parts: data.parts,
+            baseModelId: curated.id,
+            model: data.modelUsed || 'qwen3.8-omni-flash',
+            createdAt: new Date().toISOString(),
+            tokens: {
+              prompt_tokens: usage.prompt_tokens,
+              cached_tokens: usage.cached_tokens || 0,
+              output_tokens: usage.output_tokens,
+              total_tokens: usage.total_tokens,
+              cost_usd: usage.cost_usd,
+            },
+          });
+
+          setSessionTokenStats((prev) =>
+            recordSessionTokenStats(prev, usage, data.lessonTitleUz || cleanTitle)
+          );
+          setActiveHtmlLesson({
+            topicTitle: data.lessonTitleUz || cleanTitle,
+            kind: 'mirvo-scene',
+            sourceLabel: data.mode === 'svg_addon' ? 'scene-addon' : 'scene-focus',
+            publicPath: data.patchedHtml ? undefined : data.publicPath || curated.publicPath,
+            htmlContent: data.patchedHtml || undefined,
+            steps: data.steps,
+            parts: data.parts,
+            modelUsed: data.modelUsed,
+            tokenUsage: usage,
+          });
+          setHtmlStreamProgress((prev) => ({
+            ...prev,
+            active: false,
+            error: null,
+          }));
+          htmlAbortRef.current = null;
+          return;
+        } catch (err: unknown) {
+          if (err instanceof Error && err.name === 'AbortError') return;
+          setHtmlStreamProgress((prev) => ({
+            ...prev,
+            active: false,
+            error:
+              err instanceof Error
+                ? err.message
+                : 'Shablonni moslashtirishda xatolik yuz berdi.',
+          }));
+          htmlAbortRef.current = null;
+          return;
+        }
+      }
+
+      // 3. Tier 3: Zero-to-HTML streaming generation via Qwen for completely unknown devices
       const startedAt = Date.now();
       setActiveHtmlLesson(null);
       setQueryText('');
@@ -985,6 +1095,7 @@ export default function App() {
       viewModeRef.current = 'html-lesson';
       setHtmlStreamProgress({
         active: true,
+        mode: 'full-html',
         topicTitle: cleanTitle,
         statusMessage: 'Qwen 3.8 Omni Flash izometrik HTML kodini 0 dan yozmoqda...',
         pass: 1,

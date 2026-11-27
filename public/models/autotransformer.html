@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Avtotransformator — Yuqori kuchlanishli kesma</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — PURE #FFFFFF ZERO-UI VIEWPORT & SEQUENTIAL SPOTLIGHT STYLES
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body, .mirvo-viewport {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .mirvo-viewport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+
+    /* Centered responsive 16:9 isometric camera stage */
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: block;
+    }
+
+    #autotransformer-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Modular interactive anatomical groups */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, filter;
+    }
+
+    /* Smooth dimming for non-focused parts */
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    /* Crisp luminous spotlight lift for focused part */
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Respect accessibility reduced-motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage,
+      .mirvo-part {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pure #FFFFFF canvas container with strictly ZERO UI chrome -->
+  <div id="mirvo-viewport" class="mirvo-viewport">
+    <div id="mirvo-stage" class="mirvo-stage">
+      <svg
+        id="autotransformer-svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="High-Voltage Single-Winding Autotransformer Technical Isometric Cutaway"
+      >
+        <defs>
+          <!-- ===============================================================
+               SOFT FLOOR SHADOW & LUMINOUS ENERGY FILTERS
+               =============================================================== -->
+          <filter id="floor-shadow-blur" x="-22%" y="-22%" width="144%" height="144%">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+
+          <filter id="flux-glow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="3.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="energy-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="corona-blur" x="-70%" y="-70%" width="240%" height="240%">
+            <feGaussianBlur stdDeviation="6.5" />
+          </filter>
+
+          <!-- ===============================================================
+               4-TONE MATTE ENGINEERING MATERIAL GRADIENTS
+               =============================================================== -->
+          <!-- Satin slate-blue steel transformer tank -->
+          <linearGradient id="grad-tank-top" x1="8%" y1="5%" x2="92%" y2="95%">
+            <stop offset="0%" stop-color="#96AFC7" />
+            <stop offset="48%" stop-color="#7D97B0" />
+            <stop offset="100%" stop-color="#617C96" />
+          </linearGradient>
+
+          <linearGradient id="grad-tank-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#728DA7" />
+            <stop offset="52%" stop-color="#5B7690" />
+            <stop offset="100%" stop-color="#445C73" />
+          </linearGradient>
+
+          <linearGradient id="grad-tank-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#5B7690" />
+            <stop offset="55%" stop-color="#496178" />
+            <stop offset="100%" stop-color="#36495C" />
+          </linearGradient>
+
+          <linearGradient id="grad-cavity-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1E2B38" />
+            <stop offset="55%" stop-color="#273849" />
+            <stop offset="100%" stop-color="#32465B" />
+          </linearGradient>
+
+          <!-- Dark-slate beveled base plinth -->
+          <linearGradient id="grad-plinth-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#5B6978" />
+            <stop offset="50%" stop-color="#4F5D6B" />
+            <stop offset="100%" stop-color="#3B4652" />
+          </linearGradient>
+
+          <!-- Laminated silicon-steel core 4-tone shading -->
+          <linearGradient id="grad-core-face" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E2E8F0" />
+            <stop offset="42%" stop-color="#CBD5E1" />
+            <stop offset="78%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="grad-core-edge" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F1F5F9" />
+            <stop offset="50%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <!-- Deep cobalt-blue bobbin insulation frame -->
+          <linearGradient id="grad-cobalt-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="45%" stop-color="#3B82F6" />
+            <stop offset="100%" stop-color="#1D4ED8" />
+          </linearGradient>
+
+          <linearGradient id="grad-cobalt-side" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#2563EB" />
+            <stop offset="60%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <!-- Warm brushed copper turns (common winding) -->
+          <linearGradient id="grad-copper-left" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8C481B" />
+            <stop offset="30%" stop-color="#E69F68" />
+            <stop offset="56%" stop-color="#FDE2C4" />
+            <stop offset="86%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <linearGradient id="grad-copper-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#B85F27" />
+            <stop offset="35%" stop-color="#E69F68" />
+            <stop offset="72%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Series winding wide brushed-copper ribbon coils -->
+          <linearGradient id="grad-series-ribbon-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FEF3C7" />
+            <stop offset="36%" stop-color="#F4A96C" />
+            <stop offset="78%" stop-color="#CC7434" />
+            <stop offset="100%" stop-color="#8A4519" />
+          </linearGradient>
+
+          <linearGradient id="grad-series-ribbon-front" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F7C28F" />
+            <stop offset="38%" stop-color="#DC8646" />
+            <stop offset="82%" stop-color="#A65521" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Dark-slate insulated switch panel -->
+          <linearGradient id="grad-panel-front" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#536375" />
+            <stop offset="48%" stop-color="#3E4D5E" />
+            <stop offset="100%" stop-color="#273340" />
+          </linearGradient>
+
+          <!-- Glazed terracotta-brown HV porcelain bushing sheds -->
+          <linearGradient id="grad-hv-porcelain" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#5C2A14" />
+            <stop offset="24%" stop-color="#D98A63" />
+            <stop offset="48%" stop-color="#E4A07B" />
+            <stop offset="76%" stop-color="#B8653E" />
+            <stop offset="100%" stop-color="#6A3219" />
+          </linearGradient>
+
+          <!-- Clean ivory-ceramic MV porcelain bushing sheds -->
+          <linearGradient id="grad-mv-porcelain" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ACA393" />
+            <stop offset="26%" stop-color="#FFFFFF" />
+            <stop offset="54%" stop-color="#F5F2EB" />
+            <stop offset="82%" stop-color="#DDD6C7" />
+            <stop offset="100%" stop-color="#B8AFA0" />
+          </linearGradient>
+
+          <!-- Brushed copper-brass terminal lugs -->
+          <linearGradient id="grad-brass-lug" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FEF3C7" />
+            <stop offset="40%" stop-color="#E69F68" />
+            <stop offset="100%" stop-color="#9A4E20" />
+          </linearGradient>
+
+          <!-- Luminous radial halos for terminals & active selector contact -->
+          <radialGradient id="grad-halo-amber" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.98" />
+            <stop offset="40%" stop-color="#FBBF24" stop-opacity="0.62" />
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+          </radialGradient>
+
+          <radialGradient id="grad-halo-cyan" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#F0F9FF" stop-opacity="0.95" />
+            <stop offset="42%" stop-color="#38BDF8" stop-opacity="0.58" />
+            <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- =================================================================
+             STRICT BACK-TO-FRONT PAINTER'S ORDER LAYER STACK
+             Inner `.explode-layer` groups decouple Exploded View translations
+             from outer `.mirvo-part` CSS spotlight opacity/filter effects.
+             ================================================================= -->
+
+        <!-- 1. HOUSING BACK: Grounded shadow, dark-slate plinth, back interior walls -->
+        <g id="part-housing-back" class="mirvo-part" data-part="housing">
+          <g class="explode-layer" data-explode="housing_back"></g>
+        </g>
+
+        <!-- 2. CORE: Heavy rectangular O-loop laminated silicon-steel core & flux loops -->
+        <g id="part-core" class="mirvo-part" data-part="core">
+          <g class="explode-layer" data-explode="core"></g>
+        </g>
+
+        <!-- 3. COMMON WINDING: Lower cobalt bobbin, dense copper turns, ivory bars & tap leads -->
+        <g id="part-common_winding" class="mirvo-part" data-part="common_winding">
+          <g class="explode-layer" data-explode="common_winding"></g>
+        </g>
+
+        <!-- 4. SERIES WINDING: Upper ribbon coils, ivory strips & golden-amber series busbar -->
+        <g id="part-series_winding" class="mirvo-part" data-part="series_winding">
+          <g class="explode-layer" data-explode="series_winding"></g>
+        </g>
+
+        <!-- 5. TAP SELECTOR: Dark-slate switch panel, 3 tap posts, rotating copper arm & rod -->
+        <g id="part-tap_selector" class="mirvo-part" data-part="tap_selector">
+          <g class="explode-layer" data-explode="tap_selector"></g>
+        </g>
+
+        <!-- 6. HOUSING FRONT: Cutaway steel tank pillars, lower wall & overhanging flanged lid -->
+        <g id="part-housing-front" class="mirvo-part" data-part="housing">
+          <g class="explode-layer" data-explode="housing_front"></g>
+        </g>
+
+        <!-- 7. BUSHINGS: 4 ribbed HV terracotta & MV ivory porcelain bushings with copper lugs -->
+        <g id="part-bushings" class="mirvo-part" data-part="bushings">
+          <g class="explode-layer" data-explode="bushings"></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. DEVICE METADATA, PART NAMES & 30-DEGREE ISOMETRIC PROJECTION
+         ===================================================================== */
+      const DEVICE_ID = "autotransformer";
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const INK = "#222933";
+
+      const PART_NAMES_UZ = {
+        core: "Qatlamli elektrotexnik po\u2018lat magnit o\u2018zagi",
+        common_winding: "Umumiy chulg\u2018am (birlamchi va ikkilamchi umumiy qism)",
+        series_winding: "Ketma-ket (qo\u2018shimcha) yuqori kuchlanish chulg\u2018ami",
+        tap_selector: "Chulg\u2018am chiqishlari va kuchlanish rostlash ulagichi",
+        bushings: "Yuqori va o\u2018rta kuchlanish chinni izolyatorlari (vvodlar)",
+        housing: "Transformator po\u2018lat baki va asosi"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "core",
+        "common_winding",
+        "series_winding",
+        "tap_selector",
+        "bushings"
+      ];
+
+      // Isometric displacement vectors for Exploded View (scaled by 0..1)
+      const EXPLODE_VECTORS = {
+        housing_back: [0, 26],
+        housing_front: [-34, 48],
+        core: [-78, 12],
+        common_winding: [-16, 42],
+        series_winding: [0, -72],
+        tap_selector: [86, 26],
+        bushings: [0, -96]
+      };
+
+      // Exact 30-degree isometric basis matching the uploaded reference orientation:
+      // +u -> down-right (+cos30, +sin30) : short tank depth axis (front-left face)
+      // +v -> up-right   (+cos30, -sin30) : long tank length axis (front-right face, O-core loop plane)
+      // +z -> straight up (0, -1)         : vertical height axis
+      const COS30 = Math.cos(Math.PI / 6); // 0.8660254
+      const SIN30 = 0.5;
+      const SCALE = 58.0;
+      const ORIGIN_X = 524.0;
+      const ORIGIN_Y = 674.0;
+
+      /**
+       * Projects a 3D isometric point (u, v, z) onto 2D SVG canvas coordinates [x, y].
+       */
+      function iso(u, v, z) {
+        return [
+          ORIGIN_X + (u + v) * COS30 * SCALE,
+          ORIGIN_Y + (u - v) * SIN30 * SCALE - z * SCALE
+        ];
+      }
+
+      /**
+       * Formats an array of 3D or 2D coordinates into an SVG polygon points string.
+       */
+      function pts(list) {
+        return list
+          .map(function (p) {
+            const c = p.length === 3 ? iso(p[0], p[1], p[2]) : p;
+            return c[0].toFixed(1) + "," + c[1].toFixed(1);
+          })
+          .join(" ");
+      }
+
+      /**
+       * Creates an SVG element with attributes and appends it to parent.
+       */
+      function el(tag, attrs, parent) {
+        const node = document.createElementNS(SVG_NS, tag);
+        if (attrs) {
+          for (const k in attrs) {
+            if (Object.prototype.hasOwnProperty.call(attrs, k) && attrs[k] !== undefined && attrs[k] !== null) {
+              node.setAttribute(k, String(attrs[k]));
+            }
+          }
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      /**
+       * Draws a crisp technical polygon from 3D coordinates with non-scaling outlines.
+       */
+      function isoPoly(parent, coords, fill, stroke, sw, extra) {
+        const attrs = Object.assign(
+          {
+            points: pts(coords),
+            fill: fill,
+            stroke: stroke === undefined ? INK : stroke,
+            "stroke-width": sw === undefined ? 1.55 : sw,
+            "stroke-linejoin": "round",
+            "stroke-linecap": "round",
+            "vector-effect": "non-scaling-stroke"
+          },
+          extra || {}
+        );
+        return el("polygon", attrs, parent);
+      }
+
+      /**
+       * Draws an isometric axis-aligned box [u0..u1, v0..v1, z0..z1].
+       * Visible faces: front-left (v = v0), front-right (u = u1), top (z = z1).
+       */
+      function isoBox(parent, u0, v0, z0, u1, v1, z1, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.55;
+        const stroke = o.stroke !== undefined ? o.stroke : INK;
+        const g = el("g", o.groupAttrs || null, parent);
+
+        if (o.left !== false) {
+          isoPoly(
+            g,
+            [
+              [u0, v0, z0],
+              [u1, v0, z0],
+              [u1, v0, z1],
+              [u0, v0, z1]
+            ],
+            colors.left,
+            stroke,
+            sw
+          );
+        }
+        if (o.right !== false) {
+          isoPoly(
+            g,
+            [
+              [u1, v0, z0],
+              [u1, v1, z0],
+              [u1, v1, z1],
+              [u1, v0, z1]
+            ],
+            colors.right,
+            stroke,
+            sw
+          );
+        }
+        if (o.top !== false) {
+          isoPoly(
+            g,
+            [
+              [u0, v0, z1],
+              [u1, v0, z1],
+              [u1, v1, z1],
+              [u0, v1, z1]
+            ],
+            colors.top,
+            stroke,
+            sw
+          );
+        }
+        return g;
+      }
+
+      /**
+       * Draws an isometric box with smoothly rounded vertical corners (for plinth & tank body).
+       */
+      function isoRoundedPrismZ(parent, u0, v0, u1, v1, z0, z1, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.6;
+        const g = el("g", null, parent);
+
+        // Build closed perimeter in (u, v) plane starting at front-left corner
+        const corners = [
+          { cu: u0 + r, cv: v0 + r, a0: Math.PI, a1: Math.PI * 1.5 },       // left corner
+          { cu: u0 + r, cv: v1 - r, a0: Math.PI * 0.5, a1: Math.PI },       // top-back corner
+          { cu: u1 - r, cv: v1 - r, a0: 0, a1: Math.PI * 0.5 },             // right corner
+          { cu: u1 - r, cv: v0 + r, a0: -Math.PI * 0.5, a1: 0 }             // front-bottom corner
+        ];
+
+        // Clean perimeter order: left -> front-bottom -> right -> back-top
+        function sampleArc(cu, cv, aStart, aEnd, steps) {
+          const arr = [];
+          for (let i = 0; i <= steps; i++) {
+            const a = aStart + (aEnd - aStart) * (i / steps);
+            arr.push([cu + r * Math.cos(a), cv + r * Math.sin(a)]);
+          }
+          return arr;
+        }
+
+        const arcLeft = sampleArc(u0 + r, v0 + r, Math.PI * 0.75, Math.PI * 1.5, 6);
+        const arcFront = sampleArc(u1 - r, v0 + r, -Math.PI * 0.5, 0, 6);
+        const arcRight = sampleArc(u1 - r, v1 - r, 0, Math.PI * 0.25, 6);
+        const arcBack = sampleArc(u0 + r, v1 - r, Math.PI * 0.5, Math.PI, 6);
+
+        // Visible front-left wall (from left silhouette to front-bottom corner)
+        const leftWallUV = arcLeft.concat(sampleArc(u1 - r, v0 + r, -Math.PI * 0.5, -Math.PI * 0.25, 4));
+        const leftPoly = [];
+        leftWallUV.forEach(function (p) { leftPoly.push([p[0], p[1], z0]); });
+        for (let i = leftWallUV.length - 1; i >= 0; i--) {
+          leftPoly.push([leftWallUV[i][0], leftWallUV[i][1], z1]);
+        }
+
+        // Visible front-right wall (from front-bottom corner to right silhouette)
+        const rightWallUV = sampleArc(u1 - r, v0 + r, -Math.PI * 0.25, 0, 4).concat(arcRight);
+        const rightPoly = [];
+        rightWallUV.forEach(function (p) { rightPoly.push([p[0], p[1], z0]); });
+        for (let i = rightWallUV.length - 1; i >= 0; i--) {
+          rightPoly.push([rightWallUV[i][0], rightWallUV[i][1], z1]);
+        }
+
+        if (o.sides !== false) {
+          isoPoly(g, leftPoly, colors.left, INK, sw);
+          isoPoly(g, rightPoly, colors.right, INK, sw);
+        }
+
+        if (o.top !== false) {
+          const topUV = []
+            .concat(sampleArc(u0 + r, v0 + r, Math.PI, Math.PI * 1.5, 5))
+            .concat(arcFront)
+            .concat(sampleArc(u1 - r, v1 - r, 0, Math.PI * 0.5, 5))
+            .concat(arcBack);
+          const topPoly = topUV.map(function (p) { return [p[0], p[1], z1]; });
+          isoPoly(g, topPoly, colors.top, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Draws a vertical isometric cylinder centered at (cu, cv) from z0 to z1.
+       */
+      function isoCylZ(parent, cu, cv, z0, z1, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.45;
+        const g = el("g", null, parent);
+        const steps = o.steps || 22;
+
+        // Visible front silhouette sweeps from -3pi/4 (left) through -pi/4 (front) to +pi/4 (right)
+        const aStart = -(3 * Math.PI) / 4;
+        const aEnd = Math.PI / 4;
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          body.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z0]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          body.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z1]);
+        }
+        isoPoly(g, body, colors.side, INK, sw);
+
+        if (o.top !== false) {
+          const topRing = [];
+          for (let i = 0; i < 24; i++) {
+            const a = (i / 24) * Math.PI * 2;
+            topRing.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z1]);
+          }
+          isoPoly(g, topRing, colors.top, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Draws a short horizontal cylinder protruding along the +u axis (front-right normal).
+       */
+      function isoCylU(parent, u0, u1, cv, cz, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.35;
+        const g = el("g", null, parent);
+        const steps = 18;
+        const aTop = (2 * Math.PI) / 3;
+        const aBot = -Math.PI / 3;
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([u0, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([u1, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+        }
+        isoPoly(g, body, colors.side, INK, sw);
+
+        if (o.cap !== false) {
+          const cap = [];
+          for (let i = 0; i < 22; i++) {
+            const a = (i / 22) * Math.PI * 2;
+            cap.push([u1, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+          }
+          isoPoly(g, cap, colors.cap, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Builds a smooth rounded-corner SVG path string from 3D isometric points.
+       */
+      function buildRoundedPath3D(points3D, cornerRadiusPx, closed) {
+        const p2 = points3D.map(function (p) {
+          return iso(p[0], p[1], p[2]);
+        });
+        const n = p2.length;
+        if (n < 2) return "";
+
+        if (closed && n >= 3) {
+          let d = "";
+          for (let i = 0; i < n; i++) {
+            const prev = p2[(i - 1 + n) % n];
+            const curr = p2[i];
+            const next = p2[(i + 1) % n];
+
+            const v1x = prev[0] - curr[0];
+            const v1y = prev[1] - curr[1];
+            const len1 = Math.hypot(v1x, v1y) || 1;
+
+            const v2x = next[0] - curr[0];
+            const v2y = next[1] - curr[1];
+            const len2 = Math.hypot(v2x, v2y) || 1;
+
+            const r = Math.min(cornerRadiusPx || 16, len1 * 0.44, len2 * 0.44);
+            const a1x = curr[0] + (v1x / len1) * r;
+            const a1y = curr[1] + (v1y / len1) * r;
+            const a2x = curr[0] + (v2x / len2) * r;
+            const a2y = curr[1] + (v2y / len2) * r;
+
+            d += (i === 0 ? "M " : " L ") + a1x.toFixed(1) + " " + a1y.toFixed(1);
+            d += " Q " + curr[0].toFixed(1) + " " + curr[1].toFixed(1) + " " + a2x.toFixed(1) + " " + a2y.toFixed(1);
+          }
+          return d + " Z";
+        }
+
+        let d = "M " + p2[0][0].toFixed(1) + " " + p2[0][1].toFixed(1);
+        for (let i = 1; i < n - 1; i++) {
+          const prev = p2[i - 1];
+          const curr = p2[i];
+          const next = p2[i + 1];
+
+          const v1x = prev[0] - curr[0];
+          const v1y = prev[1] - curr[1];
+          const len1 = Math.hypot(v1x, v1y) || 1;
+
+          const v2x = next[0] - curr[0];
+          const v2y = next[1] - curr[1];
+          const len2 = Math.hypot(v2x, v2y) || 1;
+
+          const r = Math.min(cornerRadiusPx || 14, len1 * 0.44, len2 * 0.44);
+          const a1x = curr[0] + (v1x / len1) * r;
+          const a1y = curr[1] + (v1y / len1) * r;
+          const a2x = curr[0] + (v2x / len2) * r;
+          const a2y = curr[1] + (v2y / len2) * r;
+
+          d += " L " + a1x.toFixed(1) + " " + a1y.toFixed(1);
+          d += " Q " + curr[0].toFixed(1) + " " + curr[1].toFixed(1) + " " + a2x.toFixed(1) + " " + a2y.toFixed(1);
+        }
+        const last = p2[n - 1];
+        d += " L " + last[0].toFixed(1) + " " + last[1].toFixed(1);
+        return d;
+      }
+
+      /**
+       * Renders a shaded 3-tone cylindrical copper conductor / busbar along a 3D polyline.
+       */
+      function isoTube(parent, points3D, diameterPx, colors, cornerRadiusPx) {
+        const d = buildRoundedPath3D(points3D, cornerRadiusPx !== undefined ? cornerRadiusPx : 13, false);
+        const g = el("g", null, parent);
+
+        el("path", {
+          d: d, fill: "none", stroke: INK, "stroke-width": diameterPx + 3.0,
+          "stroke-linecap": "round", "stroke-linejoin": "round", "vector-effect": "non-scaling-stroke"
+        }, g);
+        el("path", {
+          d: d, fill: "none", stroke: colors.dark, "stroke-width": diameterPx,
+          "stroke-linecap": "round", "stroke-linejoin": "round"
+        }, g);
+        el("path", {
+          d: d, fill: "none", stroke: colors.mid, "stroke-width": diameterPx * 0.72,
+          "stroke-linecap": "round", "stroke-linejoin": "round", transform: "translate(-0.9, -0.9)"
+        }, g);
+        el("path", {
+          d: d, fill: "none", stroke: colors.light, "stroke-width": diameterPx * 0.26,
+          "stroke-linecap": "round", "stroke-linejoin": "round", opacity: 0.88, transform: "translate(-1.6, -1.6)"
+        }, g);
+
+        return { group: g, d: d };
+      }
+
+      /* =====================================================================
+         2. 60 FPS LIVE PHYSICS ANIMATION REGISTRIES
+         ===================================================================== */
+      const animFluxLoops = [];         // Cyan-emerald dashed flux lines in core
+      const animFluxArrows = [];        // Traveling directional magnetic flux chevrons
+      const animCommonPulses = [];      // Cerulean conductive current pulses on common winding
+      const animSeriesPulses = [];      // Golden-amber HV current pulses on series winding & busbar
+      const animTapLeads = [];          // 3 copper tap lead overlay glow paths + traveling particles
+      const animBushingHalos = [];      // Subtle AC corona shimmer halos on HV/MV bushing terminals
+
+      // Dynamic Tap Selector mechanical & electrical animation handles
+      const tapAnim = {
+        pivotU: 3.92,
+        pivotV: 5.26,
+        pivotZ: 2.86,
+        targets: [
+          { v: 4.84, z: 2.22 }, // Tap 1 (left-lower contact post)
+          { v: 5.24, z: 2.08 }, // Tap 2 (middle contact post)
+          { v: 5.64, z: 2.18 }  // Tap 3 (right-lower contact post)
+        ],
+        bladeBack: null,
+        bladeFront: null,
+        bladeHighlight: null,
+        bladePulsePath: null,
+        contactHalo: null,
+        activeIndex: 1,       // 0 = tap1, 1 = tap2, 2 = tap3
+        posFloat: 1.0,        // continuous spring-damped index 0..2
+        velFloat: 0.0,
+        nextSwitchAt: 4.2,
+        sequence: [1, 2, 1, 0],
+        seqStep: 0
+      };
+
+      /* =====================================================================
+         3. LAYER WRAPPER REFERENCES & TANK ENVELOPE DIMENSIONS
+         ===================================================================== */
+      const wHousingBack = document.querySelector('[data-explode="housing_back"]');
+      const wCore = document.querySelector('[data-explode="core"]');
+      const wCommon = document.querySelector('[data-explode="common_winding"]');
+      const wSeries = document.querySelector('[data-explode="series_winding"]');
+      const wTap = document.querySelector('[data-explode="tap_selector"]');
+      const wHousingFront = document.querySelector('[data-explode="housing_front"]');
+      const wBushings = document.querySelector('[data-explode="bushings"]');
+
+      // Main tank dimensional envelope
+      const TU0 = 0.0;
+      const TU1 = 4.45;
+      const TV0 = 0.0;
+      const TV1 = 6.55;
+      const TZ0 = 0.0;
+      const TZ1 = 5.42;
+
+      /* =====================================================================
+         4.1. HOUSING BACK: Soft Ground Shadow, Beveled Plinth & Back Tank Walls
+         ===================================================================== */
+      function buildHousingBack() {
+        // Soft grounded elliptical/isometric contact shadow on pure #FFFFFF
+        isoPoly(
+          wHousingBack,
+          [
+            [-0.78, -0.78, -0.52],
+            [TU1 + 0.85, -0.78, -0.52],
+            [TU1 + 0.85, TV1 + 0.85, -0.52],
+            [-0.78, TV1 + 0.85, -0.52]
+          ],
+          "rgba(15, 23, 42, 0.13)",
+          "none",
+          0,
+          { filter: "url(#floor-shadow-blur)" }
+        );
+
+        // Tighter contact occlusion shadow immediately beneath base plinth
+        isoPoly(
+          wHousingBack,
+          [
+            [-0.45, -0.45, -0.48],
+            [TU1 + 0.48, -0.45, -0.48],
+            [TU1 + 0.48, TV1 + 0.48, -0.48],
+            [-0.45, TV1 + 0.48, -0.48]
+          ],
+          "rgba(15, 23, 42, 0.17)",
+          "none",
+          0,
+          { filter: "url(#floor-shadow-blur)" }
+        );
+
+        // Dark-slate beveled base plinth with smoothly rounded isometric corners
+        isoRoundedPrismZ(
+          wHousingBack,
+          -0.36, -0.36, TU1 + 0.36, TV1 + 0.36,
+          -0.44, -0.08, 0.34,
+          { top: "url(#grad-plinth-top)", left: "#3B4652", right: "#2A333D" },
+          { sw: 1.7 }
+        );
+
+        // Subtle stepped inner plinth collar rim
+        isoRoundedPrismZ(
+          wHousingBack,
+          -0.12, -0.12, TU1 + 0.12, TV1 + 0.12,
+          -0.08, 0.08, 0.28,
+          { top: "#5A6B7C", left: "#445260", right: "#313C47" },
+          { sw: 1.4 }
+        );
+
+        // Back-left solid steel-blue tank wall (along u = 0..0.34, v = 0..TV1)
+        isoBox(wHousingBack, TU0, TV0 + 0.16, TZ0 + 0.06, TU0 + 0.36, TV1 - 0.12, TZ1 - 0.18, {
+          top: "#7D97B0", left: "url(#grad-tank-left)", right: "#3A5066"
+        }, { sw: 1.55 });
+
+        // Back-right solid steel-blue tank wall (along v = TV1-0.36..TV1, u = 0..TU1)
+        isoBox(wHousingBack, TU0 + 0.16, TV1 - 0.36, TZ0 + 0.06, TU1 - 0.12, TV1, TZ1 - 0.18, {
+          top: "#7D97B0", left: "#32465B", right: "url(#grad-tank-right)"
+        }, { sw: 1.55 });
+
+        // Deep dark tank interior cavity floor & inner back walls
+        isoPoly(
+          wHousingBack,
+          [
+            [0.34, 0.34, 0.14],
+            [TU1 - 0.34, 0.34, 0.14],
+            [TU1 - 0.34, TV1 - 0.34, 0.14],
+            [0.34, TV1 - 0.34, 0.14]
+          ],
+          "#243444",
+          INK,
+          1.35
+        );
+
+        // Inner back-left dark cavity wall (u = 0.36)
+        isoPoly(
+          wHousingBack,
+          [
+            [0.36, 0.34, 0.14],
+            [0.36, TV1 - 0.36, 0.14],
+            [0.36, TV1 - 0.36, TZ1 - 0.22],
+            [0.36, 0.34, TZ1 - 0.22]
+          ],
+          "url(#grad-cavity-dark)",
+          INK,
+          1.35
+        );
+
+        // Inner back-right dark cavity wall (v = TV1 - 0.36)
+        isoPoly(
+          wHousingBack,
+          [
+            [0.36, TV1 - 0.36, 0.14],
+            [TU1 - 0.34, TV1 - 0.36, 0.14],
+            [TU1 - 0.34, TV1 - 0.36, TZ1 - 0.22],
+            [0.36, TV1 - 0.36, TZ1 - 0.22]
+          ],
+          "#2B3E50",
+          INK,
+          1.35
+        );
+      }
+
+      /* =====================================================================
+         4.2. CORE: Laminated Silicon-Steel O-Loop, Clamping Straps & Flux Φ(t)
+         ===================================================================== */
+      function buildLaminatedCore() {
+        // Core O-loop lies parallel to the (v, z) plane:
+        // u spans 0.62..2.22 (stack of precision steel laminations)
+        // v spans 0.56..6.04 (left limb at v=0.56..1.72, right limb at v=4.95..6.04)
+        // z spans 0.42..5.04 (bottom yoke z=0.42..1.38, top yoke z=4.06..5.04)
+        const uBack = 0.62;
+        const uFront = 2.22;
+
+        /**
+         * Generates a closed rounded rectangle in the (v, z) plane.
+         */
+        function roundedRectVZ(v0, z0, v1, z1, r, segs) {
+          const pts2D = [];
+          const corners = [
+            { cv: v0 + r, cz: z0 + r, a0: Math.PI, a1: Math.PI * 1.5 },       // bottom-left
+            { cv: v1 - r, cz: z0 + r, a0: Math.PI * 1.5, a1: Math.PI * 2.0 }, // bottom-right
+            { cv: v1 - r, cz: z1 - r, a0: 0, a1: Math.PI * 0.5 },             // top-right
+            { cv: v0 + r, cz: z1 - r, a0: Math.PI * 0.5, a1: Math.PI }        // top-left
+          ];
+          corners.forEach(function (c) {
+            for (let i = 0; i <= segs; i++) {
+              const a = c.a0 + (c.a1 - c.a0) * (i / segs);
+              pts2D.push([c.cv + r * Math.cos(a), c.cz + r * Math.sin(a)]);
+            }
+          });
+          return pts2D;
+        }
+
+        // --- A) OUTER EXTRUDED LAMINATION STACK (CURVING AROUND LEFT, TOP & BOTTOM) ---
+        // Build outer visible silhouette wrap connecting uBack -> uFront along left & top edges
+        const outerCurveLeftTop = [];
+        // Bottom-left arc (from bottom tangent pi*1.5 back to left tangent pi) -> left vertical -> top-left arc -> top yoke
+        function sampleVZ(cv, cz, r, a0, a1, n) {
+          const out = [];
+          for (let i = 0; i <= n; i++) {
+            const a = a0 + (a1 - a0) * (i / n);
+            out.push([cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+          }
+          return out;
+        }
+
+        const rOut = 0.62;
+        const vL = 0.56, vR = 5.96, zB = 0.42, zT = 5.02;
+
+        // Visible outer wrap along left limb + rounded top-left elbow + top yoke + bottom-left elbow
+        const spineLeftTop = []
+          .concat(sampleVZ(vL + rOut, zB + rOut, rOut, Math.PI * 1.38, Math.PI, 6))
+          .concat(sampleVZ(vL + rOut, zT - rOut, rOut, Math.PI, Math.PI * 0.5, 8))
+          .concat([[vR - rOut, zT]])
+          .concat(sampleVZ(vR - rOut, zT - rOut, rOut, Math.PI * 0.5, Math.PI * 0.15, 5));
+
+        const outerWrapPoly = [];
+        spineLeftTop.forEach(function (p) { outerWrapPoly.push([uBack, p[0], p[1]]); });
+        for (let i = spineLeftTop.length - 1; i >= 0; i--) {
+          outerWrapPoly.push([uFront, spineLeftTop[i][0], spineLeftTop[i][1]]);
+        }
+        isoPoly(wCore, outerWrapPoly, "url(#grad-core-edge)", INK, 1.55);
+
+        // Crisp parallel steel lamination sheet lines wrapping continuously over left limb & rounded top corner
+        const sheetCount = 13;
+        for (let s = 1; s < sheetCount; s++) {
+          const su = uBack + ((uFront - uBack) * s) / sheetCount;
+          let d = "";
+          for (let i = 0; i < spineLeftTop.length; i++) {
+            const c = iso(su, spineLeftTop[i][0], spineLeftTop[i][1]);
+            d += (i === 0 ? "M " : " L ") + c[0].toFixed(1) + " " + c[1].toFixed(1);
+          }
+          el("path", {
+            d: d,
+            fill: "none",
+            stroke: s % 2 === 0 ? "#475569" : "#94A3B8",
+            "stroke-width": s % 2 === 0 ? 1.15 : 0.9,
+            opacity: 0.78,
+            "vector-effect": "non-scaling-stroke"
+          }, wCore);
+        }
+
+        // --- B) FRONT-RIGHT FLAT STEEL FACE OF THE CLOSED O-LOOP CORE (AT u = uFront) ---
+        // Rendered using an evenodd SVG path (outer rounded loop minus inner core window)
+        const outerLoopVZ = roundedRectVZ(vL, zB, vR, zT, rOut, 7);
+        const innerLoopVZ = roundedRectVZ(1.70, 1.34, 4.92, 4.08, 0.32, 6);
+
+        function loopToSvgSubpath(vzPts, uCoord) {
+          return (
+            "M " +
+            vzPts
+              .map(function (p) {
+                const c = iso(uCoord, p[0], p[1]);
+                return c[0].toFixed(1) + " " + c[1].toFixed(1);
+              })
+              .join(" L ") +
+            " Z"
+          );
+        }
+
+        // Inner window wall depth (visible on bottom-inner & right-inner edges of window)
+        const innerDepthBottom = [
+          [uBack, 1.95, 1.34],
+          [uFront, 1.95, 1.34],
+          [uFront, 4.65, 1.34],
+          [uBack, 4.65, 1.34]
+        ];
+        isoPoly(wCore, innerDepthBottom, "#64748B", INK, 1.2);
+
+        const coreFrontD =
+          loopToSvgSubpath(outerLoopVZ, uFront) + " " + loopToSvgSubpath(innerLoopVZ, uFront);
+        el("path", {
+          d: coreFrontD,
+          fill: "url(#grad-core-face)",
+          "fill-rule": "evenodd",
+          stroke: INK,
+          "stroke-width": 1.65,
+          "stroke-linejoin": "round",
+          "vector-effect": "non-scaling-stroke"
+        }, wCore);
+
+        // Subtle machined core chamfer line inside the front face
+        const midLoopVZ = roundedRectVZ(vL + 0.14, zB + 0.14, vR - 0.14, zT - 0.14, rOut - 0.12, 6);
+        el("path", {
+          d: loopToSvgSubpath(midLoopVZ, uFront + 0.005),
+          fill: "none",
+          stroke: "#F8FAFC",
+          "stroke-width": 1.1,
+          opacity: 0.45
+        }, wCore);
+
+        // --- C) ANIMATED CYAN-EMERALD MAGNETIC FLUX LINES Φ(t) IN CLOSED CORE LOOP ---
+        // Three nested concentric glowing flux streamlines circulating smoothly around the O-loop!
+        const fluxRadii = [
+          { pad: 0.28, color: "#2DD4BF", width: 3.1, dash: "18 14", arrows: 4, phase: 0 },
+          { pad: 0.52, color: "#34D399", width: 3.5, dash: "22 14", arrows: 5, phase: 0.35 },
+          { pad: 0.76, color: "#38BDF8", width: 2.4, dash: "14 18", arrows: 3, phase: 0.7 }
+        ];
+
+        fluxRadii.forEach(function (fr, idx) {
+          const flPts3D = [
+            [uFront + 0.02, vL + fr.pad, zB + fr.pad],
+            [uFront + 0.02, vR - fr.pad, zB + fr.pad],
+            [uFront + 0.02, vR - fr.pad, zT - fr.pad],
+            [uFront + 0.02, vL + fr.pad, zT - fr.pad]
+          ];
+          const pathD = buildRoundedPath3D(flPts3D, 24 - idx * 3, true);
+
+          // Soft ambient magnetic halo behind central flux line
+          const auraEl = idx === 1
+            ? el("path", {
+                d: pathD, fill: "none", stroke: "#2DD4BF", "stroke-width": 11,
+                opacity: 0.24, filter: "url(#flux-glow)"
+              }, wCore)
+            : null;
+
+          // Animated flowing dashed flux line
+          const dashEl = el("path", {
+            d: pathD, fill: "none", stroke: fr.color, "stroke-width": fr.width,
+            "stroke-dasharray": fr.dash, "stroke-linecap": "round",
+            opacity: 0.92, filter: "url(#flux-glow)"
+          }, wCore);
+
+          animFluxLoops.push({
+            auraEl: auraEl,
+            dashEl: dashEl,
+            speed: 52 + idx * 6,
+            offset: idx * 14,
+            phase: fr.phase
+          });
+
+          // Crisp traveling directional flux chevrons oriented along exact O-loop path
+          const pathLen = dashEl.getTotalLength();
+          for (let a = 0; a < fr.arrows; a++) {
+            const chev = el("path", {
+              d: "M -6.2 -4.6 L 4.4 0 L -6.2 4.6",
+              fill: "none", stroke: "#CCFBF1", "stroke-width": 2.1,
+              "stroke-linecap": "round", "stroke-linejoin": "round",
+              filter: "url(#flux-glow)"
+            }, wCore);
+            animFluxArrows.push({
+              el: chev,
+              pathEl: dashEl,
+              length: pathLen,
+              t: (a + idx * 0.28) / fr.arrows,
+              speed: 0.165 + idx * 0.012
+            });
+          }
+        });
+
+        // --- D) TWO HEAVY HORIZONTAL DARK-SLATE STEEL CLAMPING BRACKETS ON LEFT LIMB ---
+        [1.76, 2.66].forEach(function (cz) {
+          // Bracket wraps cleanly across front-left outer face (v = vL - 0.12) & front-right face (u = uFront + 0.10)
+          isoBox(wCore, uBack - 0.12, vL - 0.14, cz, uFront + 0.12, vL + 1.08, cz + 0.36, {
+            top: "#64748B",
+            left: "#475569",
+            right: "#334155"
+          }, { sw: 1.5 });
+
+          // Highlighted top metallic bevel edge & bolt on clamping strap
+          const bPt = iso(uFront + 0.125, vL + 0.54, cz + 0.18);
+          el("circle", {
+            cx: bPt[0].toFixed(1), cy: bPt[1].toFixed(1), r: 3.1,
+            fill: "#94A3B8", stroke: INK, "stroke-width": 1.0
+          }, wCore);
+        });
+      }
+
+      /* =====================================================================
+         4.3. COMMON WINDING: Cobalt Bobbin, Copper Turns, Ivory Bars & Tap Leads
+         ===================================================================== */
+      function buildCommonWinding() {
+        // Seated around central-right section of core window
+        const u0 = 1.66;
+        const u1 = 3.42;
+        const v0 = 2.02;
+        const v1 = 4.52;
+        const zBot = 1.08;
+        const zTop = 3.36;
+        const collarH = 0.24;
+
+        // --- A) LOWER COBALT-BLUE INSULATED BOBBIN COLLAR ---
+        isoRoundedPrismZ(
+          wCommon, u0 - 0.08, v0 - 0.08, u1 + 0.08, v1 + 0.08,
+          zBot, zBot + collarH, 0.24,
+          { top: "url(#grad-cobalt-top)", left: "#2563EB", right: "#1E3A8A" },
+          { sw: 1.5 }
+        );
+
+        // --- B) STACKED HORIZONTAL WARM BRUSHED-COPPER TURNS ---
+        const turnZ0 = zBot + collarH;
+        const turnZ1 = zTop - collarH;
+
+        // Solid warm copper winding base prism (rounded front corner!)
+        isoRoundedPrismZ(
+          wCommon, u0, v0, u1, v1,
+          turnZ0, turnZ1, 0.20,
+          { top: "#E69F68", left: "url(#grad-copper-left)", right: "url(#grad-copper-right)" },
+          { top: false, sw: 1.55 }
+        );
+
+        // 20 crisp parallel tightly-stacked horizontal copper turns across both visible faces
+        const turns = 20;
+        for (let t = 0; t < turns; t++) {
+          const zt = turnZ0 + ((turnZ1 - turnZ0) * (t + 0.5)) / turns;
+          const turnPts = [
+            [u0 + 0.04, v0, zt],
+            [u1 - 0.14, v0, zt],
+            [u1, v0 + 0.14, zt],
+            [u1, v1 - 0.04, zt]
+          ];
+          const turnD = buildRoundedPath3D(turnPts, 10, false);
+
+          // Dark copper inter-turn shadow groove
+          el("path", {
+            d: turnD, fill: "none", stroke: "#6B3410", "stroke-width": 1.45, opacity: 0.85
+          }, wCommon);
+
+          // Bright metallic copper specular highlight immediately above groove
+          el("path", {
+            d: turnD, fill: "none", stroke: "#FDE8D2", "stroke-width": 0.9, opacity: 0.65,
+            transform: "translate(0, -1.5)"
+          }, wCommon);
+
+          // Cerulean-blue mid-height conductive insulation/energy accent band (matching blueprint!)
+          if (t === 9 || t === 10) {
+            el("path", {
+              d: turnD, fill: "none", stroke: "#38BDF8", "stroke-width": 3.4,
+              opacity: 0.9, filter: "url(#energy-glow)"
+            }, wCommon);
+          }
+
+          // Register animated cerulean-blue conductive current pulses across select turns
+          if (t % 3 === 1) {
+            const pEl = el("path", {
+              d: turnD, fill: "none", stroke: "#7DD3FC", "stroke-width": 2.6,
+              "stroke-dasharray": "14 38", "stroke-linecap": "round",
+              opacity: 0.88, filter: "url(#energy-glow)"
+            }, wCommon);
+            animCommonPulses.push({
+              el: pEl,
+              speed: 48 + (t % 4) * 5,
+              offset: t * 13
+            });
+          }
+        }
+
+        // --- C) UPPER COBALT-BLUE INSULATED BOBBIN FLANGE ---
+        isoRoundedPrismZ(
+          wCommon, u0 - 0.08, v0 - 0.08, u1 + 0.08, v1 + 0.08,
+          zTop - collarH, zTop, 0.24,
+          { top: "url(#grad-cobalt-top)", left: "#2563EB", right: "#1D4ED8" },
+          { sw: 1.55 }
+        );
+
+        // --- D) THREE CURVED INSULATED COPPER TAP LEADS -> TAP SELECTOR ---
+        // Drawn right before the 3 vertical ivory spacer bars so leads emerge seamlessly from underneath them!
+        const leadColors = { dark: "#7C3F17", mid: "#E69F68", light: "#FDE2C4" };
+
+        const tapLeadRoutes = [
+          // Tap 1 (leftmost ivory bar -> leftmost tap post on selector)
+          [
+            [3.24, 3.38, 1.38],
+            [3.24, 3.38, 0.66],
+            [3.42, 3.74, 0.56],
+            [3.88, 4.78, 1.38],
+            [3.92, 4.84, 2.22]
+          ],
+          // Tap 2 (middle ivory bar -> middle tap post on selector)
+          [
+            [3.24, 3.68, 1.38],
+            [3.24, 3.68, 0.88],
+            [3.46, 4.02, 0.80],
+            [3.90, 5.18, 1.54],
+            [3.92, 5.24, 2.08]
+          ],
+          // Tap 3 (rightmost ivory bar -> rightmost tap post on selector)
+          [
+            [3.24, 3.98, 1.38],
+            [3.24, 3.98, 1.12],
+            [3.52, 4.30, 1.04],
+            [3.92, 5.58, 1.72],
+            [3.92, 5.64, 2.18]
+          ]
+        ];
+
+        tapLeadRoutes.forEach(function (route, idx) {
+          const tube = isoTube(wCommon, route, 7.6, leadColors, 12);
+
+          // Animated luminous overlay path (lights up brightly ONLY when this tap is active!)
+          const glowStream = el("path", {
+            d: tube.d, fill: "none", stroke: "#FEF08A", "stroke-width": 4.2,
+            "stroke-dasharray": "12 22", "stroke-linecap": "round",
+            opacity: 0.1, filter: "url(#energy-glow)"
+          }, wCommon);
+
+          // Traveling bright golden energy beads along this tap lead
+          const len = glowStream.getTotalLength();
+          const beads = [];
+          for (let b = 0; b < 3; b++) {
+            const bead = el("circle", {
+              cx: 0, cy: 0, r: 3.6,
+              fill: "#FFFBEB", stroke: "#F59E0B", "stroke-width": 1.4,
+              opacity: 0, filter: "url(#energy-glow)"
+            }, wCommon);
+            beads.push({ el: bead, t: b / 3 });
+          }
+
+          animTapLeads.push({
+            index: idx,
+            glowEl: glowStream,
+            length: len,
+            offset: 0,
+            beads: beads
+          });
+        });
+
+        // --- E) THREE VERTICAL IVORY-CERAMIC INSULATING TAP SPACER BARS ---
+        const barVs = [3.38, 3.68, 3.98];
+        barVs.forEach(function (bv, idx) {
+          const bz0 = 1.32 + idx * 0.04;
+          const bz1 = 3.06 + idx * 0.04;
+          // Crisp ivory-ceramic vertical bar hugging the front-right corner of the common winding
+          isoBox(wCommon, u1 - 0.02, bv - 0.10, bz0, u1 + 0.18, bv + 0.09, bz1, {
+            top: "#FFFFFF",
+            left: "#F1F5F9",
+            right: "#E2E8F0"
+          }, { sw: 1.35 });
+
+          // Horizontal copper tap-bridge tab linking top of each ivory bar back into the copper winding
+          isoBox(wCommon, u1 - 0.42, bv - 0.06, bz1 - 0.12, u1 + 0.12, bv + 0.05, bz1 + 0.02, {
+            top: "#FDE2C4",
+            left: "#E69F68",
+            right: "#C26D32"
+          }, { sw: 1.1 });
+
+          // Subtle recessed screw notches along each ceramic bar
+          [bz0 + 0.35, bz1 - 0.38].forEach(function (sz) {
+            const sp = iso(u1 + 0.185, bv, sz);
+            el("circle", { cx: sp[0].toFixed(1), cy: sp[1].toFixed(1), r: 1.8, fill: "#94A3B8", stroke: INK, "stroke-width": 0.7 }, wCommon);
+          });
+        });
+      }
+
+      /* =====================================================================
+         4.4. SERIES WINDING: Wide Copper Ribbon Coils, Ivory Strips & Busbar
+         ===================================================================== */
+      function buildSeriesWinding() {
+        // Mounted directly above the cobalt-blue upper flange of common_winding
+        const u0 = 1.56;
+        const u1 = 3.32;
+        const vStart = 2.18;
+        const zBase = 3.38;
+        const zCrown = 4.92;
+
+        // 4 wide flat brushed-copper ribbon coils separated by crisp ivory-ceramic strips
+        const ribbonCount = 4;
+        const ribbonSpanV = 0.56;
+
+        for (let i = ribbonCount - 1; i >= 0; i--) {
+          const rv0 = vStart + i * ribbonSpanV;
+          const rv1 = rv0 + 0.44;
+
+          // Ivory-ceramic inter-turn insulating spacer strip between ribbon coils
+          if (i < ribbonCount - 1) {
+            isoBox(wSeries, u0 - 0.04, rv1, zBase + 0.06, u1 + 0.04, rv1 + 0.12, zCrown + 0.04, {
+              top: "#FFFFFF",
+              left: "#F1F5F9",
+              right: "#E2E8F0"
+            }, { sw: 1.3 });
+          }
+
+          // Sculpted rounded-top brushed-copper ribbon coil block
+          // Front-left side face (visible on leftmost coil)
+          if (i === 0) {
+            isoPoly(
+              wSeries,
+              [
+                [u0, rv0, zBase],
+                [u1, rv0, zBase],
+                [u1, rv0, zCrown - 0.24],
+                [u1 - 0.22, rv0, zCrown],
+                [u0 + 0.12, rv0, zCrown],
+                [u0, rv0, zCrown - 0.16]
+              ],
+              "#CC7434",
+              INK,
+              1.45
+            );
+          }
+
+          // Top beveled arch of wide copper ribbon
+          isoPoly(
+            wSeries,
+            [
+              [u0 + 0.10, rv0, zCrown],
+              [u1 - 0.22, rv0, zCrown],
+              [u1 - 0.22, rv1, zCrown],
+              [u0 + 0.10, rv1, zCrown]
+            ],
+            "url(#grad-series-ribbon-top)",
+            INK,
+            1.45
+          );
+
+          // Chamfered front-upper shoulder slope of ribbon
+          isoPoly(
+            wSeries,
+            [
+              [u1 - 0.22, rv0, zCrown],
+              [u1, rv0, zCrown - 0.24],
+              [u1, rv1, zCrown - 0.24],
+              [u1 - 0.22, rv1, zCrown]
+            ],
+            "#FEF3C7",
+            INK,
+            1.35
+          );
+
+          // Front vertical face of wide brushed-copper ribbon
+          isoPoly(
+            wSeries,
+            [
+              [u1, rv0, zBase],
+              [u1, rv1, zBase],
+              [u1, rv1, zCrown - 0.24],
+              [u1, rv0, zCrown - 0.24]
+            ],
+            "url(#grad-series-ribbon-front)",
+            INK,
+            1.45
+          );
+
+          // Subtle fine brushed-copper turn lines across the ribbon face
+          const midV = (rv0 + rv1) * 0.5;
+          const l1 = iso(u0 + 0.14, midV, zCrown + 0.005);
+          const l2 = iso(u1 - 0.22, midV, zCrown + 0.005);
+          const l3 = iso(u1 + 0.005, midV, zCrown - 0.24);
+          const l4 = iso(u1 + 0.005, midV, zBase + 0.05);
+          el("polyline", {
+            points:
+              l1[0].toFixed(1) + "," + l1[1].toFixed(1) + " " +
+              l2[0].toFixed(1) + "," + l2[1].toFixed(1) + " " +
+              l3[0].toFixed(1) + "," + l3[1].toFixed(1) + " " +
+              l4[0].toFixed(1) + "," + l4[1].toFixed(1),
+            fill: "none", stroke: "#8A4519", "stroke-width": 1.15, opacity: 0.65
+          }, wSeries);
+
+          // Animated warm golden-amber current pulse gliding along each series ribbon coil
+          const ribbonFlowD = buildRoundedPath3D(
+            [
+              [u0 + 0.18, midV, zCrown + 0.02],
+              [u1 - 0.20, midV, zCrown + 0.02],
+              [u1 + 0.02, midV, zCrown - 0.22],
+              [u1 + 0.02, midV, zBase + 0.08]
+            ],
+            8,
+            false
+          );
+          const rPulse = el("path", {
+            d: ribbonFlowD, fill: "none", stroke: "#FEF08A", "stroke-width": 3.0,
+            "stroke-dasharray": "12 28", "stroke-linecap": "round",
+            opacity: 0.85, filter: "url(#energy-glow)"
+          }, wSeries);
+          animSeriesPulses.push({
+            el: rPulse,
+            speed: 44,
+            offset: i * 16,
+            isBusbar: false
+          });
+        }
+
+        // Clean ivory clamping base strip where series busbar mounts at lower-front of series coils
+        isoBox(wSeries, u1 - 0.06, vStart - 0.06, zBase - 0.02, u1 + 0.14, vStart + 2.26, zBase + 0.18, {
+          top: "#FFFFFF", left: "#F1F5F9", right: "#E2E8F0"
+        }, { sw: 1.25 });
+
+        // --- BRIGHT WARM GOLDEN-AMBER INSULATED SERIES BUSBAR LOOPING TO TAP SELECTOR ---
+        const busbarPts = [
+          [u1 + 0.12, vStart + 0.22, zBase + 0.16],
+          [u1 + 0.12, vStart + 0.22, 4.42],
+          [u1 + 0.12, 5.26, 4.42],
+          [3.68, 5.26, 4.42],
+          [3.68, 5.26, 3.62],
+          [3.92, 5.26, 3.52]
+        ];
+        const seriesBus = isoTube(
+          wSeries,
+          busbarPts,
+          9.4,
+          { dark: "#B45309", mid: "#F59E0B", light: "#FEF3C7" },
+          14
+        );
+
+        // Animated bright golden-amber HV energy pulses gliding smoothly along the series busbar
+        const busPulse = el("path", {
+          d: seriesBus.d, fill: "none", stroke: "#FFFBEB", "stroke-width": 4.0,
+          "stroke-dasharray": "14 26", "stroke-linecap": "round",
+          opacity: 0.94, filter: "url(#energy-glow)"
+        }, wSeries);
+        animSeriesPulses.push({
+          el: busPulse,
+          speed: 58,
+          offset: 0,
+          isBusbar: true
+        });
+
+        // Glowing golden energy droplets cruising along the upper series busbar
+        const busLen = busPulse.getTotalLength();
+        for (let b = 0; b < 4; b++) {
+          const bead = el("circle", {
+            cx: 0, cy: 0, r: 3.4,
+            fill: "#FFFBEB", stroke: "#F59E0B", "stroke-width": 1.3,
+            filter: "url(#energy-glow)"
+          }, wSeries);
+          animSeriesPulses.push({
+            isBead: true,
+            el: bead,
+            pathEl: busPulse,
+            length: busLen,
+            t: b / 4,
+            speed: 0.24
+          });
+        }
+      }
+
+      /* =====================================================================
+         4.5. TAP SELECTOR: Dark-Slate Panel, 3 Tap Posts, Rotating Copper Arm
+         ===================================================================== */
+      function buildTapSelector() {
+        const uBack = 3.52;
+        const uFace = 3.86;
+        const v0 = 4.48;
+        const v1 = 6.02;
+        const z0 = 1.68;
+        const z1 = 3.86;
+
+        // --- A) RECTANGULAR DARK-SLATE INSULATED SWITCH PANEL WITH BEVELED RIM ---
+        isoBox(wTap, uBack, v0, z0, uFace, v1, z1, {
+          top: "#64748B",
+          left: "#475569",
+          right: "url(#grad-panel-front)"
+        }, { sw: 1.6 });
+
+        // Inner recessed switch face border
+        isoPoly(
+          wTap,
+          [
+            [uFace + 0.01, v0 + 0.14, z0 + 0.14],
+            [uFace + 0.01, v1 - 0.14, z0 + 0.14],
+            [uFace + 0.01, v1 - 0.14, z1 - 0.14],
+            [uFace + 0.01, v0 + 0.14, z1 - 0.14]
+          ],
+          "#2E3C4C",
+          INK,
+          1.25
+        );
+
+        // 4 corner metallic mounting screws on panel bezel
+        [
+          [v0 + 0.14, z0 + 0.14],
+          [v1 - 0.14, z0 + 0.14],
+          [v1 - 0.14, z1 - 0.14],
+          [v0 + 0.14, z1 - 0.14]
+        ].forEach(function (sc) {
+          const p = iso(uFace + 0.02, sc[0], sc[1]);
+          el("circle", { cx: p[0].toFixed(1), cy: p[1].toFixed(1), r: 3.1, fill: "#94A3B8", stroke: INK, "stroke-width": 1.0 }, wTap);
+        });
+
+        // --- B) UPPER COPPER FEED POST (CONNECTED FROM SERIES BUSBAR) ---
+        isoCylU(wTap, uFace, uFace + 0.22, 5.26, 3.52, 0.12, {
+          side: "#C26D32", cap: "#FDE2C4"
+        }, { sw: 1.25 });
+
+        // Vertical internal copper feed bridge from upper feed post down to central pivot shaft
+        isoPoly(
+          wTap,
+          [
+            [uFace + 0.04, 5.19, 2.86],
+            [uFace + 0.04, 5.33, 2.86],
+            [uFace + 0.04, 5.33, 3.52],
+            [uFace + 0.04, 5.19, 3.52]
+          ],
+          "#E69F68",
+          INK,
+          1.15
+        );
+
+        // --- C) THREE BRUSHED-COPPER FIXED TAP CONTACT POSTS IN LOWER ARC ---
+        tapAnim.targets.forEach(function (tp) {
+          // Dark insulated mounting bushing washer
+          isoCylU(wTap, uFace, uFace + 0.10, tp.v, tp.z, 0.16, {
+            side: "#1E293B", cap: "#334155"
+          }, { sw: 1.1 });
+
+          // Protruding brushed-copper fixed contact terminal stud
+          isoCylU(wTap, uFace + 0.10, uFace + 0.30, tp.v, tp.z, 0.105, {
+            side: "#C26D32", cap: "#FDE2C4"
+          }, { sw: 1.25 });
+        });
+
+        // Glowing warm-amber contact halo (moves dynamically to the active tap post!)
+        tapAnim.contactHalo = el("circle", {
+          cx: 0, cy: 0, r: 17,
+          fill: "url(#grad-halo-amber)",
+          filter: "url(#corona-blur)",
+          opacity: 0.85
+        }, wTap);
+
+        // --- D) CENTRAL ROTATING PIVOT SHAFT & MOVABLE COPPER SELECTOR ARM ---
+        // Dark-slate insulated pivot hub base
+        isoCylU(wTap, uFace, uFace + 0.24, tapAnim.pivotV, tapAnim.pivotZ, 0.21, {
+          side: "#334155", cap: "#64748B"
+        }, { sw: 1.35 });
+
+        // Dynamic brushed-copper selector blade (3D isometric extruded bar updated at 60 FPS!)
+        tapAnim.bladeBack = el("polygon", {
+          points: "", fill: "#9A4E20", stroke: INK, "stroke-width": 1.35,
+          "stroke-linejoin": "round", "vector-effect": "non-scaling-stroke"
+        }, wTap);
+
+        tapAnim.bladeFront = el("polygon", {
+          points: "", fill: "#E69F68", stroke: INK, "stroke-width": 1.4,
+          "stroke-linejoin": "round", "vector-effect": "non-scaling-stroke"
+        }, wTap);
+
+        tapAnim.bladeHighlight = el("line", {
+          x1: 0, y1: 0, x2: 0, y2: 0,
+          stroke: "#FEF3C7", "stroke-width": 2.1, "stroke-linecap": "round", opacity: 0.85
+        }, wTap);
+
+        tapAnim.bladePulsePath = el("line", {
+          x1: 0, y1: 0, x2: 0, y2: 0,
+          stroke: "#FFFBEB", "stroke-width": 3.4, "stroke-dasharray": "7 11",
+          "stroke-linecap": "round", filter: "url(#energy-glow)", opacity: 0.95
+        }, wTap);
+
+        // Top pivot clamping cap over the selector arm joint
+        isoCylU(wTap, uFace + 0.24, uFace + 0.42, tapAnim.pivotV, tapAnim.pivotZ, 0.13, {
+          side: "#475569", cap: "#94A3B8"
+        }, { sw: 1.25 });
+
+        // --- E) PROTRUDING DARK-SLATE INSULATED CONTROL ROD / HANDLE ---
+        // Right auxiliary actuator shaft & handle protruding cleanly toward front-right (matching reference!)
+        isoCylU(wTap, uFace, uFace + 0.54, 5.72, 3.04, 0.125, {
+          side: "#334155", cap: "#64748B"
+        }, { sw: 1.35 });
+
+        // Secondary left mechanical stop stud
+        isoCylU(wTap, uFace, uFace + 0.44, 4.78, 2.74, 0.105, {
+          side: "#334155", cap: "#64748B"
+        }, { sw: 1.25 });
+
+        // Initialize blade geometry at Tap 2
+        updateSelectorBlade(tapAnim.posFloat, 0);
+      }
+
+      /**
+       * Smoothly updates the 3D isometric brushed-copper selector arm blade and active contact halo
+       * for any continuous position `posFloat` in [0..2].
+       */
+      function updateSelectorBlade(posFloat, dashOffset) {
+        const clamped = Math.max(0, Math.min(2, posFloat));
+        let tv, tz;
+        if (clamped <= 1) {
+          const f = clamped;
+          tv = tapAnim.targets[0].v + (tapAnim.targets[1].v - tapAnim.targets[0].v) * f;
+          tz = tapAnim.targets[0].z + (tapAnim.targets[1].z - tapAnim.targets[0].z) * f;
+        } else {
+          const f = clamped - 1;
+          tv = tapAnim.targets[1].v + (tapAnim.targets[2].v - tapAnim.targets[1].v) * f;
+          tz = tapAnim.targets[1].z + (tapAnim.targets[2].z - tapAnim.targets[1].z) * f;
+        }
+
+        const pu = tapAnim.pivotU + 0.22;
+        const pv = tapAnim.pivotV;
+        const pz = tapAnim.pivotZ;
+
+        // Compute normalized perpendicular vector in (v, z) plane for blade width
+        const dv = tv - pv;
+        const dz = tz - pz;
+        const len = Math.hypot(dv, dz) || 1;
+        const nv = (-dz / len) * 0.095;
+        const nz = (dv / len) * 0.095;
+
+        // Extend slightly past contact center for realistic wiping shoe overhang
+        const ev = pv + (dv / len) * (len + 0.10);
+        const ez = pz + (dz / len) * (len + 0.10);
+
+        const frontQuad = [
+          [pu + 0.07, pv - nv, pz - nz],
+          [pu + 0.07, pv + nv, pz + nz],
+          [pu + 0.07, ev + nv * 0.85, ez + nz * 0.85],
+          [pu + 0.07, ev - nv * 0.85, ez - nz * 0.85]
+        ];
+        const sideQuad = [
+          [pu - 0.02, pv - nv, pz - nz],
+          [pu + 0.07, pv - nv, pz - nz],
+          [pu + 0.07, ev - nv * 0.85, ez - nz * 0.85],
+          [pu - 0.02, ev - nv * 0.85, ez - nz * 0.85]
+        ];
+
+        tapAnim.bladeBack.setAttribute("points", pts(sideQuad));
+        tapAnim.bladeFront.setAttribute("points", pts(frontQuad));
+
+        const pA = iso(pu + 0.08, pv, pz);
+        const pB = iso(pu + 0.08, tv, tz);
+        tapAnim.bladeHighlight.setAttribute("x1", pA[0].toFixed(1));
+        tapAnim.bladeHighlight.setAttribute("y1", pA[1].toFixed(1));
+        tapAnim.bladeHighlight.setAttribute("x2", pB[0].toFixed(1));
+        tapAnim.bladeHighlight.setAttribute("y2", pB[1].toFixed(1));
+
+        tapAnim.bladePulsePath.setAttribute("x1", pA[0].toFixed(1));
+        tapAnim.bladePulsePath.setAttribute("y1", pA[1].toFixed(1));
+        tapAnim.bladePulsePath.setAttribute("x2", pB[0].toFixed(1));
+        tapAnim.bladePulsePath.setAttribute("y2", pB[1].toFixed(1));
+        tapAnim.bladePulsePath.setAttribute("stroke-dashoffset", dashOffset.toFixed(1));
+
+        // Position luminous contact halo precisely on the contact point
+        const cPt = iso(pu + 0.09, tv, tz);
+        tapAnim.contactHalo.setAttribute("cx", cPt[0].toFixed(1));
+        tapAnim.contactHalo.setAttribute("cy", cPt[1].toFixed(1));
+      }
+
+      /* =====================================================================
+         4.6. HOUSING FRONT: Cutaway Steel Tank Pillars, Lower Rim & Flanged Lid
+         ===================================================================== */
+      function buildHousingFront() {
+        const wallT = 0.24;
+        const rimColors = {
+          top: "#8EA8C1",
+          left: "url(#grad-tank-left)",
+          right: "url(#grad-tank-right)"
+        };
+
+        // --- A) LEFT VERTICAL CUTAWAY PILLAR (u = 0..0.52, v = 0..0.24) ---
+        isoBox(wHousingFront, TU0, TV0, TZ0 + 0.08, 0.56, TV0 + wallT, TZ1 - 0.18, rimColors, { sw: 1.55 });
+        // Crisp beveled inner cut face along left pillar
+        isoPoly(
+          wHousingFront,
+          [
+            [0.56, TV0, TZ0 + 0.42],
+            [0.56, TV0 + wallT, TZ0 + 0.42],
+            [0.56, TV0 + wallT, TZ1 - 0.18],
+            [0.56, TV0, TZ1 - 0.18]
+          ],
+          "#B5C8DB",
+          INK,
+          1.35
+        );
+
+        // --- B) RIGHT VERTICAL CUTAWAY PILLAR (u = TU1-0.24..TU1, v = TV1-0.56..TV1) ---
+        isoBox(wHousingFront, TU1 - wallT, TV1 - 0.58, TZ0 + 0.08, TU1, TV1, TZ1 - 0.18, rimColors, { sw: 1.55 });
+        // Crisp beveled inner cut edge along right pillar
+        isoPoly(
+          wHousingFront,
+          [
+            [TU1 - wallT, TV1 - 0.58, TZ0 + 0.42],
+            [TU1, TV1 - 0.58, TZ0 + 0.42],
+            [TU1, TV1 - 0.58, TZ1 - 0.18],
+            [TU1 - wallT, TV1 - 0.58, TZ1 - 0.18]
+          ],
+          "#A3B8CC",
+          INK,
+          1.35
+        );
+
+        // --- C) LOWER FRONT-LEFT & FRONT-RIGHT CUTAWAY TANK SILL WALLS ---
+        // Clean rounded front-bottom corner wrapping both lower cutaway edges seamlessly
+        isoRoundedPrismZ(
+          wHousingFront,
+          TU0, TV0, TU1, TV1,
+          TZ0 + 0.06, TZ0 + 0.44, 0.24,
+          { top: "#A8BDD1", left: "url(#grad-tank-left)", right: "url(#grad-tank-right)" },
+          { top: false, sw: 1.55 }
+        );
+
+        // Crisp light-colored horizontal beveled cut top edges along lower cutaway sill
+        isoPoly(
+          wHousingFront,
+          [
+            [0.56, TV0, TZ0 + 0.44],
+            [TU1 - 0.16, TV0, TZ0 + 0.44],
+            [TU1 - 0.24, TV0 + wallT, TZ0 + 0.44],
+            [0.56, TV0 + wallT, TZ0 + 0.44]
+          ],
+          "#B8CCE0",
+          INK,
+          1.35
+        );
+        isoPoly(
+          wHousingFront,
+          [
+            [TU1 - wallT, TV0 + 0.16, TZ0 + 0.44],
+            [TU1, TV0 + 0.16, TZ0 + 0.44],
+            [TU1, TV1 - 0.58, TZ0 + 0.44],
+            [TU1 - wallT, TV1 - 0.58, TZ0 + 0.44]
+          ],
+          "#A6BBD0",
+          INK,
+          1.35
+        );
+
+        // --- D) OVERHANGING TOP STEEL-BLUE FLANGED LID WITH FRONT CUTAWAY NOTCH ---
+        // The lid overhangs the tank by 0.22 on all 4 sides, and has a clean surgical rectangular
+        // cutaway notch over the front-center (`u: 2.02..4.67, v: 1.18..5.04`) exposing the top of
+        // the core, series winding, and tap selector!
+        const lu0 = TU0 - 0.22;
+        const lu1 = TU1 + 0.22;
+        const lv0 = TV0 - 0.22;
+        const lv1 = TV1 + 0.22;
+        const lz0 = TZ1 - 0.22;
+        const lz1 = TZ1;
+
+        // Cutaway notch coordinates on the front-right edge of the top lid
+        const nu = 2.04;
+        const nv0 = 1.18;
+        const nv1 = 4.96;
+
+        // Top surface polygon (C-shaped lid around the surgical front cutaway notch)
+        const lidTopVerts = [
+          [lu0, lv0, lz1],
+          [lu0, lv1, lz1],
+          [lu1, lv1, lz1],
+          [lu1, nv1, lz1],
+          [nu, nv1, lz1],
+          [nu, nv0, lz1],
+          [lu1, nv0, lz1],
+          [lu1, lv0, lz1]
+        ];
+
+        // Vertical outer flange skirt segments (drawn before top face for clean edges)
+        // Front-left overhanging flange skirt
+        isoPoly(
+          wHousingFront,
+          [
+            [lu0, lv0, lz0],
+            [lu1, lv0, lz0],
+            [lu1, lv0, lz1],
+            [lu0, lv0, lz1]
+          ],
+          "#5A7590",
+          INK,
+          1.55
+        );
+        // Front-right left wing skirt (v = lv0..nv0)
+        isoPoly(
+          wHousingFront,
+          [
+            [lu1, lv0, lz0],
+            [lu1, nv0, lz0],
+            [lu1, nv0, lz1],
+            [lu1, lv0, lz1]
+          ],
+          "#435B72",
+          INK,
+          1.55
+        );
+        // Inner cutaway notch thickness walls (clean light-steel cut edges!)
+        isoPoly(
+          wHousingFront,
+          [
+            [nu, nv0, lz0],
+            [nu, nv1, lz0],
+            [nu, nv1, lz1],
+            [nu, nv0, lz1]
+          ],
+          "#B8CCE0",
+          INK,
+          1.35
+        );
+        isoPoly(
+          wHousingFront,
+          [
+            [nu, nv1, lz0],
+            [lu1, nv1, lz0],
+            [lu1, nv1, lz1],
+            [nu, nv1, lz1]
+          ],
+          "#9DB4CA",
+          INK,
+          1.35
+        );
+        // Front-right right wing skirt (v = nv1..lv1)
+        isoPoly(
+          wHousingFront,
+          [
+            [lu1, nv1, lz0],
+            [lu1, lv1, lz0],
+            [lu1, lv1, lz1],
+            [lu1, nv1, lz1]
+          ],
+          "#435B72",
+          INK,
+          1.55
+        );
+
+        // Main top lid surface
+        isoPoly(wHousingFront, lidTopVerts, "url(#grad-tank-top)", INK, 1.65);
+
+        // Subtle inner rim highlight tracing the overhanging lid edge
+        const lidHighlight = lidTopVerts.map(function (v) { return iso(v[0], v[1], v[2] + 0.01); });
+        el("polyline", {
+          points:
+            lidHighlight[0][0].toFixed(1) + "," + lidHighlight[0][1].toFixed(1) + " " +
+            lidHighlight[7][0].toFixed(1) + "," + lidHighlight[7][1].toFixed(1) + " " +
+            lidHighlight[6][0].toFixed(1) + "," + lidHighlight[6][1].toFixed(1) + " " +
+            lidHighlight[5][0].toFixed(1) + "," + lidHighlight[5][1].toFixed(1) + " " +
+            lidHighlight[4][0].toFixed(1) + "," + lidHighlight[4][1].toFixed(1) + " " +
+            lidHighlight[3][0].toFixed(1) + "," + lidHighlight[3][1].toFixed(1) + " " +
+            lidHighlight[2][0].toFixed(1) + "," + lidHighlight[2][1].toFixed(1),
+          fill: "none", stroke: "#DCE6F0", "stroke-width": 1.35, opacity: 0.72
+        }, wHousingFront);
+
+        // Corner hex bolts on the overhanging steel lid flange
+        [
+          [0.06, 0.06],
+          [4.32, 0.06],
+          [4.32, 6.44],
+          [0.06, 6.44],
+          [4.32, 0.85],
+          [4.32, 5.40]
+        ].forEach(function (bc) {
+          const bp = iso(bc[0], bc[1], lz1 + 0.01);
+          el("ellipse", {
+            cx: bp[0].toFixed(1), cy: bp[1].toFixed(1), rx: 4.5, ry: 2.6,
+            fill: "#475569", stroke: INK, "stroke-width": 1.05
+          }, wHousingFront);
+          el("ellipse", {
+            cx: (bp[0] - 0.7).toFixed(1), cy: (bp[1] - 0.6).toFixed(1), rx: 2.0, ry: 1.1,
+            fill: "#CBD5E1"
+          }, wHousingFront);
+        });
+      }
+
+      /* =====================================================================
+         4.7. BUSHINGS: 4 Tall Alternating Terracotta HV & Ivory MV Bushings
+         ===================================================================== */
+      function buildBushings() {
+        /**
+         * Renders a tall, precision-sculpted ribbed glazed porcelain bushing with bolted
+         * steel-blue circular mounting flange and brushed-copper top terminal lug.
+         */
+        function drawBushing(cu, cv, isHv, phaseShift) {
+          const g = el("g", null, wBushings);
+          const zBase = TZ1;
+
+          // Circular bolted steel-blue mounting base flange
+          isoCylZ(g, cu, cv, zBase, zBase + 0.16, 0.44, {
+            side: "#5B7690", top: "#8EA8C1"
+          }, { sw: 1.35, steps: 22 });
+
+          // Lower collar ring
+          isoCylZ(g, cu, cv, zBase + 0.16, zBase + 0.34, 0.34, {
+            side: isHv ? "#7C3B1D" : "#BDB5A5", top: isHv ? "#D98A63" : "#FFFFFF"
+          }, { sw: 1.25, steps: 20 });
+
+          // Stacked glazed porcelain ribbed sheds (8 discs for HV, 7 for MV)
+          const sheds = isHv ? 8 : 7;
+          const zStart = zBase + 0.32;
+          const shedH = 0.22;
+
+          for (let s = 0; s < sheds; s++) {
+            const frac = s / (sheds - 1);
+            const rOuter = (isHv ? 0.38 : 0.36) - frac * 0.055;
+            const rNeck = rOuter * 0.70;
+            const sz = zStart + s * shedH;
+
+            // Undercut porcelain core neck
+            isoCylZ(g, cu, cv, sz, sz + shedH * 0.42, rNeck, {
+              side: isHv ? "#5C2A14" : "#ADA495",
+              top: isHv ? "#8F4726" : "#DDD6C7"
+            }, { top: false, sw: 1.15, steps: 18 });
+
+            // Flared glazed shed skirt disc
+            isoCylZ(g, cu, cv, sz + shedH * 0.30, sz + shedH * 0.88, rOuter, {
+              side: isHv ? "url(#grad-hv-porcelain)" : "url(#grad-mv-porcelain)",
+              top: isHv ? "#DF9670" : "#FFFFFF"
+            }, { sw: 1.25, steps: 22 });
+          }
+
+          // Brushed-copper top cylindrical cap & rectangular terminal flag with bolt hole
+          const zCrown = zStart + sheds * shedH;
+          isoCylZ(g, cu, cv, zCrown - 0.02, zCrown + 0.26, 0.21, {
+            side: "url(#grad-brass-lug)", top: "#FEF3C7"
+          }, { sw: 1.25, steps: 18 });
+
+          // Rectangular copper terminal blade rising from cap
+          isoBox(g, cu - 0.08, cv - 0.15, zCrown + 0.24, cu + 0.08, cv + 0.15, zCrown + 0.72, {
+            top: "#FEF3C7", left: "#E69F68", right: "#B85F27"
+          }, { sw: 1.25 });
+
+          // Crisp bolt hole on terminal flag
+          const hp = iso(cu + 0.085, cv, zCrown + 0.50);
+          el("circle", {
+            cx: hp[0].toFixed(1), cy: hp[1].toFixed(1), r: 2.8,
+            fill: "#273340", stroke: INK, "stroke-width": 0.9
+          }, g);
+
+          // Animated electric field corona pulse halo synced to AC cycle & tap boost
+          const haloPt = iso(cu, cv, zCrown + 0.56);
+          const halo = el("circle", {
+            cx: haloPt[0].toFixed(1), cy: haloPt[1].toFixed(1),
+            r: isHv ? 22 : 18,
+            fill: isHv ? "url(#grad-halo-amber)" : "url(#grad-halo-cyan)",
+            filter: "url(#corona-blur)",
+            opacity: 0.42
+          }, g);
+
+          animBushingHalos.push({
+            el: halo,
+            isHv: isHv,
+            phase: phaseShift,
+            baseR: isHv ? 21 : 17
+          });
+        }
+
+        // Strict back-to-front painter's order for the 4 alternating bushings:
+        // 1. Top-back tallest bushing: Terracotta-brown HV
+        drawBushing(0.98, 5.52, true, 0);
+        // 2. Mid-left bushing: Clean ivory-ceramic MV
+        drawBushing(0.98, 3.22, false, (2 * Math.PI) / 3);
+        // 3. Front-right bushing: Clean ivory-ceramic MV
+        drawBushing(3.46, 5.52, false, (4 * Math.PI) / 3);
+        // 4. Front-left bushing: Terracotta-brown HV
+        drawBushing(0.98, 0.92, true, Math.PI / 3);
+      }
+
+      /* =====================================================================
+         5. ASSEMBLE SCENE & COMPUTE EXACT BOUNDING-BOX FOCUS TARGETS
+         ===================================================================== */
+      buildHousingBack();
+      buildLaminatedCore();
+      buildCommonWinding();
+      buildSeriesWinding();
+      buildTapSelector();
+      buildHousingFront();
+      buildBushings();
+
+      const stageEl = document.getElementById("mirvo-stage");
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+      const allExplodeLayers = Array.from(document.querySelectorAll(".explode-layer"));
+
+      /**
+       * Computes exact center (x, y) and safe framing zoom from each part's live SVG bounding box
+       * so no part ever clips out of the 16:9 frame during spotlight zoom.
+       */
+      function computeFocusTargets() {
+        const targets = {
+          full: { x: 800, y: 450, zoom: 1.0 }
+        };
+
+        const keys = ["core", "common_winding", "series_winding", "tap_selector", "bushings", "housing"];
+        keys.forEach(function (key) {
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          allPartEls.forEach(function (g) {
+            if (g.dataset.part === key) {
+              try {
+                const b = g.getBBox();
+                if (b.width > 0 && b.height > 0) {
+                  minX = Math.min(minX, b.x);
+                  minY = Math.min(minY, b.y);
+                  maxX = Math.max(maxX, b.x + b.width);
+                  maxY = Math.max(maxY, b.y + b.height);
+                }
+              } catch (e) {
+                // Ignore if detached
+              }
+            }
+          });
+
+          if (isFinite(minX)) {
+            const w = maxX - minX;
+            const h = maxY - minY;
+            const cx = minX + w * 0.5;
+            const cy = minY + h * 0.5;
+            const fitZoom = Math.min((1600 * 0.66) / w, (900 * 0.70) / h);
+            const zoom = key === "housing" ? 1.08 : Math.max(1.52, Math.min(2.12, fitZoom));
+            targets[key] = {
+              x: Number(cx.toFixed(1)),
+              y: Number(cy.toFixed(1)),
+              zoom: Number(zoom.toFixed(2))
+            };
+          } else {
+            targets[key] = { x: 800, y: 450, zoom: 1.65 };
+          }
+        });
+
+        return targets;
+      }
+
+      const FOCUS_TARGETS = computeFocusTargets();
+
+      /* =====================================================================
+         6. SCENE STATE, CAMERA, SPOTLIGHT & EXPLODED VIEW CONTROLLER
+         ===================================================================== */
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        focusedPart: null,
+        camera: { x: 800, y: 450, zoom: 1.0 },
+        targetExploded: 0,
+        currentExploded: 0,
+        phase: "auto", // "auto" | "step_down" | "step_up" | "tap1" | "tap2" | "tap3"
+        playing: true,
+        autoTour: !prefersReducedMotion,
+        stepIndex: 0,
+        tourTimer: null,
+        simTime: 0
+      };
+
+      /**
+       * Smoothly pans and zooms the 16:9 SVG stage around `target`.
+       */
+      function applyCamera(target) {
+        let cam = FOCUS_TARGETS.full;
+        if (typeof target === "string") {
+          cam = FOCUS_TARGETS[target] || FOCUS_TARGETS.full;
+        } else if (target && typeof target === "object") {
+          cam = {
+            x: typeof target.x === "number" ? target.x : 800,
+            y: typeof target.y === "number" ? target.y : 450,
+            zoom: typeof target.zoom === "number" ? Math.max(0.6, Math.min(3.2, target.zoom)) : 1.0
+          };
+        }
+
+        state.camera = cam;
+
+        if (prefersReducedMotion) {
+          stageEl.style.transform = "scale(1) translate(0%, 0%)";
+          return;
+        }
+
+        const txPct = ((800 - cam.x) / 1600) * 100;
+        const tyPct = ((450 - cam.y) / 900) * 100;
+        stageEl.style.transform =
+          "scale(" +
+          cam.zoom.toFixed(3) +
+          ") translate(" +
+          txPct.toFixed(2) +
+          "%, " +
+          tyPct.toFixed(2) +
+          "%)";
+      }
+
+      /**
+       * Spotlights ONLY elements matching `data-part === partId` at 100% clarity while
+       * dimming all other parts (including both housing-back and housing-front).
+       */
+      function applyHighlight(partId) {
+        const cleanId = partId && partId !== "full" && PART_NAMES_UZ[partId] ? partId : null;
+        state.focusedPart = cleanId;
+
+        allPartEls.forEach(function (g) {
+          if (!cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.remove("is-focused");
+          } else if (g.dataset.part === cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.add("is-focused");
+          } else {
+            g.classList.remove("is-focused");
+            g.classList.add("is-dimmed");
+          }
+        });
+      }
+
+      /**
+       * Applies smooth Exploded View translations onto inner `.explode-layer` wrappers.
+       */
+      function writeExplodedTransforms(amount) {
+        allExplodeLayers.forEach(function (layer) {
+          const key = layer.dataset.explode;
+          const vec = EXPLODE_VECTORS[key] || [0, 0];
+          const dx = vec[0] * amount;
+          const dy = vec[1] * amount;
+          if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+            layer.removeAttribute("transform");
+          } else {
+            layer.setAttribute("transform", "translate(" + dx.toFixed(2) + " " + dy.toFixed(2) + ")");
+          }
+        });
+      }
+
+      /* =====================================================================
+         7. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ===================================================================== */
+      function clearTourTimer() {
+        if (state.tourTimer !== null) {
+          clearTimeout(state.tourTimer);
+          state.tourTimer = null;
+        }
+      }
+
+      function scheduleNextTourStep() {
+        clearTourTimer();
+        if (!state.autoTour || prefersReducedMotion) return;
+        const holdMs = state.stepIndex === 0 ? 2500 : 3500;
+        state.tourTimer = setTimeout(function () {
+          if (state.autoTour) {
+            runTourStep(state.stepIndex + 1);
+          }
+        }, holdMs);
+      }
+
+      function runTourStep(index) {
+        clearTourTimer();
+        const safeIdx = ((index % TOUR_SEQUENCE.length) + TOUR_SEQUENCE.length) % TOUR_SEQUENCE.length;
+        state.stepIndex = safeIdx;
+        const key = TOUR_SEQUENCE[safeIdx];
+
+        if (key === "full") {
+          applyHighlight(null);
+          applyCamera("full");
+        } else {
+          applyHighlight(key);
+          applyCamera(key);
+        }
+
+        if (state.autoTour && !prefersReducedMotion) {
+          scheduleNextTourStep();
+        }
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled) && !prefersReducedMotion;
+        clearTourTimer();
+        if (state.autoTour) {
+          scheduleNextTourStep();
+        }
+      }
+
+      /* =====================================================================
+         8. 60 FPS LIVE DUAL-PATH ELECTROMAGNETIC & TAP-SWITCHING PHYSICS LOOP
+         ===================================================================== */
+      let lastTs = 0;
+
+      function tickPhysics(ts) {
+        try {
+          if (!lastTs) lastTs = ts;
+          const dt = Math.min(0.05, Math.max(0.001, (ts - lastTs) / 1000));
+          lastTs = ts;
+
+          // Keep Exploded View interpolation buttery-smooth even if physics is paused
+          if (Math.abs(state.targetExploded - state.currentExploded) > 0.0008) {
+            if (prefersReducedMotion) {
+              state.currentExploded = state.targetExploded;
+            } else {
+              const alpha = 1 - Math.exp(-dt * 8.4);
+              state.currentExploded += (state.targetExploded - state.currentExploded) * alpha;
+            }
+            writeExplodedTransforms(state.currentExploded);
+          } else if (state.currentExploded !== state.targetExploded) {
+            state.currentExploded = state.targetExploded;
+            writeExplodedTransforms(state.currentExploded);
+          }
+
+          if (state.playing) {
+            const motionScale = prefersReducedMotion ? 0.16 : 1.0;
+            state.simTime += dt;
+            const t = state.simTime;
+
+            // --- 1) TAP SELECTOR SPRING-DAMPED ACTUATION ---
+            if (state.phase === "tap1") {
+              tapAnim.activeIndex = 0;
+            } else if (state.phase === "tap2") {
+              tapAnim.activeIndex = 1;
+            } else if (state.phase === "tap3") {
+              tapAnim.activeIndex = 2;
+            } else if (t >= tapAnim.nextSwitchAt) {
+              // Automatically step through Tap 1 -> Tap 2 -> Tap 3 every ~4.5 seconds
+              tapAnim.seqStep = (tapAnim.seqStep + 1) % tapAnim.sequence.length;
+              tapAnim.activeIndex = tapAnim.sequence[tapAnim.seqStep];
+              tapAnim.nextSwitchAt = t + 4.5;
+            }
+
+            // Realistic underdamped spring physics for copper selector blade motion
+            const stiffness = 135;
+            const damping = 16.5;
+            const disp = tapAnim.activeIndex - tapAnim.posFloat;
+            const acc = disp * stiffness - tapAnim.velFloat * damping;
+            tapAnim.velFloat += acc * dt;
+            tapAnim.posFloat += tapAnim.velFloat * dt;
+
+            // Voltage boost multiplier driven by active tap ratio (tap1=0.82, tap2=1.0, tap3=1.28)
+            const tapBoost = 0.82 + tapAnim.posFloat * 0.23;
+
+            // Direction multiplier: step_down (+1) vs step_up (-1)
+            const flowDir = state.phase === "step_up" ? -1 : 1;
+
+            // --- 2) MAGNETIC FLUX Φ(t) IN LAMINATED SILICON-STEEL CORE ---
+            const acSin = Math.sin(t * 1.45);
+            const fluxSigned = Math.tanh(acSin * 2.1) * flowDir;
+            const fluxIntensity = (0.48 + 0.50 * Math.abs(acSin)) * (0.88 + tapBoost * 0.14);
+
+            for (let i = 0; i < animFluxLoops.length; i++) {
+              const fl = animFluxLoops[i];
+              fl.offset -= dt * fl.speed * (0.55 + 0.45 * Math.abs(fluxSigned)) * flowDir * motionScale;
+              fl.dashEl.setAttribute("stroke-dashoffset", fl.offset.toFixed(2));
+              fl.dashEl.setAttribute("opacity", Math.min(1, fluxIntensity).toFixed(2));
+              if (fl.auraEl) {
+                fl.auraEl.setAttribute("opacity", (fluxIntensity * 0.30).toFixed(2));
+              }
+            }
+
+            for (let i = 0; i < animFluxArrows.length; i++) {
+              const fa = animFluxArrows[i];
+              fa.t = (fa.t + dt * fa.speed * flowDir * motionScale) % 1;
+              if (fa.t < 0) fa.t += 1;
+
+              const dist = fa.t * fa.length;
+              const p1 = fa.pathEl.getPointAtLength(dist);
+              const dist2 = (dist + flowDir * 3.0 + fa.length) % fa.length;
+              const p2 = fa.pathEl.getPointAtLength(dist2);
+              const angDeg = (Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180) / Math.PI;
+
+              fa.el.setAttribute(
+                "transform",
+                "translate(" + p1.x.toFixed(1) + " " + p1.y.toFixed(1) + ") rotate(" + angDeg.toFixed(1) + ")"
+              );
+              fa.el.setAttribute("opacity", Math.min(1, 0.35 + fluxIntensity * 0.65).toFixed(2));
+            }
+
+            // --- 3) DUAL-PATH POWER TRANSFER: COMMON WINDING (CERULEAN CONDUCTIVE FLOW) ---
+            for (let i = 0; i < animCommonPulses.length; i++) {
+              const cp = animCommonPulses[i];
+              cp.offset -= dt * cp.speed * flowDir * motionScale;
+              cp.el.setAttribute("stroke-dashoffset", cp.offset.toFixed(2));
+              const op = 0.44 + 0.48 * Math.abs(Math.cos(t * 1.8 + i * 0.7));
+              cp.el.setAttribute("opacity", op.toFixed(2));
+            }
+
+            // --- 4) DUAL-PATH POWER TRANSFER: SERIES WINDING & UPPER BUSBAR (GOLDEN-AMBER FLOW) ---
+            for (let i = 0; i < animSeriesPulses.length; i++) {
+              const sp = animSeriesPulses[i];
+              if (sp.isBead) {
+                sp.t = (sp.t + dt * sp.speed * flowDir * tapBoost * motionScale) % 1;
+                if (sp.t < 0) sp.t += 1;
+                const pt = sp.pathEl.getPointAtLength(sp.t * sp.length);
+                const fade = Math.min(1, sp.t * 8, (1 - sp.t) * 8);
+                sp.el.setAttribute("cx", pt.x.toFixed(1));
+                sp.el.setAttribute("cy", pt.y.toFixed(1));
+                sp.el.setAttribute("opacity", (0.95 * fade).toFixed(2));
+              } else {
+                sp.offset -= dt * sp.speed * flowDir * tapBoost * motionScale;
+                sp.el.setAttribute("stroke-dashoffset", sp.offset.toFixed(2));
+                const op = sp.isBusbar
+                  ? 0.72 + 0.26 * Math.abs(Math.sin(t * 2.2))
+                  : 0.45 + 0.45 * Math.abs(Math.sin(t * 2.0 + i * 0.8));
+                sp.el.setAttribute("opacity", op.toFixed(2));
+              }
+            }
+
+            // --- 5) EXCLUSIVE ACTIVE TAP LEAD ROUTING & SELECTOR BLADE GLOW ---
+            updateSelectorBlade(tapAnim.posFloat, -t * 52 * flowDir);
+
+            // Pulse the contact halo softly when seated on a tap
+            const seatedFactor = Math.max(0, 1 - Math.abs(tapAnim.activeIndex - tapAnim.posFloat) * 2.4);
+            const haloOp = seatedFactor * (0.58 + 0.36 * Math.sin(t * 5.2));
+            tapAnim.contactHalo.setAttribute("opacity", haloOp.toFixed(2));
+            tapAnim.contactHalo.setAttribute("r", (14 + 5 * tapBoost * seatedFactor).toFixed(1));
+
+            for (let i = 0; i < animTapLeads.length; i++) {
+              const tl = animTapLeads[i];
+              // Smooth activation weight: 1.0 when selector blade sits on this tap, 0.0 otherwise
+              const proximity = Math.max(0, 1 - Math.abs(tl.index - tapAnim.posFloat) * 1.8);
+              tl.offset -= dt * 58 * flowDir * tapBoost * motionScale;
+              tl.glowEl.setAttribute("stroke-dashoffset", tl.offset.toFixed(2));
+              tl.glowEl.setAttribute("opacity", (proximity * 0.94).toFixed(2));
+
+              for (let b = 0; b < tl.beads.length; b++) {
+                const bd = tl.beads[b];
+                bd.t = (bd.t + dt * 0.32 * flowDir * tapBoost * motionScale) % 1;
+                if (bd.t < 0) bd.t += 1;
+                if (proximity > 0.05) {
+                  const pt = tl.glowEl.getPointAtLength(bd.t * tl.length);
+                  const edge = Math.min(1, bd.t * 8, (1 - bd.t) * 8);
+                  bd.el.setAttribute("cx", pt.x.toFixed(1));
+                  bd.el.setAttribute("cy", pt.y.toFixed(1));
+                  bd.el.setAttribute("opacity", (proximity * edge * 0.96).toFixed(2));
+                } else {
+                  bd.el.setAttribute("opacity", "0");
+                }
+              }
+            }
+
+            // --- 6) BUSHING TERMINAL AC ENERGY PULSES (MODULATED BY ACTIVE TAP RATIO) ---
+            for (let i = 0; i < animBushingHalos.length; i++) {
+              const bh = animBushingHalos[i];
+              const pulse = Math.abs(Math.sin(t * 2.3 + bh.phase));
+              // MV ivory terminals reflect tap output voltage modulation visibly
+              const boost = bh.isHv ? (state.phase === "step_up" ? tapBoost : 1.0) : tapBoost;
+              const op = Math.min(0.95, (0.28 + 0.44 * pulse) * boost);
+              const rad = bh.baseR * (0.88 + 0.24 * pulse) * (0.85 + 0.18 * boost);
+              bh.el.setAttribute("opacity", op.toFixed(2));
+              bh.el.setAttribute("r", rad.toFixed(1));
+            }
+          }
+        } catch (err) {
+          // Keep 60 FPS loop resilient against runtime exceptions
+        }
+        requestAnimationFrame(tickPhysics);
+      }
+
+      /* =====================================================================
+         9. USER INTERACTIONS (CLICK-TO-ASK, RESET, EXPLODED VIEW, KEYBOARD)
+         ===================================================================== */
+      allPartEls.forEach(function (g) {
+        const partId = g.dataset.part;
+        if (!partId) return;
+
+        g.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          setAutoTour(false);
+          const idx = TOUR_SEQUENCE.indexOf(partId);
+          if (idx >= 0) state.stepIndex = idx;
+          applyHighlight(partId);
+          applyCamera(partId);
+
+          // Notify host / Mirvo AI voice-lesson parent iframe
+          try {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId: partId,
+                nameUz: PART_NAMES_UZ[partId] || partId
+              },
+              "*"
+            );
+          } catch (e) {
+            // Safe standalone fallback
+          }
+        });
+      });
+
+      // Clicking empty white space resets view and resumes sequential spotlight tour
+      viewportEl.addEventListener("click", function (ev) {
+        const clickedPart = ev.target && ev.target.closest ? ev.target.closest(".mirvo-part") : null;
+        if (!clickedPart) {
+          window.MirvoScene.reset();
+        }
+      });
+
+      // Double-clicking anywhere toggles smooth Exploded View (0 <-> 1)
+      viewportEl.addEventListener("dblclick", function (ev) {
+        ev.preventDefault();
+        window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard controls: R / Esc -> Reset, E -> Exploded View, Space -> Play/Pause
+      window.addEventListener("keydown", function (ev) {
+        const key = ev.key;
+        if (key === "r" || key === "R" || key === "Escape") {
+          window.MirvoScene.reset();
+        } else if (key === "e" || key === "E") {
+          window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+        } else if (key === " ") {
+          ev.preventDefault();
+          window.MirvoScene.setPlaying(!state.playing);
+        }
+      });
+
+      /* =====================================================================
+         10. MANDATORY MIRVO AI INTEGRATION API (`window.MirvoScene` & `postMessage`)
+         ===================================================================== */
+      window.MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: PART_NAMES_UZ,
+
+        focus: function (target) {
+          if (target === null || target === "full") {
+            state.stepIndex = 0;
+            applyCamera("full");
+            return;
+          }
+          setAutoTour(false);
+          if (typeof target === "string") {
+            const idx = TOUR_SEQUENCE.indexOf(target);
+            if (idx >= 0) state.stepIndex = idx;
+          }
+          applyCamera(target);
+        },
+
+        highlight: function (partId) {
+          applyHighlight(partId);
+        },
+
+        setStep: function (index) {
+          setAutoTour(false);
+          const safeIdx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.floor(Number(index) || 0)));
+          state.stepIndex = safeIdx;
+          const key = TOUR_SEQUENCE[safeIdx];
+
+          const phaseMap = {
+            full: "auto",
+            core: "auto",
+            common_winding: "step_down",
+            series_winding: "step_up",
+            tap_selector: "tap3",
+            bushings: "auto"
+          };
+
+          state.phase = phaseMap[key] || "auto";
+          if (key === "full") {
+            applyHighlight(null);
+            applyCamera("full");
+          } else {
+            applyHighlight(key);
+            applyCamera(key);
+          }
+        },
+
+        setAutoTour: function (enabled) {
+          setAutoTour(enabled);
+        },
+
+        setExploded: function (amount) {
+          state.targetExploded = Math.max(0, Math.min(1, Number(amount) || 0));
+        },
+
+        setPhase: function (mode) {
+          const valid = ["auto", "step_down", "step_up", "tap1", "tap2", "tap3"];
+          if (valid.indexOf(mode) !== -1) {
+            state.phase = mode;
+            if (mode === "tap1") tapAnim.activeIndex = 0;
+            if (mode === "tap2") tapAnim.activeIndex = 1;
+            if (mode === "tap3") tapAnim.activeIndex = 2;
+          }
+        },
+
+        setPlaying: function (playing) {
+          state.playing = Boolean(playing);
+        },
+
+        reset: function () {
+          state.targetExploded = 0;
+          state.phase = "auto";
+          state.playing = true;
+          state.stepIndex = 0;
+          tapAnim.nextSwitchAt = state.simTime + 4.2;
+          applyHighlight(null);
+          applyCamera("full");
+          setAutoTour(!prefersReducedMotion);
+        },
+
+        getState: function () {
+          return {
+            deviceId: DEVICE_ID,
+            parts: Object.assign({}, PART_NAMES_UZ),
+            tourSequence: TOUR_SEQUENCE.slice(),
+            stepIndex: state.stepIndex,
+            focusedPart: state.focusedPart,
+            exploded: Number(state.targetExploded.toFixed(2)),
+            phase: state.phase,
+            activeTap: tapAnim.activeIndex + 1,
+            playing: state.playing,
+            autoTour: state.autoTour,
+            camera: Object.assign({}, state.camera)
+          };
+        }
+      };
+
+      // Listen for parent Mirvo AI lesson controller commands via postMessage
+      window.addEventListener("message", function (ev) {
+        try {
+          const msg = ev.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              window.MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              window.MirvoScene.highlight(msg.partId);
+              break;
+            case "SET_STEP":
+              window.MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              window.MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              window.MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              window.MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              window.MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              window.MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          // Safely ignore malformed cross-origin payloads
+        }
+      });
+
+      /* =====================================================================
+         11. BOOTSTRAP ON WINDOW LOAD
+         ===================================================================== */
+      window.onload = function () {
+        applyCamera("full");
+        applyHighlight(null);
+        requestAnimationFrame(tickPhysics);
+        if (!prefersReducedMotion) {
+          runTourStep(0);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

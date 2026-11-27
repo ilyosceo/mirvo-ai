@@ -1,0 +1,2863 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shamol elektr stansiyasi (SHES-5.0)</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — PURE #FFFFFF ZERO-UI CANVAS & RESPONSIVE 16:9 STAGE
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body, .mirvo-viewport {
+      background: #ffffff;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    #mirvo-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: visible;
+    }
+
+    /* =========================================================================
+       SEQUENTIAL AUTO-SPOTLIGHT FOCUS & DIMMING TRANSITIONS
+       ========================================================================= */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-part[data-part="housing"] {
+      cursor: default;
+    }
+
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Crisp dark-slate technical engineering outlines */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.35;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-bold {
+      stroke: #222933;
+      stroke-width: 1.55;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-thin {
+      stroke: #222933;
+      stroke-width: 1.05;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-micro {
+      stroke: #222933;
+      stroke-width: 0.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage {
+        transition: none;
+      }
+      .mirvo-part {
+        transition: opacity 0.2s ease;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="mirvo-viewport">
+    <div class="mirvo-stage" id="mirvo-stage">
+      <svg
+        id="mirvo-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <!-- ================= SOFT GROUND SHADOWS & ENERGY GLOW FILTERS ================= -->
+          <filter id="ground-shadow-blur" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
+
+          <filter id="cyan-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="4.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="brake-heat-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="6.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- ================= HARMONIC 4-TONE MATTE ENGINEERING PALETTE ================= -->
+          <!-- Aerodynamic Ivory-Cream Nacelle Shell & Fiberglass Blades -->
+          <linearGradient id="ivory-shell-v" x1="15%" y1="0%" x2="85%" y2="100%">
+            <stop offset="0%" stop-color="#FDFCF8" />
+            <stop offset="38%" stop-color="#F3F0E6" />
+            <stop offset="76%" stop-color="#DDD9CC" />
+            <stop offset="100%" stop-color="#B5B0A1" />
+          </linearGradient>
+
+          <linearGradient id="ivory-lip" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDFCF8" />
+            <stop offset="48%" stop-color="#EAE6D9" />
+            <stop offset="100%" stop-color="#C8C3B4" />
+          </linearGradient>
+
+          <linearGradient id="ivory-bevel" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="55%" stop-color="#ECE8DC" />
+            <stop offset="100%" stop-color="#CCC7B8" />
+          </linearGradient>
+
+          <linearGradient id="spinner-grad" x1="20%" y1="8%" x2="82%" y2="92%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="32%" stop-color="#F7F5EE" />
+            <stop offset="70%" stop-color="#DFDBD0" />
+            <stop offset="100%" stop-color="#B5B0A1" />
+          </linearGradient>
+
+          <linearGradient id="blade-lit" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDFCF8" />
+            <stop offset="45%" stop-color="#F3F0E6" />
+            <stop offset="85%" stop-color="#DDD9CC" />
+            <stop offset="100%" stop-color="#C3BEB0" />
+          </linearGradient>
+
+          <linearGradient id="blade-shaded" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ECE9DF" />
+            <stop offset="50%" stop-color="#D6D2C5" />
+            <stop offset="100%" stop-color="#B5B0A1" />
+          </linearGradient>
+
+          <!-- Interior Nacelle Cavity & Dark-Slate Plinth / Pillow Blocks -->
+          <linearGradient id="cavity-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#334155" />
+            <stop offset="48%" stop-color="#475569" />
+            <stop offset="100%" stop-color="#1E293B" />
+          </linearGradient>
+
+          <linearGradient id="plinth-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#5B6B7F" />
+            <stop offset="52%" stop-color="#475569" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <linearGradient id="plinth-side" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#1E293B" />
+          </linearGradient>
+
+          <linearGradient id="slate-block" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="45%" stop-color="#475569" />
+            <stop offset="82%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#1E293B" />
+          </linearGradient>
+
+          <!-- Machined Satin Steel (Shaft, Gearbox, Tower, Brake Disc) -->
+          <linearGradient id="steel-cyl-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="22%" stop-color="#CBD5E1" />
+            <stop offset="42%" stop-color="#F8FAFC" />
+            <stop offset="72%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-cyl-axis" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#CBD5E1" />
+            <stop offset="26%" stop-color="#F8FAFC" />
+            <stop offset="58%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-disc" x1="15%" y1="10%" x2="88%" y2="92%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="36%" stop-color="#CBD5E1" />
+            <stop offset="72%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="steel-gear-face" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="45%" stop-color="#CBD5E1" />
+            <stop offset="85%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <!-- Rich Cobalt Blue (Pitch Rings, Hub Collar, Finned Generator, Yaw Pinion) -->
+          <linearGradient id="cobalt-cyl" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="32%" stop-color="#2563EB" />
+            <stop offset="72%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <linearGradient id="cobalt-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E3A8A" />
+            <stop offset="28%" stop-color="#2563EB" />
+            <stop offset="52%" stop-color="#60A5FA" />
+            <stop offset="80%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#172554" />
+          </linearGradient>
+
+          <!-- Warm Brushed Copper / Terracotta-Amber (Caliper, Windings, Bronze Stage, Yaw Race) -->
+          <linearGradient id="copper-cyl" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="30%" stop-color="#E69156" />
+            <stop offset="70%" stop-color="#C2652E" />
+            <stop offset="100%" stop-color="#7C3A16" />
+          </linearGradient>
+
+          <linearGradient id="copper-h" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7C3A16" />
+            <stop offset="26%" stop-color="#C2652E" />
+            <stop offset="52%" stop-color="#FDE2C4" />
+            <stop offset="78%" stop-color="#E69156" />
+            <stop offset="100%" stop-color="#7C3A16" />
+          </linearGradient>
+
+          <linearGradient id="caliper-grad" x1="15%" y1="5%" x2="85%" y2="95%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="34%" stop-color="#E69156" />
+            <stop offset="74%" stop-color="#C2652E" />
+            <stop offset="100%" stop-color="#7C3A16" />
+          </linearGradient>
+
+          <!-- Vibrant Cyan-Emerald Energy & Wind Streamlines -->
+          <linearGradient id="cyan-busbar" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#67E8F9" />
+            <stop offset="50%" stop-color="#14B8A6" />
+            <stop offset="100%" stop-color="#0891B2" />
+          </linearGradient>
+
+          <linearGradient id="wind-ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0" />
+            <stop offset="35%" stop-color="#67E8F9" stop-opacity="0.55" />
+            <stop offset="75%" stop-color="#38BDF8" stop-opacity="0.45" />
+            <stop offset="100%" stop-color="#BAE6FD" stop-opacity="0" />
+          </linearGradient>
+
+          <radialGradient id="brake-amber-radial" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.95" />
+            <stop offset="45%" stop-color="#F59E0B" stop-opacity="0.65" />
+            <stop offset="100%" stop-color="#EA580C" stop-opacity="0" />
+          </radialGradient>
+
+          <radialGradient id="gen-em-radial" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.85" />
+            <stop offset="50%" stop-color="#14B8A6" stop-opacity="0.38" />
+            <stop offset="100%" stop-color="#0891B2" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Pure #FFFFFF background click target for smooth Reset -->
+        <rect id="bg-reset-target" x="0" y="0" width="1600" height="900" fill="#FFFFFF" />
+
+        <!-- =======================================================================
+             WHOLE WIND TURBINE ASSEMBLY — 8 STRICT PAINTER'S-ORDER MODULAR LAYERS
+             ======================================================================= -->
+        <g id="mirvo-assembly">
+          <!-- 1. Housing Back: Shadows, Base Plinth, Lower Tower Stub & Rear/Upper Nacelle Shell -->
+          <g id="part-housing-back" class="mirvo-part" data-part="housing">
+            <g class="explode-layer" id="explode-housing-back"></g>
+          </g>
+
+          <!-- 2. Yaw Drive: Upper Tower Column, 44-Tooth Slewing Ring, Copper Race & Blue/Amber Pinions -->
+          <g id="part-yaw_drive" class="mirvo-part" data-part="yaw_drive">
+            <g class="explode-layer" id="explode-yaw_drive"></g>
+          </g>
+
+          <!-- 3. Generator: Finned Cobalt Stator, Copper End-Windings, High-Speed Rotor & 3 Cyan Busbars -->
+          <g id="part-generator" class="mirvo-part" data-part="generator">
+            <g class="explode-layer" id="explode-generator"></g>
+          </g>
+
+          <!-- 4. Disc Brake: High-Speed Flange, Ventilated Drilled Steel Disc & Terracotta Caliper -->
+          <g id="part-disc_brake" class="mirvo-part" data-part="disc_brake">
+            <g class="explode-layer" id="explode-disc_brake"></g>
+          </g>
+
+          <!-- 5. Gearbox: Cutaway Steel Casing, Internal Ring Gear, 3 Orbiting Planets & Sun Gear -->
+          <g id="part-gearbox" class="mirvo-part" data-part="gearbox">
+            <g class="explode-layer" id="explode-gearbox"></g>
+          </g>
+
+          <!-- 6. Main Shaft: Low-Speed Steel Shaft & Twin Dark-Slate Pillow-Block Roller Bearings -->
+          <g id="part-main_shaft" class="mirvo-part" data-part="main_shaft">
+            <g class="explode-layer" id="explode-main_shaft"></g>
+          </g>
+
+          <!-- 7. Rotor & Blades: Wind Streamlines, Hub Collar, 3D Z-Sorted Spinner & 3 Fiberglass Blades -->
+          <g id="part-rotor_blades" class="mirvo-part" data-part="rotor_blades">
+            <g class="explode-layer" id="explode-rotor_blades"></g>
+          </g>
+
+          <!-- 8. Housing Front: Foreground Lower Beveled Ivory Cutaway Lip (Pointer-Transparent) -->
+          <g id="part-housing-front" class="mirvo-part" data-part="housing" style="pointer-events: none;">
+            <g class="explode-layer" id="explode-housing-front"></g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =========================================================================
+         1. DEVICE METADATA, UZBEK LABELS & CAMERA FOCUS CONFIGURATION
+         ========================================================================= */
+      const DEVICE_ID = "shes_wind_nacelle";
+
+      const PART_NAMES_UZ = {
+        rotor_blades: "Rotor parraklari va stupitsa",
+        main_shaft: "Asosiy past tezlikli val",
+        gearbox: "Planetar tishli multiplikator",
+        disc_brake: "Diskli tormoz mexanizmi",
+        generator: "Elektr generatori",
+        yaw_drive: "Shamolga burish mexanizmi (Yaw drive)"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "rotor_blades",
+        "main_shaft",
+        "gearbox",
+        "disc_brake",
+        "generator",
+        "yaw_drive"
+      ];
+
+      // Calibrated bounding centers & zoom levels so every focused part fills frame cleanly
+      const CAMERA_TARGETS = {
+        full: { x: 800, y: 450, zoom: 1.0 },
+        rotor_blades: { x: 410, y: 492, zoom: 1.54 },
+        main_shaft: { x: 618, y: 438, zoom: 2.15 },
+        gearbox: { x: 832, y: 374, zoom: 2.15 },
+        disc_brake: { x: 1004, y: 324, zoom: 2.35 },
+        generator: { x: 1172, y: 274, zoom: 2.05 },
+        yaw_drive: { x: 874, y: 585, zoom: 2.15 }
+      };
+
+      // Matching physics phase when stepped directly via MirvoScene.setStep(index)
+      const STEP_PHASES = [
+        "auto",       // 0: full
+        "nominal",    // 1: rotor_blades
+        "nominal",    // 2: main_shaft
+        "nominal",    // 3: gearbox
+        "brake",      // 4: disc_brake
+        "high_wind",  // 5: generator
+        "yaw"         // 6: yaw_drive
+      ];
+
+      // Clean isometric exploded-view vectors along drivetrain & tower axes
+      const EXPLODE_VECTORS = {
+        "housing-back": { x: -20, y: -56 },
+        "housing-front": { x: 24, y: 58 },
+        rotor_blades: { x: -102, y: 32 },
+        main_shaft: { x: -42, y: 13 },
+        gearbox: { x: 0, y: 0 },
+        disc_brake: { x: 52, y: -16 },
+        generator: { x: 104, y: -32 },
+        yaw_drive: { x: 0, y: 74 }
+      };
+
+      const TOUR_HOLD_FULL_MS = 2500;
+      const TOUR_HOLD_PART_MS = 3500;
+
+      const prefersReducedMotion =
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* =========================================================================
+         2. TRUE 3D ORTHOGRAPHIC ISOMETRIC PROJECTION ENGINE
+            World Coordinates:
+              s = drivetrain axis (-s front-left nose -> +s back-right generator)
+              v = cutaway transverse axis (+v toward viewer front-right)
+              u = vertical axis (+u straight up)
+         ========================================================================= */
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const ORIGIN_X = 838;
+      const ORIGIN_Y = 368;
+
+      // Calibrated 3D camera: yaw = 34 deg, elevation = 28 deg
+      // Produces exact ~ -17.5 deg drivetrain axis & horizontal tower/yaw ellipses
+      const PSI = (34 * Math.PI) / 180;
+      const EL = (28 * Math.PI) / 180;
+      const C_PSI = Math.cos(PSI);
+      const S_PSI = Math.sin(PSI);
+      const C_EL = Math.cos(EL);
+      const S_EL = Math.sin(EL);
+
+      const SX = C_PSI;
+      const SY = -S_PSI * S_EL;
+      const SD = -S_PSI * C_EL;
+
+      const VX = S_PSI;
+      const VY = C_PSI * S_EL;
+      const VD = C_PSI * C_EL;
+
+      const UX = 0;
+      const UY = -C_EL;
+      const UD = S_EL;
+
+      function proj(s, v, u) {
+        return {
+          x: ORIGIN_X + s * SX + v * VX + u * UX,
+          y: ORIGIN_Y + s * SY + v * VY + u * UY,
+          d: s * SD + v * VD + u * UD
+        };
+      }
+
+      function ptsStr(list3D) {
+        let out = "";
+        for (let i = 0; i < list3D.length; i++) {
+          const p = proj(list3D[i][0], list3D[i][1], list3D[i][2]);
+          out += (i === 0 ? "" : " ") + p.x.toFixed(1) + "," + p.y.toFixed(1);
+        }
+        return out;
+      }
+
+      function pathStr(list3D, closed = true) {
+        let out = "";
+        for (let i = 0; i < list3D.length; i++) {
+          const p = proj(list3D[i][0], list3D[i][1], list3D[i][2]);
+          out += (i === 0 ? "M " : " L ") + p.x.toFixed(1) + " " + p.y.toFixed(1);
+        }
+        return closed ? out + " Z" : out;
+      }
+
+      function el(tag, attrs = {}, parent = null) {
+        const node = document.createElementNS(SVG_NS, tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          node.setAttribute(k, String(v));
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      /**
+       * Samples a coaxial circle at axial station `s` with radius `r` and optional center offset (vc, uc).
+       */
+      function coaxialCircle(s, r, segs = 32, vc = 0, uc = 0, a0 = 0, a1 = Math.PI * 2) {
+        const arr = [];
+        for (let i = 0; i <= segs; i++) {
+          const a = a0 + (a1 - a0) * (i / segs);
+          arr.push([s, vc + r * Math.cos(a), uc + r * Math.sin(a)]);
+        }
+        return arr;
+      }
+
+      /**
+       * Draws a coaxial 3D cylindrical drum segment from s1 (front) to s2 (back),
+       * automatically computing visible silhouette angles in screen space.
+       */
+      function drawCoaxialCylinder(parent, s1, s2, r, opts = {}) {
+        const vc = opts.vc || 0;
+        const uc = opts.uc || 0;
+        const segs = opts.segs || 36;
+        const cls = opts.cls || "ink";
+        const g = el("g", {}, parent);
+
+        // Compute tangent angle of projected circle along screen-normal to drivetrain axis
+        // Circle point relative to center: dx = r*VX*cos(a), dy = r*(VY*cos(a) + UY*sin(a))
+        // Silhouette occurs where tangent is parallel to (SX, SY), i.e., cross((dx', dy'), (SX, SY)) = 0
+        // dx' = -VX*sin(a), dy' = -VY*sin(a) + UY*cos(a)
+        // (-VX*SY + VY*SX)*sin(a) - (UY*SX)*cos(a) = 0
+        const aSil = Math.atan2(UY * SX, -VX * SY + VY * SX); // upper/lower silhouette angle
+        const aTop = aSil > 0 ? aSil : aSil + Math.PI;
+        const aBot = aTop - Math.PI;
+
+        // Pick visible arc (facing camera: larger depth d = VD*cos(a) + UD*sin(a))
+        const midA = (aTop + aBot) * 0.5;
+        const dMid = VD * Math.cos(midA) + UD * Math.sin(midA);
+        const startA = dMid >= 0 ? aBot : aTop;
+        const endA = dMid >= 0 ? aTop : aBot + Math.PI * 2;
+
+        const frontArc = [];
+        const backArc = [];
+        for (let i = 0; i <= segs; i++) {
+          const a = startA + (endA - startA) * (i / segs);
+          const v = vc + r * Math.cos(a);
+          const u = uc + r * Math.sin(a);
+          frontArc.push([s1, v, u]);
+          backArc.unshift([s2, v, u]);
+        }
+
+        el("path", { class: cls, d: pathStr([...frontArc, ...backArc], true), fill: opts.sideFill || "url(#steel-cyl-axis)" }, g);
+
+        if (opts.frontCapFill !== null) {
+          el("path", {
+            class: cls,
+            d: pathStr(coaxialCircle(s1, r, segs, vc, uc), true),
+            fill: opts.frontCapFill || "url(#steel-disc)"
+          }, g);
+        }
+        return g;
+      }
+
+      /**
+       * Draws a horizontal 3D vertical-axis cylinder from uBot to uTop centered at (sc, vc).
+       */
+      function drawVerticalCylinder(parent, sc, vc, uBot, uTop, r, opts = {}) {
+        const g = el("g", {}, parent);
+        const cls = opts.cls || "ink";
+        const rx = r;
+        const ry = r * S_EL;
+        const top = proj(sc, vc, uTop);
+        const bot = proj(sc, vc, uBot);
+
+        el(
+          "path",
+          {
+            class: cls,
+            d: `M ${(top.x - rx).toFixed(1)} ${top.y.toFixed(1)} L ${(bot.x - rx).toFixed(1)} ${bot.y.toFixed(1)} A ${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 0 ${(bot.x + rx).toFixed(1)} ${bot.y.toFixed(1)} L ${(top.x + rx).toFixed(1)} ${top.y.toFixed(1)} Z`,
+            fill: opts.sideFill || "url(#steel-cyl-v)"
+          },
+          g
+        );
+
+        if (opts.topFill !== null) {
+          el(
+            "ellipse",
+            {
+              class: cls,
+              cx: top.x.toFixed(1),
+              cy: top.y.toFixed(1),
+              rx: rx.toFixed(1),
+              ry: ry.toFixed(1),
+              fill: opts.topFill || "#E2E8F0"
+            },
+            g
+          );
+        }
+        return g;
+      }
+
+      /**
+       * Generates a crisp 2D/3D coaxial spur gear face + 3D extruded tooth rim at station s1..s2.
+       * Used dynamically at 60 FPS for planetary gears & sun gear.
+       */
+      function buildCoaxialGearPaths(s1, s2, vc, uc, rOuter, rRoot, teeth, phaseAngle) {
+        const frontRing = [];
+        const toothSideQuads = [];
+        const step = (Math.PI * 2) / teeth;
+
+        for (let i = 0; i < teeth; i++) {
+          const a0 = phaseAngle + i * step;
+          const a1 = a0 + step * 0.18;
+          const a2 = a0 + step * 0.44;
+          const a3 = a0 + step * 0.62;
+
+          const p0 = [s1, vc + rRoot * Math.cos(a0), uc + rRoot * Math.sin(a0)];
+          const p1 = [s1, vc + rOuter * Math.cos(a1), uc + rOuter * Math.sin(a1)];
+          const p2 = [s1, vc + rOuter * Math.cos(a2), uc + rOuter * Math.sin(a2)];
+          const p3 = [s1, vc + rRoot * Math.cos(a3), uc + rRoot * Math.sin(a3)];
+          frontRing.push(p0, p1, p2, p3);
+
+          // Tooth outer tip face visible on camera-facing half
+          const aMid = (a1 + a2) * 0.5;
+          const depth = VD * Math.cos(aMid) + UD * Math.sin(aMid);
+          if (depth > -0.15) {
+            const q1 = [s2, vc + rOuter * Math.cos(a1), uc + rOuter * Math.sin(a1)];
+            const q2 = [s2, vc + rOuter * Math.cos(a2), uc + rOuter * Math.sin(a2)];
+            toothSideQuads.push({
+              d: pathStr([p1, p2, q2, q1], true),
+              lit: Math.sin(aMid + 0.6) > 0.15,
+              depth
+            });
+          }
+        }
+        toothSideQuads.sort((a, b) => a.depth - b.depth);
+        return { frontD: pathStr(frontRing, true), sideQuads: toothSideQuads };
+      }
+
+      /* =========================================================================
+         3. DOM REFERENCES & LAYER CONTAINERS
+         ========================================================================= */
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const stageEl = document.getElementById("mirvo-stage");
+      const svgRoot = document.getElementById("mirvo-svg");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+
+      const layers = {
+        "housing-back": document.getElementById("explode-housing-back"),
+        yaw_drive: document.getElementById("explode-yaw_drive"),
+        generator: document.getElementById("explode-generator"),
+        disc_brake: document.getElementById("explode-disc_brake"),
+        gearbox: document.getElementById("explode-gearbox"),
+        main_shaft: document.getElementById("explode-main_shaft"),
+        rotor_blades: document.getElementById("explode-rotor_blades"),
+        "housing-front": document.getElementById("explode-housing-front")
+      };
+
+      const explodeList = Object.keys(EXPLODE_VECTORS).map((key) => ({
+        key,
+        el: layers[key],
+        vec: EXPLODE_VECTORS[key]
+      }));
+
+      // Dynamic handles updated smoothly at 60 FPS
+      const dyn = {
+        // Wind streamlines
+        windStreams: [],
+        // Rotor & blades (Z-sorted dynamically)
+        rotorBackSlot: null,
+        rotorFrontSlot: null,
+        bladeGroups: [],
+        spinnerRecessPath: null,
+        // Main shaft rotation bars
+        shaftBars: [],
+        // Gearbox orbiting planets, carrier & sun gear
+        gearboxDynamicLayer: null,
+        carrierSpokes: [],
+        planetNodes: [],
+        sunNode: null,
+        bronzeRingMarks: [],
+        // Disc brake rotating slots, ventilation holes, bolts & thermal glow
+        brakeSlots: [],
+        brakeHoles: [],
+        brakeBolts: [],
+        brakeHeatGlow: null,
+        caliperGroup: null,
+        // Generator rotor bars, fan blades, EM shimmer & busbar electrical pulses
+        genRotorBars: [],
+        genFanBlades: [],
+        genEmGlow: null,
+        busbarPaths: [],
+        busbarLengths: [],
+        busbarPulses: [],
+        // Yaw drive dynamic teeth for slewing ring & vertical pinions
+        yawSlewingTeethG: null,
+        yawBluePinionG: null,
+        yawCopperPinionG: null,
+        yawLastAngle: NaN
+      };
+
+      /* =========================================================================
+         4. BUILD LAYER 1 — HOUSING BACK (SHADOWS, PLINTH, TOWER BASE, REAR NACELLE)
+         ========================================================================= */
+      function buildHousingBack() {
+        const g = layers["housing-back"];
+        const sTower = 32;
+
+        // 1A. Soft Grounded Contact Shadows on #FFFFFF
+        const shadowG = el("g", { "pointer-events": "none", filter: "url(#ground-shadow-blur)" }, g);
+        // Plinth cast shadow
+        el("path", {
+          d: pathStr([
+            [-218, 178, -422],
+            [328, 178, -422],
+            [328, -162, -422],
+            [-218, -162, -422]
+          ]),
+          fill: "#94A3B8",
+          opacity: "0.34"
+        }, shadowG);
+        // Subtle front-left ground shadow beneath rotor blades
+        const bladeShad = proj(-365, 130, -420);
+        el("ellipse", {
+          cx: bladeShad.x.toFixed(1),
+          cy: bladeShad.y.toFixed(1),
+          rx: "155",
+          ry: "44",
+          transform: `rotate(-14 ${bladeShad.x.toFixed(1)} ${bladeShad.y.toFixed(1)})`,
+          fill: "#CBD5E1",
+          opacity: "0.45"
+        }, shadowG);
+
+        // 1B. Dark-Slate Rounded Rectangular Base Plinth aligned with Nacelle Diagonal
+        function roundedPlinthLoop(s0, s1, v0, v1, rad, u) {
+          const pts = [];
+          const corners = [
+            { cs: s0 + rad, cv: v0 + rad, a0: Math.PI, a1: Math.PI * 1.5 },
+            { cs: s1 - rad, cv: v0 + rad, a0: Math.PI * 1.5, a1: Math.PI * 2 },
+            { cs: s1 - rad, cv: v1 - rad, a0: 0, a1: Math.PI * 0.5 },
+            { cs: s0 + rad, cv: v1 - rad, a0: Math.PI * 0.5, a1: Math.PI }
+          ];
+          for (const c of corners) {
+            for (let i = 0; i <= 5; i++) {
+              const a = c.a0 + (c.a1 - c.a0) * (i / 5);
+              pts.push([c.cs + Math.cos(a) * rad, c.cv + Math.sin(a) * rad, u]);
+            }
+          }
+          return pts;
+        }
+
+        const pTop = roundedPlinthLoop(-208, 326, -158, 166, 26, -395);
+        const pBot = roundedPlinthLoop(-208, 326, -158, 166, 26, -420);
+
+        // Build side skirt around visible front/right/left perimeter (indices 6..23)
+        const skirtTop = [];
+        const skirtBot = [];
+        for (let i = 6; i < pTop.length; i++) {
+          skirtTop.push(pTop[i]);
+          skirtBot.unshift(pBot[i]);
+        }
+        skirtTop.push(pTop[0]);
+        skirtBot.unshift(pBot[0]);
+
+        el("path", { class: "ink-bold", d: pathStr([...skirtTop, ...skirtBot], true), fill: "url(#plinth-side)" }, g);
+        el("path", { class: "ink-bold", d: pathStr(pTop, true), fill: "url(#plinth-top)" }, g);
+        // Subtle crisp bevel rim highlight on front-left & front-right top edge
+        el("path", {
+          d: pathStr(pTop.slice(12, 23), false),
+          fill: "none",
+          stroke: "#94A3B8",
+          "stroke-width": "1.3",
+          opacity: "0.6"
+        }, g);
+
+        // Tower contact shadow ring on plinth top
+        const tBase = proj(sTower, 0, -394);
+        el("ellipse", {
+          cx: tBase.x.toFixed(1),
+          cy: tBase.y.toFixed(1),
+          rx: "144",
+          ry: (144 * S_EL).toFixed(1),
+          fill: "#0F172A",
+          opacity: "0.35"
+        }, g);
+
+        // 1C. Lower Satin-Steel Cylindrical Tower Base mounted on Plinth
+        drawVerticalCylinder(g, sTower, 0, -395, -288, 130, {
+          sideFill: "url(#steel-cyl-v)",
+          topFill: "#94A3B8",
+          cls: "ink-bold"
+        });
+        // Base mounting bevel collar
+        const baseRing = proj(sTower, 0, -390);
+        el("path", {
+          class: "ink-thin",
+          fill: "none",
+          d: `M ${(baseRing.x - 130).toFixed(1)} ${baseRing.y.toFixed(1)} A 130 ${(130 * S_EL).toFixed(1)} 0 0 0 ${(baseRing.x + 130).toFixed(1)} ${baseRing.y.toFixed(1)}`
+        }, g);
+
+        // 1D. Streamlined Aerodynamic Ivory Nacelle Back & Upper Shell
+        // Lofted parametric cross-section profile R(s) matching the sleek curved nacelle silhouette
+        function nacelleRadius(s) {
+          if (s <= -332) return 96;
+          if (s < -140) {
+            const t = (s + 332) / 192;
+            const e = 1 - Math.pow(1 - t, 2.1);
+            return 96 + e * 38;
+          }
+          if (s <= 430) {
+            const t = (s + 140) / 570;
+            return 134 + Math.sin(t * Math.PI * 0.75) * 6;
+          }
+          // Rounded rear cap taper
+          const t = Math.min(1, (s - 430) / 76);
+          return 136 * Math.sqrt(Math.max(0.02, 1 - t * t * 0.92));
+        }
+
+        // Upper-back outer aerodynamic shell loft: sweeps from top-front cutaway lip (angle ~ 78°)
+        // over the roof (90°) and down the back wall (180°..252°)
+        const sStations = [-332, -290, -230, -155, -70, 20, 120, 220, 320, 415, 458, 488, 504];
+
+        // Outer top/back silhouette & cutaway top edge
+        const topRimOuter = [];
+        const backBottomOuter = [];
+        const topRimInner = [];
+        const cavityTopEdge = [];
+        const cavityFloorBack = [];
+        const cavityFloorFront = [];
+
+        for (let i = 0; i < sStations.length; i++) {
+          const s = sStations[i];
+          const r = nacelleRadius(s);
+          const rIn = Math.max(20, r - 14);
+          // Upper-front cutaway arch stays neatly open along the side
+          const aCutTop = s < -260 ? 1.12 : s > 430 ? 0.95 : 1.24; // ~71 deg
+          const aBack = 3.55; // lower back silhouette edge (~203 deg)
+
+          topRimOuter.push([s, r * Math.cos(aCutTop), r * Math.sin(aCutTop)]);
+          topRimInner.push([s, rIn * Math.cos(aCutTop), rIn * Math.sin(aCutTop)]);
+          backBottomOuter.unshift([s, r * Math.cos(aBack), r * Math.sin(aBack)]);
+
+          if (s >= -318 && s <= 468) {
+            cavityTopEdge.push([s, rIn * Math.cos(aCutTop), rIn * Math.sin(aCutTop)]);
+            cavityFloorBack.push([s, -rIn * 0.74, -rIn * 0.62]);
+            cavityFloorFront.unshift([s, rIn * 0.66, -rIn * 0.72]);
+          }
+        }
+
+        // Full back/upper ivory aerodynamic shell body
+        el("path", {
+          class: "ink-bold",
+          d: pathStr([...topRimOuter, ...backBottomOuter], true),
+          fill: "url(#ivory-shell-v)"
+        }, g);
+
+        // Sleek rear rounded cap vertical contour seam
+        const rearArchPts = [];
+        for (let i = 0; i <= 18; i++) {
+          const a = -0.65 + (i / 18) * 3.1;
+          const r = nacelleRadius(452);
+          rearArchPts.push([452 + Math.cos(a) * 42, r * Math.cos(a), r * Math.sin(a)]);
+        }
+        el("path", {
+          class: "ink-thin",
+          d: pathStr(rearArchPts, false),
+          fill: "none",
+          opacity: "0.42"
+        }, g);
+
+        // Recessed Dark-Slate Interior Nacelle Cavity Wall
+        const cavityRim = [
+          ...cavityTopEdge,
+          [468, 72, -18],
+          [468, 80, -82],
+          ...cavityFloorFront,
+          [-318, 42, -74],
+          [-318, -28, -58]
+        ];
+        el("path", {
+          class: "ink",
+          d: pathStr(cavityRim, true),
+          fill: "url(#cavity-bg)"
+        }, g);
+
+        // Heavy Dark-Slate Horizontal Bedplate Deck Floor inside Nacelle
+        el("path", {
+          class: "ink-thin",
+          d: pathStr([
+            [-308, -68, -74],
+            [454, -76, -74],
+            [454, 78, -82],
+            [-308, 62, -78]
+          ], true),
+          fill: "#263244"
+        }, g);
+
+        // Subtle interior structural stiffening ribs along back inner wall
+        [-220, -110, 128, 250, 395].forEach((sr) => {
+          const rIn = nacelleRadius(sr) - 16;
+          el("path", {
+            class: "ink-micro",
+            d: pathStr([
+              [sr, rIn * Math.cos(1.32), rIn * Math.sin(1.32)],
+              [sr, -rIn * 0.45, rIn * 0.65],
+              [sr, -rIn * 0.72, -rIn * 0.58]
+            ], false),
+            fill: "none",
+            stroke: "#1E293B",
+            opacity: "0.5"
+          }, g);
+        });
+
+        // Thick Beveled Ivory Top Cutaway Wall Rim (connecting outer & inner arches)
+        const topBevelLoop = [...topRimOuter, ...[...topRimInner].reverse()];
+        el("path", {
+          class: "ink",
+          d: pathStr(topBevelLoop, true),
+          fill: "url(#ivory-bevel)"
+        }, g);
+
+        // Subtle aerodynamic crease highlight along nacelle roof
+        const roofHighlight = sStations.slice(1, -2).map((s) => {
+          const r = nacelleRadius(s);
+          return [s, r * Math.cos(1.62), r * Math.sin(1.62)];
+        });
+        el("path", {
+          d: pathStr(roofHighlight, false),
+          fill: "none",
+          stroke: "#FFFFFF",
+          "stroke-width": "2.2",
+          opacity: "0.7"
+        }, g);
+      }
+
+      /* =========================================================================
+         5. BUILD LAYER 2 — YAW DRIVE (UPPER TOWER, 44-TOOTH SLEWING RING & PINIONS)
+         ========================================================================= */
+      function buildYawDrive() {
+        const g = layers.yaw_drive;
+        const sc = 32;
+        const vc = 0;
+
+        // 2A. Upper Machined Steel Tower Column rising into Slewing Ring
+        drawVerticalCylinder(g, sc, vc, -296, -242, 130, {
+          sideFill: "url(#steel-cyl-v)",
+          topFill: "#CBD5E1",
+          cls: "ink"
+        });
+
+        // Lower slewing ring base shoulder flange
+        drawVerticalCylinder(g, sc, vc, -252, -238, 138, {
+          sideFill: "#64748B",
+          topFill: "#334155",
+          cls: "ink"
+        });
+
+        // 2B. Dynamic 44-Tooth Horizontal Slewing Ring Gear Container
+        dyn.yawSlewingTeethG = el("g", { id: "yaw-slewing-teeth" }, g);
+
+        // 2C. Inner Bearing Races & Nacelle Pedestal Collar sitting atop Slewing Ring
+        const ringTop = proj(sc, vc, -206);
+        // Dark-slate recessed bearing track
+        el("ellipse", {
+          class: "ink-thin",
+          cx: ringTop.x.toFixed(1),
+          cy: ringTop.y.toFixed(1),
+          rx: "126",
+          ry: (126 * S_EL).toFixed(1),
+          fill: "#334155"
+        }, g);
+
+        // Warm brushed-copper inner race ring
+        drawVerticalCylinder(g, sc, vc, -208, -192, 108, {
+          sideFill: "url(#copper-h)",
+          topFill: "#E69156",
+          cls: "ink-thin"
+        });
+
+        // Cobalt-blue inner slewing hub collar linking up into nacelle bedplate
+        drawVerticalCylinder(g, sc, vc, -192, -162, 82, {
+          sideFill: "url(#cobalt-v)",
+          topFill: "#2563EB",
+          cls: "ink-thin"
+        });
+
+        // Dark-slate steel upper turret transition into nacelle floor
+        drawVerticalCylinder(g, sc, vc, -162, -118, 68, {
+          sideFill: "url(#slate-block)",
+          topFill: "#334155",
+          cls: "ink-thin"
+        });
+
+        // 2D. Dynamic Vertical Meshing Yaw Pinion Gears (Cobalt Blue lower + Copper-Amber upper)
+        dyn.yawBluePinionG = el("g", { id: "yaw-blue-pinion" }, g);
+        dyn.yawCopperPinionG = el("g", { id: "yaw-copper-pinion" }, g);
+      }
+
+      /**
+       * Renders a vertical-axis 3D toothed spur gear ring (slewing ring or yaw drive pinion)
+       * updated dynamically when yawAngle changes.
+       */
+      function renderHorizontalToothedGear(container, sc, vc, uBot, uTop, rOuter, rRoot, teeth, angle, colors) {
+        while (container.firstChild) container.removeChild(container.firstChild);
+        const step = (Math.PI * 2) / teeth;
+
+        // Collect teeth around the full ring and sort back-to-front by 3D depth
+        const items = [];
+        for (let i = 0; i < teeth; i++) {
+          const a0 = angle + i * step;
+          const a1 = a0 + step * 0.2;
+          const a2 = a0 + step * 0.52;
+          const a3 = a0 + step * 0.72;
+          const aMid = (a1 + a2) * 0.5;
+          const depth = SD * Math.cos(aMid) + VD * Math.sin(aMid);
+          items.push({ a0, a1, a2, a3, aMid, depth });
+        }
+        items.sort((a, b) => a.depth - b.depth);
+
+        // Draw core cylinder inside root radius first
+        drawVerticalCylinder(container, sc, vc, uBot, uTop, rRoot, {
+          sideFill: colors.coreSide,
+          topFill: colors.coreTop,
+          cls: "ink-micro"
+        });
+
+        // Draw individual 3D tooth prisms around the visible perimeter
+        for (const t of items) {
+          if (t.depth < -0.22) continue; // cull fully hidden back teeth
+          const c1 = Math.cos(t.a1), s1 = Math.sin(t.a1);
+          const c2 = Math.cos(t.a2), s2 = Math.sin(t.a2);
+          const c0 = Math.cos(t.a0), s0 = Math.sin(t.a0);
+          const c3 = Math.cos(t.a3), s3 = Math.sin(t.a3);
+
+          const pTop = [
+            [sc + rRoot * c0, vc + rRoot * s0, uTop],
+            [sc + rOuter * c1, vc + rOuter * s1, uTop],
+            [sc + rOuter * c2, vc + rOuter * s2, uTop],
+            [sc + rRoot * c3, vc + rRoot * s3, uTop]
+          ];
+          const pFace = [
+            [sc + rOuter * c1, vc + rOuter * s1, uTop],
+            [sc + rOuter * c2, vc + rOuter * s2, uTop],
+            [sc + rOuter * c2, vc + rOuter * s2, uBot],
+            [sc + rOuter * c1, vc + rOuter * s1, uBot]
+          ];
+
+          // Subtle directional shading across curved gear rim
+          const xNorm = SX * Math.cos(t.aMid) + VX * Math.sin(t.aMid);
+          const faceFill = xNorm < -0.15 ? colors.toothLight : xNorm < 0.38 ? colors.toothMid : colors.toothDark;
+
+          // Visible tooth flank
+          if (xNorm < 0) {
+            el("polygon", {
+              class: "ink-micro",
+              points: ptsStr([
+                [sc + rRoot * c3, vc + rRoot * s3, uTop],
+                [sc + rOuter * c2, vc + rOuter * s2, uTop],
+                [sc + rOuter * c2, vc + rOuter * s2, uBot],
+                [sc + rRoot * c3, vc + rRoot * s3, uBot]
+              ]),
+              fill: colors.toothDark
+            }, container);
+          } else {
+            el("polygon", {
+              class: "ink-micro",
+              points: ptsStr([
+                [sc + rRoot * c0, vc + rRoot * s0, uTop],
+                [sc + rOuter * c1, vc + rOuter * s1, uTop],
+                [sc + rOuter * c1, vc + rOuter * s1, uBot],
+                [sc + rRoot * c0, vc + rRoot * s0, uBot]
+              ]),
+              fill: colors.toothMid
+            }, container);
+          }
+
+          el("polygon", { class: "ink-micro", points: ptsStr(pFace), fill: faceFill }, container);
+          el("polygon", { class: "ink-micro", points: ptsStr(pTop), fill: colors.toothTop }, container);
+        }
+      }
+
+      function updateYawDriveGeometry(yawAngle) {
+        if (Math.abs(yawAngle - dyn.yawLastAngle) < 0.0004) return;
+        dyn.yawLastAngle = yawAngle;
+
+        // 44-tooth satin-steel slewing ring gear
+        renderHorizontalToothedGear(
+          dyn.yawSlewingTeethG,
+          32,
+          0,
+          -244,
+          -208,
+          144,
+          132,
+          44,
+          yawAngle,
+          {
+            coreSide: "url(#steel-cyl-v)",
+            coreTop: "#94A3B8",
+            toothTop: "#F1F5F9",
+            toothLight: "#E2E8F0",
+            toothMid: "#CBD5E1",
+            toothDark: "#64748B"
+          }
+        );
+
+        // Counter-rotating vertical cobalt-blue meshing yaw pinion (14 teeth)
+        const pinionAngle = -yawAngle * 3.14;
+        const pSc = 80;
+        const pVc = 52;
+        renderHorizontalToothedGear(
+          dyn.yawBluePinionG,
+          pSc,
+          pVc,
+          -206,
+          -166,
+          34,
+          25,
+          14,
+          pinionAngle,
+          {
+            coreSide: "url(#cobalt-v)",
+            coreTop: "#2563EB",
+            toothTop: "#60A5FA",
+            toothLight: "#3B82F6",
+            toothMid: "#2563EB",
+            toothDark: "#1E3A8A"
+          }
+        );
+
+        // Upper warm brushed terracotta-copper drive pinion (12 teeth)
+        renderHorizontalToothedGear(
+          dyn.yawCopperPinionG,
+          pSc,
+          pVc,
+          -166,
+          -124,
+          27,
+          20,
+          12,
+          pinionAngle * 1.15 + 0.25,
+          {
+            coreSide: "url(#copper-h)",
+            coreTop: "#E69156",
+            toothTop: "#FDE2C4",
+            toothLight: "#E69156",
+            toothMid: "#C2652E",
+            toothDark: "#7C3A16"
+          }
+        );
+      }
+
+      /* =========================================================================
+         6. BUILD LAYER 3 — GENERATOR (COBALT STATOR, COPPER WINDINGS, ROTOR, BUSBARS)
+         ========================================================================= */
+      function buildGenerator() {
+        const g = layers.generator;
+        const sFront = 258;
+        const sRear = 426;
+        const rOuter = 94;
+        const rBore = 56;
+
+        // 3A. Rear Steel Shaft Stub & Cobalt End Bell Cap
+        drawCoaxialCylinder(g, 444, 488, 28, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#CBD5E1",
+          cls: "ink"
+        });
+        drawCoaxialCylinder(g, 422, 456, 86, {
+          sideFill: "url(#cobalt-cyl)",
+          frontCapFill: "#1E3A8A",
+          cls: "ink"
+        });
+
+        // 3B. Upper-Back Cobalt-Blue Finned Stator Shell
+        drawCoaxialCylinder(g, sFront, sRear, rOuter, {
+          sideFill: "url(#cobalt-cyl)",
+          frontCapFill: "#1E3A8A",
+          cls: "ink"
+        });
+
+        // Upper-back longitudinal cooling fins (angles 65°..225°)
+        for (let deg = 70; deg <= 220; deg += 15) {
+          const a = (deg * Math.PI) / 180;
+          const r1 = rOuter - 2;
+          const r2 = rOuter + 12;
+          const aW = 0.045;
+          el("path", {
+            class: "ink-micro",
+            d: pathStr([
+              [sFront + 6, r1 * Math.cos(a), r1 * Math.sin(a)],
+              [sFront + 6, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sRear - 4, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sRear - 4, r1 * Math.cos(a), r1 * Math.sin(a)]
+            ]),
+            fill: deg < 135 ? "#60A5FA" : "#2563EB"
+          }, g);
+          el("path", {
+            class: "ink-micro",
+            d: pathStr([
+              [sFront + 6, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sFront + 6, r2 * Math.cos(a + aW), r2 * Math.sin(a + aW)],
+              [sRear - 4, r2 * Math.cos(a + aW), r2 * Math.sin(a + aW)],
+              [sRear - 4, r2 * Math.cos(a), r2 * Math.sin(a)]
+            ]),
+            fill: "#1D4ED8"
+          }, g);
+        }
+
+        // Recessed Dark Cutaway Stator Bore Cavity
+        const boreBack = [];
+        for (let deg = -68; deg <= 72; deg += 10) {
+          const a = (deg * Math.PI) / 180;
+          boreBack.push([sRear - 6, rBore * Math.cos(a), rBore * Math.sin(a)]);
+        }
+        for (let deg = 72; deg >= -68; deg -= 10) {
+          const a = (deg * Math.PI) / 180;
+          boreBack.push([sFront + 6, rBore * Math.cos(a), rBore * Math.sin(a)]);
+        }
+        el("path", { class: "ink-thin", d: pathStr(boreBack, true), fill: "#1E293B" }, g);
+
+        // 3C. Warm Brushed-Copper Rear & Front Stator End-Windings
+        function drawCopperEndWindings(sBase, sTip) {
+          const wg = el("g", {}, g);
+          const outerR = 76;
+          const innerR = 54;
+          // Draw bundled copper end-turns around the visible cutaway ring
+          const upper = [];
+          const lower = [];
+          for (let deg = -82; deg <= 258; deg += 12) {
+            const a = (deg * Math.PI) / 180;
+            upper.push([sTip, outerR * Math.cos(a), outerR * Math.sin(a)]);
+            lower.unshift([sBase, innerR * Math.cos(a), innerR * Math.sin(a)]);
+          }
+          el("path", { class: "ink-thin", d: pathStr([...upper, ...lower], true), fill: "url(#copper-cyl)" }, wg);
+
+          // Crisp individual copper coil strand texture lines
+          for (let deg = -72; deg <= 125; deg += 18) {
+            const a = (deg * Math.PI) / 180;
+            el("path", {
+              d: pathStr([
+                [sBase, innerR * Math.cos(a), innerR * Math.sin(a)],
+                [sTip, outerR * Math.cos(a + 0.08), outerR * Math.sin(a + 0.08)]
+              ], false),
+              fill: "none",
+              stroke: "#7C3A16",
+              "stroke-width": "1.05",
+              opacity: "0.78"
+            }, wg);
+          }
+        }
+
+        drawCopperEndWindings(sRear - 22, sRear - 4);
+
+        // Animated Electromagnetic Air-Gap Shimmer Glow inside Generator Bore
+        const emCenter = proj(342, 12, 4);
+        dyn.genEmGlow = el("ellipse", {
+          cx: emCenter.x.toFixed(1),
+          cy: emCenter.y.toFixed(1),
+          rx: "58",
+          ry: "44",
+          transform: `rotate(-16 ${emCenter.x.toFixed(1)} ${emCenter.y.toFixed(1)})`,
+          fill: "url(#gen-em-radial)",
+          opacity: "0.28",
+          "pointer-events": "none"
+        }, g);
+
+        // 3D. High-Speed Laminated Satin-Steel Rotor Core & Front Cobalt Cooling Hub
+        // Main high-speed drive shaft passing into generator
+        drawCoaxialCylinder(g, 224, 302, 19, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: null,
+          cls: "ink"
+        });
+
+        // Laminated steel cylindrical rotor core
+        drawCoaxialCylinder(g, 294, 412, 44, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#CBD5E1",
+          cls: "ink"
+        });
+
+        // Animated rotor surface lamination / slot bars (updated at 60 FPS)
+        const rotorBarLayer = el("g", { id: "gen-rotor-bars" }, g);
+        for (let i = 0; i < 8; i++) {
+          const bar = el("line", {
+            stroke: i % 2 === 0 ? "#475569" : "#FFFFFF",
+            "stroke-width": i % 2 === 0 ? "2.6" : "2.0",
+            "stroke-linecap": "round",
+            opacity: "0.75"
+          }, rotorBarLayer);
+          dyn.genRotorBars.push({ el: bar, offset: (i / 8) * Math.PI * 2 });
+        }
+
+        // Front cobalt-blue rotor hub + cooling fan blades
+        drawCoaxialCylinder(g, 266, 294, 32, {
+          sideFill: "url(#cobalt-cyl)",
+          frontCapFill: "#3B82F6",
+          cls: "ink-thin"
+        });
+        const fanLayer = el("g", {}, g);
+        for (let i = 0; i < 6; i++) {
+          const blade = el("polygon", {
+            class: "ink-micro",
+            fill: "#60A5FA"
+          }, fanLayer);
+          dyn.genFanBlades.push({ el: blade, offset: (i / 6) * Math.PI * 2 });
+        }
+
+        // Front brushed-copper stator end-windings framing the rotor
+        drawCopperEndWindings(sFront + 22, sFront + 4);
+
+        // 3E. Foreground Lower Cutaway Finned Cobalt Stator Casing (angles -74°..+14°)
+        const lowerCutG = el("g", {}, g);
+        // Cutaway longitudinal slot face with crisp cyan-emerald insulation edge
+        el("path", {
+          class: "ink-thin",
+          d: pathStr([
+            [sFront, rBore * Math.cos(0.14), rBore * Math.sin(0.14)],
+            [sFront, (rOuter + 10) * Math.cos(0.14), (rOuter + 10) * Math.sin(0.14)],
+            [sRear, (rOuter + 10) * Math.cos(0.14), (rOuter + 10) * Math.sin(0.14)],
+            [sRear, rBore * Math.cos(0.14), rBore * Math.sin(0.14)]
+          ]),
+          fill: "#14B8A6"
+        }, lowerCutG);
+
+        // Lower foreground longitudinal cobalt-blue cooling fins
+        for (let deg = 8; deg >= -72; deg -= 11) {
+          const a = (deg * Math.PI) / 180;
+          const r1 = rOuter - 4;
+          const r2 = rOuter + 12;
+          const aNext = ((deg - 5.5) * Math.PI) / 180;
+          el("path", {
+            class: "ink-micro",
+            d: pathStr([
+              [sFront + 2, r1 * Math.cos(a), r1 * Math.sin(a)],
+              [sFront + 2, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sRear - 2, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sRear - 2, r1 * Math.cos(a), r1 * Math.sin(a)]
+            ]),
+            fill: deg > -25 ? "#3B82F6" : "#1D4ED8"
+          }, lowerCutG);
+          el("path", {
+            class: "ink-micro",
+            d: pathStr([
+              [sFront + 2, r2 * Math.cos(a), r2 * Math.sin(a)],
+              [sFront + 2, r2 * Math.cos(aNext), r2 * Math.sin(aNext)],
+              [sRear - 2, r2 * Math.cos(aNext), r2 * Math.sin(aNext)],
+              [sRear - 2, r2 * Math.cos(a), r2 * Math.sin(a)]
+            ]),
+            fill: deg > -35 ? "#2563EB" : "#1E3A8A"
+          }, lowerCutG);
+        }
+
+        // Front cutaway cobalt bevel edge
+        const frontArcOuter = [];
+        const frontArcInner = [];
+        for (let deg = -76; deg <= 14; deg += 9) {
+          const a = (deg * Math.PI) / 180;
+          frontArcOuter.push([sFront, (rOuter + 4) * Math.cos(a), (rOuter + 4) * Math.sin(a)]);
+          frontArcInner.unshift([sFront, rBore * Math.cos(a), rBore * Math.sin(a)]);
+        }
+        el("path", { class: "ink", d: pathStr([...frontArcOuter, ...frontArcInner], true), fill: "#2563EB" }, lowerCutG);
+
+        // 3F. Three Vibrant Cyan-Emerald Output Busbar Conduits + Animated Electricity Pulses
+        const busG = el("g", { id: "gen-busbars" }, g);
+        const pulseG = el("g", { filter: "url(#cyan-glow)", "pointer-events": "none" }, g);
+
+        const railOffsets = [
+          { ds: -10, dv: 14, du: 0 },
+          { ds: 4, dv: 2, du: 8 },
+          { ds: 18, dv: -10, du: 16 }
+        ];
+
+        railOffsets.forEach((off, idx) => {
+          const p0 = proj(330 + off.ds, 44 + off.dv, 62);
+          const p1 = proj(330 + off.ds, 28 + off.dv, 108 + off.du * 0.45);
+          const p2 = proj(358 + off.ds, 18 + off.dv, 114 + off.du * 0.5);
+          const p3 = proj(472, 16 + off.dv * 0.9, 106 + off.du * 0.45);
+
+          const d = `M ${p0.x.toFixed(1)} ${p0.y.toFixed(1)} L ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Q ${p2.x.toFixed(1)} ${p2.y.toFixed(1)} ${p3.x.toFixed(1)} ${p3.y.toFixed(1)}`;
+
+          // Dark-slate outer conduit border
+          el("path", {
+            d,
+            fill: "none",
+            stroke: "#222933",
+            "stroke-width": "7.2",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          }, busG);
+          // Vibrant cyan-emerald busbar body
+          const railPath = el("path", {
+            d,
+            fill: "none",
+            stroke: "url(#cyan-busbar)",
+            "stroke-width": "4.6",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          }, busG);
+          // Specular center line
+          el("path", {
+            d,
+            fill: "none",
+            stroke: "#ECFEFF",
+            "stroke-width": "1.3",
+            "stroke-linecap": "round",
+            opacity: "0.7"
+          }, busG);
+
+          dyn.busbarPaths.push(railPath);
+
+          // 3 glowing electricity pulses per busbar (9 total)
+          for (let k = 0; k < 3; k++) {
+            const bead = el("circle", {
+              r: "3.6",
+              fill: "#ECFEFF",
+              stroke: "#14B8A6",
+              "stroke-width": "1.3"
+            }, pulseG);
+            dyn.busbarPulses.push({
+              el: bead,
+              railIdx: idx,
+              offset: (k / 3 + idx * 0.12) % 1
+            });
+          }
+        });
+      }
+
+      /* =========================================================================
+         7. BUILD LAYER 4 — DISC BRAKE (VENTILATED DRILLED STEEL DISC & CALIPER)
+         ========================================================================= */
+      function buildDiscBrake() {
+        const g = layers.disc_brake;
+
+        // 4A. High-Speed Shaft Segment & Bolted Coupling Flange
+        drawCoaxialCylinder(g, 130, 232, 22, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#CBD5E1",
+          cls: "ink"
+        });
+
+        // 4B. Coaxial Ventilated Steel Brake Disc (s = 192..208, R = 82)
+        // Outer ventilated drum edge & rear disc face
+        drawCoaxialCylinder(g, 192, 208, 82, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "url(#steel-disc)",
+          cls: "ink-bold"
+        });
+
+        // Concentric machined friction track groove rings on disc face
+        el("path", {
+          class: "ink-micro",
+          d: pathStr(coaxialCircle(191.6, 74, 36), true),
+          fill: "none",
+          opacity: "0.4"
+        }, g);
+        el("path", {
+          class: "ink-micro",
+          d: pathStr(coaxialCircle(191.6, 44, 36), true),
+          fill: "none",
+          opacity: "0.45"
+        }, g);
+
+        // Dynamic rotating radial cooling slots (8) & double ring of drilled holes (16)
+        const discMarksG = el("g", {}, g);
+        for (let i = 0; i < 8; i++) {
+          const slot = el("line", {
+            stroke: "#334155",
+            "stroke-width": "2.2",
+            "stroke-linecap": "round",
+            opacity: "0.8"
+          }, discMarksG);
+          dyn.brakeSlots.push({ el: slot, offset: (i / 8) * Math.PI * 2 });
+        }
+        for (let i = 0; i < 16; i++) {
+          const hole = el("ellipse", {
+            rx: "2.3",
+            ry: "3.2",
+            fill: "#334155",
+            stroke: "#1E293B",
+            "stroke-width": "0.6"
+          }, discMarksG);
+          dyn.brakeHoles.push({
+            el: hole,
+            offset: (i / 16) * Math.PI * 2,
+            radius: i % 2 === 0 ? 67 : 54
+          });
+        }
+
+        // Front Coupling Hub & Rotating Bolts
+        drawCoaxialCylinder(g, 152, 192, 38, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#E2E8F0",
+          cls: "ink"
+        });
+        drawCoaxialCylinder(g, 132, 154, 24, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#CBD5E1",
+          cls: "ink"
+        });
+        for (let i = 0; i < 6; i++) {
+          const bolt = el("circle", { r: "2.6", fill: "#475569", stroke: "#222933", "stroke-width": "0.8" }, g);
+          dyn.brakeBolts.push({ el: bolt, offset: (i / 6) * Math.PI * 2 });
+        }
+
+        // Responsive Amber Thermal Braking Halo (illuminates smoothly during braking phase)
+        const heatPt = proj(192, 22, 68);
+        dyn.brakeHeatGlow = el("ellipse", {
+          cx: heatPt.x.toFixed(1),
+          cy: heatPt.y.toFixed(1),
+          rx: "42",
+          ry: "32",
+          fill: "url(#brake-amber-radial)",
+          opacity: "0",
+          filter: "url(#brake-heat-glow)",
+          "pointer-events": "none"
+        }, g);
+
+        // 4C. Sculpted Warm Terracotta-Amber Hydraulic Brake Caliper Straddling Upper-Front Rim
+        const calG = el("g", { id: "brake-caliper-body" }, g);
+        dyn.caliperGroup = calG;
+
+        // Rear caliper bridge jaw behind disc
+        el("path", {
+          class: "ink",
+          d: pathStr([
+            [208, -16, 86],
+            [228, -10, 82],
+            [228, 44, 62],
+            [208, 42, 64]
+          ]),
+          fill: "#9A4A20"
+        }, calG);
+
+        // Top hydraulic arch spanning over disc rim
+        el("path", {
+          class: "ink-bold",
+          d: pathStr([
+            [172, -18, 92],
+            [224, -14, 90],
+            [224, 52, 64],
+            [172, 48, 66]
+          ]),
+          fill: "#F2B07E"
+        }, calG);
+
+        // Main sculpted front terracotta-amber caliper housing with twin piston bosses
+        el("path", {
+          class: "ink-bold",
+          d: pathStr([
+            [172, -18, 92],
+            [172, 48, 66],
+            [176, 62, 34],
+            [196, 64, 24],
+            [196, 48, 52],
+            [196, -8, 76]
+          ]),
+          fill: "url(#caliper-grad)"
+        }, calG);
+
+        // Side bevel cheek facing front-right (+v)
+        el("path", {
+          class: "ink",
+          d: pathStr([
+            [172, 48, 66],
+            [224, 52, 64],
+            [226, 64, 30],
+            [176, 62, 34]
+          ]),
+          fill: "#C2652E"
+        }, calG);
+
+        // Twin circular hydraulic piston bosses & steel caliper bolts
+        [
+          [184, 14, 72],
+          [186, 42, 52]
+        ].forEach(([bs, bv, bu]) => {
+          const p = proj(bs, bv, bu);
+          el("ellipse", {
+            class: "ink-thin",
+            cx: p.x.toFixed(1),
+            cy: p.y.toFixed(1),
+            rx: "10.5",
+            ry: "13.5",
+            transform: `rotate(-15 ${p.x.toFixed(1)} ${p.y.toFixed(1)})`,
+            fill: "#E69156"
+          }, calG);
+          el("ellipse", {
+            class: "ink-micro",
+            cx: (p.x - 1.5).toFixed(1),
+            cy: p.y.toFixed(1),
+            rx: "5.2",
+            ry: "6.8",
+            transform: `rotate(-15 ${p.x.toFixed(1)} ${p.y.toFixed(1)})`,
+            fill: "#CBD5E1"
+          }, calG);
+        });
+      }
+
+      /* =========================================================================
+         8. BUILD LAYER 5 — PLANETARY GEARBOX (CASING, RING GEAR, 3 PLANETS, SUN)
+         ========================================================================= */
+      function buildGearbox() {
+        const g = layers.gearbox;
+        const sIn = -112;
+        const sOut = 114;
+        const rCase = 104;
+        const rIn = 88;
+
+        // 5A. Rear Half of Cutaway Satin-Steel Gearbox Housing
+        drawCoaxialCylinder(g, sIn + 18, sOut, rCase, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#475569",
+          cls: "ink-bold"
+        });
+
+        // Heavy Front Bolted Input Flange Ring
+        drawCoaxialCylinder(g, sIn, sIn + 20, rCase + 6, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#CBD5E1",
+          cls: "ink-bold"
+        });
+        // Flange bore recess
+        el("path", {
+          class: "ink",
+          d: pathStr(coaxialCircle(sIn - 0.5, 68, 32), true),
+          fill: "#94A3B8"
+        }, g);
+        // 10 Flange perimeter bolt holes on visible arc
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2;
+          const p = proj(sIn - 0.8, 92 * Math.cos(a), 92 * Math.sin(a));
+          el("circle", { cx: p.x.toFixed(1), cy: p.y.toFixed(1), r: "3.2", fill: "#334155", stroke: "#222933", "stroke-width": "0.7" }, g);
+        }
+
+        // Recessed Dark Cutaway Gearbox Chamber Interior
+        const cavPts = [];
+        for (let deg = -62; deg <= 82; deg += 10) {
+          const a = (deg * Math.PI) / 180;
+          cavPts.push([sOut - 10, rIn * Math.cos(a), rIn * Math.sin(a)]);
+        }
+        for (let deg = 82; deg >= -62; deg -= 10) {
+          const a = (deg * Math.PI) / 180;
+          cavPts.push([sIn + 22, rIn * Math.cos(a), rIn * Math.sin(a)]);
+        }
+        el("path", { class: "ink-thin", d: pathStr(cavPts, true), fill: "#1E293B" }, g);
+
+        // 5B. Stationary Internal Ring Gear Teeth along Top & Bottom Cutaway Walls
+        const ringG = el("g", {}, g);
+        // Warm amber-bronze ring gear liner band
+        el("path", {
+          class: "ink-micro",
+          d: pathStr([
+            [sIn + 26, rIn * Math.cos(1.38), rIn * Math.sin(1.38)],
+            [sOut - 34, rIn * Math.cos(1.38), rIn * Math.sin(1.38)],
+            [sOut - 34, (rIn - 12) * Math.cos(1.38), (rIn - 12) * Math.sin(1.38)],
+            [sIn + 26, (rIn - 12) * Math.cos(1.38), (rIn - 12) * Math.sin(1.38)]
+          ]),
+          fill: "#C2652E"
+        }, ringG);
+
+        // Stationary steel internal ring teeth along upper cutaway edge
+        for (let sT = sIn + 30; sT <= sOut - 42; sT += 10) {
+          el("polygon", {
+            class: "ink-micro",
+            points: ptsStr([
+              [sT, 18, 86],
+              [sT + 6, 18, 86],
+              [sT + 6, 20, 76],
+              [sT, 20, 76]
+            ]),
+            fill: "#CBD5E1"
+          }, ringG);
+        }
+
+        // Rear warm amber-bronze stepped output stage collar inside gearbox
+        drawCoaxialCylinder(g, 54, 96, 52, {
+          sideFill: "url(#copper-cyl)",
+          frontCapFill: "#E69156",
+          cls: "ink"
+        });
+        for (let i = 0; i < 6; i++) {
+          const mark = el("line", {
+            stroke: "#7C3A16",
+            "stroke-width": "1.6",
+            "stroke-linecap": "round"
+          }, g);
+          dyn.bronzeRingMarks.push({ el: mark, offset: (i / 6) * Math.PI * 2 });
+        }
+
+        // 5C. Dynamic 3D-Projected Multi-Stage Planetary Gear Train Container
+        // Populated & depth-sorted at 60 FPS (Sun Gear + 3 Orbiting Planet Gears + Carrier)
+        dyn.gearboxDynamicLayer = el("g", { id: "gearbox-planets-live" }, g);
+
+        // Pre-create reusable groups for Sun Gear and 3 Planets (zero GC churn)
+        dyn.sunNode = {
+          g: el("g", {}, dyn.gearboxDynamicLayer),
+          sidesG: null,
+          facePath: null,
+          hubPath: null
+        };
+        dyn.sunNode.sidesG = el("g", {}, dyn.sunNode.g);
+        dyn.sunNode.facePath = el("path", { class: "ink-thin", fill: "#FDE2C4" }, dyn.sunNode.g);
+        dyn.sunNode.hubPath = el("path", { class: "ink-thin", fill: "#64748B" }, dyn.sunNode.g);
+
+        for (let i = 0; i < 3; i++) {
+          const pg = el("g", {}, dyn.gearboxDynamicLayer);
+          const sidesG = el("g", {}, pg);
+          const facePath = el("path", { class: "ink-thin", fill: "url(#steel-gear-face)" }, pg);
+          const hubRing = el("path", { class: "ink-micro", fill: "#E69156" }, pg);
+          const pinDot = el("path", { class: "ink-micro", fill: "#475569" }, pg);
+          dyn.planetNodes.push({
+            g: pg,
+            sidesG,
+            facePath,
+            hubRing,
+            pinDot,
+            baseAngle: (i / 3) * Math.PI * 2 + 0.45
+          });
+        }
+
+        // 5D. Foreground Cutaway Beveled Steel Gearbox Housing Walls (Top-Front & Lower-Front)
+        // Lower-front cutaway housing skirt
+        const lowOut = [];
+        const lowIn = [];
+        for (let deg = -68; deg <= -12; deg += 8) {
+          const a = (deg * Math.PI) / 180;
+          lowOut.push([sIn + 18, rCase * Math.cos(a), rCase * Math.sin(a)]);
+          lowIn.unshift([sOut, rCase * Math.cos(a), rCase * Math.sin(a)]);
+        }
+        el("path", { class: "ink", d: pathStr([...lowOut, ...lowIn], true), fill: "url(#steel-cyl-axis)" }, g);
+
+        // Beveled front-bottom steel cutaway cross-section lip
+        el("path", {
+          class: "ink",
+          d: pathStr([
+            [sIn + 18, rIn * Math.cos(-0.22), rIn * Math.sin(-0.22)],
+            [sIn + 18, rCase * Math.cos(-0.22), rCase * Math.sin(-0.22)],
+            [sOut, rCase * Math.cos(-0.22), rCase * Math.sin(-0.22)],
+            [sOut, rIn * Math.cos(-0.22), rIn * Math.sin(-0.22)]
+          ]),
+          fill: "#E2E8F0"
+        }, g);
+
+        // Rear vertical cutaway cross-section lip
+        const rearLipOut = [];
+        const rearLipIn = [];
+        for (let deg = -14; deg <= 82; deg += 12) {
+          const a = (deg * Math.PI) / 180;
+          rearLipOut.push([sOut, rCase * Math.cos(a), rCase * Math.sin(a)]);
+          rearLipIn.unshift([sOut, rIn * Math.cos(a), rIn * Math.sin(a)]);
+        }
+        el("path", { class: "ink", d: pathStr([...rearLipOut, ...rearLipIn], true), fill: "#CBD5E1" }, g);
+      }
+
+      /**
+       * Updates 3 orbiting steel planet gears (1x orbit, 3.2x local spin) and fast-spinning
+       * central sun gear (5.5x) with exact 3D depth sorting every frame.
+       */
+      function updateGearboxAnimation(rotorAngle) {
+        const orbitAngle = rotorAngle;
+        const planetSpin = -rotorAngle * 3.2;
+        const sunSpin = rotorAngle * 5.5;
+
+        // Update bronze rear stage rotation marks (5.5x)
+        for (const m of dyn.bronzeRingMarks) {
+          const a = sunSpin + m.offset;
+          const depth = VD * Math.cos(a) + UD * Math.sin(a);
+          if (depth < -0.1) {
+            m.el.setAttribute("opacity", "0");
+          } else {
+            const p1 = proj(56, 52 * Math.cos(a), 52 * Math.sin(a));
+            const p2 = proj(94, 52 * Math.cos(a), 52 * Math.sin(a));
+            m.el.setAttribute("x1", p1.x.toFixed(1));
+            m.el.setAttribute("y1", p1.y.toFixed(1));
+            m.el.setAttribute("x2", p2.x.toFixed(1));
+            m.el.setAttribute("y2", p2.y.toFixed(1));
+            m.el.setAttribute("opacity", (0.2 + depth * 0.7).toFixed(2));
+          }
+        }
+
+        // Build Sun Gear geometry
+        const sunData = buildCoaxialGearPaths(-56, 56, 0, 0, 25, 19, 12, sunSpin);
+        dyn.sunNode.facePath.setAttribute("d", sunData.frontD);
+        dyn.sunNode.hubPath.setAttribute("d", pathStr(coaxialCircle(-56.5, 11, 18), true));
+        while (dyn.sunNode.sidesG.firstChild) dyn.sunNode.sidesG.removeChild(dyn.sunNode.sidesG.firstChild);
+        for (const q of sunData.sideQuads) {
+          el("path", {
+            class: "ink-micro",
+            d: q.d,
+            fill: q.lit ? "#FDE2C4" : "#C2652E"
+          }, dyn.sunNode.sidesG);
+        }
+
+        // Compute 3 orbiting planetary gears & depth-sort alongside sun gear
+        const sortable = [{ depth: 0, node: dyn.sunNode.g }];
+        const rOrbit = 48;
+
+        for (const pNode of dyn.planetNodes) {
+          const orbA = orbitAngle + pNode.baseAngle;
+          const vc = rOrbit * Math.cos(orbA);
+          const uc = rOrbit * Math.sin(orbA);
+          const depth = vc * VD + uc * UD;
+
+          const pData = buildCoaxialGearPaths(-54, 38, vc, uc, 32, 25, 14, planetSpin + pNode.baseAngle);
+          pNode.facePath.setAttribute("d", pData.frontD);
+          pNode.hubRing.setAttribute("d", pathStr(coaxialCircle(-54.4, 15, 18, vc, uc), true));
+          pNode.pinDot.setAttribute("d", pathStr(coaxialCircle(-54.8, 7.5, 14, vc, uc), true));
+
+          while (pNode.sidesG.firstChild) pNode.sidesG.removeChild(pNode.sidesG.firstChild);
+          for (const q of pData.sideQuads) {
+            el("path", {
+              class: "ink-micro",
+              d: q.d,
+              fill: q.lit ? "#E2E8F0" : "#64748B"
+            }, pNode.sidesG);
+          }
+
+          sortable.push({ depth, node: pNode.g });
+        }
+
+        // Strict back-to-front SVG DOM ordering
+        sortable.sort((a, b) => a.depth - b.depth);
+        for (const item of sortable) {
+          dyn.gearboxDynamicLayer.appendChild(item.node);
+        }
+      }
+
+      /* =========================================================================
+         9. BUILD LAYER 6 — MAIN SHAFT & TWIN DARK-SLATE PILLOW-BLOCK BEARINGS
+         ========================================================================= */
+      function buildMainShaft() {
+        const g = layers.main_shaft;
+
+        // Helper to draw a heavy dark-slate pillow-block main roller bearing housing
+        function drawPillowBlock(sCenter) {
+          const bg = el("g", {}, g);
+          const s1 = sCenter - 22;
+          const s2 = sCenter + 22;
+
+          // Wide bolted mounting foot resting on nacelle bedplate
+          el("path", {
+            class: "ink",
+            d: pathStr([
+              [s1 - 12, 68, -78],
+              [s2 + 12, 68, -78],
+              [s2 + 12, 68, -60],
+              [s1 - 12, 68, -60]
+            ]),
+            fill: "#334155"
+          }, bg);
+          el("path", {
+            class: "ink",
+            d: pathStr([
+              [s1 - 12, 42, -60],
+              [s2 + 12, 42, -60],
+              [s2 + 12, 68, -60],
+              [s1 - 12, 68, -60]
+            ]),
+            fill: "#64748B"
+          }, bg);
+
+          // Hex anchor bolts on bearing foot
+          [s1 - 2, s2 + 2].forEach((sb) => {
+            const p = proj(sb, 56, -58);
+            el("ellipse", {
+              class: "ink-micro",
+              cx: p.x.toFixed(1),
+              cy: p.y.toFixed(1),
+              rx: "4.6",
+              ry: "2.8",
+              fill: "#CBD5E1"
+            }, bg);
+          });
+
+          // Main cylindrical dark-slate bearing ring housing
+          drawCoaxialCylinder(bg, s1, s2, 54, {
+            sideFill: "url(#slate-block)",
+            frontCapFill: "#475569",
+            cls: "ink-bold"
+          });
+
+          // Lower vertical pedestal cheeks joining housing to base
+          el("path", {
+            class: "ink",
+            d: pathStr([
+              [s1, 46, -24],
+              [s2, 46, -24],
+              [s2, 54, -62],
+              [s1, 54, -62]
+            ]),
+            fill: "#334155"
+          }, bg);
+
+          // Visible machined satin-steel bearing outer & inner roller race
+          el("path", {
+            class: "ink-thin",
+            d: pathStr(coaxialCircle(s1 - 0.5, 43, 28), true),
+            fill: "#CBD5E1"
+          }, bg);
+          el("path", {
+            class: "ink-micro",
+            d: pathStr(coaxialCircle(s1 - 0.8, 38, 28), true),
+            fill: "#64748B"
+          }, bg);
+        }
+
+        // Rear bearing first (painter's order: farther from camera)
+        drawPillowBlock(-174);
+
+        // Coaxial Heavy-Duty Satin-Steel Low-Speed Main Shaft (spanning rotor hub -> gearbox)
+        drawCoaxialCylinder(g, -338, -104, 33, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: null,
+          cls: "ink-bold"
+        });
+
+        // Animated longitudinal brushed-steel rotation sheen & keyway bars along main shaft
+        const barLayer = el("g", {}, g);
+        for (let i = 0; i < 6; i++) {
+          const line = el("line", {
+            stroke: i === 0 ? "#475569" : "#FFFFFF",
+            "stroke-width": i === 0 ? "3.2" : "2.0",
+            "stroke-linecap": "round",
+            opacity: "0.7"
+          }, barLayer);
+          dyn.shaftBars.push({ el: line, offset: (i / 6) * Math.PI * 2, isKeyway: i === 0 });
+        }
+
+        // Front pillow-block bearing (closer to rotor)
+        drawPillowBlock(-274);
+
+        // Front shaft segment emerging toward rotor hub
+        drawCoaxialCylinder(g, -342, -296, 33, {
+          sideFill: "url(#steel-cyl-axis)",
+          frontCapFill: "#E2E8F0",
+          cls: "ink"
+        });
+      }
+
+      /* =========================================================================
+         10. BUILD LAYER 7 — ROTOR & BLADES (WIND, COLLAR, 3D Z-SORTED SPINNER & BLADES)
+         ========================================================================= */
+      function buildRotorBlades() {
+        const g = layers.rotor_blades;
+
+        // 7A. Subtle Pale Cyan-Slate Wind Streamline Ribbons drifting left-to-right
+        const windLayer = el("g", { "pointer-events": "none" }, g);
+        const windYs = [225, 318, 415, 530, 625, 710];
+        windYs.forEach((wy, idx) => {
+          const p = el("path", {
+            fill: "none",
+            stroke: "url(#wind-ribbon)",
+            "stroke-width": idx % 2 === 0 ? "3.2" : "2.2",
+            "stroke-linecap": "round",
+            opacity: "0"
+          }, windLayer);
+          dyn.windStreams.push({
+            el: p,
+            baseY: wy,
+            baseX: 85 + (idx % 3) * 35,
+            amp: 8 + (idx % 3) * 4,
+            offset: idx / windYs.length
+          });
+        });
+
+        // 7B. Cobalt-Blue Main Nacelle Collar Ring with Bolted Segments
+        drawCoaxialCylinder(g, -352, -318, 96, {
+          sideFill: "url(#cobalt-cyl)",
+          frontCapFill: "#1D4ED8",
+          cls: "ink-bold"
+        });
+        // Recessed bolt pockets around visible cobalt collar rim
+        for (let deg = -65; deg <= 95; deg += 20) {
+          const a = (deg * Math.PI) / 180;
+          const p = proj(-338, 95 * Math.cos(a), 95 * Math.sin(a));
+          el("ellipse", {
+            class: "ink-micro",
+            cx: p.x.toFixed(1),
+            cy: p.y.toFixed(1),
+            rx: "4.2",
+            ry: "6.4",
+            transform: `rotate(-14 ${p.x.toFixed(1)} ${p.y.toFixed(1)})`,
+            fill: "#1E3A8A"
+          }, g);
+        }
+
+        // 7C. Back-Blade Slot (populated dynamically by 3D Z-sorter every frame)
+        dyn.rotorBackSlot = el("g", { id: "rotor-blades-back" }, g);
+
+        // 7D. Sculpted Matte Ivory-White Aerodynamic Spinner (Nose Cone)
+        const spinnerG = el("g", { id: "rotor-spinner" }, g);
+        const sHubBase = -356;
+        const sHubTip = -612;
+        const rBase = 92;
+
+        // Smooth paraboloid silhouette of spinner nose cone
+        // Sample profile along upper and lower screen-space silhouette
+        const aSil = Math.atan2(UY * SX, -VX * SY + VY * SX);
+        const aTop = aSil > 0 ? aSil : aSil + Math.PI;
+        const aBot = aTop - Math.PI;
+
+        const upperProf = [];
+        const lowerProf = [];
+        const steps = 20;
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps; // 0 = base, 1 = nose tip
+          const s = sHubBase + (sHubTip - sHubBase) * t;
+          // Smooth aerodynamic ogive nose profile
+          const r = rBase * Math.pow(1 - Math.pow(t, 1.85), 0.56);
+          upperProf.push([s, r * Math.cos(aTop), r * Math.sin(aTop)]);
+          lowerProf.unshift([s, r * Math.cos(aBot), r * Math.sin(aBot)]);
+        }
+
+        // Back curved base seam of spinner
+        const baseArc = [];
+        for (let i = 0; i <= 16; i++) {
+          const a = aBot + (aTop - aBot) * (i / 16);
+          baseArc.unshift([sHubBase, rBase * Math.cos(a), rBase * Math.sin(a)]);
+        }
+
+        el("path", {
+          class: "ink-bold",
+          d: pathStr([...upperProf, ...lowerProf, ...baseArc], true),
+          fill: "url(#spinner-grad)"
+        }, spinnerG);
+
+        // Crisp curved hub panel seam line wrapping spinner mid-body
+        const seamPts = [];
+        for (let i = 0; i <= 18; i++) {
+          const a = aBot + (aTop - aBot) * (i / 18);
+          const t = 0.42;
+          const s = sHubBase + (sHubTip - sHubBase) * t;
+          const r = rBase * Math.pow(1 - Math.pow(t, 1.85), 0.56);
+          seamPts.push([s, r * Math.cos(a), r * Math.sin(a)]);
+        }
+        el("path", { class: "ink-thin", d: pathStr(seamPts, false), fill: "none", opacity: "0.7" }, spinnerG);
+
+        // Iconic sculpted triangular/teardrop nose-cone front recess (rotates gently with spinner)
+        dyn.spinnerRecessPath = el("path", { class: "ink", fill: "#64748B" }, spinnerG);
+
+        // 7E. Front-Blade Slot (populated dynamically by 3D Z-sorter every frame)
+        dyn.rotorFrontSlot = el("g", { id: "rotor-blades-front" }, g);
+
+        // Pre-allocate 3 Reusable Aerodynamic Fiberglass Blade Groups (Zero DOM Thrashing!)
+        for (let k = 0; k < 3; k++) {
+          const bg = el("g", {});
+          const pitchRingBack = el("path", { class: "ink", fill: "#1D4ED8" }, bg);
+          const pitchRingSide = el("path", { class: "ink", fill: "url(#cobalt-cyl)" }, bg);
+          const pitchRingTop = el("path", { class: "ink-thin", fill: "#60A5FA" }, bg);
+          const bladeBody = el("path", { class: "ink-bold", fill: "url(#blade-lit)" }, bg);
+          const bladeRidge = el("path", { class: "ink-micro", fill: "none", stroke: "#94A3B8", opacity: "0.65" }, bg);
+          const bladeCap = el("path", { class: "ink", fill: "#EAE6DA" }, bg);
+          dyn.bladeGroups.push({
+            g: bg,
+            pitchRingBack,
+            pitchRingSide,
+            pitchRingTop,
+            bladeBody,
+            bladeRidge,
+            bladeCap,
+            angleOffset: (k * Math.PI * 2) / 3 + 1.62 // initial iconic Y-pose matching reference
+          });
+        }
+      }
+
+      /**
+       * Dynamically projects all 3 aerodynamic fiberglass blades + cobalt pitch bearing rings
+       * in true 3D around the drivetrain axis and Z-sorts them seamlessly behind/in front of the spinner.
+       */
+      function updateRotor3D(rotorAngle) {
+        const sHub = -442;
+        const rRoot = 74;
+        const rPitchTop = 104;
+        const rTip = 342;
+
+        // Rotate subtle nose-cone recess around spinner axis
+        const recA = rotorAngle;
+        const recPts = [];
+        for (let i = 0; i < 3; i++) {
+          const a = recA + (i * Math.PI * 2) / 3;
+          const s = -542 + Math.cos(a) * 18;
+          const v = 34 * Math.cos(a) + 12;
+          const u = 34 * Math.sin(a) - 4;
+          recPts.push([s, v, u]);
+        }
+        // Smooth rounded teardrop front nose recess centered near front nose
+        const nC = proj(-558, 12, -2);
+        const n1 = proj(-522, 24 * Math.cos(recA) + 18, 28 * Math.sin(recA) + 22);
+        const n2 = proj(-522, 24 * Math.cos(recA + 2.1) + 18, 28 * Math.sin(recA + 2.1) - 18);
+        const n3 = proj(-592, 6, -4);
+        dyn.spinnerRecessPath.setAttribute(
+          "d",
+          `M ${n3.x.toFixed(1)} ${n3.y.toFixed(1)} Q ${n1.x.toFixed(1)} ${n1.y.toFixed(1)} ${nC.x.toFixed(1)} ${(nC.y + 4).toFixed(1)} Q ${n2.x.toFixed(1)} ${n2.y.toFixed(1)} ${n3.x.toFixed(1)} ${n3.y.toFixed(1)} Z`
+        );
+
+        const backList = [];
+        const frontList = [];
+
+        for (let k = 0; k < 3; k++) {
+          const b = dyn.bladeGroups[k];
+          const phi = rotorAngle + b.angleOffset;
+          const cP = Math.cos(phi);
+          const sP = Math.sin(phi);
+
+          // Radial outward unit vector eR = (0, cP, sP)
+          // Tangential chord unit vector eT = (0, -sP, cP)
+          // Axial unit vector eS = (1, 0, 0)
+          // Blade center depth for 3D Z-sorting against spinner
+          const depthMid = (cP * VD + sP * UD);
+
+          // Helper converting blade-local (r, chord, thick) to world (s, v, u)
+          // Pitch angle twist: ~28° aerodynamic pitch from root to tip
+          function bPt(r, chord, thick) {
+            const twist = 0.42 + ((r - rPitchTop) / (rTip - rPitchTop)) * 0.16;
+            const ct = Math.cos(twist);
+            const st = Math.sin(twist);
+            const ds = chord * st - thick * ct;
+            const dt = chord * ct + thick * st;
+            return [
+              sHub + ds,
+              r * cP + dt * (-sP),
+              r * sP + dt * cP
+            ];
+          }
+
+          // 1. Cobalt-Blue Cylindrical Pitch Bearing Ring at Blade Root (r = rRoot .. rPitchTop)
+          const ringSegs = 16;
+          const ringBotPts = [];
+          const ringTopPts = [];
+          const rRing = 36;
+          for (let i = 0; i <= ringSegs; i++) {
+            const a = (i / ringSegs) * Math.PI * 2;
+            const ca = Math.cos(a) * rRing;
+            const sa = Math.sin(a) * rRing;
+            ringBotPts.push([sHub + sa, rRoot * cP + ca * (-sP), rRoot * sP + ca * cP]);
+            ringTopPts.push([sHub + sa, rPitchTop * cP + ca * (-sP), rPitchTop * sP + ca * cP]);
+          }
+          // Find extreme screen-space silhouette indices of ringTopPts along perpendicular to radial screen direction
+          const radScrX = cP * VX;
+          const radScrY = cP * VY + sP * UY;
+          const radLen = Math.hypot(radScrX, radScrY) || 1;
+          const perpX = -radScrY / radLen;
+          const perpY = radScrX / radLen;
+
+          let minProj = Infinity, maxProj = -Infinity, minIdx = 0, maxIdx = 0;
+          for (let i = 0; i < ringSegs; i++) {
+            const pp = proj(ringTopPts[i][0], ringTopPts[i][1], ringTopPts[i][2]);
+            const vProj = pp.x * perpX + pp.y * perpY;
+            if (vProj < minProj) { minProj = vProj; minIdx = i; }
+            if (vProj > maxProj) { maxProj = vProj; maxIdx = i; }
+          }
+
+          // Build clean cylindrical side wrap connecting minIdx -> maxIdx along front half
+          const sideLoop = [];
+          let idx = minIdx;
+          for (let step = 0; step <= ringSegs; step++) {
+            sideLoop.push(ringTopPts[idx]);
+            if (idx === maxIdx) break;
+            idx = (idx + 1) % ringSegs;
+          }
+          const sideLoopRev = [];
+          idx = maxIdx;
+          for (let step = 0; step <= ringSegs; step++) {
+            sideLoopRev.push(ringBotPts[idx]);
+            if (idx === minIdx) break;
+            idx = (idx - 1 + ringSegs) % ringSegs;
+          }
+
+          b.pitchRingBack.setAttribute("d", pathStr(ringBotPts, true));
+          b.pitchRingSide.setAttribute("d", pathStr([...sideLoop, ...sideLoopRev], true));
+          b.pitchRingTop.setAttribute("d", pathStr(ringTopPts, true));
+
+          // 2. Aerodynamic Matte Ivory-White Fiberglass Blade Surface (r = rPitchTop-4 .. rTip)
+          // Leading edge (+chord) and trailing edge (-chord) sweeping smoothly to cropped airfoil tip
+          const stations = [
+            { r: rPitchTop - 4, lead: 26, trail: -26, th: 16 },
+            { r: 145, lead: 36, trail: -40, th: 16 },
+            { r: 210, lead: 44, trail: -54, th: 14 },
+            { r: 280, lead: 46, trail: -60, th: 11 },
+            { r: rTip, lead: 44, trail: -62, th: 8.5 }
+          ];
+
+          const leadEdge = stations.map((st) => bPt(st.r, st.lead, 0));
+          const trailEdge = [...stations].reverse().map((st) => bPt(st.r, st.trail, 0));
+          const ridgePts = stations.map((st) => bPt(st.r, st.lead * 0.25, st.th));
+
+          // Cropped airfoil cross-section cap at rTip
+          const tip = stations[stations.length - 1];
+          const capPts = [];
+          const capSteps = 12;
+          for (let i = 0; i <= capSteps; i++) {
+            const t = i / capSteps;
+            const c = tip.lead + (tip.trail - tip.lead) * t;
+            const env = Math.sin(t * Math.PI);
+            capPts.push(bPt(tip.r, c, tip.th * env * 1.15));
+          }
+          for (let i = capSteps; i >= 0; i--) {
+            const t = i / capSteps;
+            const c = tip.lead + (tip.trail - tip.lead) * t;
+            const env = Math.sin(t * Math.PI);
+            capPts.push(bPt(tip.r, c, -tip.th * env * 0.55));
+          }
+
+          b.bladeBody.setAttribute("d", pathStr([...leadEdge, ...trailEdge], true));
+          b.bladeBody.setAttribute("fill", sP > -0.15 ? "url(#blade-lit)" : "url(#blade-shaded)");
+          b.bladeRidge.setAttribute("d", pathStr(ridgePts, false));
+          b.bladeCap.setAttribute("d", pathStr(capPts, true));
+
+          if (depthMid < -0.08) {
+            backList.push({ depth: depthMid, el: b.g });
+          } else {
+            frontList.push({ depth: depthMid, el: b.g });
+          }
+        }
+
+        // Strict back-to-front ordering in both blade slots
+        backList.sort((a, b) => a.depth - b.depth);
+        frontList.sort((a, b) => a.depth - b.depth);
+
+        for (const item of backList) dyn.rotorBackSlot.appendChild(item.el);
+        for (const item of frontList) dyn.rotorFrontSlot.appendChild(item.el);
+      }
+
+      /* =========================================================================
+         11. BUILD LAYER 8 — HOUSING FRONT (FOREGROUND BEVELED IVORY CUTAWAY LIP)
+         ========================================================================= */
+      function buildHousingFront() {
+        const g = layers["housing-front"];
+
+        function nacelleRadius(s) {
+          if (s <= -332) return 96;
+          if (s < -140) {
+            const t = (s + 332) / 192;
+            const e = 1 - Math.pow(1 - t, 2.1);
+            return 96 + e * 38;
+          }
+          if (s <= 430) {
+            const t = (s + 140) / 570;
+            return 134 + Math.sin(t * Math.PI * 0.75) * 6;
+          }
+          const t = Math.min(1, (s - 430) / 76);
+          return 136 * Math.sqrt(Math.max(0.02, 1 - t * t * 0.92));
+        }
+
+        // Foreground lower-front curved ivory cutaway lip sweeping cleanly beneath
+        // the drivetrain, dipping gently over the yaw-drive opening, and closing at rear cap
+        const lipStations = [
+          { s: -332, aTop: -0.35, aBot: -1.65 },
+          { s: -290, aTop: -0.52, aBot: -1.62 },
+          { s: -210, aTop: -0.60, aBot: -1.58 },
+          { s: -110, aTop: -0.60, aBot: -1.55 },
+          { s: -15,  aTop: -0.58, aBot: -1.52 },
+          { s: 55,   aTop: -0.56, aBot: -1.46 },
+          { s: 120,  aTop: -0.56, aBot: -1.30 }, // graceful yaw-drive recess scoop
+          { s: 165,  aTop: -0.55, aBot: -1.52 },
+          { s: 260,  aTop: -0.54, aBot: -1.56 },
+          { s: 365,  aTop: -0.52, aBot: -1.56 },
+          { s: 445,  aTop: -0.38, aBot: -1.48 },
+          { s: 486,  aTop: -0.05, aBot: -1.18 }
+        ];
+
+        const outerTop = [];
+        const outerBot = [];
+        const innerTop = [];
+
+        for (const st of lipStations) {
+          const r = nacelleRadius(st.s);
+          const rIn = Math.max(24, r - 13);
+          outerTop.push([st.s, r * Math.cos(st.aTop), r * Math.sin(st.aTop)]);
+          innerTop.push([st.s, rIn * Math.cos(st.aTop), rIn * Math.sin(st.aTop)]);
+          outerBot.unshift([st.s, r * Math.cos(st.aBot), r * Math.sin(st.aBot)]);
+        }
+
+        // Main curved foreground ivory cutaway skirt
+        el("path", {
+          class: "ink-bold",
+          d: pathStr([...outerTop, ...outerBot], true),
+          fill: "url(#ivory-lip)"
+        }, g);
+
+        // Crisp beveled top cutaway rim wall thickness
+        el("path", {
+          class: "ink",
+          d: pathStr([...outerTop, ...[...innerTop].reverse()], true),
+          fill: "url(#ivory-bevel)"
+        }, g);
+
+        // Front nose collar cutaway cheek connecting lower lip up to top arch
+        el("path", {
+          class: "ink",
+          d: pathStr([
+            [-332, 96 * Math.cos(-0.35), 96 * Math.sin(-0.35)],
+            [-332, 83 * Math.cos(-0.35), 83 * Math.sin(-0.35)],
+            [-318, 86 * Math.cos(-0.46), 86 * Math.sin(-0.46)],
+            [-318, 99 * Math.cos(-0.46), 99 * Math.sin(-0.46)]
+          ]),
+          fill: "#DDD9CC"
+        }, g);
+
+        // Subtle sunlit specular highlight line along lower cutaway lip edge
+        el("path", {
+          d: pathStr(outerTop.slice(1, -1), false),
+          fill: "none",
+          stroke: "#FFFFFF",
+          "stroke-width": "1.6",
+          opacity: "0.78"
+        }, g);
+      }
+
+      /* =========================================================================
+         12. RUNTIME SIMULATION STATE & COUPLED 60 FPS DRIVETRAIN PHYSICS
+         ========================================================================= */
+      const state = {
+        playing: true,
+        phaseMode: "auto", // "auto" | "nominal" | "high_wind" | "brake" | "yaw"
+        simTime: 0,
+        rotorOmega: 0.62, // rad/s
+        rotorAngle: 0,
+        yawAngle: 0,
+        busbarPhase: 0,
+        brakeClamp: 0, // 0..1 smooth hydraulic clamp factor
+        explodeTarget: 0,
+        explodeCurrent: 0,
+        focusedPart: null,
+        autoTourEnabled: !prefersReducedMotion,
+        tourIndex: 0,
+        tourTimerId: null
+      };
+
+      function cacheBusbarLengths() {
+        dyn.busbarLengths = dyn.busbarPaths.map((p) => p.getTotalLength());
+      }
+
+      function computeTargetPhysics(t, mode) {
+        if (mode === "nominal") {
+          return { omega: 0.68, brake: 0.0, yawRate: 0.0 };
+        }
+        if (mode === "high_wind") {
+          return { omega: 1.18, brake: 0.0, yawRate: 0.02 * Math.sin(t * 0.7) };
+        }
+        if (mode === "brake") {
+          return { omega: 0.0, brake: 1.0, yawRate: 0.0 };
+        }
+        if (mode === "yaw") {
+          return { omega: 0.56, brake: 0.0, yawRate: 0.24 * Math.sin(t * 1.15) };
+        }
+        // "auto": realistic breathing wind gusts + occasional gentle yaw tracking + subtle caliper breath
+        const gust = 0.62 + 0.17 * Math.sin(t * 0.48) + 0.05 * Math.sin(t * 1.25);
+        const yawOsc = Math.pow(Math.max(0, Math.sin(t * 0.35)), 3) * 0.14 * Math.cos(t * 0.9);
+        const microBrake = Math.max(0, Math.sin(t * 0.42 - 1.2) - 0.88) * 1.8;
+        return { omega: gust, brake: Math.min(0.28, microBrake), yawRate: yawOsc };
+      }
+
+      function updatePhysics(dt) {
+        // Always smoothly interpolate Exploded View even when paused
+        const expDiff = state.explodeTarget - state.explodeCurrent;
+        if (Math.abs(expDiff) > 0.0005) {
+          state.explodeCurrent += expDiff * Math.min(1, dt * 7.2);
+          applyExplodeTransforms(state.explodeCurrent);
+        } else if (state.explodeCurrent !== state.explodeTarget) {
+          state.explodeCurrent = state.explodeTarget;
+          applyExplodeTransforms(state.explodeCurrent);
+        }
+
+        if (!state.playing) return;
+
+        state.simTime += dt;
+        const t = state.simTime;
+        const target = computeTargetPhysics(t, state.phaseMode);
+
+        // Smooth mechanical inertia easing (realistic heavy rotor deceleration on brake)
+        const inertiaRate = state.phaseMode === "brake" ? 1.85 : 2.6;
+        state.rotorOmega += (target.omega - state.rotorOmega) * Math.min(1, dt * inertiaRate);
+        if (state.phaseMode === "brake" && state.rotorOmega < 0.003) state.rotorOmega = 0;
+
+        state.brakeClamp += (target.brake - state.brakeClamp) * Math.min(1, dt * 4.5);
+
+        // Advance continuous angles
+        state.rotorAngle = (state.rotorAngle + state.rotorOmega * dt) % (Math.PI * 200);
+        state.yawAngle += target.yawRate * dt;
+
+        // Normalize electrical output intensity [0..1]
+        const rpmRatio = Math.min(1.25, state.rotorOmega / 0.85);
+        const hsAngle = state.rotorAngle * 5.5; // 5.5x high-speed drivetrain ratio
+        state.busbarPhase = (state.busbarPhase + dt * (0.28 + rpmRatio * 0.65)) % 1000;
+
+        // ----- A. WIND STREAMLINES -----
+        const windSpeed = state.phaseMode === "high_wind" ? 0.85 : state.phaseMode === "brake" ? 0.28 : 0.45 + rpmRatio * 0.22;
+        const windVis = state.phaseMode === "high_wind" ? 0.85 : 0.55;
+        for (let i = 0; i < dyn.windStreams.length; i++) {
+          const w = dyn.windStreams[i];
+          const prog = (w.offset + t * windSpeed) % 1;
+          const x0 = w.baseX + prog * 235;
+          const y0 = w.baseY - prog * 58;
+          const len = 95 + rpmRatio * 45;
+          const sway = Math.sin(t * 2.6 + i * 1.3) * w.amp;
+          w.el.setAttribute(
+            "d",
+            `M ${x0.toFixed(1)} ${y0.toFixed(1)} Q ${(x0 + len * 0.5).toFixed(1)} ${(y0 - len * 0.14 + sway).toFixed(1)} ${(x0 + len).toFixed(1)} ${(y0 - len * 0.27).toFixed(1)}`
+          );
+          w.el.setAttribute("opacity", (Math.sin(prog * Math.PI) * windVis).toFixed(2));
+        }
+
+        // ----- B. 3D Z-SORTED ROTOR BLADES & SPINNER (1x) -----
+        updateRotor3D(state.rotorAngle);
+
+        // ----- C. LOW-SPEED MAIN SHAFT ROTATION SHEEN (1x) -----
+        for (const bar of dyn.shaftBars) {
+          const a = state.rotorAngle + bar.offset;
+          const depth = VD * Math.cos(a) + UD * Math.sin(a);
+          if (depth < -0.05) {
+            bar.el.setAttribute("opacity", "0");
+          } else {
+            const p1 = proj(-252, 33 * Math.cos(a), 33 * Math.sin(a));
+            const p2 = proj(-196, 33 * Math.cos(a), 33 * Math.sin(a));
+            bar.el.setAttribute("x1", p1.x.toFixed(1));
+            bar.el.setAttribute("y1", p1.y.toFixed(1));
+            bar.el.setAttribute("x2", p2.x.toFixed(1));
+            bar.el.setAttribute("y2", p2.y.toFixed(1));
+            bar.el.setAttribute("opacity", ((bar.isKeyway ? 0.72 : 0.48) * Math.min(1, depth * 1.4)).toFixed(2));
+          }
+        }
+
+        // ----- D. MULTI-STAGE PLANETARY GEARBOX (1x ORBIT / 3.2x PLANETS / 5.5x SUN) -----
+        updateGearboxAnimation(state.rotorAngle);
+
+        // ----- E. VENTILATED BRAKE DISC (5.5x) & HYDRAULIC CALIPER CLAMP -----
+        for (const sl of dyn.brakeSlots) {
+          const a = hsAngle + sl.offset;
+          const p1 = proj(191.2, 46 * Math.cos(a), 46 * Math.sin(a));
+          const p2 = proj(191.2, 74 * Math.cos(a + 0.12), 74 * Math.sin(a + 0.12));
+          sl.el.setAttribute("x1", p1.x.toFixed(1));
+          sl.el.setAttribute("y1", p1.y.toFixed(1));
+          sl.el.setAttribute("x2", p2.x.toFixed(1));
+          sl.el.setAttribute("y2", p2.y.toFixed(1));
+        }
+        for (const h of dyn.brakeHoles) {
+          const a = hsAngle + h.offset;
+          const p = proj(191.2, h.radius * Math.cos(a), h.radius * Math.sin(a));
+          h.el.setAttribute("cx", p.x.toFixed(1));
+          h.el.setAttribute("cy", p.y.toFixed(1));
+        }
+        for (const bl of dyn.brakeBolts) {
+          const a = hsAngle + bl.offset;
+          const p = proj(151.5, 29 * Math.cos(a), 29 * Math.sin(a));
+          bl.el.setAttribute("cx", p.x.toFixed(1));
+          bl.el.setAttribute("cy", p.y.toFixed(1));
+        }
+
+        // Caliper slight inward squeeze & warm amber friction glow during braking
+        const clampShift = state.brakeClamp * 2.4;
+        dyn.caliperGroup.setAttribute("transform", `translate(${(-clampShift * 0.5).toFixed(2)}, ${clampShift.toFixed(2)})`);
+        const heatAlpha = state.brakeClamp * (0.45 + 0.35 * Math.min(1, state.rotorOmega * 1.4 + 0.4) * (0.75 + 0.25 * Math.sin(t * 9)));
+        dyn.brakeHeatGlow.setAttribute("opacity", heatAlpha.toFixed(2));
+
+        // ----- F. GENERATOR HIGH-SPEED ROTOR (5.5x), FAN, EM GLOW & CYAN BUSBAR PULSES -----
+        for (const bar of dyn.genRotorBars) {
+          const a = hsAngle + bar.offset;
+          const depth = VD * Math.cos(a) + UD * Math.sin(a);
+          if (depth < 0.05) {
+            bar.el.setAttribute("opacity", "0");
+          } else {
+            const p1 = proj(298, 44 * Math.cos(a), 44 * Math.sin(a));
+            const p2 = proj(408, 44 * Math.cos(a), 44 * Math.sin(a));
+            bar.el.setAttribute("x1", p1.x.toFixed(1));
+            bar.el.setAttribute("y1", p1.y.toFixed(1));
+            bar.el.setAttribute("x2", p2.x.toFixed(1));
+            bar.el.setAttribute("y2", p2.y.toFixed(1));
+            bar.el.setAttribute("opacity", (depth * 0.85).toFixed(2));
+          }
+        }
+
+        for (const fb of dyn.genFanBlades) {
+          const a = hsAngle + fb.offset;
+          const a2 = a + 0.34;
+          fb.el.setAttribute(
+            "points",
+            ptsStr([
+              [265.5, 19 * Math.cos(a), 19 * Math.sin(a)],
+              [265.5, 31 * Math.cos(a + 0.08), 31 * Math.sin(a + 0.08)],
+              [265.5, 31 * Math.cos(a2), 31 * Math.sin(a2)],
+              [265.5, 19 * Math.cos(a2 - 0.08), 19 * Math.sin(a2 - 0.08)]
+            ])
+          );
+        }
+
+        // Generator electromagnetic glow proportional to RPM
+        const emAlpha = Math.min(0.68, rpmRatio * (0.28 + 0.14 * Math.sin(t * 10)));
+        dyn.genEmGlow.setAttribute("opacity", emAlpha.toFixed(2));
+
+        // Flowing cyan-emerald electrical energy pulse beads along all 3 busbars
+        for (let i = 0; i < dyn.busbarPulses.length; i++) {
+          const bp = dyn.busbarPulses[i];
+          const pathEl = dyn.busbarPaths[bp.railIdx];
+          const len = dyn.busbarLengths[bp.railIdx] || 1;
+          const prog = (bp.offset + state.busbarPhase) % 1;
+          const pt = pathEl.getPointAtLength(prog * len);
+          bp.el.setAttribute("cx", pt.x.toFixed(1));
+          bp.el.setAttribute("cy", pt.y.toFixed(1));
+          const vis = Math.sin(prog * Math.PI) * Math.min(1, rpmRatio * 1.15);
+          bp.el.setAttribute("opacity", vis.toFixed(2));
+          bp.el.setAttribute("r", (2.6 + Math.min(1.4, rpmRatio * 1.1)).toFixed(1));
+        }
+
+        // ----- G. YAW DRIVE SLEWING RING & MESHEING PINIONS -----
+        updateYawDriveGeometry(state.yawAngle);
+      }
+
+      /* =========================================================================
+         13. CAMERA, HIGHLIGHT, EXPLODED VIEW & AUTO-SPOTLIGHT TOUR CONTROLLERS
+         ========================================================================= */
+      function applyCamera(target) {
+        try {
+          let cam = CAMERA_TARGETS.full;
+          if (typeof target === "string") {
+            cam = CAMERA_TARGETS[target] || CAMERA_TARGETS.full;
+          } else if (target && typeof target === "object") {
+            const x = Number.isFinite(target.x) ? target.x : 800;
+            const y = Number.isFinite(target.y) ? target.y : 450;
+            const zoom = Number.isFinite(target.zoom) ? Math.max(0.5, Math.min(3.5, target.zoom)) : 1.0;
+            cam = { x, y, zoom };
+          }
+
+          if (prefersReducedMotion && state.autoTourEnabled) {
+            stageEl.style.transform = "scale(1) translate(0%, 0%)";
+            return;
+          }
+
+          const dxPct = ((800 - cam.x) / 1600) * 100;
+          const dyPct = ((450 - cam.y) / 900) * 100;
+          stageEl.style.transform = `scale(${cam.zoom.toFixed(4)}) translate(${dxPct.toFixed(3)}%, ${dyPct.toFixed(3)}%)`;
+        } catch (err) {
+          console.error("Camera update error:", err);
+        }
+      }
+
+      function applyHighlight(partId) {
+        try {
+          const valid = partId && PART_NAMES_UZ[partId] ? partId : null;
+          state.focusedPart = valid;
+
+          for (const node of allPartEls) {
+            const dp = node.getAttribute("data-part");
+            if (!valid) {
+              node.classList.remove("is-dimmed", "is-focused");
+            } else if (dp === valid) {
+              node.classList.remove("is-dimmed");
+              node.classList.add("is-focused");
+            } else {
+              node.classList.remove("is-focused");
+              node.classList.add("is-dimmed");
+            }
+          }
+        } catch (err) {
+          console.error("Highlight update error:", err);
+        }
+      }
+
+      function applyExplodeTransforms(amount) {
+        for (const item of explodeList) {
+          if (!item.el) continue;
+          if (amount < 0.0005) {
+            item.el.removeAttribute("transform");
+          } else {
+            const tx = (item.vec.x * amount).toFixed(2);
+            const ty = (item.vec.y * amount).toFixed(2);
+            item.el.setAttribute("transform", `translate(${tx}, ${ty})`);
+          }
+        }
+      }
+
+      function clearTourTimer() {
+        if (state.tourTimerId !== null) {
+          window.clearTimeout(state.tourTimerId);
+          state.tourTimerId = null;
+        }
+      }
+
+      function scheduleNextTourStep() {
+        clearTourTimer();
+        if (!state.autoTourEnabled || prefersReducedMotion) return;
+
+        const currentTarget = TOUR_SEQUENCE[state.tourIndex];
+        const delay = currentTarget === "full" ? TOUR_HOLD_FULL_MS : TOUR_HOLD_PART_MS;
+
+        state.tourTimerId = window.setTimeout(() => {
+          if (!state.autoTourEnabled) return;
+          state.tourIndex = (state.tourIndex + 1) % TOUR_SEQUENCE.length;
+          const nextTarget = TOUR_SEQUENCE[state.tourIndex];
+          if (nextTarget === "full") {
+            applyCamera("full");
+            applyHighlight(null);
+          } else {
+            applyCamera(nextTarget);
+            applyHighlight(nextTarget);
+          }
+          scheduleNextTourStep();
+        }, delay);
+      }
+
+      function startAutoTour(fromStart = false) {
+        if (prefersReducedMotion) {
+          state.autoTourEnabled = false;
+          clearTourTimer();
+          if (fromStart) {
+            applyCamera("full");
+            applyHighlight(null);
+          }
+          return;
+        }
+        state.autoTourEnabled = true;
+        if (fromStart) {
+          state.tourIndex = 0;
+          applyCamera("full");
+          applyHighlight(null);
+        }
+        scheduleNextTourStep();
+      }
+
+      function stopAutoTour() {
+        state.autoTourEnabled = false;
+        clearTourTimer();
+      }
+
+      /* =========================================================================
+         14. 60 FPS ANIMATION LOOP (CAPPED DELTA-TIME)
+         ========================================================================= */
+      let lastTs = performance.now();
+
+      function animateLoop(now) {
+        const dt = Math.min((now - lastTs) / 1000, 0.05);
+        lastTs = now;
+        updatePhysics(dt);
+        window.requestAnimationFrame(animateLoop);
+      }
+
+      /* =========================================================================
+         15. MANDATORY MIRVO AI INTEGRATION API (window.MirvoScene & postMessage)
+         ========================================================================= */
+      const MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: Object.entries(PART_NAMES_UZ).map(([id, nameUz]) => ({
+          id,
+          nameUz,
+          focusTarget: { ...CAMERA_TARGETS[id] }
+        })),
+
+        focus(target) {
+          try {
+            applyCamera(target === null || target === undefined ? "full" : target);
+          } catch (err) {
+            console.error("MirvoScene.focus error:", err);
+          }
+        },
+
+        highlight(partId) {
+          try {
+            applyHighlight(partId ?? null);
+          } catch (err) {
+            console.error("MirvoScene.highlight error:", err);
+          }
+        },
+
+        setStep(index) {
+          try {
+            const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.round(Number(index) || 0)));
+            stopAutoTour();
+            state.tourIndex = idx;
+            const target = TOUR_SEQUENCE[idx];
+            if (target === "full") {
+              applyCamera("full");
+              applyHighlight(null);
+            } else {
+              applyCamera(target);
+              applyHighlight(target);
+            }
+            if (STEP_PHASES[idx]) {
+              state.phaseMode = STEP_PHASES[idx];
+            }
+          } catch (err) {
+            console.error("MirvoScene.setStep error:", err);
+          }
+        },
+
+        setAutoTour(enabled) {
+          try {
+            if (Boolean(enabled)) {
+              startAutoTour(false);
+            } else {
+              stopAutoTour();
+            }
+          } catch (err) {
+            console.error("MirvoScene.setAutoTour error:", err);
+          }
+        },
+
+        setExploded(amount) {
+          try {
+            state.explodeTarget = Math.max(0, Math.min(1, Number(amount) || 0));
+          } catch (err) {
+            console.error("MirvoScene.setExploded error:", err);
+          }
+        },
+
+        setPhase(mode) {
+          try {
+            if (["auto", "nominal", "high_wind", "brake", "yaw"].includes(mode)) {
+              state.phaseMode = mode;
+            }
+          } catch (err) {
+            console.error("MirvoScene.setPhase error:", err);
+          }
+        },
+
+        setPlaying(playing) {
+          try {
+            state.playing = Boolean(playing);
+          } catch (err) {
+            console.error("MirvoScene.setPlaying error:", err);
+          }
+        },
+
+        reset() {
+          try {
+            state.explodeTarget = 0;
+            state.phaseMode = "auto";
+            state.playing = true;
+            startAutoTour(true);
+          } catch (err) {
+            console.error("MirvoScene.reset error:", err);
+          }
+        }
+      };
+
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (event) => {
+        try {
+          const msg = event && event.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              stopAutoTour();
+              MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              MirvoScene.highlight(msg.partId ?? null);
+              break;
+            case "SET_STEP":
+              MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          console.error("postMessage handler error:", err);
+        }
+      });
+
+      /* =========================================================================
+         16. DIRECT USER INTERACTIONS (CLICK-TO-ASK, RESET, EXPLODED VIEW, KEYS)
+         ========================================================================= */
+      function emitPartClick(partId) {
+        const nameUz = PART_NAMES_UZ[partId];
+        if (!nameUz) return;
+        const payload = {
+          type: "PART_CLICK",
+          deviceId: DEVICE_ID,
+          partId,
+          nameUz
+        };
+        try {
+          window.postMessage(payload, "*");
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage(payload, "*");
+          }
+        } catch (err) {
+          console.error("PART_CLICK emit error:", err);
+        }
+      }
+
+      svgRoot.addEventListener("click", (e) => {
+        const partGroup = e.target.closest(".mirvo-part");
+        const partId = partGroup ? partGroup.getAttribute("data-part") : null;
+
+        if (partId && PART_NAMES_UZ[partId]) {
+          stopAutoTour();
+          const idx = TOUR_SEQUENCE.indexOf(partId);
+          if (idx !== -1) state.tourIndex = idx;
+          applyCamera(partId);
+          applyHighlight(partId);
+          emitPartClick(partId);
+        } else {
+          MirvoScene.reset();
+        }
+      });
+
+      viewportEl.addEventListener("click", (e) => {
+        if (e.target === viewportEl || e.target === stageEl) {
+          MirvoScene.reset();
+        }
+      });
+
+      viewportEl.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" || e.key === "r" || e.key === "R") {
+          MirvoScene.reset();
+        } else if (e.key === "e" || e.key === "E") {
+          MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+        }
+      });
+
+      /* =========================================================================
+         17. BOOTSTRAP GEOMETRY & START 60 FPS SIMULATION ON LOAD
+         ========================================================================= */
+      window.onload = function () {
+        try {
+          buildHousingBack();
+          buildYawDrive();
+          buildGenerator();
+          buildDiscBrake();
+          buildGearbox();
+          buildMainShaft();
+          buildRotorBlades();
+          buildHousingFront();
+          cacheBusbarLengths();
+
+          // Render initial 3D geometry frame cleanly before animation loop begins
+          updateRotor3D(0);
+          updateGearboxAnimation(0);
+          updateYawDriveGeometry(0);
+
+          applyCamera("full");
+          applyHighlight(null);
+          startAutoTour(true);
+
+          lastTs = performance.now();
+          window.requestAnimationFrame(animateLoop);
+        } catch (err) {
+          console.error("Wind turbine bootstrap error:", err);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

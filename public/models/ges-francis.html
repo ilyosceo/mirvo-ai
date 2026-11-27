@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gidroelektr stansiya (GES — Frensis)</title>
+  <style>
+    /* =========================================================================
+       PURE #FFFFFF ZERO-UI CANVAS — MIRVO ANATOMY PIPELINE (DEVICE #03)
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mirvo-viewport {
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    #francisSvg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Crisp dark-slate technical ink outlines */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.55px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-bold {
+      stroke: #222933;
+      stroke-width: 1.85px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-seam {
+      stroke: #222933;
+      stroke-width: 1.05px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-faint {
+      stroke: #334155;
+      stroke-width: 0.72px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    /* Modular interactive assemblies & Sequential Spotlight Tour */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-shadow {
+      transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.25));
+    }
+
+    /* Animated flow strokes */
+    .water-dash {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .electric-dash {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="viewport">
+    <div class="mirvo-stage" id="stage">
+      <svg
+        id="francisSvg"
+        viewBox="0 0 1600 900"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Hydroelectric Francis Turbine Generator Unit Isometric Cutaway"
+      >
+        <defs>
+          <!-- Soft ground shadow blur -->
+          <filter id="groundBlur" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="10" />
+          </filter>
+
+          <!-- Luminous cyan electromagnetic air-gap glow -->
+          <filter id="cyanGlow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="5.5" result="b1" />
+            <feMerge>
+              <feMergeNode in="b1" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Soft water spray blur -->
+          <filter id="sprayBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="4.5" />
+          </filter>
+
+          <!-- ================= MATERIAL 4-TONE GRADIENTS ================= -->
+
+          <!-- Cobalt & Cerulean Blue Spiral Scroll Case -->
+          <linearGradient id="spiralOuterGrad" x1="12%" y1="15%" x2="88%" y2="85%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="28%" stop-color="#3B82F6" />
+            <stop offset="62%" stop-color="#2563EB" />
+            <stop offset="86%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <linearGradient id="spiralTopHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.72" />
+            <stop offset="45%" stop-color="#60A5FA" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0" />
+          </linearGradient>
+
+          <linearGradient id="penstockShellGrad" x1="25%" y1="0%" x2="75%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="35%" stop-color="#3B82F6" />
+            <stop offset="72%" stop-color="#2563EB" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <linearGradient id="flangeFaceGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#7CB4F9" />
+            <stop offset="48%" stop-color="#4A85D6" />
+            <stop offset="100%" stop-color="#27539E" />
+          </linearGradient>
+
+          <linearGradient id="blueBevelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#BAE6FD" />
+            <stop offset="50%" stop-color="#7DD3FC" />
+            <stop offset="100%" stop-color="#60A5FA" />
+          </linearGradient>
+
+          <!-- Pressurized Cyan-Cerulean Water Inside Spiral & Penstock -->
+          <linearGradient id="waterInletGrad" x1="0%" y1="65%" x2="100%" y2="35%">
+            <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.92" />
+            <stop offset="38%" stop-color="#22D3EE" stop-opacity="0.94" />
+            <stop offset="72%" stop-color="#38BDF8" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.94" />
+          </linearGradient>
+
+          <linearGradient id="waterRightGrad" x1="0%" y1="20%" x2="100%" y2="85%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.95" />
+            <stop offset="52%" stop-color="#22D3EE" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.95" />
+          </linearGradient>
+
+          <!-- Draft Tube Slate-Gray & Deep Steel-Blue Elbow -->
+          <linearGradient id="draftElbowGrad" x1="15%" y1="15%" x2="85%" y2="85%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="32%" stop-color="#64748B" />
+            <stop offset="68%" stop-color="#475569" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <linearGradient id="draftCollarGrad" x1="20%" y1="10%" x2="80%" y2="90%">
+            <stop offset="0%" stop-color="#8A9BB0" />
+            <stop offset="40%" stop-color="#58697E" />
+            <stop offset="78%" stop-color="#3A495C" />
+            <stop offset="100%" stop-color="#273342" />
+          </linearGradient>
+
+          <linearGradient id="draftInteriorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1E293B" />
+            <stop offset="55%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="draftWaterGrad" x1="0%" y1="10%" x2="100%" y2="90%">
+            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.88" />
+            <stop offset="42%" stop-color="#38BDF8" stop-opacity="0.86" />
+            <stop offset="80%" stop-color="#7DD3FC" stop-opacity="0.72" />
+            <stop offset="100%" stop-color="#E0F2FE" stop-opacity="0.06" />
+          </linearGradient>
+
+          <linearGradient id="dischargeSprayGrad" x1="0%" y1="30%" x2="100%" y2="70%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.72" />
+            <stop offset="48%" stop-color="#7DD3FC" stop-opacity="0.46" />
+            <stop offset="82%" stop-color="#BAE6FD" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+          </linearGradient>
+
+          <!-- Support Pier Concrete / Steel -->
+          <linearGradient id="pierFrontGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#E2E8F0" />
+            <stop offset="100%" stop-color="#CBD5E1" />
+          </linearGradient>
+
+          <linearGradient id="pierSideGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <!-- Warm Machined Bronze & Amber-Gold Wicket Gates -->
+          <linearGradient id="bronzeRingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#92400E" />
+            <stop offset="22%" stop-color="#D97706" />
+            <stop offset="50%" stop-color="#F59E0B" />
+            <stop offset="78%" stop-color="#D97706" />
+            <stop offset="100%" stop-color="#78350F" />
+          </linearGradient>
+
+          <linearGradient id="bronzeTopGrad" x1="15%" y1="15%" x2="85%" y2="85%">
+            <stop offset="0%" stop-color="#FDE68A" />
+            <stop offset="48%" stop-color="#F59E0B" />
+            <stop offset="100%" stop-color="#B45309" />
+          </linearGradient>
+
+          <!-- Brushed Steel Shaft & Francis Runner -->
+          <linearGradient id="shaftSteelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="24%" stop-color="#CBD5E1" />
+            <stop offset="44%" stop-color="#F8FAFC" />
+            <stop offset="68%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="runnerShroudGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="28%" stop-color="#CBD5E1" />
+            <stop offset="52%" stop-color="#F1F5F9" />
+            <stop offset="82%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <!-- Ceramic Ivory Generator Housing -->
+          <linearGradient id="ivoryCylGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#D8D2C5" />
+            <stop offset="22%" stop-color="#F4F1EA" />
+            <stop offset="48%" stop-color="#FAF8F3" />
+            <stop offset="78%" stop-color="#E5E0D4" />
+            <stop offset="100%" stop-color="#BDB6A5" />
+          </linearGradient>
+
+          <linearGradient id="ivoryTopGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="52%" stop-color="#F7F5EE" />
+            <stop offset="100%" stop-color="#E4DFD2" />
+          </linearGradient>
+
+          <linearGradient id="ivoryBevelLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#EFECE4" />
+            <stop offset="100%" stop-color="#DDD7C9" />
+          </linearGradient>
+
+          <linearGradient id="ivoryBevelRight" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#CFC9BA" />
+            <stop offset="100%" stop-color="#BDB6A5" />
+          </linearGradient>
+
+          <!-- Brushed Copper Generator Stator End-Windings -->
+          <linearGradient id="copperCoilLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="38%" stop-color="#E69F68" />
+            <stop offset="72%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3A12" />
+          </linearGradient>
+
+          <linearGradient id="copperCoilRight" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F5BA86" />
+            <stop offset="42%" stop-color="#C97336" />
+            <stop offset="78%" stop-color="#9A4C1C" />
+            <stop offset="100%" stop-color="#6B300E" />
+          </linearGradient>
+
+          <!-- Laminated Dark-Slate Stator Core -->
+          <linearGradient id="statorCoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#475569" />
+            <stop offset="50%" stop-color="#64748B" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <!-- Luminous Cyan Electromagnetic Air-Gap -->
+          <linearGradient id="airGapCyanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.95" />
+            <stop offset="50%" stop-color="#22D3EE" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.95" />
+          </linearGradient>
+
+          <!-- Clip paths for crisp interior flow containment -->
+          <clipPath id="penstockWaterClip">
+            <path d="M 426 570 C 446 544, 488 538, 526 548 L 604 503 C 625 493, 648 518, 654 550 C 659 578, 651 605, 636 616 L 544 668 C 516 688, 456 680, 428 634 C 414 611, 414 586, 426 570 Z" />
+          </clipPath>
+
+          <clipPath id="rightSpiralWaterClip">
+            <path d="M 906 520 C 938 510, 976 508, 1006 522 C 1030 534, 1038 564, 1026 588 C 1012 612, 978 614, 944 596 L 908 574 Z" />
+          </clipPath>
+
+          <clipPath id="draftUpperWaterClip">
+            <path d="M 782 590 C 818 594, 858 584, 878 570 C 884 612, 898 638, 922 652 L 856 694 C 818 672, 790 634, 782 590 Z" />
+          </clipPath>
+
+          <clipPath id="draftMouthClip">
+            <path d="M 920 715 C 942 668, 996 638, 1044 652 L 1185 735 L 1125 872 L 948 806 C 916 786, 906 746, 920 715 Z" />
+          </clipPath>
+        </defs>
+
+        <!-- ===================================================================
+             1. GROUND CONTACT SHADOW (NON-PART SOFT ELLIPSES ON PURE #FFFFFF)
+             =================================================================== -->
+        <g id="ground-shadows" class="mirvo-shadow">
+          <!-- Left penstock & pier shadow -->
+          <path
+            d="M 416 708 L 570 630 L 705 708 L 552 806 Z"
+            fill="#cbd5e1"
+            opacity="0.52"
+            filter="url(#groundBlur)"
+          />
+          <!-- Central & right pier / draft tube floor shadow -->
+          <ellipse cx="835" cy="738" rx="268" ry="118" fill="#cbd5e1" opacity="0.48" filter="url(#groundBlur)" />
+          <!-- Draft tube bottom-right shadow -->
+          <ellipse cx="972" cy="786" rx="112" ry="52" transform="rotate(-14 972 786)" fill="#94a3b8" opacity="0.34" filter="url(#groundBlur)" />
+        </g>
+
+        <!-- ===================================================================
+             2. DRAFT TUBE BACK (`data-part="draft_tube"`)
+             =================================================================== -->
+        <g id="part-draft-tube-back" class="mirvo-part" data-part="draft_tube">
+          <!-- Main curved slate-gray metallic elbow body dropping from runner (x=800,y=535) to collar -->
+          <path
+            class="ink-bold"
+            fill="url(#draftElbowGrad)"
+            d="M 716 530
+               C 712 632, 756 714, 858 762
+               L 928 656
+               C 896 636, 882 598, 884 530 Z"
+          />
+
+          <!-- Upper inner cutaway vertical window cavity exposing descending water -->
+          <path
+            class="ink"
+            fill="url(#draftInteriorGrad)"
+            d="M 776 588
+               C 818 594, 856 584, 882 566
+               C 886 610, 902 640, 926 654
+               L 852 702
+               C 812 674, 784 636, 776 588 Z"
+          />
+
+          <!-- Upper inner window descending translucent cerulean-cyan water -->
+          <g clip-path="url(#draftUpperWaterClip)">
+            <path
+              fill="url(#draftWaterGrad)"
+              d="M 776 586 C 820 594, 860 584, 882 566 C 888 612, 902 640, 926 654 L 852 700 C 810 672, 784 632, 776 586 Z"
+            />
+            <g id="draftUpperWaterDynamic"></g>
+          </g>
+
+          <!-- Clean beveled metallic rim of upper draft tube cutaway window -->
+          <path
+            class="ink"
+            fill="#94a3b8"
+            d="M 776 588 L 786 590 C 794 634, 820 668, 856 692 L 852 702 C 812 674, 784 636, 776 588 Z"
+          />
+
+          <!-- Wider stepped cylindrical diffuser collar (outer back/top shell) -->
+          <path
+            class="ink-bold"
+            fill="url(#draftCollarGrad)"
+            d="M 848 748
+               C 844 686, 898 624, 962 634
+               L 1076 698
+               C 1018 682, 954 736, 956 806
+               L 848 748 Z"
+          />
+
+          <!-- Concave dark inner barrel of the cutaway diffuser mouth -->
+          <path
+            class="ink"
+            fill="url(#draftInteriorGrad)"
+            d="M 922 778
+               C 916 716, 974 656, 1036 672
+               L 1084 702
+               C 1094 748, 1044 824, 982 824 Z"
+          />
+        </g>
+
+        <!-- ===================================================================
+             3. SPIRAL CASE BACK (`data-part="spiral_case"`)
+             =================================================================== -->
+        <g id="part-spiral-back" class="mirvo-part" data-part="spiral_case">
+          <!-- Back-right concrete/steel support pedestal under right volute -->
+          <g id="pier-right">
+            <!-- Base stepped foot -->
+            <path class="ink" fill="#cbd5e1" d="M 918 672 L 990 712 L 1054 676 L 1054 692 L 990 728 L 918 688 Z" />
+            <path class="ink" fill="#e2e8f0" d="M 918 672 L 982 636 L 1054 676 L 990 712 Z" />
+            <!-- Vertical column faces -->
+            <path class="ink" fill="url(#pierFrontGrad)" d="M 926 572 L 986 604 L 986 704 L 926 672 Z" />
+            <path class="ink" fill="url(#pierSideGrad)" d="M 986 604 L 1038 574 L 1038 674 L 986 704 Z" />
+          </g>
+
+          <!-- Huge snail-shaped horizontal spiral scroll case (volute) wrapping around turbine -->
+          <path
+            class="ink-bold"
+            fill="url(#spiralOuterGrad)"
+            d="M 496 496
+               C 482 404, 560 326, 672 296
+               C 760 272, 858 274, 944 300
+               C 1058 334, 1126 414, 1112 508
+               C 1102 568, 1068 606, 1024 624
+               C 996 636, 962 628, 934 606
+               L 908 564
+               C 942 528, 968 492, 964 452
+               C 958 392, 886 352, 800 352
+               C 712 352, 636 394, 632 456
+               C 630 486, 646 516, 668 538
+               L 538 518 Z"
+          />
+
+          <!-- Soft top cylindrical highlight sheen along the cobalt scroll crown -->
+          <path
+            fill="url(#spiralTopHighlight)"
+            d="M 520 456
+               C 530 374, 622 316, 742 298
+               C 854 282, 982 308, 1058 380
+               C 1094 414, 1104 458, 1090 494
+               C 1060 426, 976 376, 868 360
+               C 748 342, 620 368, 558 438 Z"
+          />
+
+          <!-- Subtle dark inner recess wall behind wicket gate stay ring -->
+          <ellipse class="ink" cx="800" cy="462" rx="194" ry="106" fill="#1e3a8a" />
+        </g>
+
+        <!-- ===================================================================
+             4. WICKET GATES BACK (`data-part="wicket_gates"`)
+             =================================================================== -->
+        <g id="part-wicket-back" class="mirvo-part" data-part="wicket_gates">
+          <!-- Outer machined warm bronze stay ring collar -->
+          <path
+            class="ink-bold"
+            fill="url(#bronzeRingGrad)"
+            d="M 608 462 A 192 104 0 1 1 992 462 L 992 506 A 192 104 0 1 1 608 506 Z"
+          />
+          <!-- Top flat machined golden-bronze annular rim -->
+          <path
+            class="ink"
+            fill="url(#bronzeTopGrad)"
+            fill-rule="evenodd"
+            d="M 800 358 A 192 104 0 1 0 800.1 358 Z
+               M 800 372 A 174 94 0 1 1 799.9 372 Z"
+          />
+          <!-- Lower bronze chamber floor visible behind & around the runner -->
+          <ellipse class="ink-seam" cx="800" cy="516" rx="172" ry="92" fill="#92400e" />
+          <ellipse class="ink-seam" cx="800" cy="512" rx="146" ry="78" fill="#1e293b" opacity="0.55" />
+
+          <!-- Dynamic procedural back arc of angled bronze wicket guide vanes + water jets -->
+          <g id="wicketBackDynamic"></g>
+        </g>
+
+        <!-- ===================================================================
+             5. FRANCIS RUNNER & VERTICAL SHAFT (`data-part="runner"`)
+             =================================================================== -->
+        <g id="part-runner" class="mirvo-part" data-part="runner">
+          <!-- Lower runner shroud band (outer satin silver skirt seated above draft tube) -->
+          <path
+            class="ink-bold"
+            fill="url(#runnerShroudGrad)"
+            d="M 678 492
+               A 122 66 0 0 0 922 492
+               L 914 522
+               A 114 62 0 0 1 686 522 Z"
+          />
+          <!-- Inner shaded water-channel cavity of the Francis runner -->
+          <ellipse class="ink" cx="800" cy="492" rx="122" ry="66" fill="#64748b" />
+          <ellipse cx="800" cy="496" rx="114" ry="60" fill="#334155" opacity="0.58" />
+
+          <!-- Dynamic 60 FPS 3D-projected 11 curved hydrodynamic Francis blades + crown hub -->
+          <g id="runnerBladesDynamic"></g>
+
+          <!-- Vertical brushed-steel main shaft rising from runner crown to top of generator -->
+          <g id="mainShaftGroup">
+            <!-- Lower shaft section (runner crown y=462 up to coupling flange y=386) -->
+            <path
+              class="ink-bold"
+              fill="url(#shaftSteelGrad)"
+              d="M 782 384 L 818 384 L 818 466 A 18 10 0 0 1 782 466 Z"
+            />
+            <!-- Lower shaft guide sleeve collar inside runner crown -->
+            <path
+              class="ink"
+              fill="url(#shaftSteelGrad)"
+              d="M 775 454 A 25 13 0 0 0 825 454 L 825 468 A 25 13 0 0 1 775 468 Z"
+            />
+            <ellipse class="ink-seam" cx="800" cy="454" rx="25" ry="13" fill="#e2e8f0" />
+
+            <!-- Stepped bolted flanged coupling around y=375 -->
+            <path
+              class="ink-bold"
+              fill="url(#shaftSteelGrad)"
+              d="M 764 368 A 36 19 0 0 0 836 368 L 836 384 A 36 19 0 0 1 764 384 Z"
+            />
+            <ellipse class="ink" cx="800" cy="368" rx="36" ry="19" fill="#f1f5f9" />
+            <!-- Dynamic orbiting bolts on coupling flange -->
+            <g id="couplingBoltsDynamic"></g>
+
+            <!-- Upper shaft section rising into generator rotor & top thrust bearing -->
+            <path
+              class="ink-bold"
+              fill="url(#shaftSteelGrad)"
+              d="M 783 102 L 817 102 L 817 368 A 17 9 0 0 1 783 368 Z"
+            />
+            <!-- Top shaft cap ellipse -->
+            <ellipse class="ink" cx="800" cy="102" rx="17" ry="9" fill="#f8fafc" />
+          </g>
+        </g>
+
+        <!-- ===================================================================
+             6. WICKET GATES FRONT (`data-part="wicket_gates"`)
+             =================================================================== -->
+        <g id="part-wicket-front" class="mirvo-part" data-part="wicket_gates">
+          <!-- Dynamic foreground modulating wicket vanes on left & right cutaway edges -->
+          <g id="wicketFrontDynamic"></g>
+
+          <!-- Left beveled bronze cutaway end-wall framing the runner throat -->
+          <path
+            class="ink-bold"
+            fill="#f59e0b"
+            d="M 656 462 L 680 474 L 680 562 L 656 548 Z"
+          />
+          <path
+            class="ink"
+            fill="#fde68a"
+            d="M 656 462 L 672 454 L 696 466 L 680 474 Z"
+          />
+
+          <!-- Right beveled bronze cutaway end-wall framing the runner throat -->
+          <path
+            class="ink-bold"
+            fill="#d97706"
+            d="M 920 474 L 946 462 L 946 548 L 920 562 Z"
+          />
+          <path
+            class="ink"
+            fill="#fcd34d"
+            d="M 904 466 L 930 454 L 946 462 L 920 474 Z"
+          />
+        </g>
+
+        <!-- ===================================================================
+             7. SPIRAL CASE FRONT (`data-part="spiral_case"`)
+             =================================================================== -->
+        <g id="part-spiral-front" class="mirvo-part" data-part="spiral_case">
+          <!-- Front-left light-gray concrete/steel support pier seated under penstock shoulder -->
+          <g id="pier-left">
+            <!-- Stepped beveled floor base plate -->
+            <path class="ink" fill="#e2e8f0" d="M 556 704 L 642 752 L 696 722 L 610 674 Z" />
+            <path class="ink-bold" fill="#cbd5e1" d="M 556 704 L 642 752 L 642 768 L 556 720 Z" />
+            <path class="ink-bold" fill="#94a3b8" d="M 642 752 L 696 722 L 696 738 L 642 768 Z" />
+            <!-- Vertical structural pedestal column -->
+            <path class="ink-bold" fill="url(#pierFrontGrad)" d="M 570 598 L 638 636 L 638 742 L 570 704 Z" />
+            <path class="ink-bold" fill="url(#pierSideGrad)" d="M 638 636 L 684 610 L 684 716 L 638 742 Z" />
+            <!-- Recessed architectural chamfer panel on front face -->
+            <path class="ink-faint" fill="#cbd5e1" opacity="0.65" d="M 580 614 L 628 640 L 628 724 L 580 698 Z" />
+          </g>
+
+          <!-- Front-left horizontal penstock inlet pipe body (outer blue casing) -->
+          <path
+            class="ink-bold"
+            fill="url(#penstockShellGrad)"
+            d="M 464 510
+               L 598 438
+               C 634 426, 662 468, 668 532
+               C 672 574, 658 612, 636 626
+               L 524 690
+               C 492 706, 446 680, 424 632
+               C 404 588, 418 532, 464 510 Z"
+          />
+
+          <!-- Penstock cutaway interior pressurized cyan-blue water body -->
+          <g clip-path="url(#penstockWaterClip)">
+            <path
+              fill="url(#waterInletGrad)"
+              d="M 418 540 L 664 494 L 664 624 L 418 696 Z"
+            />
+            <!-- Dynamic 60 FPS swirling inlet streamlines, waves & micro-bubbles -->
+            <g id="penstockWaterDynamic"></g>
+          </g>
+
+          <!-- Thick beveled light-blue steel cutaway rim along penstock opening -->
+          <path
+            class="ink-bold"
+            fill="url(#blueBevelGrad)"
+            d="M 488 530 L 602 470 C 614 466, 624 474, 630 486 L 614 494 C 609 485, 602 480, 594 484 L 494 538 Z"
+          />
+          <path
+            class="ink-bold"
+            fill="url(#blueBevelGrad)"
+            d="M 526 672 L 642 608 C 652 602, 662 590, 664 574 L 674 580 C 670 600, 658 614, 646 622 L 534 684 Z"
+          />
+          <!-- Lower-left penstock collar lip connecting to pier -->
+          <path
+            class="ink"
+            fill="#60a5fa"
+            d="M 636 594 L 674 574 L 692 586 L 656 606 Z"
+          />
+
+          <!-- Heavy bolted blue-steel penstock inlet flange on far lower-left -->
+          <g id="penstock-flange">
+            <!-- Outer flange thickness depth band -->
+            <path
+              class="ink-bold"
+              fill="#1e40af"
+              d="M 380 546
+                 C 402 492, 456 480, 496 508
+                 L 512 522
+                 C 474 494, 420 506, 398 558
+                 C 374 614, 404 688, 464 714
+                 C 492 726, 518 724, 536 710
+                 L 518 722
+                 C 496 736, 466 736, 438 722
+                 C 380 692, 356 606, 380 546 Z"
+            />
+            <!-- Front beveled flange face with hollow circular water bore -->
+            <g transform="translate(454, 616) rotate(-28)">
+              <path
+                class="ink-bold"
+                fill="url(#flangeFaceGrad)"
+                fill-rule="evenodd"
+                d="M 0 -112 A 74 112 0 1 0 0.1 -112 Z
+                   M 0 -74 A 48 74 0 1 1 -0.1 -74 Z"
+              />
+              <!-- Inner bore metallic throat shadow -->
+              <ellipse class="ink" cx="0" cy="0" rx="48" ry="74" fill="none" />
+              <!-- 10 crisp dark bolt holes around the flange rim -->
+              <g id="flangeBoltsStatic"></g>
+            </g>
+          </g>
+
+          <!-- Right-side spiral scroll cutaway opening exposing swirling volute water -->
+          <g id="right-scroll-cutaway">
+            <!-- Concave dark-blue inner wall behind right water -->
+            <path
+              class="ink"
+              fill="#1e3a8a"
+              d="M 906 520 C 938 508, 980 506, 1012 522 C 1036 534, 1044 566, 1030 592 C 1014 616, 976 618, 940 598 L 906 574 Z"
+            />
+            <!-- Pressurized swirling water in right scroll cross-section -->
+            <g clip-path="url(#rightSpiralWaterClip)">
+              <path fill="url(#waterRightGrad)" d="M 902 504 L 1046 504 L 1046 622 L 902 622 Z" />
+              <g id="rightSpiralWaterDynamic"></g>
+            </g>
+            <!-- Thick beveled light-blue steel cutaway rim on right scroll -->
+            <path
+              class="ink-bold"
+              fill="url(#blueBevelGrad)"
+              d="M 904 510
+                 C 942 496, 988 494, 1022 514
+                 C 1048 530, 1056 568, 1038 598
+                 C 1018 628, 974 630, 934 606
+                 L 904 584 L 912 572
+                 L 942 592
+                 C 976 612, 1010 610, 1026 588
+                 C 1038 566, 1032 536, 1008 522
+                 C 978 506, 938 508, 908 520 Z"
+            />
+          </g>
+        </g>
+
+        <!-- ===================================================================
+             8. DRAFT TUBE FRONT (`data-part="draft_tube"`)
+             Foreground cutaway lip, rushing discharge water & dissipating spray
+             =================================================================== -->
+        <g id="part-draft-tube-front" class="mirvo-part" data-part="draft_tube">
+          <!-- Animated 60 FPS decelerating ice-blue discharge water & trailing spray -->
+          <g clip-path="url(#draftMouthClip)">
+            <!-- Translucent water volume pouring out diffuser mouth -->
+            <path
+              fill="url(#dischargeSprayGrad)"
+              d="M 930 718
+                 C 956 678, 1004 668, 1044 686
+                 L 1172 752
+                 C 1152 798, 1110 838, 1068 854
+                 L 952 792
+                 C 926 774, 918 744, 930 718 Z"
+            />
+            <g id="draftDischargeDynamic"></g>
+          </g>
+
+          <!-- Crisp beveled foreground rim of the cylindrical diffuser mouth cutaway -->
+          <path
+            class="ink-bold"
+            fill="#94a3b8"
+            d="M 1034 662
+               C 972 648, 912 710, 918 776
+               C 922 814, 962 838, 1008 824
+               L 1014 812
+               C 974 824, 938 804, 934 772
+               C 928 716, 980 662, 1034 676
+               L 1084 704 L 1088 692 Z"
+          />
+          <!-- Lower-front beveled collar edge line -->
+          <path
+            class="ink-bold"
+            fill="url(#draftCollarGrad)"
+            d="M 848 748 L 952 806 C 930 788, 918 756, 924 720 L 848 748 Z"
+            opacity="0.35"
+          />
+        </g>
+
+        <!-- ===================================================================
+             9. VERTICAL HYDROGENERATOR BACK (`data-part="generator"`)
+             =================================================================== -->
+        <g id="part-generator-back" class="mirvo-part" data-part="generator">
+          <!-- Bottom bolted ceramic ivory mounting flange seated on turbine head cover -->
+          <path
+            class="ink-bold"
+            fill="url(#ivoryCylGrad)"
+            d="M 634 338
+               A 166 86 0 0 0 966 338
+               L 966 356
+               A 166 86 0 0 1 634 356 Z"
+          />
+          <ellipse class="ink" cx="800" cy="338" rx="166" ry="86" fill="url(#ivoryTopGrad)" />
+
+          <!-- Outer cylindrical matte ceramic ivory housing barrel -->
+          <path
+            class="ink-bold"
+            fill="url(#ivoryCylGrad)"
+            d="M 648 134
+               L 648 332
+               A 152 82 0 0 0 952 332
+               L 952 134 Z"
+          />
+
+          <!-- Top beveled crown deck of generator housing -->
+          <ellipse class="ink-bold" cx="800" cy="134" rx="152" ry="82" fill="url(#ivoryTopGrad)" />
+          <!-- Subtle inset groove ring on top crown deck -->
+          <ellipse class="ink-faint" cx="800" cy="134" rx="136" ry="73" fill="none" opacity="0.65" />
+
+          <!-- Circular recessed top bearing boss housing -->
+          <path
+            class="ink"
+            fill="url(#ivoryCylGrad)"
+            d="M 748 128 A 52 28 0 0 0 852 128 L 852 142 A 52 28 0 0 1 748 142 Z"
+          />
+          <ellipse class="ink" cx="800" cy="128" rx="52" ry="28" fill="#f7f5ee" />
+
+          <!-- Deep dark-slate interior generator cutaway cavity -->
+          <path
+            class="ink"
+            fill="#1e293b"
+            d="M 696 164
+               C 722 146, 758 136, 800 136
+               C 842 136, 878 146, 904 164
+               L 904 356
+               C 876 374, 840 384, 800 384
+               C 760 384, 724 374, 696 356 Z"
+          />
+
+          <!-- Luminous cyan electromagnetic air-gap glow behind rotor -->
+          <rect
+            id="airGapBackGlow"
+            x="728"
+            y="182"
+            width="144"
+            height="142"
+            rx="16"
+            fill="url(#airGapCyanGrad)"
+            opacity="0.42"
+            filter="url(#cyanGlow)"
+          />
+
+          <!-- RICH BRUSHED-COPPER STATOR END-WINDINGS (Top & Bottom, Left & Right) -->
+          <g id="statorCopperCoils">
+            <!-- Top-Left copper end-winding bundle -->
+            <path
+              class="ink"
+              fill="url(#copperCoilLeft)"
+              d="M 702 204
+                 C 700 166, 724 146, 764 148
+                 L 764 184
+                 C 744 184, 736 194, 736 206 Z"
+            />
+            <!-- Top-Right copper end-winding bundle -->
+            <path
+              class="ink"
+              fill="url(#copperCoilRight)"
+              d="M 898 204
+                 C 900 166, 876 146, 836 148
+                 L 836 184
+                 C 856 184, 864 194, 864 206 Z"
+            />
+            <!-- Bottom-Left copper end-winding bundle -->
+            <path
+              class="ink"
+              fill="url(#copperCoilLeft)"
+              d="M 702 302
+                 C 702 338, 728 354, 764 350
+                 L 764 318
+                 C 744 320, 736 312, 736 300 Z"
+            />
+            <!-- Bottom-Right copper end-winding bundle -->
+            <path
+              class="ink"
+              fill="url(#copperCoilRight)"
+              d="M 898 302
+                 C 898 338, 872 354, 836 350
+                 L 836 318
+                 C 856 320, 864 312, 864 300 Z"
+            />
+            <!-- Crisp individual copper winding wire striations (populated statically in JS) -->
+            <g id="copperStriationsStatic"></g>
+            <!-- Animated golden-amber & cyan electrical current pulses along stator coils -->
+            <path id="coilPulseTL" class="electric-dash" d="M 712 202 C 712 174, 732 158, 760 158" stroke="#fef08a" stroke-width="2.8" stroke-dasharray="10 18" filter="url(#cyanGlow)" opacity="0.85" />
+            <path id="coilPulseTR" class="electric-dash" d="M 840 158 C 868 158, 888 174, 888 202" stroke="#67e8f9" stroke-width="2.8" stroke-dasharray="10 18" filter="url(#cyanGlow)" opacity="0.85" />
+            <path id="coilPulseBL" class="electric-dash" d="M 760 340 C 732 340, 712 326, 712 302" stroke="#67e8f9" stroke-width="2.8" stroke-dasharray="10 18" filter="url(#cyanGlow)" opacity="0.85" />
+            <path id="coilPulseBR" class="electric-dash" d="M 888 302 C 888 326, 868 340, 840 340" stroke="#fef08a" stroke-width="2.8" stroke-dasharray="10 18" filter="url(#cyanGlow)" opacity="0.85" />
+          </g>
+
+          <!-- LAMINATED DARK-SLATE IRON STATOR CORE BLOCKS (Left & Right walls) -->
+          <g id="statorCoreBlocks">
+            <!-- Left stator iron core -->
+            <path class="ink-bold" fill="url(#statorCoreGrad)" d="M 698 202 L 734 202 L 734 304 L 698 304 Z" />
+            <!-- Right stator iron core -->
+            <path class="ink-bold" fill="url(#statorCoreGrad)" d="M 866 202 L 902 202 L 902 304 L 866 304 Z" />
+            <!-- Crisp vertical lamination striations -->
+            <g id="statorLaminationsStatic"></g>
+            <!-- Luminous cyan-turquoise air-gap strips along inner stator faces -->
+            <rect id="airGapStripL" x="734" y="200" width="6.5" height="106" rx="2" fill="url(#airGapCyanGrad)" filter="url(#cyanGlow)" />
+            <rect id="airGapStripR" x="859.5" y="200" width="6.5" height="106" rx="2" fill="url(#airGapCyanGrad)" filter="url(#cyanGlow)" />
+          </g>
+        </g>
+
+        <!-- ===================================================================
+             10. VERTICAL HYDROGENERATOR ROTOR (`data-part="generator"`)
+             Procedurally animated salient-pole rotor & cyan induction arcs
+             =================================================================== -->
+        <g id="part-generator-rotor" class="mirvo-part" data-part="generator">
+          <!-- Upper thrust bearing collar & cyan magnetic seal (y=124..176) -->
+          <path
+            class="ink"
+            fill="url(#shaftSteelGrad)"
+            d="M 772 138 A 28 14 0 0 0 828 138 L 828 168 A 28 14 0 0 1 772 168 Z"
+          />
+          <ellipse class="ink-seam" cx="800" cy="138" rx="28" ry="14" fill="#cbd5e1" />
+          <!-- Cyan induction collar ring beneath top bearing -->
+          <path
+            class="ink-seam"
+            fill="#67e8f9"
+            opacity="0.88"
+            d="M 774 166 A 26 12 0 0 0 826 166 L 826 176 A 26 12 0 0 1 774 176 Z"
+          />
+
+          <!-- Lower generator guide bearing collar (y=318..348) -->
+          <path
+            class="ink"
+            fill="url(#shaftSteelGrad)"
+            d="M 774 316 A 26 13 0 0 0 826 316 L 826 340 A 26 13 0 0 1 774 340 Z"
+          />
+
+          <!-- Top shaft cap visible inside recessed top boss -->
+          <path
+            class="ink-bold"
+            fill="url(#shaftSteelGrad)"
+            d="M 783 96 L 817 96 L 817 136 A 17 9 0 0 1 783 136 Z"
+          />
+          <ellipse class="ink" cx="800" cy="96" rx="17" ry="9" fill="#f8fafc" />
+
+          <!-- Dynamic 60 FPS rotating salient-pole vertical steel rotor + dancing cyan arcs -->
+          <g id="generatorRotorDynamic"></g>
+        </g>
+
+        <!-- ===================================================================
+             11. VERTICAL HYDROGENERATOR FRONT (`data-part="generator"`)
+             Crisp architectural beveled cutaway walls & bolted bottom flange
+             =================================================================== -->
+        <g id="part-generator-front" class="mirvo-part" data-part="generator">
+          <!-- Left beveled ivory vertical cutaway wall -->
+          <path
+            class="ink-bold"
+            fill="url(#ivoryBevelLeft)"
+            d="M 682 174 L 698 164 L 698 356 L 682 346 Z"
+          />
+          <!-- Right beveled ivory vertical cutaway wall -->
+          <path
+            class="ink-bold"
+            fill="url(#ivoryBevelRight)"
+            d="M 902 164 L 918 174 L 918 346 L 902 356 Z"
+          />
+          <!-- Left top cutaway bevel notch connecting crown deck to cutaway -->
+          <path
+            class="ink"
+            fill="#efeae0"
+            d="M 682 174 L 748 136 L 758 144 L 698 176 Z"
+          />
+          <!-- Right top cutaway bevel notch -->
+          <path
+            class="ink"
+            fill="#ddd7c9"
+            d="M 918 174 L 852 136 L 842 144 L 902 176 Z"
+          />
+          <!-- Left lower flange cutout tab with bolts -->
+          <path
+            class="ink-bold"
+            fill="#f4f1ea"
+            d="M 634 338 C 634 366, 658 388, 696 402 L 696 356 L 682 346 C 656 336, 646 322, 648 310 Z"
+          />
+          <path
+            class="ink-bold"
+            fill="#d8d2c5"
+            d="M 634 338 L 634 356 C 634 384, 658 406, 696 420 L 696 402 C 658 388, 634 366, 634 338 Z"
+          />
+          <!-- Right lower flange cutout tab with bolts -->
+          <path
+            class="ink-bold"
+            fill="#e5e0d4"
+            d="M 966 338 C 966 366, 942 388, 904 402 L 904 356 L 918 346 C 944 336, 954 322, 952 310 Z"
+          />
+          <path
+            class="ink-bold"
+            fill="#bdb6a5"
+            d="M 966 338 L 966 356 C 966 384, 942 406, 904 420 L 904 402 C 942 388, 966 366, 966 338 Z"
+          />
+          <!-- Flange mounting bolts on left & right shoulders -->
+          <g id="genFlangeBoltsStatic"></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =======================================================================
+         1. SHARED COAXIAL ISOMETRIC CONSTANTS & HELPERS
+         Center vertical axis: CX = 800, isometric ellipse squash ISO_Y = 0.54
+         ======================================================================= */
+      const CX = 800;
+      const ISO_Y = 0.54;
+      const r1 = (n) => Math.round(n * 10) / 10;
+
+      function isoPt(r, th, y) {
+        return [CX + Math.cos(th) * r, y + Math.sin(th) * r * ISO_Y];
+      }
+
+      function ptsStr(pts) {
+        let s = "";
+        for (let i = 0; i < pts.length; i++) {
+          if (i > 0) s += " ";
+          s += `${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return s;
+      }
+
+      function pathD(pts, closed = true) {
+        if (!pts.length) return "";
+        let d = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+        for (let i = 1; i < pts.length; i++) {
+          d += `L${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return closed ? d + "Z" : d;
+      }
+
+      function hexToRgb(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      }
+
+      function lerpColor(hexA, hexB, t) {
+        const a = hexToRgb(hexA), b = hexToRgb(hexB);
+        const k = Math.max(0, Math.min(1, t));
+        return `rgb(${Math.round(a[0] + (b[0] - a[0]) * k)},${Math.round(a[1] + (b[1] - a[1]) * k)},${Math.round(a[2] + (b[2] - a[2]) * k)})`;
+      }
+
+      function sampleRamp(ramp, t) {
+        const k = Math.max(0, Math.min(1, t)) * (ramp.length - 1);
+        const i = Math.min(ramp.length - 2, Math.floor(k));
+        return lerpColor(ramp[i], ramp[i + 1], k - i);
+      }
+
+      const RAMPS = {
+        silver: ["#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#f8fafc"],
+        bronze: ["#78350f", "#b45309", "#d97706", "#f59e0b", "#fcd34d", "#fde68a"],
+        rotor:  ["#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"]
+      };
+
+      /* =======================================================================
+         2. ONE-TIME STATIC PRECISION DETAILS (BOLTS, LAMINATIONS, COIL TURNS)
+         ======================================================================= */
+      function buildStaticDetails() {
+        // 1) 10 crisp dark bolt holes around the penstock flange face
+        let fBolts = "";
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2 + 0.14;
+          const bx = Math.cos(a) * 61;
+          const by = Math.sin(a) * 93;
+          fBolts += `<ellipse cx="${r1(bx)}" cy="${r1(by)}" rx="4.8" ry="7.2" fill="#1e293b" stroke="#93c5fd" stroke-width="0.9"/>`;
+        }
+        document.getElementById("flangeBoltsStatic").innerHTML = fBolts;
+
+        // 2) Copper stator end-winding wire turn striations (Left & Right, Top & Bottom)
+        let cStr = "";
+        for (let i = 0; i < 6; i++) {
+          const k = i / 5;
+          const xL = 706 + k * 28;
+          const yTL = 198 - k * 34;
+          const yBL = 306 + k * 32;
+          cStr += `<path class="ink-faint" fill="none" opacity="0.65" d="M ${r1(xL)} 203 C ${r1(xL)} ${r1(yTL)}, ${r1(734 + k * 24)} ${r1(152 + k * 26)}, 763 ${r1(152 + k * 28)}"/>`;
+          cStr += `<path class="ink-faint" fill="none" opacity="0.65" d="M ${r1(xL)} 303 C ${r1(xL)} ${r1(yBL)}, ${r1(734 + k * 24)} ${r1(348 - k * 26)}, 763 ${r1(348 - k * 28)}"/>`;
+
+          const xR = 894 - k * 28;
+          cStr += `<path class="ink-faint" fill="none" opacity="0.65" d="M ${r1(xR)} 203 C ${r1(xR)} ${r1(yTL)}, ${r1(866 - k * 24)} ${r1(152 + k * 26)}, 837 ${r1(152 + k * 28)}"/>`;
+          cStr += `<path class="ink-faint" fill="none" opacity="0.65" d="M ${r1(xR)} 303 C ${r1(xR)} ${r1(yBL)}, ${r1(866 - k * 24)} ${r1(348 - k * 26)}, 837 ${r1(348 - k * 28)}"/>`;
+        }
+        document.getElementById("copperStriationsStatic").innerHTML = cStr;
+
+        // 3) Laminated dark-slate iron stator core vertical striations
+        let lam = "";
+        for (let i = 1; i <= 7; i++) {
+          const xL = 698 + i * 4.5;
+          const xR = 866 + i * 4.5;
+          lam += `<line x1="${r1(xL)}" y1="203" x2="${r1(xL)}" y2="303" stroke="#1e293b" stroke-width="0.95" opacity="0.72"/>`;
+          lam += `<line x1="${r1(xR)}" y1="203" x2="${r1(xR)}" y2="303" stroke="#1e293b" stroke-width="0.95" opacity="0.72"/>`;
+        }
+        document.getElementById("statorLaminationsStatic").innerHTML = lam;
+
+        // 4) Generator bottom mounting flange bolts (left & right exposed shoulders)
+        const boltPts = [
+          [654, 352], [672, 370], [688, 384],
+          [946, 352], [928, 370], [912, 384]
+        ];
+        let gBolts = "";
+        for (const [bx, by] of boltPts) {
+          gBolts += `<ellipse class="ink-seam" cx="${bx}" cy="${by}" rx="6.2" ry="3.5" fill="#cbd5e1"/>`;
+          gBolts += `<ellipse cx="${bx}" cy="${by - 1.2}" rx="3.4" ry="1.8" fill="#64748b"/>`;
+        }
+        document.getElementById("genFlangeBoltsStatic").innerHTML = gBolts;
+      }
+
+      /* =======================================================================
+         3. 60 FPS PROCEDURAL PHYSICS RENDERERS
+         ======================================================================= */
+
+      // Pre-seeded water bubbles & spray droplets for zero-allocation animation
+      const INLET_BUBBLES = Array.from({ length: 14 }, (_, i) => ({
+        t: i / 14,
+        speed: 0.42 + (i % 4) * 0.11,
+        lane: ((i % 5) - 2) * 16,
+        r: 2.0 + (i % 3) * 1.15
+      }));
+
+      const SPRAY_DROPS = Array.from({ length: 16 }, (_, i) => ({
+        t: i / 16,
+        speed: 0.56 + (i % 4) * 0.14,
+        spread: ((i % 5) - 2) * 18,
+        r: 1.8 + (i % 3) * 1.1
+      }));
+
+      // A) WICKET GATES (Back arc of angled bronze vanes + water jets & Front cutaway vanes)
+      function renderWicketGates(clock, regulateIntensity, flowSpeed) {
+        const backEl = document.getElementById("wicketBackDynamic");
+        const frontEl = document.getElementById("wicketFrontDynamic");
+
+        // Subtle live wicket-vane angle modulation (micro-oscillation showing flow regulation)
+        const pitchMod = Math.sin(clock * (1.45 * regulateIntensity)) * 0.14 * regulateIntensity;
+
+        const VANE_COUNT = 16;
+        const R_PIN = 156;
+        const Y_TOP = 446;
+        const Y_BOT = 508;
+        const HALF_CHORD = 18;
+
+        const backVanes = [];
+        const frontVanes = [];
+
+        for (let i = 0; i < VANE_COUNT; i++) {
+          const th = (i / VANE_COUNT) * Math.PI * 2;
+          const s = Math.sin(th);
+          // Skip the open front viewing cutaway window (th around +PI/2: 52° .. 128°)
+          if (s > 0.78) continue;
+
+          // Tangential vane orientation angle + subtle live modulation
+          const vaneAng = th + 1.06 + pitchMod;
+          const pPinX = Math.cos(th) * R_PIN;
+          const pPinZ = Math.sin(th) * R_PIN;
+
+          const x1 = pPinX - Math.cos(vaneAng) * HALF_CHORD;
+          const z1 = pPinZ - Math.sin(vaneAng) * HALF_CHORD;
+          const x2 = pPinX + Math.cos(vaneAng) * HALF_CHORD;
+          const z2 = pPinZ + Math.sin(vaneAng) * HALF_CHORD;
+
+          // Thickness vector perpendicular to vane chord
+          const nx = -Math.sin(vaneAng) * 3.8;
+          const nz = Math.cos(vaneAng) * 3.8;
+
+          const item = {
+            th, depth: s,
+            t1a: [CX + x1, Y_TOP + z1 * ISO_Y],
+            t2a: [CX + x2, Y_TOP + z2 * ISO_Y],
+            t2b: [CX + x2 + nx, Y_TOP + (z2 + nz) * ISO_Y],
+            t1b: [CX + x1 + nx, Y_TOP + (z1 + nz) * ISO_Y],
+            b1a: [CX + x1, Y_BOT + z1 * ISO_Y],
+            b2a: [CX + x2, Y_BOT + z2 * ISO_Y],
+            b2b: [CX + x2 + nx, Y_BOT + (z2 + nz) * ISO_Y],
+            b1b: [CX + x1 + nx, Y_BOT + (z1 + nz) * ISO_Y],
+            shade: 0.45 + 0.42 * Math.cos(th + 0.65)
+          };
+
+          // Vanes behind runner (s < 0.35) go in back group; side cutaway vanes go in front group
+          if (s < 0.32) backVanes.push(item);
+          else frontVanes.push(item);
+        }
+
+        backVanes.sort((a, b) => a.depth - b.depth);
+        frontVanes.sort((a, b) => a.depth - b.depth);
+
+        const drawVane = (v) => {
+          const faceCol = sampleRamp(RAMPS.bronze, v.shade);
+          const sideCol = sampleRamp(RAMPS.bronze, Math.max(0.08, v.shade - 0.25));
+          const topCol  = sampleRamp(RAMPS.bronze, Math.min(1, v.shade + 0.28));
+          return (
+            `<polygon class="ink-seam" fill="${sideCol}" points="${ptsStr([v.t1b, v.t2b, v.b2b, v.b1b])}"/>` +
+            `<polygon class="ink-seam" fill="${faceCol}" points="${ptsStr([v.t1a, v.t2a, v.b2a, v.b1a])}"/>` +
+            `<polygon class="ink-seam" fill="${topCol}" points="${ptsStr([v.t1a, v.t2a, v.t2b, v.t1b])}"/>`
+          );
+        };
+
+        let backHtml = "";
+        // Animated cyan water jets threading smoothly between back vanes toward runner!
+        const jetOff = (-clock * 78 * flowSpeed).toFixed(1);
+        for (let i = 0; i < 8; i++) {
+          const th = Math.PI + 0.25 + (i / 7) * (Math.PI - 0.5);
+          const pOut = isoPt(170, th, 488);
+          const pMid = isoPt(145, th + 0.24, 492);
+          const pIn  = isoPt(118, th + 0.45, 494);
+          backHtml += `<path class="water-dash" d="M${r1(pOut[0])},${r1(pOut[1])} Q${r1(pMid[0])},${r1(pMid[1])} ${r1(pIn[0])},${r1(pIn[1])}" stroke="#67e8f9" stroke-width="3.2" stroke-dasharray="10 14" stroke-dashoffset="${jetOff}" opacity="0.72"/>`;
+        }
+        for (const v of backVanes) backHtml += drawVane(v);
+        backEl.innerHTML = backHtml;
+
+        let frontHtml = "";
+        for (const v of frontVanes) frontHtml += drawVane(v);
+        frontEl.innerHTML = frontHtml;
+      }
+
+      // B) FRANCIS RUNNER (11 3D-projected curved silver-steel blades + crown + orbiting coupling bolts)
+      function renderRunner(clock, spinSpeed) {
+        const el = document.getElementById("runnerBladesDynamic");
+        const boltsEl = document.getElementById("couplingBoltsDynamic");
+
+        // Smooth clockwise hydrodynamic rotation
+        const theta = clock * 2.55 * spinSpeed;
+        const BLADE_COUNT = 11;
+        const Y_CROWN = 456;
+        const Y_OUTER_TOP = 472;
+        const Y_OUTER_BOT = 516;
+        const R_HUB = 38;
+        const R_OUT = 116;
+
+        // Build all 11 curved hydrodynamic blades and depth-sort back-to-front
+        const blades = [];
+        for (let i = 0; i < BLADE_COUNT; i++) {
+          const a0 = theta + (i / BLADE_COUNT) * Math.PI * 2;
+          // Depth measured near the mid-outer blade centroid
+          const depth = Math.sin(a0 - 0.34);
+          blades.push({ a0, depth });
+        }
+        blades.sort((a, b) => a.depth - b.depth);
+
+        let html = "";
+
+        const drawBlade = (a0) => {
+          // Each Francis blade sweeps gracefully backward by 0.68 rad from hub to outer rim
+          const aMid = a0 - 0.30;
+          const aOut = a0 - 0.66;
+          const aOutBack = aOut - 0.14;
+          const aMidBack = aMid - 0.12;
+          const aHubBack = a0 - 0.14;
+
+          // Leading top curved edge (hub -> mid -> outer rim)
+          const pH0 = isoPt(R_HUB, a0, Y_CROWN);
+          const pM0 = isoPt(78, aMid, Y_CROWN + 8);
+          const pO0 = isoPt(R_OUT, aOut, Y_OUTER_TOP);
+
+          // Lower trailing pressure surface curving down into the shroud
+          const pOB = isoPt(R_OUT - 3, aOut - 0.18, Y_OUTER_BOT);
+          const pMB = isoPt(74, aMid - 0.14, Y_OUTER_BOT - 8);
+          const pHB = isoPt(R_HUB + 4, a0 - 0.10, Y_CROWN + 26);
+
+          // Upper beveled blade thickness strip
+          const pH1 = isoPt(R_HUB, aHubBack, Y_CROWN);
+          const pM1 = isoPt(78, aMidBack, Y_CROWN + 8);
+          const pO1 = isoPt(R_OUT, aOutBack, Y_OUTER_TOP);
+
+          // Dynamic directional shading based on blade facing angle
+          const faceLight = 0.48 + 0.42 * Math.cos(aMid + 0.85);
+          const topLight  = 0.68 + 0.28 * Math.cos(aMid + 0.55);
+
+          const bodyCol = sampleRamp(RAMPS.silver, faceLight);
+          const topCol  = sampleRamp(RAMPS.silver, topLight);
+
+          const bodyPath =
+            `M${r1(pH0[0])},${r1(pH0[1])} Q${r1(pM0[0])},${r1(pM0[1])} ${r1(pO0[0])},${r1(pO0[1])} ` +
+            `L${r1(pOB[0])},${r1(pOB[1])} Q${r1(pMB[0])},${r1(pMB[1])} ${r1(pHB[0])},${r1(pHB[1])} Z`;
+
+          const rimPath =
+            `M${r1(pH0[0])},${r1(pH0[1])} Q${r1(pM0[0])},${r1(pM0[1])} ${r1(pO0[0])},${r1(pO0[1])} ` +
+            `L${r1(pO1[0])},${r1(pO1[1])} Q${r1(pM1[0])},${r1(pM1[1])} ${r1(pH1[0])},${r1(pH1[1])} Z`;
+
+          return (
+            `<path class="ink-seam" fill="${bodyCol}" d="${bodyPath}"/>` +
+            `<path class="ink-seam" fill="${topCol}" d="${rimPath}"/>`
+          );
+        };
+
+        // Render back blades (depth < 0.08) behind the central conical crown hub
+        for (const b of blades) {
+          if (b.depth < 0.08) html += drawBlade(b.a0);
+        }
+
+        // Sculpted conical central silver crown hub
+        html += `<path class="ink" fill="url(#runnerShroudGrad)" d="M 754 468 C 756 446, 774 438, 800 438 C 826 438, 844 446, 846 468 A 46 25 0 0 1 754 468 Z"/>`;
+        html += `<ellipse class="ink-seam" cx="800" cy="458" rx="44" ry="23" fill="#e2e8f0"/>`;
+
+        // Render front blades (depth >= 0.08) sweeping gracefully in front of crown hub
+        for (const b of blades) {
+          if (b.depth >= 0.08) html += drawBlade(b.a0);
+        }
+
+        // Crisp front rim arc of the runner shroud band framing the blades
+        html += `<path class="ink" fill="none" d="M 684 494 A 116 62 0 0 0 916 494" stroke="#f8fafc" stroke-width="2.2" opacity="0.8"/>`;
+
+        el.innerHTML = html;
+
+        // Orbiting flange bolts on the stepped shaft coupling around y=368 (synced to theta!)
+        let bHtml = "";
+        for (let i = 0; i < 6; i++) {
+          const a = theta + (i / 6) * Math.PI * 2;
+          const bx = CX + Math.cos(a) * 26;
+          const by = 368 + Math.sin(a) * 26 * ISO_Y;
+          bHtml += `<ellipse class="ink-faint" cx="${r1(bx)}" cy="${r1(by)}" rx="3.8" ry="2.2" fill="#475569"/>`;
+        }
+        boltsEl.innerHTML = bHtml;
+      }
+
+      // C) SPIRAL CASE & PENSTOCK WATER (60 FPS swirling streamlines, helical waves & bubbles)
+      function renderSpiralWater(clock, dt, inflowSpeed) {
+        const penEl = document.getElementById("penstockWaterDynamic");
+        const rightEl = document.getElementById("rightSpiralWaterDynamic");
+
+        const dashOff = (-clock * 112 * inflowSpeed).toFixed(1);
+        const wave = Math.sin(clock * 4.2 * inflowSpeed) * 6.5;
+
+        // 1) Pressurized swirling streamlines rushing from left flange into wicket gates
+        const penStreams = [
+          `M 420 578 C 476 ${r1(552 + wave)}, 542 ${r1(542 - wave)}, 642 512`,
+          `M 424 606 C 482 ${r1(584 - wave)}, 554 ${r1(574 + wave)}, 652 542`,
+          `M 434 636 C 494 ${r1(620 + wave * 0.8)}, 566 ${r1(604 - wave)}, 650 572`,
+          `M 456 664 C 516 ${r1(652 - wave * 0.7)}, 580 ${r1(632 + wave)}, 644 602`
+        ];
+
+        let pHtml = "";
+        // Subtle helical translucent vortex band inside penstock
+        const vortexShift = (clock * 52 * inflowSpeed) % 90;
+        for (let k = -1; k < 4; k++) {
+          const vx = 435 + k * 76 + vortexShift;
+          const vy = 626 - k * 28 - vortexShift * 0.36;
+          pHtml += `<path fill="none" stroke="#e0f2fe" stroke-width="11" stroke-linecap="round" opacity="0.22" d="M ${r1(vx - 18)} ${r1(vy - 34)} Q ${r1(vx + 12)} ${r1(vy)} ${r1(vx - 8)} ${r1(vy + 42)}"/>`;
+        }
+
+        for (let i = 0; i < penStreams.length; i++) {
+          const w = i === 1 ? 5.2 : 3.4;
+          const col = i % 2 === 0 ? "#a5f3fc" : "#e0f2fe";
+          pHtml += `<path class="water-dash" d="${penStreams[i]}" stroke="${col}" stroke-width="${w}" stroke-dasharray="28 22" stroke-dashoffset="${(Number(dashOff) * (0.9 + i * 0.08)).toFixed(1)}" opacity="0.78"/>`;
+        }
+
+        // Glowing micro-bubbles rushing inward along penstock
+        for (const b of INLET_BUBBLES) {
+          b.t = (b.t + dt * b.speed * inflowSpeed) % 1;
+          const t = b.t;
+          const bx = 428 + t * 218;
+          const by = 622 - t * 80 + b.lane + Math.sin(t * 10 + clock * 5) * 6;
+          const op = Math.sin(t * Math.PI) * 0.88;
+          pHtml += `<circle cx="${r1(bx)}" cy="${r1(by)}" r="${b.r.toFixed(1)}" fill="#e0f2fe" opacity="${op.toFixed(2)}"/>`;
+        }
+        penEl.innerHTML = pHtml;
+
+        // 2) Right-side cutaway scroll water wrapping inward smoothly
+        let rHtml = "";
+        const rWave = Math.cos(clock * 4.5 * inflowSpeed) * 5;
+        const rStreams = [
+          `M 1024 532 C 992 ${r1(522 + rWave)}, 948 ${r1(526 - rWave)}, 912 536`,
+          `M 1030 562 C 994 ${r1(552 - rWave)}, 952 ${r1(554 + rWave)}, 910 556`,
+          `M 1018 592 C 986 ${r1(584 + rWave)}, 948 ${r1(580 - rWave)}, 914 574`
+        ];
+        for (let i = 0; i < rStreams.length; i++) {
+          rHtml += `<path class="water-dash" d="${rStreams[i]}" stroke="${i === 1 ? "#e0f2fe" : "#a5f3fc"}" stroke-width="${i === 1 ? 4.4 : 3.0}" stroke-dasharray="20 18" stroke-dashoffset="${(Number(dashOff) * 0.85).toFixed(1)}" opacity="0.82"/>`;
+        }
+        rightEl.innerHTML = rHtml;
+      }
+
+      // D) DRAFT TUBE WATER & DIFFUSER DISCHARGE SPRAY
+      function renderDraftTubeWater(clock, dt, dischargeSpeed) {
+        const upEl = document.getElementById("draftUpperWaterDynamic");
+        const outEl = document.getElementById("draftDischargeDynamic");
+
+        const off = (-clock * 116 * dischargeSpeed).toFixed(1);
+        const sway = Math.sin(clock * 4.6 * dischargeSpeed) * 4.5;
+
+        // 1) Upper elbow cutaway swirling descending water
+        let uHtml = "";
+        const upStreams = [
+          `M 804 590 C 814 ${r1(632 + sway)}, 838 ${r1(664 - sway)}, 876 686`,
+          `M 832 586 C 844 ${r1(624 - sway)}, 866 ${r1(652 + sway)}, 898 672`,
+          `M 860 578 C 870 ${r1(614 + sway)}, 888 ${r1(640 - sway)}, 914 656`
+        ];
+        for (let i = 0; i < upStreams.length; i++) {
+          uHtml += `<path class="water-dash" d="${upStreams[i]}" stroke="${i === 1 ? "#e0f2fe" : "#bae6fd"}" stroke-width="${i === 1 ? 4.8 : 3.2}" stroke-dasharray="18 16" stroke-dashoffset="${off}" opacity="0.86"/>`;
+        }
+        upEl.innerHTML = uHtml;
+
+        // 2) Lower diffuser cutaway flowing water ribbons, foam streaks & dissipating spray
+        let dHtml = "";
+        const outStreams = [
+          `M 946 706 C 1018 ${r1(736 + sway)}, 1094 ${r1(754 - sway)}, 1168 770`,
+          `M 936 734 C 1012 ${r1(768 - sway)}, 1084 ${r1(788 + sway)}, 1156 808`,
+          `M 936 764 C 1004 ${r1(798 + sway)}, 1070 ${r1(818 - sway)}, 1134 844`,
+          `M 950 788 C 1006 ${r1(818 - sway)}, 1054 ${r1(838 + sway)}, 1106 862`
+        ];
+        for (let i = 0; i < outStreams.length; i++) {
+          const w = i === 1 ? 5.6 : 3.8;
+          const col = i % 2 === 0 ? "#e0f2fe" : "#7dd3fc";
+          dHtml += `<path class="water-dash" d="${outStreams[i]}" stroke="${col}" stroke-width="${w}" stroke-dasharray="32 22" stroke-dashoffset="${(Number(off) * (0.92 + i * 0.06)).toFixed(1)}" opacity="${(0.84 - i * 0.08).toFixed(2)}"/>`;
+        }
+
+        // Translucent spray mist clouds & foam droplets dissipating into white
+        for (const s of SPRAY_DROPS) {
+          s.t = (s.t + dt * s.speed * dischargeSpeed) % 1;
+          const t = s.t;
+          const sx = 948 + t * 212;
+          const sy = 744 + t * 72 + s.spread * (0.6 + t * 0.9) + Math.sin(t * 9 + clock * 4) * 5;
+          const op = Math.sin(t * Math.PI) * (1 - t * 0.35) * 0.85;
+          dHtml += `<circle cx="${r1(sx)}" cy="${r1(sy)}" r="${(s.r * (1 + t * 0.45)).toFixed(1)}" fill="${t < 0.55 ? "#e0f2fe" : "#bae6fd"}" opacity="${op.toFixed(2)}"/>`;
+        }
+        outEl.innerHTML = dHtml;
+      }
+
+      // E) VERTICAL GENERATOR SALIENT-POLE ROTOR + CYAN INDUCTION ARCS
+      function renderGeneratorRotor(clock, spinSpeed, genIntensity) {
+        const el = document.getElementById("generatorRotorDynamic");
+
+        // Exact synchronization with Francis runner angular velocity!
+        const theta = clock * 2.55 * spinSpeed;
+        const R_CORE = 52;
+        const R_POLE = 61;
+        const Y_TOP = 190;
+        const Y_BOT = 314;
+        const POLE_COUNT = 8;
+
+        // Subtle electromagnetic air-gap pulsing
+        const pulse = 0.72 + 0.28 * Math.sin(clock * 8.5 * genIntensity);
+        document.getElementById("airGapBackGlow").setAttribute("opacity", (0.36 + 0.18 * pulse * genIntensity).toFixed(2));
+        document.getElementById("airGapStripL").setAttribute("opacity", (0.78 + 0.22 * pulse).toFixed(2));
+        document.getElementById("airGapStripR").setAttribute("opacity", (0.78 + 0.22 * pulse).toFixed(2));
+
+        // Animate stator coil electrical current pulses
+        const cOff = (-clock * 74 * genIntensity).toFixed(1);
+        document.getElementById("coilPulseTL").style.strokeDashoffset = `${cOff}px`;
+        document.getElementById("coilPulseTR").style.strokeDashoffset = `${cOff}px`;
+        document.getElementById("coilPulseBL").style.strokeDashoffset = `${cOff}px`;
+        document.getElementById("coilPulseBR").style.strokeDashoffset = `${cOff}px`;
+
+        let html = "";
+
+        // Base cylindrical laminated dark-slate rotor core drum
+        html += `<path class="ink-bold" fill="#334155" d="M ${CX - R_CORE} ${Y_TOP} L ${CX + R_CORE} ${Y_TOP} L ${CX + R_CORE} ${Y_BOT} A ${R_CORE} ${r1(R_CORE * 0.42)} 0 0 1 ${CX - R_CORE} ${Y_BOT} Z"/>`;
+        // Top beveled rotor end-plate
+        html += `<ellipse class="ink" cx="${CX}" cy="${Y_TOP}" rx="${R_CORE}" ry="${r1(R_CORE * 0.42)}" fill="#64748b"/>`;
+
+        // Procedurally draw the visible front salient pole shoes gliding smoothly left-to-right!
+        const poles = [];
+        for (let i = 0; i < POLE_COUNT; i++) {
+          const a = ((theta + (i / POLE_COUNT) * Math.PI * 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          // Front-facing arc of cylinder: sin(a) > -0.15 (angles ~ 0 .. PI)
+          const sinA = Math.sin(a);
+          if (sinA > -0.18) {
+            poles.push({ a, depth: sinA, idx: i });
+          }
+        }
+        poles.sort((p, q) => p.depth - q.depth);
+
+        const HALF_W = 0.24; // Angular half-width of each salient pole face
+        for (const p of poles) {
+          const aL = p.a - HALF_W;
+          const aR = p.a + HALF_W;
+          const xL = CX + Math.cos(aL) * R_POLE;
+          const xR = CX + Math.cos(aR) * R_POLE;
+          // Slight isometric vertical arc drop on front faces
+          const dyL = Math.sin(aL) * R_POLE * 0.22;
+          const dyR = Math.sin(aR) * R_POLE * 0.22;
+
+          // Only render pole shoe if left-to-right width is visibly facing viewer
+          if (xR < xL) {
+            // Normal angle is p.a; front-left light peaks near cos(p.a + 0.55)
+            const shadeT = 0.24 + 0.62 * (0.5 + 0.5 * Math.cos(p.a + 0.72));
+            const poleCol = sampleRamp(RAMPS.rotor, shadeT);
+            const capCol  = sampleRamp(RAMPS.rotor, Math.min(1, shadeT + 0.24));
+
+            // Salient pole face vertical polygon
+            const poly = [
+              [xR, Y_TOP + dyR],
+              [xL, Y_TOP + dyL],
+              [xL, Y_BOT + dyL],
+              [xR, Y_BOT + dyR]
+            ];
+            html += `<polygon class="ink-seam" fill="${poleCol}" points="${ptsStr(poly)}"/>`;
+
+            // Top pole cap bevel
+            const ixL = CX + Math.cos(aL) * (R_CORE - 4);
+            const ixR = CX + Math.cos(aR) * (R_CORE - 4);
+            const capPoly = [
+              [ixR, Y_TOP + dyR * 0.7],
+              [ixL, Y_TOP + dyL * 0.7],
+              [xL,  Y_TOP + dyL],
+              [xR,  Y_TOP + dyR]
+            ];
+            html += `<polygon class="ink-faint" fill="${capCol}" points="${ptsStr(capPoly)}"/>`;
+
+            // Subtle vertical lamination groove down pole center
+            const xm = (xL + xR) * 0.5;
+            const dym = (dyL + dyR) * 0.5;
+            html += `<line x1="${r1(xm)}" y1="${r1(Y_TOP + dym + 4)}" x2="${r1(xm)}" y2="${r1(Y_BOT + dym - 4)}" stroke="#1e293b" stroke-width="0.9" opacity="0.55"/>`;
+          }
+        }
+
+        // Top cyan rotor excitation ring
+        html += `<path fill="none" stroke="#67e8f9" stroke-width="2.2" stroke-dasharray="10 10" stroke-dashoffset="${(-clock * 48).toFixed(1)}" opacity="${(0.8 * pulse).toFixed(2)}" d="M ${CX - 46} ${Y_TOP + 2} A 46 19 0 0 0 ${CX + 46} ${Y_TOP + 2}"/>`;
+
+        // Faint cyan electromagnetic induction arcs dancing across left & right air gaps!
+        for (let k = 0; k < 3; k++) {
+          const yArc = 216 + k * 34 + Math.sin(clock * 7 + k * 2.1) * 7;
+          const jag = Math.sin(clock * 19 + k * 3.7) * 3.5;
+          const opArc = (0.45 + 0.45 * Math.abs(Math.sin(clock * 6 + k * 1.9))) * Math.min(1, genIntensity);
+          html += `<path fill="none" stroke="#a5f3fc" stroke-width="1.6" filter="url(#cyanGlow)" opacity="${opArc.toFixed(2)}" d="M 736 ${r1(yArc)} Q 741 ${r1(yArc + jag)} 745 ${r1(yArc - jag * 0.5)}"/>`;
+          html += `<path fill="none" stroke="#a5f3fc" stroke-width="1.6" filter="url(#cyanGlow)" opacity="${opArc.toFixed(2)}" d="M 855 ${r1(yArc)} Q 860 ${r1(yArc - jag)} 864 ${r1(yArc + jag * 0.5)}"/>`;
+        }
+
+        el.innerHTML = html;
+      }
+
+      /* =======================================================================
+         4. SEQUENTIAL AUTO-SPOTLIGHT TOUR, EXPLODED VIEW & MIRVO API
+         ======================================================================= */
+      const TOUR_SEQUENCE = ["full", "spiral_case", "wicket_gates", "runner", "draft_tube", "generator"];
+
+      const PARTS_META = {
+        spiral_case:  { nameUz: "Spiral kamera",                       x: 46, y: 56, zoom: 1.65, phase: "inflow" },
+        wicket_gates: { nameUz: "Yo‘naltiruvchi apparat kurakchalari", x: 50, y: 52, zoom: 2.15, phase: "regulate" },
+        runner:       { nameUz: "Frensis ishchi g‘ildiragi",           x: 50, y: 53, zoom: 2.45, phase: "spin" },
+        draft_tube:   { nameUz: "So‘rish quvuri",                      x: 57, y: 74, zoom: 2.05, phase: "discharge" },
+        generator:    { nameUz: "Vertikal gidrogenerator",             x: 50, y: 27, zoom: 2.15, phase: "generate" }
+      };
+
+      const FULL_VIEW = { nameUz: "Gidroelektr stansiya (GES — Frensis)", x: 50, y: 50, zoom: 1.0 };
+
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        playing: !prefersReducedMotion,
+        mode: "auto", // "auto" | "inflow" | "regulate" | "spin" | "discharge" | "generate"
+        clock: prefersReducedMotion ? 1.5 : 0,
+        lastTs: 0,
+        activePart: null,
+        autoTour: !prefersReducedMotion,
+        tourIdx: 0,
+        tourTimer: 0,
+        // Critically-damped Exploded View spring
+        expTarget: 0,
+        expCur: 0,
+        expVel: 0
+      };
+
+      const stageEl = document.getElementById("stage");
+      const viewportEl = document.getElementById("viewport");
+      const shadowsEl = document.getElementById("ground-shadows");
+
+      const dom = {
+        draftB:  document.getElementById("part-draft-tube-back"),
+        draftF:  document.getElementById("part-draft-tube-front"),
+        spiralB: document.getElementById("part-spiral-back"),
+        spiralF: document.getElementById("part-spiral-front"),
+        wicketB: document.getElementById("part-wicket-back"),
+        wicketF: document.getElementById("part-wicket-front"),
+        runner:  document.getElementById("part-runner"),
+        genB:    document.getElementById("part-generator-back"),
+        genR:    document.getElementById("part-generator-rotor"),
+        genF:    document.getElementById("part-generator-front")
+      };
+
+      function focus(partIdOrCoords) {
+        const target =
+          typeof partIdOrCoords === "string"
+            ? (partIdOrCoords === "full" ? FULL_VIEW : PARTS_META[partIdOrCoords] || FULL_VIEW)
+            : partIdOrCoords || FULL_VIEW;
+        const z = Math.max(0.85, Math.min(3.5, Number(target.zoom) || 1.0));
+        const tx = 50 - (Number(target.x) ?? 50);
+        const ty = 50 - (Number(target.y) ?? 50);
+        stageEl.style.transform = `scale(${z}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`;
+      }
+
+      function highlight(partId) {
+        state.activePart = partId || null;
+        const allParts = document.querySelectorAll(".mirvo-part");
+        if (!state.activePart) {
+          allParts.forEach((el) => el.classList.remove("is-dimmed", "is-focused"));
+          shadowsEl.style.opacity = "1";
+          return;
+        }
+        allParts.forEach((el) => {
+          const match = el.dataset.part === state.activePart;
+          el.classList.toggle("is-focused", match);
+          el.classList.toggle("is-dimmed", !match);
+        });
+        shadowsEl.style.opacity = "0.35";
+      }
+
+      function scheduleNextTour() {
+        clearTimeout(state.tourTimer);
+        if (!state.autoTour || prefersReducedMotion) return;
+        const waitMs = state.tourIdx === 0 ? 2500 : 3500;
+        state.tourTimer = setTimeout(() => {
+          if (!state.autoTour) return;
+          state.tourIdx = (state.tourIdx + 1) % TOUR_SEQUENCE.length;
+          const id = TOUR_SEQUENCE[state.tourIdx];
+          if (id === "full") {
+            highlight(null);
+            focus("full");
+          } else {
+            highlight(id);
+            focus(id);
+          }
+          scheduleNextTour();
+        }, waitMs);
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled) && !prefersReducedMotion;
+        clearTimeout(state.tourTimer);
+        if (state.autoTour) scheduleNextTour();
+      }
+
+      function setStep(index) {
+        const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.round(Number(index) || 0)));
+        setAutoTour(false);
+        state.tourIdx = idx;
+        const id = TOUR_SEQUENCE[idx];
+        if (id === "full") {
+          highlight(null);
+          focus("full");
+          state.mode = "auto";
+        } else {
+          highlight(id);
+          focus(id);
+          state.mode = PARTS_META[id].phase;
+        }
+      }
+
+      function setExploded(amount) {
+        state.expTarget = Math.max(0, Math.min(1, Number(amount) || 0));
+      }
+
+      function setPhase(mode) {
+        const valid = ["auto", "inflow", "regulate", "spin", "discharge", "generate"];
+        state.mode = valid.includes(mode) ? mode : "auto";
+      }
+
+      function setPlaying(flag) {
+        state.playing = Boolean(flag);
+      }
+
+      function reset() {
+        highlight(null);
+        focus("full");
+        setExploded(0);
+        state.mode = "auto";
+        state.tourIdx = 0;
+        setPlaying(!prefersReducedMotion);
+        setAutoTour(!prefersReducedMotion);
+      }
+
+      // Critically-damped spring interpolation for smooth Exploded View separation
+      function updateExplodedSpring(dt) {
+        const k = 125.0;
+        const c = 2 * Math.sqrt(k);
+        const f = k * (state.expTarget - state.expCur) - c * state.expVel;
+        state.expVel += f * dt;
+        state.expCur += state.expVel * dt;
+        if (Math.abs(state.expTarget - state.expCur) < 0.0005 && Math.abs(state.expVel) < 0.001) {
+          state.expCur = state.expTarget;
+          state.expVel = 0;
+        }
+
+        const e = state.expCur;
+        const genT   = `translate(0, ${(-85 * e).toFixed(2)})`;
+        const wickT  = `translate(0, ${(-18 * e).toFixed(2)})`;
+        const runT   = `translate(0, ${(-12 * e).toFixed(2)})`;
+        const draftT = `translate(${(48 * e).toFixed(2)}, ${(52 * e).toFixed(2)})`;
+
+        dom.genB.setAttribute("transform", genT);
+        dom.genR.setAttribute("transform", genT);
+        dom.genF.setAttribute("transform", genT);
+        dom.wicketB.setAttribute("transform", wickT);
+        dom.wicketF.setAttribute("transform", wickT);
+        dom.runner.setAttribute("transform", runT);
+        dom.spiralB.setAttribute("transform", "translate(0, 0)");
+        dom.spiralF.setAttribute("transform", "translate(0, 0)");
+        dom.draftB.setAttribute("transform", draftT);
+        dom.draftF.setAttribute("transform", draftT);
+      }
+
+      // Main 60 FPS physical animation loop
+      function tick(ts) {
+        if (!state.lastTs) state.lastTs = ts;
+        const dt = Math.min(1 / 30, Math.max(0.001, (ts - state.lastTs) / 1000));
+        state.lastTs = ts;
+
+        if (state.playing) {
+          state.clock += dt;
+        }
+
+        updateExplodedSpring(dt);
+
+        const m = state.mode;
+        const inflowSpd    = m === "inflow"    ? 1.48 : 1.0;
+        const regIntensity = m === "regulate"  ? 1.85 : 1.0;
+        const spinSpd      = m === "spin"      ? 1.45 : (m === "generate" ? 1.25 : 1.0);
+        const dischargeSpd = m === "discharge" ? 1.48 : 1.0;
+        const genIntensity = m === "generate"  ? 1.45 : 1.0;
+
+        const animDt = state.playing ? dt : 0;
+
+        renderSpiralWater(state.clock, animDt, inflowSpd);
+        renderWicketGates(state.clock, regIntensity, inflowSpd);
+        renderRunner(state.clock, spinSpd);
+        renderDraftTubeWater(state.clock, animDt, dischargeSpd);
+        renderGeneratorRotor(state.clock, spinSpd, genIntensity);
+
+        requestAnimationFrame(tick);
+      }
+
+      /* =======================================================================
+         5. PUBLIC INTEGRATION API (window.MirvoScene + postMessage) & EVENTS
+         ======================================================================= */
+      const MirvoScene = {
+        deviceId: "ges_francis_unit",
+        parts: PARTS_META,
+        focus,
+        highlight,
+        setStep,
+        setAutoTour,
+        setExploded,
+        setPhase,
+        setPlaying,
+        reset
+      };
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (e) => {
+        const msg = e.data;
+        if (!msg || typeof msg !== "object") return;
+        switch (msg.type) {
+          case "FOCUS":
+            setAutoTour(false);
+            focus(msg.target ?? msg.partId);
+            break;
+          case "HIGHLIGHT":
+            highlight(msg.partId ?? null);
+            break;
+          case "SET_STEP":
+            setStep(msg.index);
+            break;
+          case "SET_AUTO_TOUR":
+            setAutoTour(msg.enabled ?? true);
+            break;
+          case "EXPLODE":
+            setExploded(msg.amount ?? msg.value ?? 0);
+            break;
+          case "SET_PHASE":
+            setPhase(msg.mode);
+            break;
+          case "SET_PLAYING":
+            setPlaying(msg.playing);
+            break;
+          case "RESET":
+            reset();
+            break;
+        }
+      });
+
+      // Silent direct click, double-click & keyboard interactions
+      let clickTimer = 0;
+      viewportEl.addEventListener("click", (e) => {
+        const partEl = e.target.closest(".mirvo-part");
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          if (!partEl) {
+            reset();
+            return;
+          }
+          const partId = partEl.dataset.part;
+          setAutoTour(false);
+          highlight(partId);
+          focus(partId);
+          const meta = PARTS_META[partId] || { nameUz: partId };
+          try {
+            window.parent.postMessage(
+              { type: "PART_CLICK", deviceId: "ges_francis_unit", partId, nameUz: meta.nameUz },
+              "*"
+            );
+          } catch (_) {}
+        }, 175);
+      });
+
+      viewportEl.addEventListener("dblclick", () => {
+        clearTimeout(clickTimer);
+        setExploded(state.expTarget > 0.5 ? 0 : 1);
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          e.preventDefault();
+          setPlaying(!state.playing);
+        } else if (e.key === "e" || e.key === "E") {
+          e.preventDefault();
+          setExploded(state.expTarget > 0.5 ? 0 : 1);
+        } else if (e.key === "r" || e.key === "R" || e.key === "Escape") {
+          e.preventDefault();
+          reset();
+        }
+      });
+
+      /* =======================================================================
+         6. BOOTSTRAP
+         ======================================================================= */
+      buildStaticDetails();
+      focus("full");
+      if (state.autoTour) scheduleNextTour();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

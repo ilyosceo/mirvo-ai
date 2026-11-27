@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BESS — Sanoat energiya saqlash tizimi</title>
+  <style>
+    /* =====================================================================
+       MIRVO AI — ZERO-UI PURE WHITE VIEWPORT & SEQUENTIAL SPOTLIGHT STYLES
+       ===================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .mirvo-viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: block;
+    }
+
+    #bess-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Interactive modular anatomy groups */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.78s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, filter, transform;
+    }
+
+    .mirvo-housing {
+      cursor: default;
+    }
+
+    /* Dimmed non-focused assemblies */
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    /* Focused assembly crisp spotlight lift */
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Respect reduced-motion accessibility preference */
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage,
+      .mirvo-part {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pure #FFFFFF stage container with zero UI chrome -->
+  <div id="mirvo-viewport" class="mirvo-viewport">
+    <div id="mirvo-stage" class="mirvo-stage">
+      <svg
+        id="bess-svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Utility-scale LiFePO4 Battery Energy Storage System Cutaway"
+      >
+        <defs>
+          <!-- Soft grounded ambient contact shadow filter -->
+          <filter id="plinth-shadow" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="12" />
+          </filter>
+
+          <!-- Subtle luminous glow for active energy & coolant pulses -->
+          <filter id="energy-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Soft electromagnetic warmth glow inside PCS copper coils -->
+          <filter id="coil-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5.5" />
+          </filter>
+
+          <!-- Brushed metallic / satin surface gradients -->
+          <linearGradient id="grad-shell-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="100%" stop-color="#F1F5F9" />
+          </linearGradient>
+
+          <linearGradient id="grad-rack-side" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F4F6F9" />
+            <stop offset="55%" stop-color="#E5E9F0" />
+            <stop offset="100%" stop-color="#D5DCE6" />
+          </linearGradient>
+
+          <linearGradient id="grad-terracotta-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F6BE92" />
+            <stop offset="100%" stop-color="#E4965C" />
+          </linearGradient>
+
+          <linearGradient id="grad-terracotta-side" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#E6965B" />
+            <stop offset="100%" stop-color="#C96F3C" />
+          </linearGradient>
+
+          <linearGradient id="grad-copper-top" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="50%" stop-color="#F2B986" />
+            <stop offset="100%" stop-color="#E59B61" />
+          </linearGradient>
+
+          <linearGradient id="grad-cobalt-pcb" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6" />
+            <stop offset="55%" stop-color="#2563EB" />
+            <stop offset="100%" stop-color="#1D4ED8" />
+          </linearGradient>
+
+          <linearGradient id="grad-slate-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="grad-drum-alum" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="45%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <linearGradient id="grad-soc-bar" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#059669" />
+            <stop offset="55%" stop-color="#10B981" />
+            <stop offset="100%" stop-color="#6EE7B7" />
+          </linearGradient>
+        </defs>
+
+        <!-- STRICT PAINTER'S ORDER LAYER STACK (BACK -> FRONT) -->
+        <!-- 1. Back container shell, ambient contact shadow, plinth & cavity -->
+        <g id="part-housing-back" class="mirvo-part mirvo-housing" data-part="housing"></g>
+
+        <!-- 2. Rear cooling pipes & floor cold-plates beneath battery racks -->
+        <g id="part-liquid_cooling-back" class="mirvo-part" data-part="liquid_cooling"></g>
+
+        <!-- 3. Far-right PCS bidirectional inverter compartment -->
+        <g id="part-pcs_inverter" class="mirvo-part" data-part="pcs_inverter"></g>
+
+        <!-- 4. Rear-right, front-right & rear-left LiFePO4 battery cell racks -->
+        <g id="part-cell_racks-back" class="mirvo-part" data-part="cell_racks"></g>
+
+        <!-- 5. Central BMS control cabinet, cobalt PCB, relays & wire harnesses -->
+        <g id="part-bms_controller" class="mirvo-part" data-part="bms_controller"></g>
+
+        <!-- 6. Front-left LiFePO4 battery cell rack (foreground hero rack) -->
+        <g id="part-cell_racks" class="mirvo-part" data-part="cell_racks"></g>
+
+        <!-- 7. Foreground liquid cooling manifold, collector drum & supply piping -->
+        <g id="part-liquid_cooling" class="mirvo-part" data-part="liquid_cooling"></g>
+
+        <!-- 8. Dual overhead high-current copper busbars, standoffs & energy flow -->
+        <g id="part-busbar" class="mirvo-part" data-part="busbar"></g>
+
+        <!-- 9. Cutaway front container lip framing the open enclosure -->
+        <g id="part-housing-front" class="mirvo-part mirvo-housing" data-part="housing"></g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. CONSTANTS, DEVICE METADATA & HARMONIC 4-TONE ENGINEERING PALETTE
+         ===================================================================== */
+      const DEVICE_ID = "bess_battery_pack";
+
+      const PART_NAMES_UZ = {
+        cell_racks: "LiFePO4 akkumulyator yacheyka stellajlari",
+        bms_controller: "BMS boshqaruv va monitoring kontrolleri",
+        liquid_cooling: "Suyuq sovutish tizimi va sovutish konturi",
+        pcs_inverter: "PCS ikki tomonlama quvvat inverteri",
+        busbar: "Yuqori tokli mis shinalar tizimi"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "cell_racks",
+        "bms_controller",
+        "liquid_cooling",
+        "pcs_inverter",
+        "busbar"
+      ];
+
+      // Exploded-view displacement vectors in SVG coordinate units (scaled by 0..1)
+      const EXPLODE_VECTORS = {
+        housing_back: [0, 0],
+        housing_front: [14, 34],
+        cell_racks: [-14, -22],
+        bms_controller: [8, 36],
+        liquid_cooling: [-58, 34],
+        pcs_inverter: [62, -32],
+        busbar: [0, -78]
+      };
+
+      const INK = "#222933";
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      // Exact 30-degree isometric projection constants
+      // +x -> right & up (long container axis)
+      // +y -> right & down (depth axis, front faces +y)
+      // +z -> straight up (height axis)
+      const COS30 = Math.cos(Math.PI / 6); // 0.8660254
+      const SIN30 = 0.5;
+      const SCALE = 61;
+      const ORIGIN_X = 358;
+      const ORIGIN_Y = 626;
+
+      /**
+       * Projects a 3D coordinate (x, y, z) onto 2D SVG canvas coordinates.
+       */
+      function iso(x, y, z) {
+        const sx = ORIGIN_X + (x + y) * COS30 * SCALE;
+        const sy = ORIGIN_Y + (-x + y) * SIN30 * SCALE - z * SCALE;
+        return [sx, sy];
+      }
+
+      /**
+       * Formats an array of 2D or 3D points into a compact SVG points string.
+       */
+      function pts(list) {
+        return list
+          .map(function (p) {
+            const c = p.length === 3 ? iso(p[0], p[1], p[2]) : p;
+            return c[0].toFixed(1) + "," + c[1].toFixed(1);
+          })
+          .join(" ");
+      }
+
+      /**
+       * Creates an SVG element with attributes and appends it to parent.
+       */
+      function el(tag, attrs, parent) {
+        const node = document.createElementNS(SVG_NS, tag);
+        if (attrs) {
+          for (const k in attrs) {
+            if (Object.prototype.hasOwnProperty.call(attrs, k) && attrs[k] !== undefined && attrs[k] !== null) {
+              node.setAttribute(k, String(attrs[k]));
+            }
+          }
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      /**
+       * Draws a crisp technical polygon from 3D coordinates.
+       */
+      function isoPoly(parent, coords3D, fill, stroke, sw, extra) {
+        const attrs = Object.assign(
+          {
+            points: pts(coords3D),
+            fill: fill,
+            stroke: stroke === undefined ? INK : stroke,
+            "stroke-width": sw === undefined ? 1.25 : sw,
+            "stroke-linejoin": "round",
+            "stroke-linecap": "round",
+            "vector-effect": "non-scaling-stroke"
+          },
+          extra || {}
+        );
+        return el("polygon", attrs, parent);
+      }
+
+      /**
+       * Draws an isometric axis-aligned box [x0..x1, y0..y1, z0..z1]
+       * showing visible faces: left-front (x=x0), right-front (y=y1), top (z=z1).
+       */
+      function isoBox(parent, x0, y0, z0, x1, y1, z1, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.25;
+        const stroke = o.stroke !== undefined ? o.stroke : INK;
+        const g = el("g", o.groupAttrs || null, parent);
+
+        if (o.left !== false) {
+          isoPoly(
+            g,
+            [
+              [x0, y0, z0],
+              [x0, y1, z0],
+              [x0, y1, z1],
+              [x0, y0, z1]
+            ],
+            colors.left,
+            stroke,
+            sw
+          );
+        }
+        if (o.front !== false) {
+          isoPoly(
+            g,
+            [
+              [x0, y1, z0],
+              [x1, y1, z0],
+              [x1, y1, z1],
+              [x0, y1, z1]
+            ],
+            colors.front,
+            stroke,
+            sw
+          );
+        }
+        if (o.top !== false) {
+          isoPoly(
+            g,
+            [
+              [x0, y0, z1],
+              [x1, y0, z1],
+              [x1, y1, z1],
+              [x0, y1, z1]
+            ],
+            colors.top,
+            stroke,
+            sw
+          );
+        }
+        return g;
+      }
+
+      /**
+       * Draws an isometric vertical cylinder centered at (cx, cy) from z0 to z1.
+       */
+      function isoCylZ(parent, cx, cy, z0, z1, r, colors, sw) {
+        const g = el("g", null, parent);
+        const steps = 20;
+        const topPts = [];
+        const bodyPts = [];
+        const lineW = sw !== undefined ? sw : 1.2;
+
+        // Angle sweep for visible front half of a vertical isometric cylinder:
+        // Visible silhouette runs from angle -pi/4 (back-left) through +pi/4 (front-left/right) to +3pi/4
+        // In our projection: +x is up-right, +y is down-right.
+        // The tangent silhouette angles satisfy dx + dy = 0 => cos(a) + sin(a) = 0 => a = -pi/4 and +3pi/4.
+        const aStart = (3 * Math.PI) / 4; // left silhouette
+        const aEnd = -Math.PI / 4; // right silhouette
+
+        // Bottom arc (left -> front -> right)
+        for (let i = 0; i <= steps; i++) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          bodyPts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z0]);
+        }
+        // Top arc back (right -> front -> left)
+        for (let i = steps; i >= 0; i--) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          bodyPts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z1]);
+        }
+        isoPoly(g, bodyPts, colors.side, INK, lineW);
+
+        // Subtle shaded half on the right side of the cylinder
+        if (colors.shade) {
+          const shadePts = [];
+          const aMid = Math.PI / 4;
+          for (let i = 0; i <= 10; i++) {
+            const a = aMid + (aEnd - aMid) * (i / 10);
+            shadePts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z0]);
+          }
+          for (let i = 10; i >= 0; i--) {
+            const a = aMid + (aEnd - aMid) * (i / 10);
+            shadePts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z1]);
+          }
+          isoPoly(g, shadePts, colors.shade, "none", 0);
+        }
+
+        // Full top ellipse
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          topPts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z1]);
+        }
+        isoPoly(g, topPts, colors.top, INK, lineW);
+        return g;
+      }
+
+      /**
+       * Draws an isometric horizontal cylinder aligned along the Y axis (y0 -> y1).
+       */
+      function isoCylY(parent, cx, y0, y1, cz, r, colors, sw) {
+        const g = el("g", null, parent);
+        const lineW = sw !== undefined ? sw : 1.25;
+        const steps = 18;
+        // Cross-section lies in the X-Z plane.
+        // Silhouette normal in screen space: iso(dx, 0, dz) = (dx*COS30, -dx*SIN30 - dz)
+        // Tangent parallel to Y axis is (COS30, +SIN30).
+        // Extreme points along normal perpendicular to (COS30, SIN30) => (-SIN30, COS30).
+        // Let's sample a clean circular cross-section and pick screen extreme angles directly.
+        const aTop = 2.094; // ~120 deg (upper-left silhouette)
+        const aBot = -1.047; // ~-60 deg (lower-right silhouette)
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([cx + r * Math.cos(a), y0, cz + r * Math.sin(a)]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([cx + r * Math.cos(a), y1, cz + r * Math.sin(a)]);
+        }
+        isoPoly(g, body, colors.side, INK, lineW);
+
+        // Specular highlight band along top side of drum
+        if (colors.light) {
+          const hi = [];
+          const hA = 1.82;
+          const hB = 1.15;
+          hi.push([cx + r * Math.cos(hA), y0 + 0.04, cz + r * Math.sin(hA)]);
+          hi.push([cx + r * Math.cos(hB), y0 + 0.04, cz + r * Math.sin(hB)]);
+          hi.push([cx + r * Math.cos(hB), y1 - 0.04, cz + r * Math.sin(hB)]);
+          hi.push([cx + r * Math.cos(hA), y1 - 0.04, cz + r * Math.sin(hA)]);
+          isoPoly(g, hi, colors.light, "none", 0, { opacity: 0.72 });
+        }
+
+        // Front circular end cap at y = y1
+        const cap = [];
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          cap.push([cx + r * Math.cos(a), y1, cz + r * Math.sin(a)]);
+        }
+        isoPoly(g, cap, colors.cap, INK, lineW);
+
+        // Inner collar bevel on cap
+        const capIn = [];
+        for (let i = 0; i < 20; i++) {
+          const a = (i / 20) * Math.PI * 2;
+          capIn.push([cx + r * 0.52 * Math.cos(a), y1, cz + r * 0.52 * Math.sin(a)]);
+        }
+        isoPoly(g, capIn, colors.capInner || colors.side, INK, 1.0);
+        return g;
+      }
+
+      /**
+       * Builds a smooth rounded-corner SVG path string from an array of 3D points.
+       */
+      function buildRoundedPath3D(points3D, cornerRadiusPx) {
+        const p2 = points3D.map(function (p) {
+          return iso(p[0], p[1], p[2]);
+        });
+        if (p2.length < 2) return "";
+        if (p2.length === 2 || !cornerRadiusPx) {
+          return (
+            "M " +
+            p2
+              .map(function (c) {
+                return c[0].toFixed(1) + " " + c[1].toFixed(1);
+              })
+              .join(" L ")
+          );
+        }
+
+        let d = "M " + p2[0][0].toFixed(1) + " " + p2[0][1].toFixed(1);
+        for (let i = 1; i < p2.length - 1; i++) {
+          const prev = p2[i - 1];
+          const curr = p2[i];
+          const next = p2[i + 1];
+
+          const v1x = prev[0] - curr[0];
+          const v1y = prev[1] - curr[1];
+          const len1 = Math.hypot(v1x, v1y) || 1;
+
+          const v2x = next[0] - curr[0];
+          const v2y = next[1] - curr[1];
+          const len2 = Math.hypot(v2x, v2y) || 1;
+
+          const r = Math.min(cornerRadiusPx, len1 * 0.42, len2 * 0.42);
+          const a1x = curr[0] + (v1x / len1) * r;
+          const a1y = curr[1] + (v1y / len1) * r;
+          const a2x = curr[0] + (v2x / len2) * r;
+          const a2y = curr[1] + (v2y / len2) * r;
+
+          d +=
+            " L " +
+            a1x.toFixed(1) +
+            " " +
+            a1y.toFixed(1) +
+            " Q " +
+            curr[0].toFixed(1) +
+            " " +
+            curr[1].toFixed(1) +
+            " " +
+            a2x.toFixed(1) +
+            " " +
+            a2y.toFixed(1);
+        }
+        const last = p2[p2.length - 1];
+        d += " L " + last[0].toFixed(1) + " " + last[1].toFixed(1);
+        return d;
+      }
+
+      /**
+       * Renders a 3-tone shaded cylindrical pipe along a 3D polyline with smooth bends.
+       * Returns the path string `d` so animated flow particles can track it directly.
+       */
+      function isoTube(parent, points3D, diameterPx, colors, cornerRadiusPx) {
+        const d = buildRoundedPath3D(points3D, cornerRadiusPx !== undefined ? cornerRadiusPx : 14);
+        const g = el("g", null, parent);
+
+        // Crisp dark-slate technical silhouette outline
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: INK,
+            "stroke-width": diameterPx + 2.8,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          g
+        );
+        // Deep base tone
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.dark,
+            "stroke-width": diameterPx,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          g
+        );
+        // Primary saturated mid-tone shifted slightly toward top-left light source
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.mid,
+            "stroke-width": diameterPx * 0.72,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            transform: "translate(-1.1, -1.1)"
+          },
+          g
+        );
+        // Soft specular highlight streak
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.light,
+            "stroke-width": diameterPx * 0.25,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            opacity: 0.85,
+            transform: "translate(-2.0, -2.0)"
+          },
+          g
+        );
+
+        return { group: g, d: d };
+      }
+
+      /* =====================================================================
+         2. ANIMATION TARGET REGISTRIES (60 FPS LIVE PHYSICS)
+         ===================================================================== */
+      const animCoolantPaths = [];     // SVG path elements with animated dashoffset
+      const animBusbarPaths = [];      // Bidirectional amber energy dash streams
+      const animBusbarPulses = [];     // Glowing energy beads travelling along rails
+      const animSocBars = [];          // Emerald SOC bars on all 4 battery racks
+      const animTelemetryDots = [];    // Micro-signal pulses along BMS wire harnesses
+      const animBmsLeds = [];          // Status LEDs on cobalt PCB & relay modules
+      const animCoilGlows = [];        // Electromagnetic warmth glows in PCS inductors
+
+      /* =====================================================================
+         3. LAYER BUILDERS (FAITHFUL TO UPLOADED BESS CUTAWAY REFERENCE)
+         ===================================================================== */
+
+      const gHousingBack = document.getElementById("part-housing-back");
+      const gCoolingBack = document.getElementById("part-liquid_cooling-back");
+      const gPcs = document.getElementById("part-pcs_inverter");
+      const gRacksBack = document.getElementById("part-cell_racks-back");
+      const gBms = document.getElementById("part-bms_controller");
+      const gRacksFront = document.getElementById("part-cell_racks");
+      const gCoolingFront = document.getElementById("part-liquid_cooling");
+      const gBusbar = document.getElementById("part-busbar");
+      const gHousingFront = document.getElementById("part-housing-front");
+
+      // Container dimensional envelope
+      const L = 11.35;
+      const W = 5.05;
+      const H = 3.52;
+
+      /* ---------------------------------------------------------------------
+         3.1. HOUSING BACK: Ambient Contact Shadow, Stepped Plinth & Rear Shell
+         --------------------------------------------------------------------- */
+      function buildHousingBack() {
+        // Grounded soft ambient contact shadow on pure #FFFFFF
+        isoPoly(
+          gHousingBack,
+          [
+            [-0.52, -0.42, -0.50],
+            [L + 0.56, -0.42, -0.50],
+            [L + 0.56, W + 0.56, -0.50],
+            [-0.52, W + 0.56, -0.50]
+          ],
+          "rgba(15, 23, 42, 0.13)",
+          "none",
+          0,
+          { filter: "url(#plinth-shadow)" }
+        );
+
+        // Tighter contact rim shadow right under plinth edge
+        isoPoly(
+          gHousingBack,
+          [
+            [-0.42, -0.34, -0.47],
+            [L + 0.44, -0.34, -0.47],
+            [L + 0.44, W + 0.44, -0.47],
+            [-0.42, W + 0.44, -0.47]
+          ],
+          "rgba(15, 23, 42, 0.16)",
+          "none",
+          0,
+          { filter: "url(#plinth-shadow)" }
+        );
+
+        // Lower wide base plinth slab
+        isoBox(gHousingBack, -0.38, -0.34, -0.44, L + 0.38, W + 0.38, -0.14, {
+          top: "#F1F5F9",
+          left: "#CBD5E1",
+          front: "#E2E8F0"
+        }, { sw: 1.35 });
+
+        // Upper stepped base plinth rim
+        isoBox(gHousingBack, -0.12, -0.10, -0.14, L + 0.12, W + 0.12, 0.06, {
+          top: "#F8FAFC",
+          left: "#D8E0EA",
+          front: "#E9EEF5"
+        }, { sw: 1.3 });
+
+        // Dark-slate container interior floor deck
+        isoPoly(
+          gHousingBack,
+          [
+            [0.34, 0.34, 0.08],
+            [L - 0.34, 0.34, 0.08],
+            [L - 0.34, W - 0.34, 0.08],
+            [0.34, W - 0.34, 0.08]
+          ],
+          "#475569",
+          INK,
+          1.2
+        );
+
+        // Subtle interior floor expansion joints
+        for (let gx = 1.7; gx < L - 0.8; gx += 2.2) {
+          const a = iso(gx, 0.38, 0.085);
+          const b = iso(gx, W - 0.38, 0.085);
+          el("line", {
+            x1: a[0].toFixed(1),
+            y1: a[1].toFixed(1),
+            x2: b[0].toFixed(1),
+            y2: b[1].toFixed(1),
+            stroke: "#334155",
+            "stroke-width": 1.0,
+            opacity: 0.65
+          }, gHousingBack);
+        }
+
+        // Back-left thick insulated outer container wall (along x = 0..L, y = 0..0.38)
+        isoBox(gHousingBack, 0, 0, 0.06, L, 0.38, H, {
+          top: "url(#grad-shell-top)",
+          left: "#D8E0EA",
+          front: "#CBD5E1"
+        }, { sw: 1.35 });
+
+        // Beveled inner recessed back-wall liner panel (facing +y into cavity)
+        isoPoly(
+          gHousingBack,
+          [
+            [0.36, 0.385, 0.08],
+            [L - 0.36, 0.385, 0.08],
+            [L - 0.36, 0.385, H - 0.24],
+            [0.36, 0.385, H - 0.24]
+          ],
+          "#94A3B8",
+          INK,
+          1.15
+        );
+
+        // Inner cutaway wall chamfer step along back-wall top
+        isoPoly(
+          gHousingBack,
+          [
+            [0.34, 0.385, H - 0.24],
+            [L - 0.34, 0.385, H - 0.24],
+            [L - 0.20, 0.22, H],
+            [0.20, 0.22, H]
+          ],
+          "#E2E8F0",
+          INK,
+          1.1
+        );
+
+        // Back-right thick insulated end wall (along x = L-0.38..L, y = 0.38..W)
+        isoBox(gHousingBack, L - 0.38, 0.38, 0.06, L, W, H, {
+          top: "url(#grad-shell-top)",
+          left: "#B8C4D4",
+          front: "#E8EEF5"
+        }, { sw: 1.35 });
+
+        // Dark recessed interior liner on back-right wall (facing -x)
+        isoPoly(
+          gHousingBack,
+          [
+            [L - 0.385, 0.42, 0.08],
+            [L - 0.385, W - 0.36, 0.08],
+            [L - 0.385, W - 0.36, H - 0.24],
+            [L - 0.385, 0.42, H - 0.24]
+          ],
+          "#7C8BA0",
+          INK,
+          1.1
+        );
+
+        // Clean roof cutaway notch detail on back-right corner (matching reference)
+        isoPoly(
+          gHousingBack,
+          [
+            [L - 1.15, 0.14, H + 0.01],
+            [L - 0.14, 0.14, H + 0.01],
+            [L - 0.14, 0.92, H + 0.01],
+            [L - 0.46, 0.92, H + 0.01],
+            [L - 0.46, 0.42, H + 0.01],
+            [L - 1.15, 0.42, H + 0.01]
+          ],
+          "#FFFFFF",
+          INK,
+          1.15
+        );
+      }
+
+      /* ---------------------------------------------------------------------
+         3.2. LIQUID COOLING BACK: Rear Return Pipe & Rack Cold-Plates
+         --------------------------------------------------------------------- */
+      function buildLiquidCoolingBack() {
+        const pipeBlue = { dark: "#0369A1", mid: "#0EA5E9", light: "#BAE6FD" };
+
+        // Rear-left wall loop pipe rising from lower-left corner along back wall
+        const rearLoopPts = [
+          [0.54, 0.62, 0.36],
+          [0.54, 0.56, 2.86],
+          [2.78, 0.56, 2.86],
+          [2.78, 0.72, 2.52]
+        ];
+        const rearPipe = isoTube(gCoolingBack, rearLoopPts, 10.5, pipeBlue, 15);
+        registerCoolantFlow(gCoolingBack, rearPipe.d, 2.8, 1);
+
+        // Secondary rear return tube connecting right-center racks into PCS lower bay
+        const pcsReturnPts = [
+          [7.65, 3.85, 0.54],
+          [8.30, 3.85, 0.54],
+          [8.55, 3.50, 0.54]
+        ];
+        const retPipe = isoTube(gCoolingBack, pcsReturnPts, 9, pipeBlue, 10);
+        registerCoolantFlow(gCoolingBack, retPipe.d, 2.4, 1);
+
+        // Flat brushed-aluminum thermal cold-plates beneath the 4 battery racks
+        const coldPlates = [
+          [1.68, 0.62, 3.52, 2.18], // Rear-left
+          [1.68, 2.52, 3.52, 4.10], // Front-left
+          [6.14, 0.62, 7.98, 2.18], // Rear-right
+          [6.14, 2.52, 7.98, 4.10]  // Front-right
+        ];
+        coldPlates.forEach(function (cp) {
+          isoBox(gCoolingBack, cp[0], cp[1], 0.09, cp[2], cp[3], 0.27, {
+            top: "#E2E8F0",
+            left: "#94A3B8",
+            front: "#CBD5E1"
+          }, { sw: 1.15 });
+
+          // Subtle internal cooling channel seam lines on front face of cold-plate
+          const midX = (cp[0] + cp[2]) * 0.5;
+          const pA = iso(midX - 0.32, cp[3] + 0.01, 0.18);
+          const pB = iso(midX + 0.32, cp[3] + 0.01, 0.18);
+          const flowLine = el("line", {
+            x1: pA[0].toFixed(1),
+            y1: pA[1].toFixed(1),
+            x2: pB[0].toFixed(1),
+            y2: pB[1].toFixed(1),
+            stroke: "#38BDF8",
+            "stroke-width": 2.2,
+            "stroke-linecap": "round",
+            "stroke-dasharray": "5 7",
+            opacity: 0.85
+          }, gCoolingBack);
+          animCoolantPaths.push({ el: flowLine, speed: 18, dir: 1, offset: Math.random() * 20 });
+        });
+      }
+
+      /* ---------------------------------------------------------------------
+         3.3. PCS BIDIRECTIONAL INVERTER (FAR-RIGHT TERRACOTTA + HEATSINK BAY)
+         --------------------------------------------------------------------- */
+      function buildPcsInverter() {
+        const x0 = 8.42;
+        const x1 = 10.68;
+        const y0 = 0.56;
+        const y1 = 4.18;
+
+        // --- A) LOWER DARK-SLATE HEATSINK & COOLING INTERFACE BAY (z = 0.12..1.16) ---
+        isoBox(gPcs, x0, y0 + 0.10, 0.12, x1, y1, 1.16, {
+          top: "#475569",
+          left: "#334155",
+          front: "#1E293B"
+        }, { sw: 1.3 });
+
+        // Recessed front heatsink cavity
+        isoPoly(
+          gPcs,
+          [
+            [x0 + 0.14, y1 + 0.01, 0.22],
+            [x1 - 0.12, y1 + 0.01, 0.22],
+            [x1 - 0.12, y1 + 0.01, 1.06],
+            [x0 + 0.14, y1 + 0.01, 1.06]
+          ],
+          "#0F172A",
+          INK,
+          1.1
+        );
+
+        // Cooling port circular boss on the left wall of lower bay (receives front blue pipe)
+        isoBox(gPcs, x0 - 0.08, 3.12, 0.34, x0 + 0.04, 3.62, 0.78, {
+          top: "#64748B",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.1 });
+
+        // Left green/copper power terminal block inside lower bay
+        isoBox(gPcs, x0 + 0.20, 3.55, 0.30, x0 + 0.62, y1 - 0.04, 0.90, {
+          top: "#6EE7B7",
+          left: "#10B981",
+          front: "#059669"
+        }, { sw: 1.05 });
+
+        // Small copper terminal tabs on the green module
+        for (let t = 0; t < 3; t++) {
+          isoBox(gPcs, x0 + 0.64, 3.68, 0.36 + t * 0.18, x0 + 0.80, y1 - 0.04, 0.46 + t * 0.18, {
+            top: "#FDE2C4",
+            left: "#E69F68",
+            front: "#C26D32"
+          }, { sw: 0.9 });
+        }
+
+        // Row of 9 crisp vertical brushed-aluminum heatsink fins
+        const finCount = 9;
+        const finStartX = x0 + 0.90;
+        const finEndX = x1 - 0.20;
+        const finStep = (finEndX - finStartX) / finCount;
+        for (let i = finCount - 1; i >= 0; i--) {
+          const fx = finStartX + i * finStep;
+          isoBox(gPcs, fx, 3.35, 0.28, fx + finStep * 0.48, y1 - 0.02, 0.98, {
+            top: "#F8FAFC",
+            left: "#CBD5E1",
+            front: "#E2E8F0"
+          }, { sw: 1.0 });
+        }
+
+        // --- B) UPPER TERRACOTTA-AMBER PCS ENCLOSURE (z = 1.18..3.04) ---
+        // Rear terracotta section
+        isoBox(gPcs, x0, y0, 1.18, x1, 2.45, 3.04, {
+          top: "url(#grad-terracotta-top)",
+          left: "url(#grad-terracotta-side)",
+          front: "#C86D3B"
+        }, { sw: 1.35 });
+
+        // Dark-slate insulated top saddle band across the rear/mid PCS roof (matches reference!)
+        isoBox(gPcs, x0 + 0.16, y0 + 0.35, 2.98, x1 - 0.16, 2.52, 3.07, {
+          top: "url(#grad-slate-top)",
+          left: "#334155",
+          front: "#1E293B"
+        }, { sw: 1.15 });
+
+        // Front cutaway terracotta housing shell (left wall, top roof, back interior wall, bottom shelf)
+        // Outer terracotta main block (dark cutaway interior on front face)
+        isoBox(gPcs, x0, 2.38, 1.18, x1, y1, 3.04, {
+          top: "url(#grad-terracotta-top)",
+          left: "url(#grad-terracotta-side)",
+          front: "#B45C2F"
+        }, { sw: 1.35 });
+
+        // Recessed dark interior bay on front face (y = y1)
+        const bx0 = x0 + 0.16;
+        const bx1 = x1 - 0.14;
+        const bz0 = 1.30;
+        const bz1 = 2.90;
+
+        // Inner cavity deep back wall (shifted into -y for true 3D depth)
+        isoPoly(
+          gPcs,
+          [
+            [bx0, 3.30, bz0],
+            [bx1, 3.30, bz0],
+            [bx1, 3.30, bz1],
+            [bx0, 3.30, bz1]
+          ],
+          "#263140",
+          INK,
+          1.1
+        );
+        // Inner left wall of cavity
+        isoPoly(
+          gPcs,
+          [
+            [bx0, 3.30, bz0],
+            [bx0, y1, bz0],
+            [bx0, y1, bz1],
+            [bx0, 3.30, bz1]
+          ],
+          "#9A4D24",
+          INK,
+          1.05
+        );
+        // Inner floor of cavity
+        isoPoly(
+          gPcs,
+          [
+            [bx0, 3.30, bz0],
+            [bx1, 3.30, bz0],
+            [bx1, y1, bz0],
+            [bx0, y1, bz0]
+          ],
+          "#C86D3B",
+          INK,
+          1.05
+        );
+
+        // --- LOWER CHAMBERS (z = 1.30..2.02) ---
+        // Lower-right chamber: Dual vertical copper-wound inductor coils (draw first -> further back in +x)
+        const coilXs = [x0 + 1.66, x0 + 1.24];
+        coilXs.forEach(function (cx) {
+          // Subtle electromagnetic amber warmth glow behind coil
+          const cScreen = iso(cx, 3.74, 1.64);
+          const glow = el("ellipse", {
+            cx: cScreen[0].toFixed(1),
+            cy: cScreen[1].toFixed(1),
+            rx: 17,
+            ry: 21,
+            fill: "#F59E0B",
+            opacity: 0.24,
+            filter: "url(#coil-glow)"
+          }, gPcs);
+          animCoilGlows.push(glow);
+
+          // Dark ferrite core & top/bottom bobbins
+          isoCylZ(gPcs, cx, 3.74, 1.32, 1.94, 0.19, {
+            top: "#475569",
+            side: "#334155",
+            shade: "#1E293B"
+          }, 1.0);
+
+          // Stacked copper wire winding rings
+          for (let w = 0; w < 6; w++) {
+            const wz = 1.39 + w * 0.082;
+            isoCylZ(gPcs, cx, 3.74, wz, wz + 0.068, 0.175, {
+              top: "#FDE2C4",
+              side: "#E69F68",
+              shade: "#B85F28"
+            }, 0.85);
+          }
+
+          // Top dark clamping yoke cap
+          isoBox(gPcs, cx - 0.18, 3.56, 1.90, cx + 0.18, 3.92, 1.97, {
+            top: "#64748B",
+            left: "#475569",
+            front: "#334155"
+          }, { sw: 0.95 });
+        });
+
+        // Lower-left chamber: Twin vertical dark-slate cylindrical DC-link capacitors
+        const capXs = [x0 + 0.72, x0 + 0.38];
+        capXs.forEach(function (cx) {
+          isoCylZ(gPcs, cx, 3.76, 1.32, 1.88, 0.145, {
+            top: "#CBD5E1",
+            side: "#475569",
+            shade: "#1E293B"
+          }, 1.1);
+          // Metallic vent rim on top of capacitor
+          isoCylZ(gPcs, cx, 3.76, 1.88, 1.91, 0.08, {
+            top: "#F8FAFC",
+            side: "#94A3B8"
+          }, 0.85);
+        });
+
+        // Horizontal terracotta mid-shelf dividing lower and upper PCS chambers
+        isoBox(gPcs, bx0, 3.30, 2.00, bx1, y1 + 0.01, 2.09, {
+          top: "#F3B383",
+          left: "#C86D3B",
+          front: "#D97F49"
+        }, { sw: 1.15 });
+
+        // --- UPPER CHAMBERS (z = 2.09..2.90) ---
+        // Upper-right chamber: compact finned aluminum IGBT heatsink module
+        isoBox(gPcs, x0 + 1.28, 3.36, 2.12, bx1 - 0.06, 3.92, 2.82, {
+          top: "#CBD5E1",
+          left: "#64748B",
+          front: "#475569"
+        }, { sw: 1.05 });
+
+        for (let hf = 0; hf < 6; hf++) {
+          const fz = 2.18 + hf * 0.10;
+          isoBox(gPcs, x0 + 1.56, 3.68, fz, bx1 - 0.04, y1 - 0.02, fz + 0.045, {
+            top: "#F8FAFC",
+            left: "#CBD5E1",
+            front: "#E2E8F0"
+          }, { sw: 0.85 });
+        }
+
+        // Upper-left chamber: IGBT switching block + copper-wound toroidal choke
+        isoBox(gPcs, x0 + 0.72, 3.40, 2.12, x0 + 1.20, 3.96, 2.74, {
+          top: "#94A3B8",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.05 });
+
+        // Copper-wound toroidal inductor sitting prominently in upper-left bay
+        const torScreen = iso(x0 + 0.46, 3.78, 2.48);
+        const torGlow = el("ellipse", {
+          cx: torScreen[0].toFixed(1),
+          cy: torScreen[1].toFixed(1),
+          rx: 18,
+          ry: 20,
+          fill: "#F59E0B",
+          opacity: 0.22,
+          filter: "url(#coil-glow)"
+        }, gPcs);
+        animCoilGlows.push(torGlow);
+
+        // Toroid copper ring rendered with crisp radial winding segments
+        const torCenter = iso(x0 + 0.45, 3.78, 2.48);
+        el("ellipse", {
+          cx: torCenter[0].toFixed(1),
+          cy: torCenter[1].toFixed(1),
+          rx: 16.5,
+          ry: 21.5,
+          transform: "rotate(-16 " + torCenter[0].toFixed(1) + " " + torCenter[1].toFixed(1) + ")",
+          fill: "#D97F43",
+          stroke: INK,
+          "stroke-width": 1.25
+        }, gPcs);
+        // Copper wire turn lines radiating around the toroid
+        for (let a = 0; a < 14; a++) {
+          const ang = (a / 14) * Math.PI * 2;
+          const xIn = torCenter[0] + Math.cos(ang) * 7.2;
+          const yIn = torCenter[1] + Math.sin(ang) * 9.8;
+          const xOut = torCenter[0] + Math.cos(ang) * 16.0;
+          const yOut = torCenter[1] + Math.sin(ang) * 20.6;
+          el("line", {
+            x1: xIn.toFixed(1),
+            y1: yIn.toFixed(1),
+            x2: xOut.toFixed(1),
+            y2: yOut.toFixed(1),
+            stroke: a % 2 === 0 ? "#FDE2C4" : "#7C3F17",
+            "stroke-width": 1.65,
+            "stroke-linecap": "round"
+          }, gPcs);
+        }
+        // Dark hollow center of toroid
+        el("ellipse", {
+          cx: torCenter[0].toFixed(1),
+          cy: torCenter[1].toFixed(1),
+          rx: 6.5,
+          ry: 9.2,
+          transform: "rotate(-16 " + torCenter[0].toFixed(1) + " " + torCenter[1].toFixed(1) + ")",
+          fill: "#1E293B",
+          stroke: INK,
+          "stroke-width": 1.15
+        }, gPcs);
+
+        // Small fastener dot on the terracotta side wall (matching reference detail)
+        const boltPt = iso(x0, 3.35, 1.96);
+        el("circle", {
+          cx: boltPt[0].toFixed(1),
+          cy: boltPt[1].toFixed(1),
+          r: 2.8,
+          fill: "#FDE2C4",
+          stroke: INK,
+          "stroke-width": 1.0
+        }, gPcs);
+      }
+
+      /* ---------------------------------------------------------------------
+         3.4. MODULAR LiFePO4 BATTERY CELL RACK BUILDER (USED FOR ALL 4 RACKS)
+         --------------------------------------------------------------------- */
+      function buildBatteryRack(parent, x0, y0, x1, y1, zBase, zTop, isFrontRow) {
+        const g = el("g", null, parent);
+        const wallT = 0.11;
+
+        // Outer satin light-gray/ivory anodized cabinet body
+        isoBox(g, x0, y0, zBase, x1, y1, zTop, {
+          top: "#F8FAFC",
+          left: "url(#grad-rack-side)",
+          front: "#E2E8F0"
+        }, { sw: 1.3 });
+
+        // Top dark-slate insulated terminal header cap
+        isoBox(g, x0 + 0.08, y0 + 0.08, zTop - 0.02, x1 - 0.08, y1 - 0.08, zTop + 0.09, {
+          top: "url(#grad-slate-top)",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.15 });
+
+        // Recessed front cutaway cavity showing the 4 shelves of LiFePO4 prismatic cells
+        const cx0 = x0 + wallT;
+        const cx1 = x1 - wallT;
+        const cz0 = zBase + 0.11;
+        const cz1 = zTop - 0.10;
+
+        // Deep cavity backdrop
+        isoPoly(
+          g,
+          [
+            [cx0, y1 + 0.005, cz0],
+            [cx1, y1 + 0.005, cz0],
+            [cx1, y1 + 0.005, cz1],
+            [cx0, y1 + 0.005, cz1]
+          ],
+          "#263140",
+          INK,
+          1.15
+        );
+
+        const tiers = 4;
+        const tierH = (cz1 - cz0) / tiers;
+        const cellsPerTier = 6;
+        const socW = 0.21;
+        const cellsSpanX = (cx1 - cx0) - socW - 0.06;
+        const cellW = cellsSpanX / cellsPerTier;
+
+        for (let t = 0; t < tiers; t++) {
+          const tz0 = cz0 + t * tierH + 0.04;
+          const tz1 = cz0 + (t + 1) * tierH - 0.05;
+
+          // Shelf divider plate below each tier (except bottom)
+          if (t > 0) {
+            isoBox(g, cx0, y1 - 0.18, tz0 - 0.06, cx1, y1 + 0.01, tz0 - 0.01, {
+              top: "#CBD5E1",
+              left: "#94A3B8",
+              front: "#64748B"
+            }, { sw: 0.95 });
+          }
+
+          // Individual vertical ivory/ceramic prismatic LiFePO4 cells (drawn right-to-left for crisp overlap)
+          for (let c = cellsPerTier - 1; c >= 0; c--) {
+            const px0 = cx0 + 0.02 + c * cellW;
+            const px1 = px0 + cellW - 0.028;
+
+            isoBox(g, px0, y1 - 0.26, tz0, px1, y1 - 0.01, tz1 - 0.03, {
+              top: "#FFFDF7",
+              left: "#E6E1D6",
+              front: "#F7F4EC"
+            }, { sw: 0.85 });
+
+            // Metallic & copper top interconnect tabs visible on top shelf cells
+            if (t === tiers - 1) {
+              isoBox(g, px0 + 0.03, y1 - 0.20, tz1 - 0.03, px1 - 0.03, y1 - 0.05, tz1 + 0.015, {
+                top: "#FDE2C4",
+                left: "#E69F68",
+                front: "#C26D32"
+              }, { sw: 0.7 });
+            }
+          }
+
+          // Vertical emerald-green SOC (State of Charge) energy bar on right edge of each tier
+          const sx0 = cx1 - socW;
+          const sx1 = cx1 - 0.03;
+
+          // Dark recessed housing for SOC strip
+          isoPoly(
+            g,
+            [
+              [sx0, y1 - 0.005, tz0],
+              [sx1, y1 - 0.005, tz0],
+              [sx1, y1 - 0.005, tz1 - 0.01],
+              [sx0, y1 - 0.005, tz1 - 0.01]
+            ],
+            "#064E3B",
+            INK,
+            0.85
+          );
+
+          // Glowing emerald-green dynamic SOC fill polygon
+          const barPoly = isoPoly(
+            g,
+            [
+              [sx0 + 0.02, y1, tz0 + 0.02],
+              [sx1 - 0.02, y1, tz0 + 0.02],
+              [sx1 - 0.02, y1, tz1 - 0.03],
+              [sx0 + 0.02, y1, tz1 - 0.03]
+            ],
+            "url(#grad-soc-bar)",
+            "none",
+            0
+          );
+
+          // Crisp micro LED segment divider lines over SOC bar
+          for (let seg = 1; seg <= 4; seg++) {
+            const sz = tz0 + 0.02 + ((tz1 - tz0 - 0.05) * seg) / 5;
+            const sA = iso(sx0 + 0.02, y1 + 0.005, sz);
+            const sB = iso(sx1 - 0.02, y1 + 0.005, sz);
+            el("line", {
+              x1: sA[0].toFixed(1),
+              y1: sA[1].toFixed(1),
+              x2: sB[0].toFixed(1),
+              y2: sB[1].toFixed(1),
+              stroke: "#064E3B",
+              "stroke-width": 0.9,
+              opacity: 0.65
+            }, g);
+          }
+
+          animSocBars.push({
+            el: barPoly,
+            sx0: sx0 + 0.02,
+            sx1: sx1 - 0.02,
+            y: y1,
+            zMin: tz0 + 0.02,
+            zMax: tz1 - 0.03,
+            phaseOffset: t * 0.55 + (isFrontRow ? 0 : 1.1)
+          });
+        }
+
+        // Crisp front-left side panel architectural recessed seam (adds editorial depth)
+        if (isFrontRow) {
+          isoPoly(
+            g,
+            [
+              [x0 - 0.005, y0 + 0.14, zBase + 0.16],
+              [x0 - 0.005, y1 - 0.14, zBase + 0.16],
+              [x0 - 0.005, y1 - 0.14, zTop - 0.16],
+              [x0 - 0.005, y0 + 0.14, zTop - 0.16]
+            ],
+            "none",
+            "#94A3B8",
+            0.95,
+            { opacity: 0.7 }
+          );
+        }
+
+        return g;
+      }
+
+      function buildAllRacks() {
+        // Painter's order for back racks group:
+        // 1. Rear-right rack (largest x, smallest y)
+        buildBatteryRack(gRacksBack, 6.22, 0.64, 7.92, 2.16, 0.27, 2.74, false);
+        // 2. Front-right rack (larger x than BMS, so strictly behind BMS)
+        buildBatteryRack(gRacksBack, 6.22, 2.54, 7.92, 4.06, 0.27, 2.74, true);
+        // 3. Rear-left rack (behind front-left rack)
+        buildBatteryRack(gRacksBack, 1.78, 0.64, 3.48, 2.16, 0.27, 2.74, false);
+
+        // Foreground hero rack: Front-left rack (closest to viewer, strictly in front of BMS)
+        buildBatteryRack(gRacksFront, 1.78, 2.54, 3.48, 4.06, 0.27, 2.74, true);
+      }
+
+      /* ---------------------------------------------------------------------
+         3.5. CENTRAL BMS CONTROLLER CABINET, COBALT PCB & WIRE HARNESSES
+         --------------------------------------------------------------------- */
+      function buildBmsController() {
+        // Rear auxiliary telemetry/combiner cabinet stretching toward back wall
+        isoBox(gBms, 3.92, 0.68, 0.20, 5.56, 2.48, 2.72, {
+          top: "#64748B",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.25 });
+
+        // Main central dark-slate BMS control tower
+        const bx0 = 4.18;
+        const bx1 = 5.82;
+        const by0 = 2.34;
+        const by1 = 4.06;
+        const bz0 = 0.20;
+        const bz1 = 2.74;
+
+        isoBox(gBms, bx0, by0, bz0, bx1, by1, bz1, {
+          top: "url(#grad-slate-top)",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.35 });
+
+        // Recessed front electronics bay
+        isoPoly(
+          gBms,
+          [
+            [bx0 + 0.12, by1 + 0.005, bz0 + 0.12],
+            [bx1 - 0.12, by1 + 0.005, bz0 + 0.12],
+            [bx1 - 0.12, by1 + 0.005, bz1 - 0.14],
+            [bx0 + 0.12, by1 + 0.005, bz1 - 0.14]
+          ],
+          "#1E293B",
+          INK,
+          1.15
+        );
+
+        // --- UPPER COBALT-BLUE PCB MODULE (z = 1.84..2.52) ---
+        isoBox(gBms, bx0 + 0.18, by1 - 0.06, 1.84, bx1 - 0.18, by1 + 0.04, 2.52, {
+          top: "#60A5FA",
+          left: "#1D4ED8",
+          front: "url(#grad-cobalt-pcb)"
+        }, { sw: 1.1 });
+
+        // Upper PCB IC blocks & terminal headers
+        isoBox(gBms, bx0 + 0.62, by1 + 0.02, 1.96, bx0 + 1.18, by1 + 0.10, 2.22, {
+          top: "#64748B",
+          left: "#334155",
+          front: "#1E293B"
+        }, { sw: 0.9 });
+        for (let k = 0; k < 3; k++) {
+          isoBox(gBms, bx0 + 0.64 + k * 0.20, by1 + 0.02, 2.30, bx0 + 0.78 + k * 0.20, by1 + 0.08, 2.44, {
+            top: "#94A3B8",
+            left: "#475569",
+            front: "#334155"
+          }, { sw: 0.8 });
+        }
+
+        // --- LOWER COBALT-BLUE MAIN BMS PROCESSOR PCB (z = 1.08..1.76) ---
+        isoBox(gBms, bx0 + 0.18, by1 - 0.06, 1.08, bx1 - 0.18, by1 + 0.04, 1.76, {
+          top: "#60A5FA",
+          left: "#1D4ED8",
+          front: "url(#grad-cobalt-pcb)"
+        }, { sw: 1.1 });
+
+        // Main dark microcontroller IC on lower cobalt PCB
+        isoBox(gBms, bx0 + 0.86, by1 + 0.02, 1.24, bx0 + 1.32, by1 + 0.10, 1.62, {
+          top: "#475569",
+          left: "#334155",
+          front: "#0F172A"
+        }, { sw: 0.95 });
+
+        // Crisp subtle PCB circuit trace lines
+        const tracePairs = [
+          [[bx0 + 0.48, by1 + 0.05, 1.62], [bx0 + 0.84, by1 + 0.05, 1.62]],
+          [[bx0 + 0.48, by1 + 0.05, 1.48], [bx0 + 0.84, by1 + 0.05, 1.48]],
+          [[bx0 + 0.48, by1 + 0.05, 1.34], [bx0 + 0.84, by1 + 0.05, 1.34]],
+          [[bx0 + 0.50, by1 + 0.05, 2.36], [bx0 + 0.64, by1 + 0.05, 2.36]]
+        ];
+        tracePairs.forEach(function (pair) {
+          const p1 = iso(pair[0][0], pair[0][1], pair[0][2]);
+          const p2 = iso(pair[1][0], pair[1][1], pair[1][2]);
+          el("line", {
+            x1: p1[0].toFixed(1),
+            y1: p1[1].toFixed(1),
+            x2: p2[0].toFixed(1),
+            y2: p2[1].toFixed(1),
+            stroke: "#93C5FD",
+            "stroke-width": 1.1,
+            opacity: 0.75
+          }, gBms);
+        });
+
+        // Glowing micro-status LEDs on cobalt PCBs
+        const pcbLedCoords = [
+          [bx0 + 1.34, by1 + 0.06, 2.40, "#34D399"],
+          [bx0 + 1.34, by1 + 0.06, 2.28, "#38BDF8"],
+          [bx0 + 0.62, by1 + 0.06, 1.18, "#34D399"],
+          [bx0 + 0.74, by1 + 0.06, 1.18, "#FBBF24"]
+        ];
+        pcbLedCoords.forEach(function (ld, idx) {
+          const pt = iso(ld[0], ld[1], ld[2]);
+          const led = el("circle", {
+            cx: pt[0].toFixed(1),
+            cy: pt[1].toFixed(1),
+            r: 2.6,
+            fill: ld[3],
+            stroke: INK,
+            "stroke-width": 0.65
+          }, gBms);
+          animBmsLeds.push({ el: led, phase: idx * 1.4, baseColor: ld[3] });
+        });
+
+        // --- THREE VERTICAL DARK-SLATE CONTACTOR / RELAY MODULES (z = 0.30..0.98) ---
+        for (let r = 0; r < 3; r++) {
+          const rx0 = bx0 + 0.22 + r * 0.43;
+          const rx1 = rx0 + 0.35;
+          isoBox(gBms, rx0, by1 - 0.14, 0.32, rx1, by1 + 0.06, 0.98, {
+            top: "#64748B",
+            left: "#475569",
+            front: "#334155"
+          }, { sw: 1.05 });
+
+          // Blue connector header tab on top of each contactor
+          isoBox(gBms, rx0 + 0.08, by1 + 0.03, 0.76, rx1 - 0.08, by1 + 0.08, 0.90, {
+            top: "#60A5FA",
+            left: "#2563EB",
+            front: "#1D4ED8"
+          }, { sw: 0.75 });
+
+          // Tiny emerald status indicator near bottom of each relay
+          const lp = iso((rx0 + rx1) * 0.5, by1 + 0.07, 0.44);
+          const led = el("circle", {
+            cx: lp[0].toFixed(1),
+            cy: lp[1].toFixed(1),
+            r: 2.4,
+            fill: "#34D399",
+            stroke: INK,
+            "stroke-width": 0.6
+          }, gBms);
+          animBmsLeds.push({ el: led, phase: 2.8 + r * 0.9, baseColor: "#34D399" });
+        }
+
+        // --- MULTI-WIRE SENSING HARNESSES (LEFT & RIGHT ROUTING TO RACKS) ---
+        const harnessDark = { dark: "#1E293B", mid: "#334155", light: "#64748B" };
+
+        // Left upper harness trunk -> sweeps down left wall of BMS into left battery rack
+        const leftUpperPts = [
+          [bx0 + 0.22, by1 + 0.06, 2.24],
+          [bx0 - 0.14, by1 + 0.04, 2.18],
+          [bx0 - 0.20, 3.65, 1.85],
+          [bx0 - 0.20, 3.55, 0.62],
+          [3.42, 3.45, 0.55]
+        ];
+        const hLeft1 = isoTube(gBms, leftUpperPts, 8.2, harnessDark, 14);
+        addColoredHarnessStrands(gBms, leftUpperPts, ["#EF4444", "#34D399", "#FBBF24"]);
+        registerTelemetryDot(gBms, hLeft1.d, "#38BDF8", 0.0);
+
+        // Left lower harness trunk -> joins main left bundle
+        const leftLowerPts = [
+          [bx0 + 0.22, by1 + 0.06, 1.48],
+          [bx0 - 0.12, by1 + 0.02, 1.42],
+          [bx0 - 0.20, 3.62, 1.15],
+          [bx0 - 0.20, 3.55, 0.62]
+        ];
+        const hLeft2 = isoTube(gBms, leftLowerPts, 7.0, harnessDark, 12);
+        addColoredHarnessStrands(gBms, leftLowerPts, ["#34D399", "#E2E8F0"]);
+        registerTelemetryDot(gBms, hLeft2.d, "#34D399", 0.45);
+
+        // Right harness trunk -> sweeps out right edge of BMS PCB into front-right rack
+        const rightHarnessPts = [
+          [bx1 - 0.20, by1 + 0.06, 1.62],
+          [bx1 + 0.14, by1 + 0.04, 1.54],
+          [bx1 + 0.16, 3.85, 0.52],
+          [6.32, 3.72, 0.48]
+        ];
+        const hRight = isoTube(gBms, rightHarnessPts, 7.6, harnessDark, 12);
+        addColoredHarnessStrands(gBms, rightHarnessPts, ["#EF4444", "#FBBF24", "#38BDF8"]);
+        registerTelemetryDot(gBms, hRight.d, "#38BDF8", 0.22);
+
+        // Dark cable clamp bracket on the left wall of the BMS cabinet
+        isoBox(gBms, bx0 - 0.24, 3.40, 0.92, bx0 + 0.02, 3.82, 1.04, {
+          top: "#64748B",
+          left: "#475569",
+          front: "#334155"
+        }, { sw: 1.0 });
+      }
+
+      /**
+       * Adds delicate multi-color sensing wire accents along a harness path.
+       */
+      function addColoredHarnessStrands(parent, points3D, colors) {
+        const d = buildRoundedPath3D(points3D, 13);
+        colors.forEach(function (col, idx) {
+          const shift = (idx - (colors.length - 1) / 2) * 2.1;
+          el("path", {
+            d: d,
+            fill: "none",
+            stroke: col,
+            "stroke-width": 1.35,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            opacity: 0.9,
+            transform: "translate(" + shift.toFixed(1) + ", " + (shift * 0.6).toFixed(1) + ")"
+          }, parent);
+        });
+      }
+
+      /* ---------------------------------------------------------------------
+         3.6. FOREGROUND LIQUID COOLING MANIFOLD, DRUM & LONG SUPPLY PIPING
+         --------------------------------------------------------------------- */
+      function buildLiquidCoolingFront() {
+        const pipeBlue = { dark: "#0369A1", mid: "#0EA5E9", light: "#BAE6FD" };
+        const pipeIvory = { dark: "#CBD5E1", mid: "#F1F5F9", light: "#FFFFFF" };
+
+        // Lower horizontal brushed-aluminum cylindrical collector drum (y = 0.72..4.02)
+        isoCylY(gCoolingFront, 1.06, 0.72, 4.02, 0.34, 0.21, {
+          side: "url(#grad-drum-alum)",
+          light: "#FFFFFF",
+          cap: "#E2E8F0",
+          capInner: "#94A3B8"
+        }, 1.3);
+
+        // Rear-left vertical cerulean pipe linking upper manifold to lower collector
+        const vPipeBackPts = [
+          [1.06, 1.78, 1.72],
+          [1.06, 1.78, 0.42]
+        ];
+        const vp1 = isoTube(gCoolingFront, vPipeBackPts, 10.5, pipeBlue, 6);
+        registerCoolantFlow(gCoolingFront, vp1.d, 2.8, 1);
+
+        // Front-left vertical cerulean pipe linking upper manifold to lower collector
+        const vPipeFrontPts = [
+          [1.06, 3.06, 1.72],
+          [1.06, 3.06, 0.42]
+        ];
+        const vp2 = isoTube(gCoolingFront, vPipeFrontPts, 10.5, pipeBlue, 6);
+        registerCoolantFlow(gCoolingFront, vp2.d, 2.8, -1);
+
+        // Horizontal blue T-branch feeding front-left cold-plate / rack inlet
+        const tBranchPts = [
+          [1.06, 3.06, 0.88],
+          [1.76, 3.06, 0.88]
+        ];
+        const tb = isoTube(gCoolingFront, tBranchPts, 9.2, pipeBlue, 6);
+        registerCoolantFlow(gCoolingFront, tb.d, 2.4, 1);
+
+        // Small collar flange on T-branch
+        isoCylZ(gCoolingFront, 1.06, 3.06, 0.81, 0.96, 0.14, {
+          top: "#BAE6FD",
+          side: "#0284C7",
+          shade: "#0369A1"
+        }, 0.95);
+
+        // Upper brushed-aluminum rectangular thermal header manifold bridge
+        isoBox(gCoolingFront, 0.86, 1.36, 1.66, 1.28, 3.48, 2.04, {
+          top: "#F8FAFC",
+          left: "#CBD5E1",
+          front: "#E2E8F0"
+        }, { sw: 1.3 });
+
+        // Ivory/cream thick insulated elbow pipe rising from manifold into front-left rack
+        const ivoryElbowPts = [
+          [1.08, 3.06, 2.02],
+          [1.08, 3.06, 2.44],
+          [1.82, 3.06, 2.44]
+        ];
+        isoTube(gCoolingFront, ivoryElbowPts, 14.5, pipeIvory, 14);
+
+        // Metallic flange collar at base of ivory pipe
+        isoCylZ(gCoolingFront, 1.08, 3.06, 2.02, 2.13, 0.18, {
+          top: "#F8FAFC",
+          side: "#CBD5E1",
+          shade: "#94A3B8"
+        }, 1.05);
+
+        // Long front-bottom cerulean-blue main coolant supply pipe running along the container floor
+        const mainFloorPipePts = [
+          [1.06, 4.00, 0.34],
+          [1.06, 4.44, 0.30],
+          [1.42, 4.44, 0.28],
+          [8.08, 4.44, 0.28],
+          [8.16, 3.50, 0.42],
+          [8.44, 3.42, 0.52]
+        ];
+        const mainPipe = isoTube(gCoolingFront, mainFloorPipePts, 12.0, pipeBlue, 18);
+        registerCoolantFlow(gCoolingFront, mainPipe.d, 3.2, 1);
+
+        // Connecting stub from back-left wall pipe into rear of lower collector drum
+        const rearInletPts = [
+          [0.54, 0.62, 0.36],
+          [0.98, 0.78, 0.34]
+        ];
+        const ri = isoTube(gCoolingFront, rearInletPts, 10.0, pipeBlue, 8);
+        registerCoolantFlow(gCoolingFront, ri.d, 2.6, 1);
+      }
+
+      /* ---------------------------------------------------------------------
+         3.7. DUAL OVERHEAD COPPER BUSBARS, STANDOFFS & ENERGY FLOW PULSES
+         --------------------------------------------------------------------- */
+      function buildBusbarSystem() {
+        const copperColors = {
+          top: "url(#grad-copper-top)",
+          left: "#E69F68",
+          front: "#C26D32"
+        };
+
+        /**
+         * Helper: dark-slate insulated standoff cylinder with brushed steel hex bolt on top.
+         */
+        function drawStandoff(cx, cy, zBase, zTop) {
+          // Base flange
+          isoCylZ(gBusbar, cx, cy, zBase, zBase + 0.08, 0.22, {
+            top: "#64748B",
+            side: "#334155",
+            shade: "#1E293B"
+          }, 1.05);
+          // Insulator column
+          isoCylZ(gBusbar, cx, cy, zBase + 0.08, zTop, 0.15, {
+            top: "#475569",
+            side: "#334155",
+            shade: "#1E293B"
+          }, 1.05);
+        }
+
+        function drawBoltCap(cx, cy, z) {
+          isoCylZ(gBusbar, cx, cy, z, z + 0.075, 0.105, {
+            top: "#E2E8F0",
+            side: "#64748B",
+            shade: "#334155"
+          }, 0.95);
+        }
+
+        // --- 1) INSULATED STANDOFFS UNDER ALL BUSBAR TERMINATION POINTS ---
+        // Rear rail standoffs: Rear-Left Rack, Rear-Right Rack, PCS Rear x2
+        const rearTerminals = [
+          [2.62, 1.48, 2.83, 3.02],
+          [7.06, 1.48, 2.83, 3.02],
+          [9.02, 1.38, 3.05, 3.16],
+          [9.82, 1.38, 3.05, 3.16]
+        ];
+        rearTerminals.forEach(function (st) {
+          drawStandoff(st[0], st[1], st[2], st[3]);
+        });
+
+        // Front rail standoffs: Front-Left Rack, Front-Right Rack, PCS Front x2
+        const frontTerminals = [
+          [2.62, 3.24, 2.83, 3.02],
+          [7.06, 3.24, 2.83, 3.02],
+          [9.02, 2.28, 3.05, 3.16],
+          [9.82, 2.28, 3.05, 3.16]
+        ];
+        frontTerminals.forEach(function (st) {
+          drawStandoff(st[0], st[1], st[2], st[3]);
+        });
+
+        // --- 2) REAR HEAVY-DUTY COPPER BUSBAR RAIL (y = 1.24..1.58, z = 3.02..3.16) ---
+        // Main longitudinal rear copper bar
+        isoBox(gBusbar, 2.38, 1.26, 3.04, 10.06, 1.60, 3.18, copperColors, { sw: 1.3 });
+
+        // Stepped drop-tab onto rear-left rack
+        isoBox(gBusbar, 2.40, 1.26, 2.98, 2.84, 1.68, 3.12, copperColors, { sw: 1.15 });
+        // Stepped drop-tab onto rear-right rack
+        isoBox(gBusbar, 6.84, 1.26, 2.98, 7.28, 1.68, 3.12, copperColors, { sw: 1.15 });
+
+        // --- 3) FRONT HEAVY-DUTY COPPER BUSBAR RAIL (y = 2.16..2.50 -> jogs to 3.24 at racks) ---
+        // Branch arm from front-left rack standoff up to front busbar trunk
+        isoBox(gBusbar, 2.40, 2.18, 3.04, 2.84, 3.44, 3.18, copperColors, { sw: 1.25 });
+        // Branch arm from front-right rack standoff up to front busbar trunk
+        isoBox(gBusbar, 6.84, 2.18, 3.04, 7.28, 3.44, 3.18, copperColors, { sw: 1.25 });
+        // Main longitudinal front copper trunk running all the way into PCS front terminals
+        isoBox(gBusbar, 2.40, 2.16, 3.04, 10.06, 2.50, 3.18, copperColors, { sw: 1.3 });
+
+        // Top clamping steel hex bolts on every terminal pad
+        rearTerminals.forEach(function (st) {
+          drawBoltCap(st[0], st[1] === 1.48 ? 1.43 : st[1], 3.18);
+        });
+        frontTerminals.forEach(function (st) {
+          drawBoltCap(st[0], st[1], 3.18);
+        });
+
+        // --- 4) LIVE ANIMATED WARM-AMBER ENERGY FLOW OVERLAYS ON BOTH RAILS ---
+        const rearFlowD = buildRoundedPath3D(
+          [
+            [9.82, 1.43, 3.19],
+            [7.06, 1.43, 3.19],
+            [2.62, 1.43, 3.19]
+          ],
+          6
+        );
+        const frontFlowD = buildRoundedPath3D(
+          [
+            [9.82, 2.33, 3.19],
+            [7.06, 2.33, 3.19],
+            [2.62, 2.33, 3.19],
+            [2.62, 3.24, 3.19]
+          ],
+          10
+        );
+        const midBranchD = buildRoundedPath3D(
+          [
+            [7.06, 2.33, 3.19],
+            [7.06, 3.24, 3.19]
+          ],
+          4
+        );
+
+        registerBusbarFlow(gBusbar, rearFlowD, 1, 5);
+        registerBusbarFlow(gBusbar, frontFlowD, 1, 6);
+        registerBusbarFlow(gBusbar, midBranchD, 1, 2);
+      }
+
+      /* ---------------------------------------------------------------------
+         3.8. HOUSING FRONT: CLEAN CUTAWAY LOW RIM LIPS & CORNER BEVELS
+         --------------------------------------------------------------------- */
+      function buildHousingFront() {
+        // Front-left low cutaway rim wall (framing the open container bottom-left)
+        isoBox(gHousingFront, 0, 0.36, 0.06, 0.34, W, 0.44, {
+          top: "#F8FAFC",
+          left: "#CBD5E1",
+          front: "#E2E8F0"
+        }, { sw: 1.3 });
+
+        // Front-right long low cutaway rim wall (framing the open front face cleanly)
+        isoBox(gHousingFront, 0, W - 0.34, 0.06, L, W, 0.44, {
+          top: "#F8FAFC",
+          left: "#CBD5E1",
+          front: "#E2E8F0"
+        }, { sw: 1.3 });
+
+        // Far-left vertical cutaway corner pillar (ties back-left wall smoothly to lower lip)
+        isoBox(gHousingFront, 0, 0, 0.06, 0.34, 0.40, H, {
+          top: "#FFFFFF",
+          left: "#D8E0EA",
+          front: "#CBD5E1"
+        }, { sw: 1.3 });
+
+        // Subtle inner chamfer bevel on the long front floor lip
+        isoPoly(
+          gHousingFront,
+          [
+            [0.34, W - 0.34, 0.44],
+            [L - 0.38, W - 0.34, 0.44],
+            [L - 0.38, W - 0.42, 0.24],
+            [0.34, W - 0.42, 0.24]
+          ],
+          "#94A3B8",
+          INK,
+          1.0
+        );
+      }
+
+      /* =====================================================================
+         4. ANIMATED ELEMENT REGISTRATION HELPERS
+         ===================================================================== */
+      function registerCoolantFlow(parent, pathD, strokeW, dir) {
+        const dash = el("path", {
+          d: pathD,
+          fill: "none",
+          stroke: "#E0F2FE",
+          "stroke-width": strokeW,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "stroke-dasharray": "10 22",
+          opacity: 0.92,
+          filter: "url(#energy-glow)"
+        }, parent);
+        animCoolantPaths.push({
+          el: dash,
+          speed: 36,
+          dir: dir || 1,
+          offset: Math.random() * 32
+        });
+      }
+
+      function registerBusbarFlow(parent, pathD, dir, beadCount) {
+        // Subtle glowing amber energy core stream
+        const stream = el("path", {
+          d: pathD,
+          fill: "none",
+          stroke: "#FBBF24",
+          "stroke-width": 4.2,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "stroke-dasharray": "14 26",
+          opacity: 0.82,
+          filter: "url(#energy-glow)"
+        }, parent);
+        animBusbarPaths.push({
+          el: stream,
+          dir: dir || 1,
+          offset: Math.random() * 40
+        });
+
+        // Bright traveling luminous energy droplets along the exact path
+        const pathLen = stream.getTotalLength();
+        for (let i = 0; i < beadCount; i++) {
+          const bead = el("circle", {
+            cx: 0,
+            cy: 0,
+            r: 3.4,
+            fill: "#FEF3C7",
+            stroke: "#F59E0B",
+            "stroke-width": 1.3,
+            filter: "url(#energy-glow)"
+          }, parent);
+          animBusbarPulses.push({
+            el: bead,
+            pathEl: stream,
+            length: pathLen,
+            t: i / beadCount
+          });
+        }
+      }
+
+      function registerTelemetryDot(parent, pathD, color, startT) {
+        const guide = el("path", { d: pathD, fill: "none", stroke: "none" }, parent);
+        const len = guide.getTotalLength();
+        const dot = el("circle", {
+          cx: 0,
+          cy: 0,
+          r: 2.5,
+          fill: color,
+          filter: "url(#energy-glow)",
+          opacity: 0.92
+        }, parent);
+        animTelemetryDots.push({
+          el: dot,
+          pathEl: guide,
+          length: len,
+          t: startT || 0,
+          speed: 0.34
+        });
+      }
+
+      /* =====================================================================
+         5. CONSTRUCT COMPLETE SCENE & COMPUTE EXACT BBOX CAMERA TARGETS
+         ===================================================================== */
+      buildHousingBack();
+      buildLiquidCoolingBack();
+      buildPcsInverter();
+      buildAllRacks();
+      buildBmsController();
+      buildLiquidCoolingFront();
+      buildBusbarSystem();
+      buildHousingFront();
+
+      const stageEl = document.getElementById("mirvo-stage");
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const allPartGroups = Array.from(document.querySelectorAll(".mirvo-part"));
+
+      /**
+       * Computes exact center and ideal zoom level for each of the 5 named parts
+       * from their real rendered SVG bounding boxes so every spotlight frame is centered.
+       */
+      function computeFocusTargets() {
+        const targets = {
+          full: { x: 800, y: 450, zoom: 1 }
+        };
+        const partKeys = ["cell_racks", "bms_controller", "liquid_cooling", "pcs_inverter", "busbar"];
+
+        partKeys.forEach(function (key) {
+          let minX = Infinity;
+          let minY = Infinity;
+          let maxX = -Infinity;
+          let maxY = -Infinity;
+
+          allPartGroups.forEach(function (g) {
+            if (g.dataset.part === key) {
+              try {
+                const b = g.getBBox();
+                if (b.width > 0 && b.height > 0) {
+                  minX = Math.min(minX, b.x);
+                  minY = Math.min(minY, b.y);
+                  maxX = Math.max(maxX, b.x + b.width);
+                  maxY = Math.max(maxY, b.y + b.height);
+                }
+              } catch (e) {
+                // Ignore if hidden
+              }
+            }
+          });
+
+          if (isFinite(minX)) {
+            const w = maxX - minX;
+            const h = maxY - minY;
+            const cx = minX + w * 0.5;
+            const cy = minY + h * 0.5;
+            // Choose comfortable framing zoom (leaving generous white margin)
+            const fitZoom = Math.min((1600 * 0.62) / w, (900 * 0.64) / h);
+            const zoom = Math.max(1.36, Math.min(2.05, fitZoom));
+            targets[key] = { x: cx, y: cy, zoom: Number(zoom.toFixed(2)) };
+          } else {
+            targets[key] = { x: 800, y: 450, zoom: 1.5 };
+          }
+        });
+
+        return targets;
+      }
+
+      const FOCUS_TARGETS = computeFocusTargets();
+
+      /* =====================================================================
+         6. SCENE STATE, CAMERA ENGINE, SPOTLIGHT & EXPLODED VIEW CONTROLLER
+         ===================================================================== */
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        focusedPart: null,
+        camera: { x: 800, y: 450, zoom: 1 },
+        exploded: 0,
+        phase: "auto", // "auto" | "charge" | "discharge"
+        playing: true,
+        autoTour: !prefersReducedMotion,
+        tourIndex: 0,
+        tourTimer: null,
+        simTime: 0,
+        flowDir: 1 // smooth signed flow velocity (-1 discharge .. +1 charge)
+      };
+
+      /**
+       * Smoothly moves and zooms the 16:9 SVG stage so (x, y) sits dead-center.
+       */
+      function applyCamera(target) {
+        let cam = FOCUS_TARGETS.full;
+        if (typeof target === "string") {
+          cam = FOCUS_TARGETS[target] || FOCUS_TARGETS.full;
+        } else if (target && typeof target === "object") {
+          cam = {
+            x: typeof target.x === "number" ? target.x : 800,
+            y: typeof target.y === "number" ? target.y : 450,
+            zoom: typeof target.zoom === "number" ? Math.max(0.6, Math.min(3.2, target.zoom)) : 1
+          };
+        }
+
+        state.camera = cam;
+        if (prefersReducedMotion && cam.zoom !== 1) {
+          stageEl.style.transform = "scale(1) translate(0%, 0%)";
+          return;
+        }
+
+        const txPct = ((800 - cam.x) / 1600) * 100;
+        const tyPct = ((450 - cam.y) / 900) * 100;
+        stageEl.style.transform =
+          "scale(" +
+          cam.zoom.toFixed(3) +
+          ") translate(" +
+          txPct.toFixed(2) +
+          "%, " +
+          tyPct.toFixed(2) +
+          "%)";
+      }
+
+      /**
+       * Spotlights matching `data-part` groups at 100% clarity and dims all others.
+       */
+      function applyHighlight(partId) {
+        const cleanId = partId && partId !== "full" && partId !== "housing" ? partId : null;
+        state.focusedPart = cleanId;
+
+        allPartGroups.forEach(function (g) {
+          if (!cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.remove("is-focused");
+          } else if (g.dataset.part === cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.add("is-focused");
+          } else {
+            g.classList.remove("is-focused");
+            g.classList.add("is-dimmed");
+          }
+        });
+      }
+
+      /**
+       * Applies smooth Exploded View separation (0..1) along clean isometric axes.
+       */
+      function applyExploded(amount) {
+        const clamped = Math.max(0, Math.min(1, Number(amount) || 0));
+        state.exploded = clamped;
+
+        allPartGroups.forEach(function (g) {
+          let vec = [0, 0];
+          if (g.id === "part-housing-back") {
+            vec = EXPLODE_VECTORS.housing_back;
+          } else if (g.id === "part-housing-front") {
+            vec = EXPLODE_VECTORS.housing_front;
+          } else if (EXPLODE_VECTORS[g.dataset.part]) {
+            vec = EXPLODE_VECTORS[g.dataset.part];
+          }
+          const dx = vec[0] * clamped;
+          const dy = vec[1] * clamped;
+          g.style.transform =
+            clamped < 0.001
+              ? "translate(0px, 0px)"
+              : "translate(" + dx.toFixed(1) + "px, " + dy.toFixed(1) + "px)";
+        });
+      }
+
+      /* =====================================================================
+         7. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ===================================================================== */
+      function clearTourTimer() {
+        if (state.tourTimer !== null) {
+          clearTimeout(state.tourTimer);
+          state.tourTimer = null;
+        }
+      }
+
+      function runTourStep(index) {
+        clearTourTimer();
+        const safeIdx = ((index % TOUR_SEQUENCE.length) + TOUR_SEQUENCE.length) % TOUR_SEQUENCE.length;
+        state.tourIndex = safeIdx;
+        const partKey = TOUR_SEQUENCE[safeIdx];
+
+        if (partKey === "full") {
+          applyHighlight(null);
+          applyCamera("full");
+        } else {
+          applyHighlight(partKey);
+          applyCamera(partKey);
+        }
+
+        if (state.autoTour && !prefersReducedMotion) {
+          const holdMs = partKey === "full" ? 2500 : 3500;
+          state.tourTimer = setTimeout(function () {
+            if (state.autoTour) {
+              runTourStep(state.tourIndex + 1);
+            }
+          }, holdMs);
+        }
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled) && !prefersReducedMotion;
+        clearTourTimer();
+        if (state.autoTour) {
+          const holdMs = state.tourIndex === 0 ? 2500 : 3500;
+          state.tourTimer = setTimeout(function () {
+            if (state.autoTour) {
+              runTourStep(state.tourIndex + 1);
+            }
+          }, holdMs);
+        }
+      }
+
+      /* =====================================================================
+         8. 60 FPS LIVE PHYSICS SIMULATION LOOP
+         ===================================================================== */
+      let lastTs = 0;
+
+      function tickPhysics(ts) {
+        try {
+          if (!lastTs) lastTs = ts;
+          const dt = Math.min(0.05, Math.max(0, (ts - lastTs) / 1000));
+          lastTs = ts;
+
+          if (state.playing) {
+            state.simTime += dt;
+            const t = state.simTime;
+
+            // 1) Smooth bidirectional Charge (+1) / Discharge (-1) target flow
+            let targetFlow = 1;
+            if (state.phase === "charge") {
+              targetFlow = 1;
+            } else if (state.phase === "discharge") {
+              targetFlow = -1;
+            } else {
+              // Smoothly alternates every ~7.5s with gentle reversal plateau
+              targetFlow = Math.tanh(Math.sin(t * 0.42) * 3.0);
+            }
+            state.flowDir += (targetFlow - state.flowDir) * Math.min(1, dt * 4.5);
+            const flowMag = Math.abs(state.flowDir);
+
+            // 2) Animate overhead copper busbar energy streams & beads
+            const speedScale = prefersReducedMotion ? 0.15 : 1;
+            for (let i = 0; i < animBusbarPaths.length; i++) {
+              const bp = animBusbarPaths[i];
+              bp.offset -= dt * 52 * state.flowDir * bp.dir * speedScale;
+              bp.el.setAttribute("stroke-dashoffset", bp.offset.toFixed(2));
+              bp.el.setAttribute("opacity", (0.28 + flowMag * 0.62).toFixed(2));
+            }
+
+            for (let i = 0; i < animBusbarPulses.length; i++) {
+              const p = animBusbarPulses[i];
+              p.t = (p.t + dt * 0.24 * state.flowDir * speedScale) % 1;
+              if (p.t < 0) p.t += 1;
+              const pt = p.pathEl.getPointAtLength(p.t * p.length);
+              p.el.setAttribute("cx", pt.x.toFixed(1));
+              p.el.setAttribute("cy", pt.y.toFixed(1));
+              p.el.setAttribute("opacity", (0.25 + flowMag * 0.75).toFixed(2));
+            }
+
+            // 3) Animate LiFePO4 emerald SOC vertical indicator strips
+            // Gently breathes higher during charge and slightly lower during discharge
+            const baseSoc = 0.78 + 0.14 * Math.sin(t * 0.42 - 0.6);
+            for (let i = 0; i < animSocBars.length; i++) {
+              const bar = animSocBars[i];
+              const ripple = 0.045 * Math.sin(t * 2.4 + bar.phaseOffset);
+              const fillRatio = Math.max(0.45, Math.min(0.98, baseSoc + ripple));
+              const curZTop = bar.zMin + (bar.zMax - bar.zMin) * fillRatio;
+              bar.el.setAttribute(
+                "points",
+                pts([
+                  [bar.sx0, bar.y, bar.zMin],
+                  [bar.sx1, bar.y, bar.zMin],
+                  [bar.sx1, bar.y, curZTop],
+                  [bar.sx0, bar.y, curZTop]
+                ])
+              );
+            }
+
+            // 4) Animate closed-loop cerulean liquid cooling streamlines
+            for (let i = 0; i < animCoolantPaths.length; i++) {
+              const cp = animCoolantPaths[i];
+              cp.offset -= dt * cp.speed * cp.dir * speedScale;
+              cp.el.setAttribute("stroke-dashoffset", cp.offset.toFixed(2));
+            }
+
+            // 5) Animate BMS telemetry signal pulses & status LEDs
+            for (let i = 0; i < animTelemetryDots.length; i++) {
+              const td = animTelemetryDots[i];
+              td.t = (td.t + dt * td.speed * speedScale) % 1;
+              const pt = td.pathEl.getPointAtLength(td.t * td.length);
+              td.el.setAttribute("cx", pt.x.toFixed(1));
+              td.el.setAttribute("cy", pt.y.toFixed(1));
+            }
+
+            for (let i = 0; i < animBmsLeds.length; i++) {
+              const led = animBmsLeds[i];
+              const pulse = 0.55 + 0.45 * Math.sin(t * 3.4 + led.phase);
+              led.el.setAttribute("opacity", pulse.toFixed(2));
+            }
+
+            // 6) Animate PCS copper inductor electromagnetic shimmer
+            for (let i = 0; i < animCoilGlows.length; i++) {
+              const cg = animCoilGlows[i];
+              const glowOp = 0.10 + flowMag * (0.16 + 0.08 * Math.sin(t * 5.2 + i * 1.3));
+              cg.setAttribute("opacity", glowOp.toFixed(3));
+            }
+          }
+        } catch (err) {
+          // Keep render loop resilient
+        }
+        requestAnimationFrame(tickPhysics);
+      }
+
+      /* =====================================================================
+         9. USER INTERACTIONS (CLICK-TO-ASK, RESET, EXPLODED VIEW, KEYBOARD)
+         ===================================================================== */
+      allPartGroups.forEach(function (g) {
+        const partId = g.dataset.part;
+        if (!partId || partId === "housing") return;
+
+        g.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          setAutoTour(false);
+          applyHighlight(partId);
+          applyCamera(partId);
+
+          // Notify host / Mirvo AI voice-lesson parent iframe
+          try {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId: partId,
+                nameUz: PART_NAMES_UZ[partId] || partId
+              },
+              "*"
+            );
+          } catch (e) {
+            // Ignore cross-origin restriction if standalone
+          }
+        });
+      });
+
+      // Click on empty white background or housing resets view & resumes tour
+      viewportEl.addEventListener("click", function (ev) {
+        const partEl = ev.target && ev.target.closest ? ev.target.closest(".mirvo-part") : null;
+        if (!partEl || partEl.dataset.part === "housing") {
+          window.MirvoScene.reset();
+        }
+      });
+
+      // Double-click anywhere toggles smooth Exploded View
+      viewportEl.addEventListener("dblclick", function (ev) {
+        ev.preventDefault();
+        applyExploded(state.exploded > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard shortcuts: R / Esc -> Reset, E -> Exploded View, Space -> Play/Pause
+      window.addEventListener("keydown", function (ev) {
+        const key = ev.key;
+        if (key === "r" || key === "R" || key === "Escape") {
+          window.MirvoScene.reset();
+        } else if (key === "e" || key === "E") {
+          applyExploded(state.exploded > 0.5 ? 0 : 1);
+        } else if (key === " ") {
+          ev.preventDefault();
+          state.playing = !state.playing;
+        }
+      });
+
+      /* =====================================================================
+         10. PUBLIC MIRVO AI INTEGRATION API (window.MirvoScene & postMessage)
+         ===================================================================== */
+      window.MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: PART_NAMES_UZ,
+
+        focus: function (target) {
+          setAutoTour(false);
+          applyCamera(target);
+        },
+
+        highlight: function (partId) {
+          applyHighlight(partId);
+        },
+
+        setStep: function (index) {
+          setAutoTour(false);
+          const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Number(index) || 0));
+          state.tourIndex = idx;
+          const partKey = TOUR_SEQUENCE[idx];
+
+          if (partKey === "full") {
+            applyHighlight(null);
+            applyCamera("full");
+            state.phase = "auto";
+          } else {
+            applyHighlight(partKey);
+            applyCamera(partKey);
+            if (partKey === "pcs_inverter" || partKey === "busbar") {
+              state.phase = "auto";
+            } else if (partKey === "cell_racks") {
+              state.phase = "charge";
+            }
+          }
+        },
+
+        setAutoTour: function (enabled) {
+          setAutoTour(enabled);
+        },
+
+        setExploded: function (amount) {
+          applyExploded(amount);
+        },
+
+        setPhase: function (mode) {
+          if (mode === "charge" || mode === "discharge" || mode === "auto") {
+            state.phase = mode;
+          }
+        },
+
+        setPlaying: function (playing) {
+          state.playing = Boolean(playing);
+        },
+
+        reset: function () {
+          applyExploded(0);
+          applyHighlight(null);
+          applyCamera("full");
+          state.phase = "auto";
+          state.playing = true;
+          state.tourIndex = 0;
+          setAutoTour(true);
+        }
+      };
+
+      // Listen for parent Mirvo AI lesson controller commands via postMessage
+      window.addEventListener("message", function (ev) {
+        try {
+          const msg = ev.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              window.MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              window.MirvoScene.highlight(msg.partId);
+              break;
+            case "SET_STEP":
+              window.MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              window.MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              window.MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              window.MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              window.MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              window.MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          // Safely ignore malformed messages
+        }
+      });
+
+      /* =====================================================================
+         11. BOOTSTRAP: START 60 FPS ANIMATION & SEQUENTIAL SPOTLIGHT TOUR
+         ===================================================================== */
+      window.onload = function () {
+        applyCamera("full");
+        applyHighlight(null);
+        requestAnimationFrame(tickPhysics);
+        if (!prefersReducedMotion) {
+          runTourStep(0);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

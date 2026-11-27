@@ -41,13 +41,15 @@ VISUAL & LAYOUT RULES (STRICT):
      c) Bottom floating dock (.bottom-dock):
         - Dark crisp subtitle pill (background: rgba(17, 24, 39, 0.92), color: #ffffff, max-width: 680px, border-radius: 14px).
         - Pure white high-contrast floating audio player pill (.player-pill, background: #ffffff, border: 1px solid #e5e7eb, dark #1f2937 icons, blue #2563eb primary "Eshitish" / "Pauza" button, ${safeSteps} clickable step dots, prev/replay/next/mute buttons, and speed toggle "1.0x" / "1.2x" / "0.85x").
-2. Exact 30° Mathematical Isometric Cutaway Geometry (NO sloppy flat cartoons!):
-   - Implement exact mathematical projection functions in <script>:
+2. Exact 30° Mathematical Isometric Cutaway Geometry (NO sloppy flat cartoons & NO boxy Lego brick pillars!):
+   - Implement exact mathematical projection & curved engineering helpers in <script>:
      - COS30 = Math.cos(Math.PI / 6), SIN30 = 0.5
      - iso(x, y, z) -> [OX + (x - y) * COS30 * SCALE, OY + (x + y) * SIN30 * SCALE - z * SCALE]
-     - isoBox(x0, x1, y0, y1, z0, z1, palName, opts) with 4-tone shaded faces (+z top brightest, +y left-front mid, +x right-front shaded) and crisp #1f2937 technical ink strokes (stroke-width: 1.05px outer, 0.7px inner details, 0.6px faint seams).
-     - isoCylinderZ(cx, cy, r, z0, z1, palName, steps, opts) for real vertical cylinders, shafts, rotors, coils, pistons, pipes, dials.
-     - isoCirclePts(cx, cy, r, z, steps) and custom angled tubes / cooling fins / gears / coils / cutaway housing walls so internal engineering mechanisms are genuinely exposed and immediately recognizable as the EXACT requested device!
+     - isoBox(x0, x1, y0, y1, z0, z1, palName, opts) ONLY for true rectangular frames/plates/displays — NEVER use plain rectangular boxes to fake copper coils, round housings, pistons, or pipes!
+     - isoFrustumZ(cx, cy, rBot, rTop, z0, z1, palName, steps, opts) for vertical cylinders, tapered cones/nozzles, stepped shafts, pistons, and 240° cutaway cylindrical pressure vessels/domes (pass arcStart/arcEnd so front 120° is cut open with thick beveled cutaway wall edges exposing internal rotors/pistons/valves!).
+     - isoHelixCoilZ(cx, cy, rCoil, z0, z1, turns, strokeHex, highlightHex, wireWidth) for genuine 3D helical copper windings, stator coils, springs, and heat-exchange spirals!
+     - isoTube3D(points3D, strokeWidth, outerHex, highlightHex) for smooth bent suction/discharge pipes, manifolds, and fluid conduits!
+     - isoCirclePts(cx, cy, r, z, steps) and radial blade/fin/gear loops so every internal part is unmistakably recognizable as the EXACT requested machine!
    - Architectural material palettes:
      - shell: #ffffff / #f4f5f7 / #e6e8ec
      - cavity: #f9fafb / #eef0f4 / #dfe3ea

@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Issiqlik elektr stansiyasi (IES bloki)</title>
+  <style>
+    /* =========================================================================
+       PURE #FFFFFF ZERO-UI CANVAS — MIRVO ANATOMY PIPELINE (DEVICE #01)
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mirvo-viewport {
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    #iesSvg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Crisp dark-slate technical ink outlines */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.3px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-bold {
+      stroke: #222933;
+      stroke-width: 1.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-seam {
+      stroke: #222933;
+      stroke-width: 0.85px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-faint {
+      stroke: #475569;
+      stroke-width: 0.65px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    /* Modular interactive assemblies & Sequential Spotlight Tour transitions */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    #part-plinth {
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #part-plinth.is-dimmed {
+      opacity: 0.32;
+      filter: blur(0.8px);
+    }
+
+    /* Smooth animated physical flow strokes */
+    .flow-steam {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 18 28;
+      pointer-events: none;
+    }
+
+    .flow-water {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 22 30;
+      pointer-events: none;
+    }
+
+    .flow-electric {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 12 22;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="viewport">
+    <div class="mirvo-stage" id="stage">
+      <svg
+        id="iesSvg"
+        viewBox="0 0 1600 900"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Issiqlik elektr stansiyasi — Rankine sikli izometrik kesma"
+      >
+        <defs>
+          <!-- Soft grounded contact shadow under plinth -->
+          <filter id="plinthShadow" x="-16%" y="-24%" width="132%" height="148%">
+            <feGaussianBlur stdDeviation="15" />
+          </filter>
+
+          <!-- Warm luminous furnace fire glow -->
+          <filter id="fireGlow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="8" result="b1" />
+            <feGaussianBlur stdDeviation="2.5" result="b2" />
+            <feMerge>
+              <feMergeNode in="b1" />
+              <feMergeNode in="b2" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Crisp cyan electromagnetic glow -->
+          <filter id="cyanGlow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="5.5" result="b1" />
+            <feMerge>
+              <feMergeNode in="b1" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Soft steam glow -->
+          <filter id="steamBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3.2" />
+          </filter>
+
+          <!-- Satin brushed silver-steel plinth top gradient -->
+          <linearGradient id="plinthTopGrad" x1="12%" y1="88%" x2="88%" y2="12%">
+            <stop offset="0%" stop-color="#e9eef4" />
+            <stop offset="28%" stop-color="#f6f8fb" />
+            <stop offset="56%" stop-color="#e3e9f1" />
+            <stop offset="82%" stop-color="#f2f5f9" />
+            <stop offset="100%" stop-color="#dde4ee" />
+          </linearGradient>
+
+          <!-- Furnace ambient fire radial glow -->
+          <radialGradient id="furnaceBloomGrad" cx="50%" cy="68%" r="55%">
+            <stop offset="0%" stop-color="#fef08a" stop-opacity="0.92" />
+            <stop offset="38%" stop-color="#fb923c" stop-opacity="0.62" />
+            <stop offset="72%" stop-color="#ea580c" stop-opacity="0.24" />
+            <stop offset="100%" stop-color="#ea580c" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Fire flame vertical gradients -->
+          <linearGradient id="flameOuterGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#f97316" stop-opacity="0.96" />
+            <stop offset="55%" stop-color="#fb923c" stop-opacity="0.90" />
+            <stop offset="100%" stop-color="#fdba74" stop-opacity="0.25" />
+          </linearGradient>
+          <linearGradient id="flameMidGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.98" />
+            <stop offset="60%" stop-color="#fcd34d" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#fef08a" stop-opacity="0.35" />
+          </linearGradient>
+          <linearGradient id="flameCoreGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96" />
+            <stop offset="55%" stop-color="#fef9c3" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#fde047" stop-opacity="0.28" />
+          </linearGradient>
+
+          <!-- Translucent ice-blue condensate water gradients -->
+          <linearGradient id="condensateBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.84" />
+            <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.72" />
+            <stop offset="100%" stop-color="#0284c7" stop-opacity="0.82" />
+          </linearGradient>
+          <linearGradient id="condensateSurfaceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.92" />
+            <stop offset="50%" stop-color="#7dd3fc" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="#bae6fd" stop-opacity="0.92" />
+          </linearGradient>
+
+          <!-- Expanding translucent steam ribbon inside turbine -->
+          <linearGradient id="turbineSteamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.62" />
+            <stop offset="35%" stop-color="#e0f2fe" stop-opacity="0.48" />
+            <stop offset="85%" stop-color="#bae6fd" stop-opacity="0.34" />
+            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.16" />
+          </linearGradient>
+
+          <!-- Cyan generator rotor magnetic flux glow -->
+          <linearGradient id="fluxCyanGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.45" />
+            <stop offset="50%" stop-color="#67e8f9" stop-opacity="0.96" />
+            <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.55" />
+          </linearGradient>
+        </defs>
+
+        <!-- ===================================================================
+             STRICT BACK-TO-FRONT PAINTER'S ORDER MODULAR <g> LAYERS
+             =================================================================== -->
+        <g id="part-plinth"></g>
+
+        <!-- Part 5: Synchronous Turbogenerator (farthest +u) -->
+        <g id="part-generator-back" class="mirvo-part" data-part="generator"></g>
+        <g id="part-generator-rotor" class="mirvo-part" data-part="generator"></g>
+        <g id="part-generator-front" class="mirvo-part" data-part="generator"></g>
+
+        <!-- Part 4: Shell-and-Tube Surface Condenser (middle +u, lower w) -->
+        <g id="part-condenser-back" class="mirvo-part" data-part="condenser"></g>
+        <g id="part-condenser-front" class="mirvo-part" data-part="condenser"></g>
+
+        <!-- Part 3: Multi-Stage Axial Steam Turbine (middle +u, upper w) -->
+        <g id="part-turbine-back" class="mirvo-part" data-part="turbine"></g>
+        <g id="part-turbine-rotor" class="mirvo-part" data-part="turbine"></g>
+        <g id="part-turbine-front" class="mirvo-part" data-part="turbine"></g>
+
+        <!-- Part 1: Water-Tube Boiler & Steam Drum (closest -u) -->
+        <g id="part-boiler-back" class="mirvo-part" data-part="boiler"></g>
+        <g id="part-boiler-front" class="mirvo-part" data-part="boiler"></g>
+
+        <!-- Part 2: Serpentine Superheater & Overhead Main Steam Line -->
+        <g id="part-superheater" class="mirvo-part" data-part="superheater"></g>
+
+        <!-- Part 4 Foreground: Closed-Loop Blue-Steel Feedwater Return Pipe -->
+        <g id="part-condenser-feedpipe" class="mirvo-part" data-part="condenser"></g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =======================================================================
+         1. ORTHONORMAL 3D-TO-2D ISOMETRIC PROJECTION ENGINE
+         Matches the exact diagonal framing of the reference cutaway:
+           +u : longitudinal axis (left-front boiler -> right-back generator)
+           +v : back-left depth axis (-v faces the cutaway viewer)
+           +w : vertical UP
+         ======================================================================= */
+      const AZ = (35.5 * Math.PI) / 180;
+      const EL = (28.5 * Math.PI) / 180;
+      const SCALE = 1.66;
+      const OX = 788;
+      const OY = 508;
+
+      const sinA = Math.sin(AZ), cosA = Math.cos(AZ);
+      const sinE = Math.sin(EL), cosE = Math.cos(EL);
+
+      // Camera unit vector from origin toward viewer in (-u, -v, +w) octant
+      const CAM = [-sinA * cosE, -cosA * cosE, sinE];
+      // Orthonormal screen basis
+      const RIGHT = [cosA, -sinA, 0];
+      const UP = [sinA * sinE, cosA * sinE, cosE];
+
+      // Screen delta per unit along +u, +v, +w (SVG +Y points down)
+      const UX = RIGHT[0] * SCALE, UY = -UP[0] * SCALE;
+      const VX = RIGHT[1] * SCALE, VY = -UP[1] * SCALE;
+      const WX = RIGHT[2] * SCALE, WY = -UP[2] * SCALE;
+
+      // Exact silhouette angles for any coaxial cylinder aligned with the u-axis
+      const TH_CAM = Math.atan2(CAM[2], CAM[1]);      // Direction facing viewer in (v,w)
+      const TH_TOP_SIL = TH_CAM - Math.PI / 2;        // Upper-back silhouette edge
+      const TH_BOT_SIL = TH_CAM + Math.PI / 2;        // Lower-front silhouette edge
+
+      // Studio key light from upper-left-front
+      const L_RAW = [-0.38, -0.46, 0.80];
+      const L_LEN = Math.hypot(...L_RAW);
+      const LIGHT = L_RAW.map((c) => c / L_LEN);
+
+      function proj(u, v, w) {
+        return [
+          OX + u * UX + v * VX + w * WX,
+          OY + u * UY + v * VY + w * WY
+        ];
+      }
+
+      const r1 = (n) => Math.round(n * 10) / 10;
+
+      function ptsStr(pts) {
+        let out = "";
+        for (let i = 0; i < pts.length; i++) {
+          if (i > 0) out += " ";
+          out += `${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return out;
+      }
+
+      function pathD(pts, closed = true) {
+        if (!pts.length) return "";
+        let d = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+        for (let i = 1; i < pts.length; i++) {
+          d += `L${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return closed ? d + "Z" : d;
+      }
+
+      function hexToRgb(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      }
+
+      function lerpColor(hexA, hexB, t) {
+        const a = hexToRgb(hexA), b = hexToRgb(hexB);
+        const k = Math.max(0, Math.min(1, t));
+        return `rgb(${Math.round(a[0] + (b[0] - a[0]) * k)},${Math.round(a[1] + (b[1] - a[1]) * k)},${Math.round(a[2] + (b[2] - a[2]) * k)})`;
+      }
+
+      // Harmonious 4-tone matte engineering material palettes (dark -> light)
+      const RAMPS = {
+        plinth:    ["#aeb9c7", "#c7d0db", "#e2e8f0", "#f3f5f8", "#ffffff"],
+        ivory:     ["#b7aea0", "#c8bfb0", "#e2dacb", "#f5f1e6", "#fbf9f3"],
+        drum:      ["#6d7c8e", "#9aa6b5", "#d8d5cc", "#f2efe6", "#fcfaf5"],
+        steel:     ["#64748b", "#94a3b8", "#cbd5e1", "#edf2f7", "#f8fafc"],
+        slate:     ["#273140", "#334155", "#475569", "#64748b", "#8294ab"],
+        furnace:   ["#1a1e24", "#242931", "#2b3038", "#3a414c"],
+        copper:    ["#6e3412", "#a85826", "#d9854b", "#f6c39a", "#fde2c8"],
+        cobalt:    ["#183566", "#234b8e", "#366dc2", "#5b95e5", "#8ab9f5"],
+        feedpipe:  ["#2b578f", "#3f73b5", "#5a93d6", "#93c5fd", "#dbeafe"]
+      };
+
+      function sampleRamp(rampName, t) {
+        const ramp = RAMPS[rampName] || RAMPS.steel;
+        const k = Math.max(0, Math.min(1, t)) * (ramp.length - 1);
+        const i = Math.min(ramp.length - 2, Math.floor(k));
+        return lerpColor(ramp[i], ramp[i + 1], k - i);
+      }
+
+      function shadeNormal(nx, ny, nz, rampName, bias = 0) {
+        const len = Math.hypot(nx, ny, nz) || 1;
+        const ndl = (nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2]) / len;
+        return sampleRamp(rampName, ndl * 0.5 + 0.5 + bias);
+      }
+
+      /* =======================================================================
+         2. PARAMETRIC 3D PRIMITIVES (BOXES, SLABS, COAXIAL SHELLS, 3D TUBES)
+         ======================================================================= */
+
+      // Shaded 3D axis-aligned box in (u, v, w) with automatic visible faces (-u, -v, +w)
+      function box3D(u0, u1, v0, v1, w0, w1, rampName, opts = {}) {
+        const cls = opts.cls || "ink";
+        const p000 = proj(u0, v0, w0), p100 = proj(u1, v0, w0);
+        const p001 = proj(u0, v0, w1), p101 = proj(u1, v0, w1);
+        const p010 = proj(u0, v1, w0), p011 = proj(u0, v1, w1);
+        const p111 = proj(u1, v1, w1);
+
+        const colFrontU = opts.frontU || shadeNormal(-1, 0, 0, rampName, -0.05);
+        const colSideV  = opts.sideV  || shadeNormal(0, -1, 0, rampName, 0.03);
+        const colTopW   = opts.topW   || shadeNormal(0, 0, 1, rampName, 0.09);
+
+        let html = "";
+        if (!opts.skipFrontU) {
+          html += `<polygon class="${cls}" fill="${colFrontU}" points="${ptsStr([p010, p000, p001, p011])}"/>`;
+        }
+        if (!opts.skipSideV) {
+          html += `<polygon class="${cls}" fill="${colSideV}" points="${ptsStr([p000, p100, p101, p001])}"/>`;
+        }
+        if (!opts.skipTop) {
+          html += `<polygon class="${cls}" fill="${colTopW}" points="${ptsStr([p011, p001, p101, p111])}"/>`;
+        }
+        return html;
+      }
+
+      // Rounded-corner extruded horizontal slab (used for satin anodized silver plinth)
+      function roundedSlab3D(u0, u1, v0, v1, w0, w1, cornerR, rampName, opts = {}) {
+        const cls = opts.cls || "ink-bold";
+        const r = Math.min(cornerR, (u1 - u0) * 0.45, (v1 - v0) * 0.45);
+        const segs = 7;
+        const corners = [
+          { cu: u1 - r, cv: v1 - r, a0: 0, a1: Math.PI / 2 },
+          { cu: u0 + r, cv: v1 - r, a0: Math.PI / 2, a1: Math.PI },
+          { cu: u0 + r, cv: v0 + r, a0: Math.PI, a1: 1.5 * Math.PI },
+          { cu: u1 - r, cv: v0 + r, a0: 1.5 * Math.PI, a1: 2 * Math.PI }
+        ];
+        const ring = [];
+        for (const c of corners) {
+          for (let i = 0; i <= segs; i++) {
+            const a = c.a0 + (i / segs) * (c.a1 - c.a0);
+            ring.push([c.cu + Math.cos(a) * r, c.cv + Math.sin(a) * r, Math.cos(a), Math.sin(a)]);
+          }
+        }
+        const topPts = ring.map(([u, v]) => proj(u, v, w1));
+        const botPts = ring.map(([u, v]) => proj(u, v, w0));
+
+        let html = "";
+        const visBot = [];
+        for (let i = 0; i < ring.length; i++) {
+          const j = (i + 1) % ring.length;
+          const nx = (ring[i][2] + ring[j][2]) * 0.5;
+          const ny = (ring[i][3] + ring[j][3]) * 0.5;
+          if (nx * CAM[0] + ny * CAM[1] > -0.05) {
+            const col = shadeNormal(nx, ny, 0, rampName, -0.04);
+            html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.6" points="${ptsStr([botPts[i], botPts[j], topPts[j], topPts[i]])}"/>`;
+            visBot.push(botPts[i]);
+          }
+        }
+        if (visBot.length > 2) {
+          html += `<path class="${cls}" fill="none" d="${pathD(visBot, false)}"/>`;
+        }
+        const topFill = opts.topFill || shadeNormal(0, 0, 1, rampName, 0.08);
+        html += `<path class="${cls}" fill="${topFill}" d="${pathD(topPts, true)}"/>`;
+
+        // Chamfered highlight bevel inset around top edge
+        if (opts.bevelInset) {
+          const bi = opts.bevelInset;
+          const br = Math.max(4, r - bi * 0.7);
+          const bRing = [];
+          const bc = [
+            { cu: u1 - bi - br, cv: v1 - bi - br, a0: 0, a1: Math.PI / 2 },
+            { cu: u0 + bi + br, cv: v1 - bi - br, a0: Math.PI / 2, a1: Math.PI },
+            { cu: u0 + bi + br, cv: v0 + bi + br, a0: Math.PI, a1: 1.5 * Math.PI },
+            { cu: u1 - bi - br, cv: v0 + bi + br, a0: 1.5 * Math.PI, a1: 2 * Math.PI }
+          ];
+          for (const c of bc) {
+            for (let i = 0; i <= 5; i++) {
+              const a = c.a0 + (i / 5) * (c.a1 - c.a0);
+              bRing.push(proj(c.cu + Math.cos(a) * br, c.cv + Math.sin(a) * br, w1 + 0.1));
+            }
+          }
+          html += `<path class="ink-faint" fill="none" opacity="0.55" d="${pathD(bRing, true)}"/>`;
+        }
+        return html;
+      }
+
+      // Coaxial circle on u = const
+      function coaxialCircle(u, R, steps = 32, v0 = 0, w0 = 0) {
+        const pts = [];
+        for (let i = 0; i < steps; i++) {
+          const th = (i / steps) * Math.PI * 2;
+          pts.push(proj(u, v0 + Math.cos(th) * R, w0 + Math.sin(th) * R));
+        }
+        return pts;
+      }
+
+      // Coaxial arc on u = const
+      function coaxialArc(u, R, th0, th1, steps = 16, v0 = 0, w0 = 0) {
+        const pts = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = th0 + (i / steps) * (th1 - th0);
+          pts.push(proj(u, v0 + Math.cos(th) * R, w0 + Math.sin(th) * R));
+        }
+        return pts;
+      }
+
+      // Full 360° coaxial cylinder/frustum along u (uA < uB; uA is closer to viewer)
+      function coaxialCyl(uA, rA, uB, rB, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 26;
+        const cls = opts.cls || "ink";
+        const du = uB - uA, dr = rB - rA;
+        const sl = Math.hypot(du, dr) || 1;
+        const nU = -dr / sl, nR = du / sl;
+
+        const pA = [], pB = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = TH_TOP_SIL + (i / steps) * (TH_BOT_SIL - TH_TOP_SIL);
+          pA.push(proj(uA, v0 + Math.cos(th) * rA, w0 + Math.sin(th) * rA));
+          pB.push(proj(uB, v0 + Math.cos(th) * rB, w0 + Math.sin(th) * rB));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const th = TH_TOP_SIL + ((i + 0.5) / steps) * (TH_BOT_SIL - TH_TOP_SIL);
+          const col = shadeNormal(nU, nR * Math.cos(th), nR * Math.sin(th), rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.55" points="${ptsStr([pA[i], pA[i + 1], pB[i + 1], pB[i]])}"/>`;
+        }
+        if (!opts.noSilhouettes) {
+          html += `<path class="${cls}" fill="none" d="M${r1(pA[0][0])},${r1(pA[0][1])}L${r1(pB[0][0])},${r1(pB[0][1])} M${r1(pA[steps][0])},${r1(pA[steps][1])}L${r1(pB[steps][0])},${r1(pB[steps][1])}"/>`;
+        }
+        if (!opts.noBackArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pB, false)}"/>`;
+        }
+        if (opts.frontCap !== false) {
+          const capPts = coaxialCircle(uA, rA, 32, v0, w0);
+          const capCol = opts.capFill || shadeNormal(-1, 0, 0, rampName, -0.02);
+          html += `<path class="${cls}" fill="${capCol}" d="${pathD(capPts, true)}"/>`;
+        } else if (!opts.noFrontArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pA, false)}"/>`;
+        }
+        return html;
+      }
+
+      // Partial coaxial cylindrical strip (outer or inner concave surface)
+      function coaxialStrip(uA, rA, uB, rB, th0, th1, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 18;
+        const inner = Boolean(opts.inner);
+        const cls = opts.cls || "ink";
+        const du = uB - uA, dr = rB - rA;
+        const sl = Math.hypot(du, dr) || 1;
+        const nU = (inner ? 1 : -1) * (-dr / sl);
+        const nR = (inner ? -1 : 1) * (du / sl);
+
+        const pA = [], pB = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = th0 + (i / steps) * (th1 - th0);
+          pA.push(proj(uA, v0 + Math.cos(th) * rA, w0 + Math.sin(th) * rA));
+          pB.push(proj(uB, v0 + Math.cos(th) * rB, w0 + Math.sin(th) * rB));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const th = th0 + ((i + 0.5) / steps) * (th1 - th0);
+          const col = shadeNormal(nU, nR * Math.cos(th), nR * Math.sin(th), rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.55" points="${ptsStr([pA[i], pA[i + 1], pB[i + 1], pB[i]])}"/>`;
+        }
+        if (opts.strokeStart) {
+          html += `<line class="${cls}" x1="${r1(pA[0][0])}" y1="${r1(pA[0][1])}" x2="${r1(pB[0][0])}" y2="${r1(pB[0][1])}"/>`;
+        }
+        if (opts.strokeEnd) {
+          html += `<line class="${cls}" x1="${r1(pA[steps][0])}" y1="${r1(pA[steps][1])}" x2="${r1(pB[steps][0])}" y2="${r1(pB[steps][1])}"/>`;
+        }
+        if (opts.strokeBackArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pB, false)}"/>`;
+        }
+        if (opts.strokeFrontArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pA, false)}"/>`;
+        }
+        return html;
+      }
+
+      // Annular ring sector on plane u = const facing -u
+      function coaxialAnnulus(u, rIn, rOut, th0, th1, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 22;
+        const cls = opts.cls || "ink";
+        const outPts = coaxialArc(u, rOut, th0, th1, steps, v0, w0);
+        const inPts = coaxialArc(u, rIn, th1, th0, steps, v0, w0);
+        const col = opts.fill || shadeNormal(-1, 0, 0, rampName, opts.bias || 0);
+        return `<polygon class="${cls}" fill="${col}" points="${ptsStr(outPts.concat(inPts))}"/>`;
+      }
+
+      // Vertical cylinder along w (w0 -> w1)
+      function verticalCyl(u0, v0, R, w0, w1, rampName, opts = {}) {
+        const steps = opts.steps || 20;
+        const cls = opts.cls || "ink";
+        // Visible side faces around (u,v) circle where dot((cos a, sin a, 0), CAM) > 0
+        const aCam = Math.atan2(CAM[1], CAM[0]);
+        const a0 = aCam - Math.PI / 2;
+        const a1 = aCam + Math.PI / 2;
+
+        const pBot = [], pTop = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = a0 + (i / steps) * (a1 - a0);
+          pBot.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w0));
+          pTop.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w1));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const a = a0 + ((i + 0.5) / steps) * (a1 - a0);
+          const col = shadeNormal(Math.cos(a), Math.sin(a), 0, rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.5" points="${ptsStr([pBot[i], pBot[i + 1], pTop[i + 1], pTop[i]])}"/>`;
+        }
+        html += `<path class="${cls}" fill="none" d="${pathD(pBot, false)} M${r1(pBot[0][0])},${r1(pBot[0][1])}L${r1(pTop[0][0])},${r1(pTop[0][1])} M${r1(pBot[steps][0])},${r1(pBot[steps][1])}L${r1(pTop[steps][0])},${r1(pTop[steps][1])}"/>`;
+        if (opts.topCap) {
+          const cap = [];
+          for (let i = 0; i < steps; i++) {
+            const a = (i / steps) * Math.PI * 2;
+            cap.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w1));
+          }
+          html += `<path class="${cls}" fill="${shadeNormal(0, 0, 1, rampName, 0.1)}" d="${pathD(cap, true)}"/>`;
+        }
+        return html;
+      }
+
+      // Smooth rounded 3D pipe with dark ink outline + base shade + warm highlight rim + optional collar flanges
+      function smoothPipe3D(points3D, radiusPx, rampName, opts = {}) {
+        const cornerR = opts.cornerR || 16;
+        // Subdivide polyline corners into smooth circular fillets in 3D before projecting
+        const dense = [];
+        for (let i = 0; i < points3D.length; i++) {
+          if (i === 0 || i === points3D.length - 1) {
+            dense.push(points3D[i]);
+            continue;
+          }
+          const prev = points3D[i - 1], cur = points3D[i], next = points3D[i + 1];
+          const v1 = [prev[0] - cur[0], prev[1] - cur[1], prev[2] - cur[2]];
+          const v2 = [next[0] - cur[0], next[1] - cur[1], next[2] - cur[2]];
+          const l1 = Math.hypot(...v1) || 1, l2 = Math.hypot(...v2) || 1;
+          const cr = Math.min(cornerR, l1 * 0.44, l2 * 0.44);
+          const pA = [cur[0] + (v1[0] / l1) * cr, cur[1] + (v1[1] / l1) * cr, cur[2] + (v1[2] / l1) * cr];
+          const pB = [cur[0] + (v2[0] / l2) * cr, cur[1] + (v2[1] / l2) * cr, cur[2] + (v2[2] / l2) * cr];
+          const segs = 7;
+          for (let s = 0; s <= segs; s++) {
+            const t = s / segs, omt = 1 - t;
+            dense.push([
+              omt * omt * pA[0] + 2 * omt * t * cur[0] + t * t * pB[0],
+              omt * omt * pA[1] + 2 * omt * t * cur[1] + t * t * pB[1],
+              omt * omt * pA[2] + 2 * omt * t * cur[2] + t * t * pB[2]
+            ]);
+          }
+        }
+        const pts2D = dense.map((p) => proj(p[0], p[1], p[2]));
+        const d = pathD(pts2D, false);
+        const colDark = sampleRamp(rampName, 0.25);
+        const colMid  = sampleRamp(rampName, 0.56);
+        const colHi   = sampleRamp(rampName, 0.90);
+
+        let html = "";
+        // Outer dark ink stroke
+        html += `<path fill="none" stroke="#222933" stroke-width="${(radiusPx * 2 + 2.8).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" d="${d}"/>`;
+        // Shaded pipe body
+        html += `<path fill="none" stroke="${colDark}" stroke-width="${(radiusPx * 2).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" d="${d}"/>`;
+        // Midtone core slightly shifted up-left for cylindrical volume
+        html += `<path fill="none" stroke="${colMid}" stroke-width="${(radiusPx * 1.42).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" transform="translate(-0.7,-0.9)" d="${d}"/>`;
+        // Crisp specular highlight ridge
+        html += `<path fill="none" stroke="${colHi}" stroke-width="${Math.max(1.8, radiusPx * 0.46).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" transform="translate(-1.5,-1.8)" opacity="0.88" d="${d}"/>`;
+        return { html, d, pts2D };
+      }
+
+      // Machined pipe collar flange ring at 3D point
+      function pipeCollar(u, v, w, axis, r = 9.5, len = 6.5, rampName = "copper") {
+        if (axis === "u") {
+          return coaxialCyl(u - len * 0.5, r, u + len * 0.5, r, rampName, { v0: v, w0: w, steps: 16, cls: "ink-seam" });
+        }
+        return verticalCyl(u, v, r, w - len * 0.5, w + len * 0.5, rampName, { steps: 16, topCap: true, cls: "ink-seam" });
+      }
+
+      /* =======================================================================
+         3. BUILD ALL MODULAR ASSEMBLIES IN STRICT PAINTER'S ORDER
+         ======================================================================= */
+      const SHAFTS = { v: 0, w: 50 }; // Shared coaxial turbine + generator shaft axis
+
+      function buildAllAssemblies() {
+        /* ---------------------------------------------------------------------
+           0) PART-PLINTH: Soft Ground Halo + Beveled Satin Silver Plinth Plate
+           --------------------------------------------------------------------- */
+        {
+          let html = "";
+          // Soft ambient drop shadow halo beneath plinth
+          const sh = [
+            proj(-388, -168, -148), proj(388, -168, -148),
+            proj(388, 168, -148), proj(-388, 168, -148)
+          ];
+          html += `<polygon fill="#1e293b" opacity="0.13" filter="url(#plinthShadow)" points="${ptsStr(sh)}"/>`;
+
+          // Main beveled satin anodized silver-steel rectangular plate
+          html += roundedSlab3D(-376, 376, -152, 152, -140, -118, 22, "plinth", {
+            topFill: "url(#plinthTopGrad)",
+            bevelInset: 10
+          });
+
+          // Subtle grounded contact shadows directly beneath the 3 major footprints
+          const sBoiler = [proj(-322, -110, -117.5), proj(-82, -110, -117.5), proj(-82, 108, -117.5), proj(-322, 108, -117.5)];
+          const sCond   = [proj(-18, -76, -117.5), proj(126, -76, -117.5), proj(126, 38, -117.5), proj(-18, 38, -117.5)];
+          const sGen    = [proj(166, -98, -117.5), proj(336, -98, -117.5), proj(336, 98, -117.5), proj(166, 98, -117.5)];
+          html += `<polygon fill="#334155" opacity="0.11" points="${ptsStr(sBoiler)}"/>`;
+          html += `<polygon fill="#334155" opacity="0.11" points="${ptsStr(sCond)}"/>`;
+          html += `<polygon fill="#334155" opacity="0.12" points="${ptsStr(sGen)}"/>`;
+
+          document.getElementById("part-plinth").innerHTML = html;
+        }
+
+        /* ---------------------------------------------------------------------
+           1) PART-GENERATOR (Part 5): Back Housing, Coaxial Slotted Rotor, Front Cutaway
+           --------------------------------------------------------------------- */
+        {
+          const U0 = 166, U1 = 334;
+          const R_OUT = 84, R_IN = 66;
+          const CUT_TOP = (102 * Math.PI) / 180;
+          const CUT_BOT = (212 * Math.PI) / 180;
+
+          // --- GENERATOR BACK ---
+          let back = "";
+          // Dark-slate stepped mounting pedestal on plinth
+          back += box3D(180, 326, -92, 92, -118, -76, "slate", { cls: "ink-bold" });
+          // Flared ivory-cream lower stator support legs
+          back += box3D(188, 318, -74, 74, -76, -34, "ivory", { cls: "ink" });
+
+          // Outer ivory-cream cutaway stator housing (back-upper arc: TH_TOP_SIL -> CUT_TOP)
+          back += coaxialStrip(U0, R_OUT, U1, R_OUT, TH_TOP_SIL, CUT_TOP, "ivory", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeBackArc: true, strokeFrontArc: true
+          });
+          // Rear end-shield cap at u = U1
+          back += coaxialAnnulus(U1 - 8, 22, R_OUT, TH_TOP_SIL, TH_BOT_SIL, "ivory", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 28, cls: "ink", bias: -0.06
+          });
+          // Inner laminated dark-slate stator iron core (visible concave back arc)
+          back += coaxialStrip(U0 + 10, R_IN, U1 - 10, R_IN, CUT_BOT, CUT_TOP + Math.PI * 2, "slate", {
+            v0: SHAFTS.v, w0: SHAFTS.w, inner: true, steps: 24, cls: "ink-seam", bias: -0.08
+          });
+
+          // Vibrant layered brushed-copper upper stator end-windings (looping cleanly in top cavity)
+          for (let layer = 0; layer < 4; layer++) {
+            const rad = 52 + layer * 4.6;
+            back += coaxialStrip(U0 + 14 + layer * 2, rad, U1 - 14 - layer * 2, rad, 0.72, 1.88, "copper", {
+              v0: SHAFTS.v, w0: SHAFTS.w, steps: 14, cls: "ink-seam", strokeFrontArc: true, strokeBackArc: true, bias: 0.05
+            });
+          }
+          // Back-lower copper stator end-windings visible beneath rotor
+          for (let layer = 0; layer < 3; layer++) {
+            const rad = 54 + layer * 4.5;
+            back += coaxialStrip(U0 + 16 + layer * 2, rad, U1 - 16 - layer * 2, rad, 3.85, 5.15, "copper", {
+              v0: SHAFTS.v, w0: SHAFTS.w, inner: true, steps: 14, cls: "ink-seam", bias: -0.04
+            });
+          }
+
+          // Upper beveled cutaway cross-section wall of ivory generator housing
+          const cT = Math.cos(CUT_TOP), sT = Math.sin(CUT_TOP);
+          const gCutTop = [
+            proj(U0, SHAFTS.v + cT * R_OUT, SHAFTS.w + sT * R_OUT),
+            proj(U1, SHAFTS.v + cT * R_OUT, SHAFTS.w + sT * R_OUT),
+            proj(U1, SHAFTS.v + cT * R_IN,  SHAFTS.w + sT * R_IN),
+            proj(U0, SHAFTS.v + cT * R_IN,  SHAFTS.w + sT * R_IN)
+          ];
+          back += `<polygon class="ink-bold" fill="${shadeNormal(0, Math.sin(CUT_TOP), -Math.cos(CUT_TOP), "ivory", 0.06)}" points="${ptsStr(gCutTop)}"/>`;
+
+          // Rear shaft tail emerging from right end bearing
+          back += coaxialCyl(U1 - 4, 15, U1 + 22, 15, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 18, cls: "ink"
+          });
+          back += coaxialCyl(U1 - 10, 24, U1, 24, "slate", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 20, cls: "ink-seam"
+          });
+
+          document.getElementById("part-generator-back").innerHTML = back;
+
+          // --- GENERATOR ROTOR (DYNAMIC ROTATING LAYER + CYAN FLUX & CURRENT) ---
+          let rot = "";
+          // Machined steel coupling collar joining turbine shaft to generator shaft
+          rot += coaxialCyl(132, 14, 154, 14, "steel", { v0: SHAFTS.v, w0: SHAFTS.w, steps: 18, cls: "ink" });
+          rot += coaxialCyl(152, 23, 168, 23, "steel", { v0: SHAFTS.v, w0: SHAFTS.w, steps: 22, cls: "ink-bold", bias: 0.05 });
+          rot += coaxialCyl(168, 15, 200, 15, "steel", { v0: SHAFTS.v, w0: SHAFTS.w, steps: 18, cls: "ink" });
+          // Dynamic slotted rotor & radial cooling fins + glowing cyan electromagnetic flux
+          rot += `<g id="genRotorDynamic"></g>`;
+          // Animated cyan current pulses traveling along upper & lower stator copper windings
+          const cpTop = [proj(U0 + 18, SHAFTS.v - 10, SHAFTS.w + 58), proj(U1 - 18, SHAFTS.v - 10, SHAFTS.w + 58)];
+          const cpBot = [proj(U1 - 18, SHAFTS.v - 34, SHAFTS.w - 44), proj(U0 + 18, SHAFTS.v - 34, SHAFTS.w - 44)];
+          rot += `<path id="genCurrentTop" class="flow-electric" d="${pathD(cpTop, false)}" stroke="#67e8f9" stroke-width="3.2" filter="url(#cyanGlow)" opacity="0.9"/>`;
+          rot += `<path id="genCurrentBot" class="flow-electric" d="${pathD(cpBot, false)}" stroke="#22d3ee" stroke-width="3.2" filter="url(#cyanGlow)" opacity="0.85"/>`;
+          document.getElementById("part-generator-rotor").innerHTML = rot;
+
+          // --- GENERATOR FRONT (LOWER FOREGROUND CUTAWAY HOUSING + LOWER WINDING EDGE) ---
+          let front = "";
+          // Lower foreground brushed-copper stator winding turns
+          for (let layer = 0; layer < 3; layer++) {
+            const rad = 52 + layer * 4.5;
+            front += coaxialStrip(U0 + 16, rad, U1 - 16, rad, 3.65, 4.35, "copper", {
+              v0: SHAFTS.v, w0: SHAFTS.w, steps: 10, cls: "ink-seam", strokeFrontArc: true, bias: 0.06
+            });
+          }
+          // Lower-front ivory housing outer shell arc (CUT_BOT -> TH_BOT_SIL)
+          front += coaxialStrip(U0, R_OUT, U1, R_OUT, CUT_BOT, TH_BOT_SIL, "ivory", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true
+          });
+          // Lower beveled cutaway cross-section wall facing viewer-upward
+          const cB = Math.cos(CUT_BOT), sB = Math.sin(CUT_BOT);
+          const gCutBot = [
+            proj(U0, SHAFTS.v + cB * R_OUT, SHAFTS.w + sB * R_OUT),
+            proj(U1, SHAFTS.v + cB * R_OUT, SHAFTS.w + sB * R_OUT),
+            proj(U1, SHAFTS.v + cB * R_IN,  SHAFTS.w + sB * R_IN),
+            proj(U0, SHAFTS.v + cB * R_IN,  SHAFTS.w + sB * R_IN)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -Math.sin(CUT_BOT), Math.cos(CUT_BOT), "ivory", 0.12)}" points="${ptsStr(gCutBot)}"/>`;
+          // Front end-frame bezel ring around shaft bearing (uncut sector)
+          front += coaxialAnnulus(U0, 26, R_OUT, CUT_BOT, CUT_TOP + Math.PI * 2, "ivory", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 30, cls: "ink-bold"
+          });
+          // Right front frame vertical rib
+          front += coaxialAnnulus(U1, R_IN, R_OUT, CUT_BOT, TH_BOT_SIL, "ivory", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 10, cls: "ink"
+          });
+          document.getElementById("part-generator-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           2) PART-CONDENSER (Part 4): Cobalt Blue Shell, Copper Tubes, Rippling Pool
+           --------------------------------------------------------------------- */
+        {
+          const CU0 = -12, CU1 = 126;
+          const CV = -12, CW = -62;
+          const CR_OUT = 44, CR_IN = 38;
+          const CC_TOP = (108 * Math.PI) / 180;
+          const CC_BOT = (232 * Math.PI) / 180;
+
+          // --- CONDENSER BACK ---
+          let back = "";
+          // Two cobalt-blue saddle legs anchored to plinth
+          back += box3D(8, 30, CV - 36, CV + 32, -118, CW - 26, "cobalt", { cls: "ink" });
+          back += box3D(86, 108, CV - 36, CV + 32, -118, CW - 26, "cobalt", { cls: "ink" });
+
+          // Twin external copper cooling water inlet/outlet pipes curving out right-back of condenser
+          const coolOut1 = smoothPipe3D([[124, CV + 12, CW + 14], [148, CV + 12, CW + 14], [156, CV + 28, CW + 8]], 4.2, "copper", { cornerR: 9 });
+          const coolOut2 = smoothPipe3D([[124, CV + 12, CW - 10], [148, CV + 12, CW - 10], [156, CV + 28, CW - 16]], 4.2, "copper", { cornerR: 9 });
+          back += coolOut2.html + coolOut1.html;
+
+          // Twin vertical satin-steel exhaust necks connecting turbine bottom to condenser top
+          back += verticalCyl(18, CV + 2, 16, CW + 34, 8, "steel", { steps: 18, cls: "ink" });
+          back += verticalCyl(84, CV + 2, 19, CW + 34, 8, "steel", { steps: 18, cls: "ink" });
+
+          // Upper-back outer cobalt blue cylindrical shell
+          back += coaxialStrip(CU0, CR_OUT, CU1, CR_OUT, TH_TOP_SIL, CC_TOP, "cobalt", {
+            v0: CV, w0: CW, steps: 18, cls: "ink-bold", strokeStart: true, strokeBackArc: true, strokeFrontArc: true
+          });
+          // Concave dark-blue inner chamber wall
+          back += coaxialStrip(CU0 + 6, CR_IN, CU1 - 6, CR_IN, CC_BOT, CC_TOP + Math.PI * 2, "cobalt", {
+            v0: CV, w0: CW, inner: true, steps: 22, cls: "ink-seam", bias: -0.22
+          });
+          // Rear brass/copper tube sheet inside condenser
+          back += `<path class="ink-seam" fill="${shadeNormal(-1, 0, 0, "copper", -0.15)}" d="${pathD(coaxialCircle(CU1 - 12, CR_IN - 1, 24, CV, CW), true)}"/>`;
+
+          // Upper cutaway cobalt bevel edge
+          const cT = Math.cos(CC_TOP), sT = Math.sin(CC_TOP);
+          const ccTopPoly = [
+            proj(CU0 + 16, CV + cT * CR_OUT, CW + sT * CR_OUT),
+            proj(CU1 - 14, CV + cT * CR_OUT, CW + sT * CR_OUT),
+            proj(CU1 - 14, CV + cT * CR_IN,  CW + sT * CR_IN),
+            proj(CU0 + 16, CV + cT * CR_IN,  CW + sT * CR_IN)
+          ];
+          back += `<polygon class="ink" fill="${shadeNormal(0, Math.sin(CC_TOP), -Math.cos(CC_TOP), "cobalt", 0.14)}" points="${ptsStr(ccTopPoly)}"/>`;
+
+          // Horizontal bundle of warm copper-alloy cooling tubes inside cutaway (back row then front row)
+          const tubePositions = [
+            [CV + 10, CW + 14], [CV + 10, CW + 3], [CV + 10, CW - 8],
+            [CV - 6,  CW + 17], [CV - 6,  CW + 6], [CV - 6,  CW - 5], [CV - 6,  CW - 16]
+          ];
+          for (const [tv, tw] of tubePositions) {
+            back += coaxialCyl(CU0 + 14, 3.6, CU1 - 12, 3.6, "copper", {
+              v0: tv, w0: tw, steps: 10, cls: "ink-seam", frontCap: false, noBackArc: true, bias: 0.06
+            });
+          }
+
+          document.getElementById("part-condenser-back").innerHTML = back;
+
+          // --- CONDENSER FRONT (FALLING DROPLETS, RIPPLING WATER POOL, FRONT BEVEL) ---
+          let front = "";
+          // Dynamic falling condensation droplets + rippling translucent ice-blue condensate water pool
+          front += `<g id="condenserWaterDynamic"></g>`;
+
+          // Front-left end cap dome/plate of cobalt condenser (CU0 .. CU0 + 16)
+          front += coaxialCyl(CU0, CR_OUT, CU0 + 16, CR_OUT, "cobalt", {
+            v0: CV, w0: CW, steps: 26, cls: "ink-bold", frontCap: true, bias: 0.04
+          });
+          // Right end rim band (CU1 - 14 .. CU1)
+          front += coaxialStrip(CU1 - 14, CR_OUT, CU1, CR_OUT, TH_TOP_SIL, TH_BOT_SIL, "cobalt", {
+            v0: CV, w0: CW, steps: 18, cls: "ink-bold", strokeFrontArc: true, strokeBackArc: true
+          });
+          // Lower-front cutaway lip strip below water pool
+          front += coaxialStrip(CU0 + 16, CR_OUT, CU1 - 14, CR_OUT, CC_BOT, TH_BOT_SIL, "cobalt", {
+            v0: CV, w0: CW, steps: 10, cls: "ink-bold", strokeEnd: true
+          });
+          const cB = Math.cos(CC_BOT), sB = Math.sin(CC_BOT);
+          const ccBotPoly = [
+            proj(CU0 + 16, CV + cB * CR_OUT, CW + sB * CR_OUT),
+            proj(CU1 - 14, CV + cB * CR_OUT, CW + sB * CR_OUT),
+            proj(CU1 - 14, CV + cB * CR_IN,  CW + sB * CR_IN),
+            proj(CU0 + 16, CV + cB * CR_IN,  CW + sB * CR_IN)
+          ];
+          front += `<polygon class="ink" fill="${shadeNormal(0, -Math.sin(CC_BOT), Math.cos(CC_BOT), "cobalt", 0.22)}" points="${ptsStr(ccBotPoly)}"/>`;
+          // Bottom-front discharge boss flange where feedwater return pipe connects
+          front += coaxialCyl(40, 9.5, 58, 9.5, "cobalt", {
+            v0: CV - 36, w0: CW - 28, steps: 14, cls: "ink-seam"
+          });
+
+          document.getElementById("part-condenser-front").innerHTML = front;
+
+          // --- CONDENSER FOREGROUND FEEDWATER RETURN PIPE (COMPLETES CLOSED RANKINE LOOP!) ---
+          const feedPts = [
+            [49, CV - 38, CW - 30],
+            [49, -108, -104],
+            [-138, -108, -104],
+            [-138, -94, -104],
+            [-138, -94, 4],
+            [-152, -80, 12]
+          ];
+          const feedPipe = smoothPipe3D(feedPts, 6.2, "feedpipe", { cornerR: 18 });
+          let fpHtml = feedPipe.html;
+          // Machined boiler entry collar flange
+          fpHtml += pipeCollar(-150, -82, 10, "u", 10.5, 6, "steel");
+          // Animated glowing ice-blue water flow pulses along the return loop
+          fpHtml += `<path id="feedwaterFlowDash" class="flow-water" d="${feedPipe.d}" stroke="#e0f2fe" stroke-width="4.2" opacity="0.92"/>`;
+          document.getElementById("part-condenser-feedpipe").innerHTML = fpHtml;
+        }
+
+        /* ---------------------------------------------------------------------
+           3) PART-TURBINE (Part 3): Satin Silver Casing + 6 Expanding Stages + Steam
+           --------------------------------------------------------------------- */
+        {
+          const TU0 = -34, TU1 = 132;
+          const TR_OUT = 68, TR_IN = 56;
+          const TC_TOP = (96 * Math.PI) / 180;
+          const TC_BOT = (214 * Math.PI) / 180;
+
+          // --- TURBINE BACK ---
+          let back = "";
+          // Outer satin anodized silver-steel casing (back-upper arc)
+          back += coaxialStrip(TU0, TR_OUT, TU1, TR_OUT, TH_TOP_SIL, TC_TOP, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.05
+          });
+          // Concave machined steel interior casing
+          back += coaxialStrip(TU0 + 8, TR_IN, TU1 - 8, TR_IN, TC_BOT, TC_TOP + Math.PI * 2, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, inner: true, steps: 24, cls: "ink-seam", bias: -0.14
+          });
+          // Rear casing closure plate around shaft
+          back += coaxialAnnulus(TU1 - 6, 18, TR_OUT, TH_TOP_SIL, TH_BOT_SIL, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 24, cls: "ink"
+          });
+          // Stator diaphragm rings interleaved between the 6 rotor stages (back concave ribs)
+          for (const du of [-2, 24, 50, 77, 104]) {
+            const dArc = coaxialArc(du, TR_IN - 1, TC_BOT, TC_TOP + Math.PI * 2, 20, SHAFTS.v, SHAFTS.w);
+            back += `<path class="ink-seam" fill="none" stroke-width="2.4" stroke="#475569" d="${pathD(dArc, false)}"/>`;
+          }
+          // Upper beveled cutaway flange wall
+          const cT = Math.cos(TC_TOP), sT = Math.sin(TC_TOP);
+          const tCutTop = [
+            proj(TU0, SHAFTS.v + cT * TR_OUT, SHAFTS.w + sT * TR_OUT),
+            proj(TU1, SHAFTS.v + cT * TR_OUT, SHAFTS.w + sT * TR_OUT),
+            proj(TU1, SHAFTS.v + cT * TR_IN,  SHAFTS.w + sT * TR_IN),
+            proj(TU0, SHAFTS.v + cT * TR_IN,  SHAFTS.w + sT * TR_IN)
+          ];
+          back += `<polygon class="ink-bold" fill="${shadeNormal(0, Math.sin(TC_TOP), -Math.cos(TC_TOP), "steel", 0.10)}" points="${ptsStr(tCutTop)}"/>`;
+
+          document.getElementById("part-turbine-back").innerHTML = back;
+
+          // --- TURBINE ROTOR (6 PROGRESSIVELY EXPANDING ISOMETRIC BLADE STAGES + STEAM) ---
+          let rot = "";
+          // Expanding translucent steam envelope flowing left->right and down into exhaust ducts
+          const stCone = [
+            proj(-24, 0, SHAFTS.w + 18), proj(124, 0, SHAFTS.w + 48),
+            proj(124, 0, SHAFTS.w - 48), proj(-24, 0, SHAFTS.w - 18)
+          ];
+          rot += `<polygon id="turbineSteamEnvelope" fill="url(#turbineSteamGrad)" filter="url(#steamBlur)" points="${ptsStr(stCone)}"/>`;
+          // Dynamic 6-stage rotating blades + shaft + animated steam ribbons
+          rot += `<g id="turbineBladesDynamic"></g>`;
+          document.getElementById("part-turbine-rotor").innerHTML = rot;
+
+          // --- TURBINE FRONT (LOWER FOREGROUND CUTAWAY SILVER CASING) ---
+          let front = "";
+          // Lower-front outer silver cylinder arc
+          front += coaxialStrip(TU0, TR_OUT, TU1, TR_OUT, TC_BOT, TH_BOT_SIL, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Lower beveled cutaway lip facing viewer-upward
+          const cB = Math.cos(TC_BOT), sB = Math.sin(TC_BOT);
+          const tCutBot = [
+            proj(TU0, SHAFTS.v + cB * TR_OUT, SHAFTS.w + sB * TR_OUT),
+            proj(TU1, SHAFTS.v + cB * TR_OUT, SHAFTS.w + sB * TR_OUT),
+            proj(TU1, SHAFTS.v + cB * TR_IN,  SHAFTS.w + sB * TR_IN),
+            proj(TU0, SHAFTS.v + cB * TR_IN,  SHAFTS.w + sB * TR_IN)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -Math.sin(TC_BOT), Math.cos(TC_BOT), "steel", 0.16)}" points="${ptsStr(tCutBot)}"/>`;
+          // Front-left machined inlet end-wall around left shaft bearing (uncut sector)
+          front += coaxialAnnulus(TU0, 18, TR_OUT, TC_BOT, TC_TOP + Math.PI * 2, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 28, cls: "ink-bold", bias: 0.04
+          });
+          // Front-left projecting steel shaft nose + bearing collar
+          front += coaxialCyl(TU0 - 16, 17, TU0, 17, "steel", { v0: SHAFTS.v, w0: SHAFTS.w, steps: 18, cls: "ink" });
+          front += coaxialCyl(TU0 - 30, 11, TU0 - 16, 11, "steel", { v0: SHAFTS.v, w0: SHAFTS.w, steps: 16, cls: "ink" });
+
+          document.getElementById("part-turbine-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           4) PART-BOILER (Part 1): Ivory Capsule Casing, Furnace, Riser Tubes, Steam Drum, Fire
+           --------------------------------------------------------------------- */
+        {
+          const BU0 = -318, BU1 = -88;
+          // Capsule profile in (v, w): bottom semi-circle (wBot = -10, R = 98) & top semi-circle (wTop = +106, R = 98)
+          const R_CAP = 96;
+          const W_BOT = -8;
+          const W_TOP = 102;
+
+          function capsulePts(u, rScale = 1.0, stepsPerArc = 16) {
+            const R = R_CAP * rScale;
+            const pts = [];
+            // Top semi-circle (th: 0 -> PI)
+            for (let i = 0; i <= stepsPerArc; i++) {
+              const th = (i / stepsPerArc) * Math.PI;
+              pts.push(proj(u, Math.cos(th) * R, W_TOP + Math.sin(th) * R));
+            }
+            // Bottom semi-circle (th: PI -> 2*PI)
+            for (let i = 0; i <= stepsPerArc; i++) {
+              const th = Math.PI + (i / stepsPerArc) * Math.PI;
+              pts.push(proj(u, Math.cos(th) * R, W_BOT + Math.sin(th) * R));
+            }
+            return pts;
+          }
+
+          // --- BOILER BACK (FEET, OUTER ARCH SHELL, FURNACE CAVITY, RISER TUBES, FIRE, STEAM DRUM) ---
+          let back = "";
+          // Dark-slate mounting saddle feet on plinth
+          back += box3D(BU0 + 18, BU0 + 52, -74, 74, -118, -86, "slate", { cls: "ink-bold" });
+          back += box3D(BU1 - 50, BU1 - 16, -74, 74, -118, -86, "slate", { cls: "ink-bold" });
+
+          // Rear capsule wall & outer ivory-ceramic arched top shell (TH_TOP_SIL -> PI)
+          back += coaxialStrip(BU0, R_CAP, BU1, R_CAP, TH_TOP_SIL, Math.PI, "ivory", {
+            v0: 0, w0: W_TOP, steps: 18, cls: "ink-bold", strokeStart: true, strokeBackArc: true, strokeFrontArc: true, bias: 0.04
+          });
+          // Back vertical flat shell wall (+v side, v = +R_CAP? Wait: +v is back-left, so th = 0 is +v, th = PI is -v!)
+          // Note: TH_TOP_SIL ≈ 0.99 rad (57°), PI = 180° (-v front wall!).
+          // Lower-front rounded bottom shell below cutaway (PI -> TH_BOT_SIL)
+          back += coaxialStrip(BU0, R_CAP, BU1, R_CAP, Math.PI, TH_BOT_SIL, "ivory", {
+            v0: 0, w0: W_BOT, steps: 14, cls: "ink-bold", strokeEnd: true, strokeBackArc: true, bias: -0.02
+          });
+
+          // Dark-charcoal recessed interior furnace chamber cavity (back wall, right wall, floor)
+          const fBack = [proj(BU0 + 24, 34, -66), proj(BU1 - 24, 34, -66), proj(BU1 - 24, 34, 166), proj(BU0 + 24, 34, 166)];
+          const fRight = [proj(BU1 - 24, -84, -66), proj(BU1 - 24, 34, -66), proj(BU1 - 24, 34, 166), proj(BU1 - 24, -84, 166)];
+          const fFloor = [proj(BU0 + 24, -84, -66), proj(BU1 - 24, -84, -66), proj(BU1 - 24, 34, -66), proj(BU0 + 24, 34, -66)];
+          back += `<polygon class="ink-seam" fill="#232830" points="${ptsStr(fBack)}"/>`;
+          back += `<polygon class="ink-seam" fill="#323944" points="${ptsStr(fRight)}"/>`;
+          back += `<polygon class="ink-seam" fill="#1c2027" points="${ptsStr(fFloor)}"/>`;
+
+          // Glowing warm furnace radiant backdrop
+          const fGlowPt = proj(-220, -20, -18);
+          back += `<ellipse id="furnaceBloom" cx="${r1(fGlowPt[0])}" cy="${r1(fGlowPt[1])}" rx="86" ry="74" fill="url(#furnaceBloomGrad)"/>`;
+
+          // Dense row of 9 vertical brushed-steel water-wall riser tubes inside furnace!
+          for (let i = 0; i < 9; i++) {
+            const tu = -274 + i * 14.5;
+            back += verticalCyl(tu, 6, 4.4, -56, 126, "steel", { steps: 10, cls: "ink-seam", bias: -0.06 });
+          }
+          // Dynamic rising heat/steam shimmer dashes inside riser tubes
+          back += `<g id="boilerRiserShimmer"></g>`;
+
+          // Refractory fire grate / burner manifold bed at bottom of furnace
+          back += box3D(-276, -158, -56, 4, -64, -46, "copper", { cls: "ink-seam", bias: 0.14 });
+          // Dynamic multi-layered flickering flames & rising embers!
+          back += `<g id="boilerFireDynamic"></g>`;
+
+          // Upper horizontal cylindrical ivory-cream Steam Drum with cool gray-blue bottom shading
+          const DU0 = -286, DU1 = -132, DV = -22, DW = 138, DR = 33;
+          // Rounded hemispherical rear cap
+          back += coaxialCyl(DU1 - 4, DR, DU1 + 10, DR * 0.55, "drum", {
+            v0: DV, w0: DW, steps: 20, frontCap: false, cls: "ink-seam"
+          });
+          // Main horizontal steam drum barrel
+          back += coaxialCyl(DU0, DR, DU1, DR, "drum", {
+            v0: DV, w0: DW, steps: 28, cls: "ink-bold", frontCap: true, bias: 0.04
+          });
+          // Subtle metallic seam ring near front of steam drum
+          const dSeam = coaxialArc(DU0 + 18, DR + 0.3, TH_TOP_SIL, TH_BOT_SIL, 20, DV, DW);
+          back += `<path class="ink-faint" fill="none" d="${pathD(dSeam, false)}"/>`;
+
+          // Top boiler arch inner bevel lip above steam drum
+          const topLip = [
+            proj(BU0 + 18, -R_CAP, W_TOP), proj(BU1 - 12, -R_CAP, W_TOP),
+            proj(BU1 - 12, -R_CAP + 14, W_TOP), proj(BU0 + 18, -R_CAP + 14, W_TOP)
+          ];
+          back += `<polygon class="ink-seam" fill="#d5cebf" points="${ptsStr(topLip)}"/>`;
+
+          document.getElementById("part-boiler-back").innerHTML = back;
+
+          // --- BOILER FRONT (FRONT-LEFT CAPSULE END, SIDE BURNER DOOR, FLAME PORT, CUTAWAY FRAME) ---
+          let front = "";
+          // Solid front-right lower capsule apron wall (u = -152 .. BU1, -v face) below superheater coils
+          const apron = [
+            proj(-154, -R_CAP, -68), proj(BU1, -R_CAP, -68),
+            proj(BU1, -R_CAP, 38), proj(-154, -R_CAP, 38)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -1, 0, "ivory", 0.04)}" points="${ptsStr(apron)}"/>`;
+
+          // Beveled cutaway thickness edges framing the furnace window (bottom & right cut wall!)
+          const cutBot = [
+            proj(-274, -R_CAP, -68), proj(-154, -R_CAP, -68),
+            proj(-154, -R_CAP + 16, -68), proj(-274, -R_CAP + 16, -68)
+          ];
+          const cutRight = [
+            proj(-154, -R_CAP, -68), proj(-154, -R_CAP, 38),
+            proj(-154, -R_CAP + 16, 38), proj(-154, -R_CAP + 16, -68)
+          ];
+          const cutStep = [
+            proj(-154, -R_CAP, 38), proj(-186, -R_CAP, 96),
+            proj(-186, -R_CAP + 16, 96), proj(-154, -R_CAP + 16, 38)
+          ];
+          front += `<polygon class="ink" fill="${shadeNormal(0, 0, 1, "ivory", 0.06)}" points="${ptsStr(cutBot)}"/>`;
+          front += `<polygon class="ink" fill="${shadeNormal(-1, 0, 0, "ivory", -0.06)}" points="${ptsStr(cutRight)}"/>`;
+          front += `<polygon class="ink" fill="${shadeNormal(-0.7, 0, 0.7, "ivory", 0.02)}" points="${ptsStr(cutStep)}"/>`;
+
+          // Full front-left capsule end cap (u = BU0, facing -u)
+          const frontCapPts = capsulePts(BU0, 1.0, 16);
+          front += `<path class="ink-bold" fill="${shadeNormal(-1, 0, 0, "ivory", -0.02)}" d="${pathD(frontCapPts, true)}"/>`;
+          // Subtle inner panel bevel inset on front-left end cap
+          const frontInset = capsulePts(BU0 - 0.5, 0.87, 14);
+          front += `<path class="ink-faint" fill="none" opacity="0.65" d="${pathD(frontInset, true)}"/>`;
+
+          // Dark-slate side burner / access door box mounted on left-back of front cap
+          front += box3D(BU0 - 26, BU0 + 2, 18, 92, -32, 92, "slate", { cls: "ink-bold" });
+          // Two small dark hinge latches on door left edge
+          front += box3D(BU0 - 30, BU0 - 24, 72, 86, 54, 72, "slate", { cls: "ink-seam" });
+          front += box3D(BU0 - 30, BU0 - 24, 72, 86, -12, 6, "slate", { cls: "ink-seam" });
+
+          // Circular recessed flame-port / burner sight window on lower front-left face
+          front += coaxialCyl(BU0 - 12, 24, BU0, 24, "slate", { v0: -32, w0: -18, steps: 22, cls: "ink-bold" });
+          front += `<path class="ink-seam" fill="#2c241e" d="${pathD(coaxialCircle(BU0 - 12.4, 15, 20, -32, -18), true)}"/>`;
+          // Subtle warm fire reflection inside sight port
+          const sp = proj(BU0 - 12.6, -32, -18);
+          front += `<circle id="boilerPortGlow" cx="${r1(sp[0])}" cy="${r1(sp[1])}" r="8.5" fill="#fb923c" opacity="0.45"/>`;
+
+          document.getElementById("part-boiler-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           5) PART-SUPERHEATER (Part 2): Copper Serpentine Coils + Overhead Steam Main
+           --------------------------------------------------------------------- */
+        {
+          let html = "";
+
+          // A) Rear parallel serpentine coil bank (slightly recessed in +v for rich 3D depth)
+          const rearCoilPts = [
+            [-148, -68, 126], [-148, -68, 52], [-134, -68, 52],
+            [-134, -68, 132], [-118, -68, 132], [-118, -68, 52],
+            [-102, -68, 52], [-102, -68, 136], [-86, -68, 136],
+            [-86, -68, 34]
+          ];
+          const rearCoil = smoothPipe3D(rearCoilPts, 5.2, "copper", { cornerR: 7 });
+          html += rearCoil.html;
+
+          // B) Overhead high-pressure copper steam main from Steam Drum top -> Turbine inlet!
+          const mainPipePts = [
+            [-208, -22, 170],
+            [-208, -22, 208],
+            [-92, -22, 208],
+            [-68, -22, 198],
+            [-68, -22, 46],
+            [-36, -12, 46]
+          ];
+          const mainPipe = smoothPipe3D(mainPipePts, 5.8, "copper", { cornerR: 15 });
+          html += mainPipe.html;
+          // Machined collar flanges at drum outlet & turbine inlet
+          html += pipeCollar(-208, -22, 172, "w", 10.5, 6.5, "copper");
+          html += pipeCollar(-38, -12, 46, "u", 10, 6.5, "copper");
+
+          // C) Prominent front multi-loop serpentine vertical superheater coil bank (5 crisp U-bends!)
+          const frontCoilPts = [
+            [-172, -52, 132],
+            [-156, -84, 124],
+            [-156, -84, 46],
+            [-140, -84, 46],
+            [-140, -84, 128],
+            [-124, -84, 128],
+            [-124, -84, 46],
+            [-108, -84, 46],
+            [-108, -84, 132],
+            [-92, -84, 132],
+            [-92, -84, 34],
+            [-78, -84, 24]
+          ];
+          const frontCoil = smoothPipe3D(frontCoilPts, 5.8, "copper", { cornerR: 7.5 });
+          html += frontCoil.html;
+          // Machined drum side port flange & lower collector collar
+          html += pipeCollar(-170, -54, 131, "u", 9.5, 6, "copper");
+          html += pipeCollar(-80, -84, 25, "u", 9.5, 6, "copper");
+
+          // D) Animated glowing superheated steam flow streaks moving smoothly through coils & main line!
+          html += `<path id="superheaterCoilFlow" class="flow-steam" d="${frontCoil.d}" stroke="#fef3c7" stroke-width="3.6" opacity="0.88"/>`;
+          html += `<path id="superheaterMainFlow" class="flow-steam" d="${mainPipe.d}" stroke="#fef9c3" stroke-width="4.0" opacity="0.92"/>`;
+
+          document.getElementById("part-superheater").innerHTML = html;
+        }
+      }
+
+      /* =======================================================================
+         4. DYNAMIC 60 FPS PHYSICAL ANIMATION RENDERERS
+         ======================================================================= */
+      // Pre-configured expanding turbine rotor stages (HP small left -> LP wide right)
+      const TURBINE_STAGES = [
+        { u: -15, rHub: 12, rTip: 25, blades: 12 },
+        { u:  10, rHub: 12, rTip: 30, blades: 14 },
+        { u:  36, rHub: 13, rTip: 35, blades: 16 },
+        { u:  62, rHub: 13, rTip: 41, blades: 18 },
+        { u:  90, rHub: 14, rTip: 46, blades: 20 },
+        { u: 116, rHub: 14, rTip: 52, blades: 22 }
+      ];
+
+      // Pre-seeded furnace ember sparks & condenser falling water droplets
+      const EMBERS = Array.from({ length: 10 }, (_, i) => ({
+        u: -268 + (i * 11.2),
+        v: -46 + ((i * 23) % 44),
+        phase: i / 10,
+        speed: 0.45 + (i % 4) * 0.14
+      }));
+
+      const DROPLETS = Array.from({ length: 14 }, (_, i) => ({
+        u: 4 + (i * 8.4),
+        v: -22 + ((i * 17) % 24),
+        phase: i / 14,
+        speed: 0.65 + (i % 3) * 0.22
+      }));
+
+      // 1) Render animated multi-layered boiler fire & riser shimmer
+      function renderBoilerPhysics(clock, intensity) {
+        const fireEl = document.getElementById("boilerFireDynamic");
+        const shimEl = document.getElementById("boilerRiserShimmer");
+        const bloomEl = document.getElementById("furnaceBloom");
+        const portEl = document.getElementById("boilerPortGlow");
+
+        const flicker = 0.88 + 0.12 * Math.sin(clock * 11.5) * Math.cos(clock * 7.3);
+        bloomEl.setAttribute("opacity", (0.72 * intensity * flicker).toFixed(2));
+        portEl.setAttribute("opacity", (0.48 * intensity * flicker).toFixed(2));
+
+        // Build 3 layered procedural flame silhouettes along furnace bed (u = -270..-164, v = -24)
+        function flameLayerPath(count, baseW, minH, maxH, freq, phaseShift) {
+          const pts = [];
+          const uStart = -272, uEnd = -162;
+          pts.push(proj(uStart, -26, baseW));
+          for (let i = 0; i < count; i++) {
+            const tMid = (i + 0.5) / count;
+            const tRight = (i + 1) / count;
+            const uMid = uStart + (uEnd - uStart) * tMid;
+            const uR = uStart + (uEnd - uStart) * tRight;
+            const env = Math.sin(tMid * Math.PI);
+            const hWave = 0.5 + 0.5 * Math.sin(clock * freq + i * 2.1 + phaseShift);
+            const sway = Math.sin(clock * (freq * 0.7) + i * 1.7 + phaseShift) * 6.5;
+            const tipW = baseW + (minH + (maxH - minH) * hWave) * (0.45 + 0.55 * env) * intensity;
+            pts.push(proj(uMid + sway, -24 + sway * 0.3, tipW));
+            if (i < count - 1) {
+              const valleyW = baseW + (minH * 0.38) * (0.5 + 0.5 * Math.cos(clock * freq + i));
+              pts.push(proj(uR, -26, valleyW));
+            }
+          }
+          pts.push(proj(uEnd, -26, baseW));
+          return pathD(pts, true);
+        }
+
+        let fHtml = "";
+        fHtml += `<path fill="url(#flameOuterGrad)" filter="url(#fireGlow)" d="${flameLayerPath(7, -50, 32, 86, 6.8, 0)}"/>`;
+        fHtml += `<path fill="url(#flameMidGrad)" d="${flameLayerPath(6, -50, 22, 64, 8.6, 1.4)}"/>`;
+        fHtml += `<path fill="url(#flameCoreGrad)" d="${flameLayerPath(5, -50, 14, 38, 10.5, 2.8)}"/>`;
+
+        // Rising luminous embers inside furnace
+        for (const e of EMBERS) {
+          const prog = (e.phase + clock * e.speed * intensity) % 1;
+          const ew = -36 + prog * 110;
+          const eu = e.u + Math.sin(clock * 4 + e.phase * 12) * 5;
+          const p = proj(eu, e.v, ew);
+          const op = Math.sin(prog * Math.PI) * 0.9 * intensity;
+          const rad = 1.6 + (1 - prog) * 1.4;
+          fHtml += `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="${rad.toFixed(1)}" fill="#fef08a" opacity="${op.toFixed(2)}"/>`;
+        }
+        fireEl.innerHTML = fHtml;
+
+        // Rising heat/steam shimmer inside the 9 water-wall riser tubes
+        let sHtml = "";
+        const dashOff = (-clock * 48 * intensity).toFixed(1);
+        for (let i = 0; i < 9; i++) {
+          const tu = -274 + i * 14.5;
+          const p0 = proj(tu, 2, -46);
+          const p1 = proj(tu, 2, 122);
+          sHtml += `<path d="M${r1(p0[0])},${r1(p0[1])}L${r1(p1[0])},${r1(p1[1])}" fill="none" stroke="#fde68a" stroke-width="2.1" stroke-linecap="round" stroke-dasharray="10 26" stroke-dashoffset="${dashOff}" opacity="${(0.32 * intensity).toFixed(2)}"/>`;
+        }
+        shimEl.innerHTML = sHtml;
+      }
+
+      // 2) Render 60 FPS rotating 6-stage isometric steam turbine + expanding steam ribbons
+      function renderTurbinePhysics(clock, spinSpeed) {
+        const el = document.getElementById("turbineBladesDynamic");
+        const theta = clock * 4.8 * spinSpeed;
+        let html = "";
+
+        // Central continuous steel shaft inside turbine (drawn in segments between stages for exact occlusion!)
+        // Draw stages rear-to-front (stage 5 -> stage 0 since +u is farther from viewer!)
+        for (let s = TURBINE_STAGES.length - 1; s >= 0; s--) {
+          const st = TURBINE_STAGES[s];
+          const uNext = s === TURBINE_STAGES.length - 1 ? 132 : TURBINE_STAGES[s + 1].u - 4;
+          // Shaft segment behind this disc
+          html += coaxialCyl(st.u + 3, 11.5, uNext, 11.5, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 12, frontCap: false, noBackArc: true, cls: "ink-seam"
+          });
+
+          // Sort blades of this stage back-to-front by camera depth
+          const bladeList = [];
+          for (let b = 0; b < st.blades; b++) {
+            const ang = theta + (b / st.blades) * Math.PI * 2 + s * 0.35;
+            const depth = Math.cos(ang) * CAM[1] + Math.sin(ang) * CAM[2];
+            bladeList.push({ ang, depth });
+          }
+          bladeList.sort((a, b) => a.depth - b.depth);
+
+          // Render back half of blades
+          const halfSplit = Math.floor(bladeList.length * 0.5);
+          const drawBlade = (b) => {
+            const a = b.ang;
+            const twist = 0.24;
+            const c0 = Math.cos(a - 0.10), s0 = Math.sin(a - 0.10);
+            const c1 = Math.cos(a + 0.10), s1 = Math.sin(a + 0.10);
+            const ct0 = Math.cos(a - 0.08 + twist), st0 = Math.sin(a - 0.08 + twist);
+            const ct1 = Math.cos(a + 0.08 + twist), st1 = Math.sin(a + 0.08 + twist);
+            const poly = [
+              proj(st.u - 2.6, SHAFTS.v + c0 * st.rHub, SHAFTS.w + s0 * st.rHub),
+              proj(st.u + 2.6, SHAFTS.v + c1 * st.rHub, SHAFTS.w + s1 * st.rHub),
+              proj(st.u + 3.2, SHAFTS.v + ct1 * st.rTip, SHAFTS.w + st1 * st.rTip),
+              proj(st.u - 3.2, SHAFTS.v + ct0 * st.rTip, SHAFTS.w + st0 * st.rTip)
+            ];
+            const col = shadeNormal(-0.3, Math.cos(a + 0.5), Math.sin(a + 0.5), "steel", 0.05);
+            return `<polygon class="ink-faint" fill="${col}" points="${ptsStr(poly)}"/>`;
+          };
+
+          for (let i = 0; i < halfSplit; i++) html += drawBlade(bladeList[i]);
+          // Machined rotor disc hub collar
+          html += coaxialCyl(st.u - 4, st.rHub + 3, st.u + 4, st.rHub + 3, "steel", {
+            v0: SHAFTS.v, w0: SHAFTS.w, steps: 14, cls: "ink-seam", bias: 0.04
+          });
+          // Front half of blades
+          for (let i = halfSplit; i < bladeList.length; i++) html += drawBlade(bladeList[i]);
+        }
+
+        // Front-most shaft segment inside turbine
+        html += coaxialCyl(-34, 11.5, TURBINE_STAGES[0].u - 3, 11.5, "steel", {
+          v0: SHAFTS.v, w0: SHAFTS.w, steps: 12, frontCap: false, cls: "ink-seam"
+        });
+
+        // Animated translucent expanding steam streamlines flowing left->right & dropping into exhaust!
+        const sOff = (-clock * 115 * spinSpeed).toFixed(1);
+        const steamPaths = [
+          [proj(-26, -14, SHAFTS.w + 14), proj(46, -24, SHAFTS.w + 26), proj(120, -28, SHAFTS.w + 34)],
+          [proj(-26, -18, SHAFTS.w),      proj(42, -26, SHAFTS.w - 4),  proj(86, -22, SHAFTS.w - 34), proj(84, -14, -18)],
+          [proj(-24, -14, SHAFTS.w - 14), proj(18, -18, SHAFTS.w - 28), proj(18, -14, -18)]
+        ];
+        for (const sp of steamPaths) {
+          html += `<path class="flow-steam" d="${pathD(sp, false)}" stroke="#e0f2fe" stroke-width="3.4" stroke-dashoffset="${sOff}" opacity="0.62"/>`;
+        }
+
+        el.innerHTML = html;
+      }
+
+      // 3) Render condenser falling droplets & rippling ice-blue condensate pool
+      function renderCondenserPhysics(clock, flowSpeed) {
+        const el = document.getElementById("condenserWaterDynamic");
+        const CV = -12, CW = -62;
+        const CU0 = 6, CU1 = 112;
+        const waterLevelW = CW - 11;
+
+        let html = "";
+
+        // Falling condensation droplets dripping from exhaust & copper tubes into pool
+        for (const d of DROPLETS) {
+          const prog = (d.phase + clock * d.speed * flowSpeed) % 1;
+          const dw = (CW + 32) - prog * 46;
+          const pt = proj(d.u, d.v, dw);
+          const op = Math.sin(prog * Math.PI) * 0.88;
+          html += `<ellipse cx="${r1(pt[0])}" cy="${r1(pt[1])}" rx="2.0" ry="3.4" fill="#bae6fd" stroke="#0284c7" stroke-width="0.6" opacity="${op.toFixed(2)}"/>`;
+        }
+
+        // Rippling ice-blue condensate water pool filling bottom half of condenser cutaway
+        const waveSamples = 20;
+        const surfFront = [], surfBack = [], botFront = [];
+        for (let i = 0; i <= waveSamples; i++) {
+          const t = i / waveSamples;
+          const u = CU0 + (CU1 - CU0) * t;
+          const ripple = Math.sin(t * 11 - clock * 4.5 * flowSpeed) * 1.9 + Math.cos(t * 7 + clock * 3.1) * 0.9;
+          surfFront.push(proj(u, CV - 36, waterLevelW + ripple));
+          surfBack.push(proj(u, CV + 22, waterLevelW + ripple * 0.6));
+          botFront.push(proj(u, CV - 34, CW - 34));
+        }
+
+        // Translucent front water cross-section body
+        const bodyPoly = surfFront.concat(botFront.slice().reverse());
+        html += `<polygon fill="url(#condensateBodyGrad)" stroke="#0284c7" stroke-width="0.9" points="${ptsStr(bodyPoly)}"/>`;
+
+        // Rippling top water meniscus surface
+        const topPoly = surfFront.concat(surfBack.slice().reverse());
+        html += `<polygon fill="url(#condensateSurfaceGrad)" stroke="#e0f2fe" stroke-width="1.2" points="${ptsStr(topPoly)}"/>`;
+
+        // Shimmering white wave crests on top of pool
+        html += `<path fill="none" stroke="#ffffff" stroke-width="1.4" opacity="0.72" d="${pathD(surfFront, false)}"/>`;
+
+        el.innerHTML = html;
+      }
+
+      // 4) Render coaxial rotating generator slotted rotor + glowing cyan electromagnetic flux
+      function renderGeneratorPhysics(clock, spinSpeed) {
+        const el = document.getElementById("genRotorDynamic");
+        const theta = clock * 4.8 * spinSpeed;
+        const RU0 = 202, RU1 = 296, RR = 38;
+        let html = "";
+
+        // Main steel rotor barrel
+        html += coaxialCyl(RU0, RR, RU1, RR, "steel", {
+          v0: SHAFTS.v, w0: SHAFTS.w, steps: 24, cls: "ink-bold", frontCap: true, bias: -0.02
+        });
+
+        // Rotating radial cooling fan blades at front rotor face (u = RU0 - 5)
+        const finCount = 12;
+        for (let i = 0; i < finCount; i++) {
+          const a = theta + (i / finCount) * Math.PI * 2;
+          const pIn = proj(RU0 - 4, SHAFTS.v + Math.cos(a) * 17, SHAFTS.w + Math.sin(a) * 17);
+          const pOut = proj(RU0 - 4, SHAFTS.v + Math.cos(a) * 35, SHAFTS.w + Math.sin(a) * 35);
+          html += `<line x1="${r1(pIn[0])}" y1="${r1(pIn[1])}" x2="${r1(pOut[0])}" y2="${r1(pOut[1])}" stroke="#22d3ee" stroke-width="2.4" stroke-linecap="round" opacity="0.85"/>`;
+        }
+
+        // Rotating axial rotor slots & glowing cyan electromagnetic flux bars along visible barrel surface!
+        const slotCount = 12;
+        const pulse = 0.72 + 0.28 * Math.sin(clock * 8.5);
+        for (let i = 0; i < slotCount; i++) {
+          const a = ((theta + (i / slotCount) * Math.PI * 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          // Only render slots on the camera-facing side of the cylinder (between TH_TOP_SIL and TH_BOT_SIL)
+          if (a >= TH_TOP_SIL + 0.08 && a <= TH_BOT_SIL - 0.08) {
+            const p0 = proj(RU0 + 6, SHAFTS.v + Math.cos(a) * (RR + 0.6), SHAFTS.w + Math.sin(a) * (RR + 0.6));
+            const p1 = proj(RU1 - 6, SHAFTS.v + Math.cos(a) * (RR + 0.6), SHAFTS.w + Math.sin(a) * (RR + 0.6));
+            // Dark rotor slot groove
+            html += `<line x1="${r1(p0[0])}" y1="${r1(p0[1])}" x2="${r1(p1[0])}" y2="${r1(p1[1])}" stroke="#1e293b" stroke-width="4.2" stroke-linecap="round"/>`;
+            // Glowing cyan electromagnetic flux bar inside slot
+            html += `<line x1="${r1(p0[0])}" y1="${r1(p0[1])}" x2="${r1(p1[0])}" y2="${r1(p1[1])}" stroke="url(#fluxCyanGrad)" stroke-width="2.5" stroke-linecap="round" opacity="${pulse.toFixed(2)}"/>`;
+          }
+        }
+
+        // Subtle cyan slip-ring aura on front rotor end
+        const ringPts = coaxialCircle(RU0 - 2, 27, 22, SHAFTS.v, SHAFTS.w);
+        html += `<path fill="none" stroke="#67e8f9" stroke-width="2.2" stroke-dasharray="8 8" stroke-dashoffset="${(-clock * 55).toFixed(1)}" opacity="${(0.75 * pulse).toFixed(2)}" filter="url(#cyanGlow)" d="${pathD(ringPts, true)}"/>`;
+
+        el.innerHTML = html;
+      }
+
+      /* =======================================================================
+         5. SEQUENTIAL AUTO-SPOTLIGHT TOUR, EXPLODED VIEW & MIRVO API
+         ======================================================================= */
+      function pctFrom3D(u, v, w) {
+        const [x, y] = proj(u, v, w);
+        return {
+          x: Math.round((x / 1600) * 1000) / 10,
+          y: Math.round((y / 900) * 1000) / 10
+        };
+      }
+
+      // Exact metadata for the 5 modular assemblies
+      const PARTS_LIST = [
+        { id: "boiler",      nameUz: "Bug‘ qozoni (o‘txona va bug‘ barabani)", ...pctFrom3D(-215, -18, 52),  zoom: 1.82, phase: "combustion" },
+        { id: "superheater", nameUz: "Bug‘ o‘ta qizdirgichi",                  ...pctFrom3D(-132, -52, 118), zoom: 2.05, phase: "steam" },
+        { id: "turbine",     nameUz: "Ko‘p bosqichli bug‘ turbinasi",          ...pctFrom3D(46, -6, 52),     zoom: 2.10, phase: "turbine" },
+        { id: "condenser",   nameUz: "Sirtli bug‘ kondensatori",               ...pctFrom3D(24, -42, -62),   zoom: 1.88, phase: "condense" },
+        { id: "generator",   nameUz: "Sinxron turbogenerator",                 ...pctFrom3D(248, -4, 38),    zoom: 1.98, phase: "generate" }
+      ];
+
+      const PARTS_MAP = {
+        full: { id: "full", nameUz: "Issiqlik elektr stansiyasi (umumiy)", x: 50, y: 50, zoom: 1.0 }
+      };
+      for (const p of PARTS_LIST) PARTS_MAP[p.id] = p;
+
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        playing: !prefersReducedMotion,
+        mode: "auto",              // "auto" | "combustion" | "steam" | "turbine" | "condense" | "generate"
+        clock: prefersReducedMotion ? 1.8 : 0,
+        lastTs: 0,
+        activePart: null,
+        // Sequential Auto-Spotlight Tour
+        autoTour: !prefersReducedMotion,
+        tourIdx: 0,                // 0 = full, 1..5 = PARTS_LIST[0..4]
+        tourTimer: 0,
+        // Critically-damped Exploded View spring
+        expTarget: 0,
+        expCur: 0,
+        expVel: 0
+      };
+
+      const stageEl = document.getElementById("stage");
+      const viewportEl = document.getElementById("viewport");
+      const plinthEl = document.getElementById("part-plinth");
+
+      // Cache group elements for zero-allocation Exploded View updates
+      let layerGroups = null;
+      function cacheLayerGroups() {
+        layerGroups = {
+          plinth:     document.getElementById("part-plinth"),
+          boilerB:    document.getElementById("part-boiler-back"),
+          boilerF:    document.getElementById("part-boiler-front"),
+          superh:     document.getElementById("part-superheater"),
+          turbineB:   document.getElementById("part-turbine-back"),
+          turbineR:   document.getElementById("part-turbine-rotor"),
+          turbineF:   document.getElementById("part-turbine-front"),
+          condB:      document.getElementById("part-condenser-back"),
+          condF:      document.getElementById("part-condenser-front"),
+          condPipe:   document.getElementById("part-condenser-feedpipe"),
+          genB:       document.getElementById("part-generator-back"),
+          genR:       document.getElementById("part-generator-rotor"),
+          genF:       document.getElementById("part-generator-front"),
+          coilFlow:   document.getElementById("superheaterCoilFlow"),
+          mainFlow:   document.getElementById("superheaterMainFlow"),
+          feedFlow:   document.getElementById("feedwaterFlowDash"),
+          genCurrT:   document.getElementById("genCurrentTop"),
+          genCurrB:   document.getElementById("genCurrentBot")
+        };
+      }
+
+      function focus(partIdOrCoords) {
+        const target =
+          typeof partIdOrCoords === "string"
+            ? PARTS_MAP[partIdOrCoords] || PARTS_MAP.full
+            : partIdOrCoords || PARTS_MAP.full;
+        const z = Math.max(0.85, Math.min(3.5, Number(target.zoom) || 1.0));
+        const tx = 50 - (Number(target.x) ?? 50);
+        const ty = 50 - (Number(target.y) ?? 50);
+        stageEl.style.transform = `scale(${z}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`;
+      }
+
+      function highlight(partId) {
+        state.activePart = partId || null;
+        const allParts = document.querySelectorAll(".mirvo-part");
+        if (!state.activePart) {
+          allParts.forEach((el) => el.classList.remove("is-dimmed", "is-focused"));
+          plinthEl.classList.remove("is-dimmed");
+          return;
+        }
+        allParts.forEach((el) => {
+          const match = el.dataset.part === state.activePart;
+          el.classList.toggle("is-focused", match);
+          el.classList.toggle("is-dimmed", !match);
+        });
+        plinthEl.classList.add("is-dimmed");
+      }
+
+      function scheduleNextTourStep() {
+        clearTimeout(state.tourTimer);
+        if (!state.autoTour || prefersReducedMotion) return;
+        const waitMs = state.tourIdx === 0 ? 2500 : 3400;
+        state.tourTimer = setTimeout(() => {
+          if (!state.autoTour) return;
+          state.tourIdx = (state.tourIdx + 1) % (PARTS_LIST.length + 1);
+          if (state.tourIdx === 0) {
+            highlight(null);
+            focus("full");
+          } else {
+            const p = PARTS_LIST[state.tourIdx - 1];
+            highlight(p.id);
+            focus(p.id);
+          }
+          scheduleNextTourStep();
+        }, waitMs);
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled) && !prefersReducedMotion;
+        clearTimeout(state.tourTimer);
+        if (state.autoTour) {
+          scheduleNextTourStep();
+        }
+      }
+
+      function setStep(index) {
+        const idx = Math.max(0, Math.min(PARTS_LIST.length, Math.round(Number(index) || 0)));
+        setAutoTour(false);
+        state.tourIdx = idx;
+        if (idx === 0) {
+          highlight(null);
+          focus("full");
+          state.mode = "auto";
+        } else {
+          const p = PARTS_LIST[idx - 1];
+          highlight(p.id);
+          focus(p.id);
+          state.mode = p.phase;
+        }
+      }
+
+      function setExploded(amount) {
+        state.expTarget = Math.max(0, Math.min(1, Number(amount) || 0));
+      }
+
+      function setPhase(mode) {
+        const valid = ["auto", "combustion", "steam", "turbine", "condense", "generate"];
+        state.mode = valid.includes(mode) ? mode : "auto";
+      }
+
+      function setPlaying(flag) {
+        state.playing = Boolean(flag);
+      }
+
+      function reset() {
+        highlight(null);
+        focus("full");
+        setExploded(0);
+        state.mode = "auto";
+        state.tourIdx = 0;
+        setPlaying(!prefersReducedMotion);
+        setAutoTour(!prefersReducedMotion);
+      }
+
+      // Critically-damped spring interpolation for smooth isometric Exploded View separation
+      function updateExplodedSpring(dt) {
+        const k = 115.0;
+        const c = 2 * Math.sqrt(k);
+        const f = k * (state.expTarget - state.expCur) - c * state.expVel;
+        state.expVel += f * dt;
+        state.expCur += state.expVel * dt;
+        if (Math.abs(state.expTarget - state.expCur) < 0.0005 && Math.abs(state.expVel) < 0.001) {
+          state.expCur = state.expTarget;
+          state.expVel = 0;
+        }
+
+        const e = state.expCur;
+        const shift = (du, dv, dw) =>
+          `translate(${(du * UX + dv * VX + dw * WX).toFixed(2)}, ${(du * UY + dv * VY + dw * WY).toFixed(2)})`;
+
+        layerGroups.plinth.setAttribute("transform", shift(0, 0, -24 * e));
+        layerGroups.boilerB.setAttribute("transform", shift(-46 * e, 0, 8 * e));
+        layerGroups.boilerF.setAttribute("transform", shift(-46 * e, -22 * e, 8 * e));
+        layerGroups.superh.setAttribute("transform", shift(-18 * e, -26 * e, 30 * e));
+        layerGroups.turbineB.setAttribute("transform", shift(10 * e, 0, 32 * e));
+        layerGroups.turbineR.setAttribute("transform", shift(10 * e, 0, 32 * e));
+        layerGroups.turbineF.setAttribute("transform", shift(10 * e, -18 * e, 32 * e));
+        layerGroups.condB.setAttribute("transform", shift(10 * e, 0, -14 * e));
+        layerGroups.condF.setAttribute("transform", shift(10 * e, -14 * e, -14 * e));
+        layerGroups.condPipe.setAttribute("transform", shift(-6 * e, -28 * e, -14 * e));
+        layerGroups.genB.setAttribute("transform", shift(58 * e, 0, 12 * e));
+        layerGroups.genR.setAttribute("transform", shift(58 * e, 0, 12 * e));
+        layerGroups.genF.setAttribute("transform", shift(58 * e, -20 * e, 12 * e));
+      }
+
+      // Main 60 FPS animation loop
+      function tick(ts) {
+        if (!state.lastTs) state.lastTs = ts;
+        const dt = Math.min(1 / 30, Math.max(0.001, (ts - state.lastTs) / 1000));
+        state.lastTs = ts;
+
+        if (state.playing) {
+          state.clock += dt;
+        }
+
+        updateExplodedSpring(dt);
+
+        // Phase-aware intensity multipliers (all systems stay alive smoothly, focused phase gets extra vigor)
+        const m = state.mode;
+        const fireInt  = m === "combustion" ? 1.25 : 1.0;
+        const steamSpd = m === "steam"      ? 1.55 : 1.0;
+        const turbSpd  = m === "turbine"    ? 1.45 : 1.0;
+        const condSpd  = m === "condense"   ? 1.45 : 1.0;
+        const genSpd   = m === "generate"   ? 1.45 : 1.0;
+
+        renderBoilerPhysics(state.clock, fireInt);
+        renderTurbinePhysics(state.clock, turbSpd);
+        renderCondenserPhysics(state.clock, condSpd);
+        renderGeneratorPhysics(state.clock, genSpd);
+
+        // Smooth continuous dash flow along superheater, feedwater return pipe & generator stator windings
+        layerGroups.coilFlow.style.strokeDashoffset = `${(-state.clock * 82 * steamSpd).toFixed(1)}px`;
+        layerGroups.mainFlow.style.strokeDashoffset = `${(-state.clock * 112 * steamSpd).toFixed(1)}px`;
+        layerGroups.feedFlow.style.strokeDashoffset = `${(-state.clock * 76 * condSpd).toFixed(1)}px`;
+        layerGroups.genCurrT.style.strokeDashoffset = `${(-state.clock * 95 * genSpd).toFixed(1)}px`;
+        layerGroups.genCurrB.style.strokeDashoffset = `${(-state.clock * 95 * genSpd).toFixed(1)}px`;
+
+        requestAnimationFrame(tick);
+      }
+
+      /* =======================================================================
+         6. PUBLIC INTEGRATION API (window.MirvoScene + postMessage) & EVENTS
+         ======================================================================= */
+      const MirvoScene = {
+        deviceId: "ies_rankine_unit",
+        parts: PARTS_LIST.map(({ id, nameUz, x, y, zoom }) => ({ id, nameUz, x, y, zoom })),
+        focus,
+        highlight,
+        setStep,
+        setAutoTour,
+        setExploded,
+        setPhase,
+        setPlaying,
+        reset
+      };
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (e) => {
+        const msg = e.data;
+        if (!msg || typeof msg !== "object") return;
+        switch (msg.type) {
+          case "FOCUS":
+            setAutoTour(false);
+            focus(msg.target ?? msg.partId);
+            break;
+          case "HIGHLIGHT":
+            highlight(msg.partId ?? null);
+            break;
+          case "SET_STEP":
+            setStep(msg.index);
+            break;
+          case "SET_AUTO_TOUR":
+            setAutoTour(msg.enabled ?? true);
+            break;
+          case "EXPLODE":
+            setExploded(msg.amount ?? msg.value ?? 0);
+            break;
+          case "SET_PHASE":
+            setPhase(msg.mode);
+            break;
+          case "SET_PLAYING":
+            setPlaying(msg.playing);
+            break;
+          case "RESET":
+            reset();
+            break;
+        }
+      });
+
+      // Click / double-click & keyboard interactions
+      let clickTimer = 0;
+      viewportEl.addEventListener("click", (e) => {
+        const partEl = e.target.closest(".mirvo-part");
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          if (!partEl) {
+            reset();
+            return;
+          }
+          const partId = partEl.dataset.part;
+          setAutoTour(false);
+          highlight(partId);
+          focus(partId);
+          const meta = PARTS_MAP[partId] || { nameUz: partId };
+          try {
+            window.parent.postMessage(
+              { type: "PART_CLICK", deviceId: "ies_rankine_unit", partId, nameUz: meta.nameUz },
+              "*"
+            );
+          } catch (_) {}
+        }, 175);
+      });
+
+      viewportEl.addEventListener("dblclick", () => {
+        clearTimeout(clickTimer);
+        setExploded(state.expTarget > 0.5 ? 0 : 1);
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          e.preventDefault();
+          setPlaying(!state.playing);
+        } else if (e.key === "e" || e.key === "E") {
+          e.preventDefault();
+          setExploded(state.expTarget > 0.5 ? 0 : 1);
+        } else if (e.key === "r" || e.key === "R" || e.key === "Escape") {
+          e.preventDefault();
+          reset();
+        }
+      });
+
+      /* =======================================================================
+         7. BOOTSTRAP
+         ======================================================================= */
+      buildAllAssemblies();
+      cacheLayerGroups();
+      focus("full");
+      if (state.autoTour) scheduleNextTourStep();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

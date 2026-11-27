@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bug‘-gaz qurilmasi (BGQ / CCGT)</title>
+  <style>
+    /* =========================================================================
+       PURE #FFFFFF ZERO-UI CANVAS — MIRVO ANATOMY PIPELINE (DEVICE #02)
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mirvo-viewport {
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    #ccgtSvg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Crisp dark-slate technical ink outlines */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.35px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-bold {
+      stroke: #222933;
+      stroke-width: 1.55px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-seam {
+      stroke: #222933;
+      stroke-width: 0.9px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-faint {
+      stroke: #334155;
+      stroke-width: 0.68px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    /* Modular clickable assemblies & Sequential Spotlight Tour transitions */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-base {
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-part.is-dimmed,
+    .mirvo-base.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 8px 18px rgba(2, 132, 199, 0.24));
+    }
+
+    /* Animated physical flow ribbons */
+    .flow-air {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 22 28;
+      pointer-events: none;
+    }
+
+    .flow-hot {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 24 30;
+      pointer-events: none;
+    }
+
+    .flow-steam {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 18 26;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="viewport">
+    <div class="mirvo-stage" id="stage">
+      <svg
+        id="ccgtSvg"
+        viewBox="0 0 1600 900"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Combined Cycle Gas Turbine Power Unit Isometric Cutaway"
+      >
+        <defs>
+          <!-- Soft grounded contact shadow under plinth -->
+          <filter id="plinthShadow" x="-15%" y="-25%" width="130%" height="150%">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+
+          <!-- Radiant amber-orange combustion glow -->
+          <filter id="fireGlow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="7.5" result="b1" />
+            <feGaussianBlur stdDeviation="2.4" result="b2" />
+            <feMerge>
+              <feMergeNode in="b1" />
+              <feMergeNode in="b2" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Luminous cyan air/steam/energy glow -->
+          <filter id="cyanGlow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="6.5" result="b1" />
+            <feMerge>
+              <feMergeNode in="b1" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Soft vapor blur -->
+          <filter id="vaporBlur" x="-35%" y="-35%" width="170%" height="170%">
+            <feGaussianBlur stdDeviation="5.5" />
+          </filter>
+
+          <!-- Brushed dark-slate plinth top sheen -->
+          <linearGradient id="plinthTopGrad" x1="8%" y1="88%" x2="92%" y2="12%">
+            <stop offset="0%" stop-color="#525f72" />
+            <stop offset="28%" stop-color="#69788d" />
+            <stop offset="58%" stop-color="#58667a" />
+            <stop offset="84%" stop-color="#6c7b90" />
+            <stop offset="100%" stop-color="#4e5b6e" />
+          </linearGradient>
+
+          <!-- Cyan intake airflow gradient -->
+          <linearGradient id="intakeCyanGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.06" />
+            <stop offset="40%" stop-color="#38bdf8" stop-opacity="0.72" />
+            <stop offset="78%" stop-color="#a5f3fc" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.18" />
+          </linearGradient>
+
+          <!-- Combustion flame vertical/radial gradients -->
+          <radialGradient id="combustorBloomGrad" cx="50%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="#fff7ed" stop-opacity="0.96" />
+            <stop offset="32%" stop-color="#fde047" stop-opacity="0.82" />
+            <stop offset="68%" stop-color="#fb923c" stop-opacity="0.46" />
+            <stop offset="100%" stop-color="#ea580c" stop-opacity="0" />
+          </radialGradient>
+
+          <linearGradient id="flameHotGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop offset="0%" stop-color="#fff7ed" stop-opacity="0.96" />
+            <stop offset="38%" stop-color="#fde047" stop-opacity="0.92" />
+            <stop offset="75%" stop-color="#fb923c" stop-opacity="0.78" />
+            <stop offset="100%" stop-color="#ea580c" stop-opacity="0.12" />
+          </linearGradient>
+
+          <!-- Hot turbine exhaust plume sweeping into HRSG -->
+          <linearGradient id="exhaustHeatGrad" x1="0%" y1="70%" x2="100%" y2="30%">
+            <stop offset="0%" stop-color="#fb923c" stop-opacity="0.72" />
+            <stop offset="45%" stop-color="#f97316" stop-opacity="0.48" />
+            <stop offset="82%" stop-color="#fdba74" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="#fed7aa" stop-opacity="0" />
+          </linearGradient>
+
+          <!-- Luminous cyan-ice steam gradient inside secondary steam turbine -->
+          <linearGradient id="steamTurbineGrad" x1="0%" y1="65%" x2="100%" y2="35%">
+            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.88" />
+            <stop offset="48%" stop-color="#38bdf8" stop-opacity="0.62" />
+            <stop offset="85%" stop-color="#0ea5e9" stop-opacity="0.76" />
+            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.08" />
+          </linearGradient>
+
+          <!-- Soft rising HRSG steam vapor gradient -->
+          <linearGradient id="hrsgVaporGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.08" />
+            <stop offset="42%" stop-color="#e2e8f0" stop-opacity="0.48" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+
+        <!-- ===================================================================
+             STRICT BACK-TO-FRONT PAINTER'S ORDER MODULAR <g> LAYERS
+             =================================================================== -->
+        <!-- 0. Stepped Slate-Gray Industrial Base Plinth -->
+        <g id="part-plinth" class="mirvo-base"></g>
+
+        <!-- 4. Utilizator-qozon (HRSG) — Upper-Right along main axis (farthest +u) -->
+        <g id="part-hrsg_boiler-back" class="mirvo-part" data-part="hrsg_boiler"></g>
+        <g id="part-hrsg_boiler-coils" class="mirvo-part" data-part="hrsg_boiler"></g>
+        <g id="part-hrsg_boiler-front" class="mirvo-part" data-part="hrsg_boiler"></g>
+
+        <!-- 3. Gaz turbinasi — Center along main axis -->
+        <g id="part-gas_turbine-back" class="mirvo-part" data-part="gas_turbine"></g>
+        <g id="part-gas_turbine-rotor" class="mirvo-part" data-part="gas_turbine"></g>
+        <g id="part-gas_turbine-front" class="mirvo-part" data-part="gas_turbine"></g>
+
+        <!-- 2. Yonish kamerasi — Middle-Left along main axis -->
+        <g id="part-combustor-back" class="mirvo-part" data-part="combustor"></g>
+        <g id="part-combustor-flames" class="mirvo-part" data-part="combustor"></g>
+        <g id="part-combustor-front" class="mirvo-part" data-part="combustor"></g>
+
+        <!-- 1. O‘qli havo kompressori — Front-Left along main axis -->
+        <g id="part-compressor-back" class="mirvo-part" data-part="compressor"></g>
+        <g id="part-compressor-rotor" class="mirvo-part" data-part="compressor"></g>
+        <g id="part-compressor-front" class="mirvo-part" data-part="compressor"></g>
+
+        <!-- 5. Bug‘ turbinasi — Front-Right parallel offset step on plinth (-v foreground) -->
+        <g id="part-steam_turbine-manifold" class="mirvo-part" data-part="steam_turbine"></g>
+        <g id="part-steam_turbine-back" class="mirvo-part" data-part="steam_turbine"></g>
+        <g id="part-steam_turbine-rotor" class="mirvo-part" data-part="steam_turbine"></g>
+        <g id="part-steam_turbine-front" class="mirvo-part" data-part="steam_turbine"></g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =======================================================================
+         1. ORTHONORMAL 3D-TO-2D ISOMETRIC PROJECTION ENGINE
+         Matches the exact diagonal layout & framing of the reference cutaway:
+           +u : main Brayton/HRSG longitudinal axis (front-left -> upper-right)
+           +v : back-left depth axis (-v points toward front-right steam turbine)
+           +w : vertical UP
+         ======================================================================= */
+      const AZ = (38.0 * Math.PI) / 180;
+      const EL = (30.0 * Math.PI) / 180;
+      const SCALE = 1.44;
+      const OX = 716;
+      const OY = 480;
+
+      const sinA = Math.sin(AZ), cosA = Math.cos(AZ);
+      const sinE = Math.sin(EL), cosE = Math.cos(EL);
+
+      // Unit vector from origin toward viewer in (-u, -v, +w) octant
+      const CAM = [-sinA * cosE, -cosA * cosE, sinE];
+      // Orthonormal screen basis vectors
+      const RIGHT = [cosA, -sinA, 0];
+      const UP = [sinA * sinE, cosA * sinE, cosE];
+
+      // Screen delta per 3D unit (SVG +Y points downward)
+      const UX = RIGHT[0] * SCALE, UY = -UP[0] * SCALE;
+      const VX = RIGHT[1] * SCALE, VY = -UP[1] * SCALE;
+      const WX = RIGHT[2] * SCALE, WY = -UP[2] * SCALE;
+
+      // Exact cylinder silhouette angles around any u-aligned coaxial axis
+      const TH_CAM = Math.atan2(CAM[2], CAM[1]);
+      const TH_TOP_SIL = TH_CAM - Math.PI / 2;
+      const TH_BOT_SIL = TH_CAM + Math.PI / 2;
+
+      // Directional studio key light from upper-left-front
+      const L_RAW = [-0.36, -0.45, 0.82];
+      const L_MAG = Math.hypot(...L_RAW);
+      const LIGHT = L_RAW.map((c) => c / L_MAG);
+
+      function proj(u, v, w) {
+        return [
+          OX + u * UX + v * VX + w * WX,
+          OY + u * UY + v * VY + w * WY
+        ];
+      }
+
+      const r1 = (n) => Math.round(n * 10) / 10;
+
+      function ptsStr(pts) {
+        let out = "";
+        for (let i = 0; i < pts.length; i++) {
+          if (i > 0) out += " ";
+          out += `${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return out;
+      }
+
+      function pathD(pts, closed = true) {
+        if (!pts.length) return "";
+        let d = `M${r1(pts[0][0])},${r1(pts[0][1])}`;
+        for (let i = 1; i < pts.length; i++) {
+          d += `L${r1(pts[i][0])},${r1(pts[i][1])}`;
+        }
+        return closed ? d + "Z" : d;
+      }
+
+      function hexToRgb(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      }
+
+      function lerpColor(hexA, hexB, t) {
+        const a = hexToRgb(hexA), b = hexToRgb(hexB);
+        const k = Math.max(0, Math.min(1, t));
+        return `rgb(${Math.round(a[0] + (b[0] - a[0]) * k)},${Math.round(a[1] + (b[1] - a[1]) * k)},${Math.round(a[2] + (b[2] - a[2]) * k)})`;
+      }
+
+      // Harmonious 4-tone matte engineering material ramps (dark -> light)
+      const RAMPS = {
+        slate:      ["#273242", "#334155", "#475569", "#64748b", "#8294ac"],
+        steel:      ["#64748b", "#94a3b8", "#cbd5e1", "#e8eef5", "#f8fafc"],
+        blade:      ["#475569", "#7d8fa4", "#b8c5d4", "#e2e8f0", "#f8fafc"],
+        ivory:      ["#b9b4a8", "#cfcabd", "#e7e5e0", "#f5f3ee", "#faf8f4"],
+        cobalt:     ["#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"],
+        cerulean:   ["#1e40af", "#2b5db8", "#4881d1", "#76a9ea", "#a8ccf7"],
+        copper:     ["#7c3414", "#b85826", "#df874c", "#f6bd8e", "#fde2c4"],
+        terracotta: ["#7c3414", "#c25e28", "#ea8c4c", "#fdba74", "#ffedd5"],
+        darkCavity: ["#171c24", "#1f2631", "#2a3342", "#394456"]
+      };
+
+      function sampleRamp(rampName, t) {
+        const ramp = RAMPS[rampName] || RAMPS.steel;
+        const k = Math.max(0, Math.min(1, t)) * (ramp.length - 1);
+        const i = Math.min(ramp.length - 2, Math.floor(k));
+        return lerpColor(ramp[i], ramp[i + 1], k - i);
+      }
+
+      function shadeNormal(nx, ny, nz, rampName, bias = 0) {
+        const len = Math.hypot(nx, ny, nz) || 1;
+        const ndl = (nx * LIGHT[0] + ny * LIGHT[1] + nz * LIGHT[2]) / len;
+        return sampleRamp(rampName, ndl * 0.5 + 0.5 + bias);
+      }
+
+      /* =======================================================================
+         2. PARAMETRIC 3D PRIMITIVES (BOXES, COAXIAL SHELLS, 3D TUBES, FLANGES)
+         ======================================================================= */
+
+      // Shaded 3D axis-aligned box in (u, v, w) showing camera-facing faces (-u, -v, +w)
+      function box3D(u0, u1, v0, v1, w0, w1, rampName, opts = {}) {
+        const cls = opts.cls || "ink";
+        const p000 = proj(u0, v0, w0), p100 = proj(u1, v0, w0);
+        const p001 = proj(u0, v0, w1), p101 = proj(u1, v0, w1);
+        const p010 = proj(u0, v1, w0), p011 = proj(u0, v1, w1);
+        const p111 = proj(u1, v1, w1);
+
+        const colFrontU = opts.frontU || shadeNormal(-1, 0, 0, rampName, -0.05);
+        const colSideV  = opts.sideV  || shadeNormal(0, -1, 0, rampName, 0.03);
+        const colTopW   = opts.topW   || shadeNormal(0, 0, 1, rampName, 0.09);
+
+        let html = "";
+        if (!opts.skipFrontU) {
+          html += `<polygon class="${cls}" fill="${colFrontU}" points="${ptsStr([p010, p000, p001, p011])}"/>`;
+        }
+        if (!opts.skipSideV) {
+          html += `<polygon class="${cls}" fill="${colSideV}" points="${ptsStr([p000, p100, p101, p001])}"/>`;
+        }
+        if (!opts.skipTop) {
+          html += `<polygon class="${cls}" fill="${colTopW}" points="${ptsStr([p011, p001, p101, p111])}"/>`;
+        }
+        return html;
+      }
+
+      // Tapered industrial mounting pedestal / A-frame leg supporting a cylinder onto the plinth
+      function cradleLeg(u0, u1, vCenter, halfWidthTop, halfWidthBot, wBot, wTop, rampName, opts = {}) {
+        const cls = opts.cls || "ink";
+        const p000 = proj(u0, vCenter - halfWidthBot, wBot);
+        const p100 = proj(u1, vCenter - halfWidthBot, wBot);
+        const p001 = proj(u0, vCenter - halfWidthTop, wTop);
+        const p101 = proj(u1, vCenter - halfWidthTop, wTop);
+        const p010 = proj(u0, vCenter + halfWidthBot, wBot);
+        const p011 = proj(u0, vCenter + halfWidthTop, wTop);
+        const colU = shadeNormal(-1, 0, 0, rampName, -0.04);
+        const colV = shadeNormal(0, -1, 0.25, rampName, 0.04);
+        let html = "";
+        // Foot base pad
+        html += box3D(u0 - 4, u1 + 4, vCenter - halfWidthBot - 4, vCenter + halfWidthBot + 4, wBot, wBot + 7, rampName, { cls: "ink-seam" });
+        // Sloped side & front faces
+        html += `<polygon class="${cls}" fill="${colU}" points="${ptsStr([p010, p000, p001, p011])}"/>`;
+        html += `<polygon class="${cls}" fill="${colV}" points="${ptsStr([p000, p100, p101, p001])}"/>`;
+        if (opts.webCut) {
+          // Recessed gusset panel detail on -v face
+          const g0 = proj(u0 + 4, vCenter - halfWidthBot + 2, wBot + 10);
+          const g1 = proj(u1 - 4, vCenter - halfWidthBot + 2, wBot + 10);
+          const g2 = proj(u1 - 4, vCenter - halfWidthTop - 1, wTop - 8);
+          const g3 = proj(u0 + 4, vCenter - halfWidthTop - 1, wTop - 8);
+          html += `<polygon class="ink-faint" fill="${shadeNormal(0, -1, 0, rampName, -0.14)}" points="${ptsStr([g0, g1, g2, g3])}"/>`;
+        }
+        return html;
+      }
+
+      // Coaxial circle points on plane u = const
+      function coaxialCircle(u, R, steps = 32, v0 = 0, w0 = 0) {
+        const pts = [];
+        for (let i = 0; i < steps; i++) {
+          const th = (i / steps) * Math.PI * 2;
+          pts.push(proj(u, v0 + Math.cos(th) * R, w0 + Math.sin(th) * R));
+        }
+        return pts;
+      }
+
+      // Coaxial arc points on plane u = const
+      function coaxialArc(u, R, th0, th1, steps = 16, v0 = 0, w0 = 0) {
+        const pts = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = th0 + (i / steps) * (th1 - th0);
+          pts.push(proj(u, v0 + Math.cos(th) * R, w0 + Math.sin(th) * R));
+        }
+        return pts;
+      }
+
+      // Full 360° coaxial cylinder/frustum along u (uA < uB; uA is closer to viewer)
+      function coaxialCyl(uA, rA, uB, rB, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 26;
+        const cls = opts.cls || "ink";
+        const du = uB - uA, dr = rB - rA;
+        const sl = Math.hypot(du, dr) || 1;
+        const nU = -dr / sl, nR = du / sl;
+
+        const pA = [], pB = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = TH_TOP_SIL + (i / steps) * (TH_BOT_SIL - TH_TOP_SIL);
+          pA.push(proj(uA, v0 + Math.cos(th) * rA, w0 + Math.sin(th) * rA));
+          pB.push(proj(uB, v0 + Math.cos(th) * rB, w0 + Math.sin(th) * rB));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const th = TH_TOP_SIL + ((i + 0.5) / steps) * (TH_BOT_SIL - TH_TOP_SIL);
+          const col = shadeNormal(nU, nR * Math.cos(th), nR * Math.sin(th), rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.55" points="${ptsStr([pA[i], pA[i + 1], pB[i + 1], pB[i]])}"/>`;
+        }
+        if (!opts.noSilhouettes) {
+          html += `<path class="${cls}" fill="none" d="M${r1(pA[0][0])},${r1(pA[0][1])}L${r1(pB[0][0])},${r1(pB[0][1])} M${r1(pA[steps][0])},${r1(pA[steps][1])}L${r1(pB[steps][0])},${r1(pB[steps][1])}"/>`;
+        }
+        if (!opts.noBackArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pB, false)}"/>`;
+        }
+        if (opts.frontCap !== false) {
+          const capPts = coaxialCircle(uA, rA, 32, v0, w0);
+          const capCol = opts.capFill || shadeNormal(-1, 0, 0, rampName, -0.02);
+          html += `<path class="${cls}" fill="${capCol}" d="${pathD(capPts, true)}"/>`;
+        } else if (!opts.noFrontArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pA, false)}"/>`;
+        }
+        return html;
+      }
+
+      // Partial coaxial cylindrical strip (outer or inner concave surface)
+      function coaxialStrip(uA, rA, uB, rB, th0, th1, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 18;
+        const inner = Boolean(opts.inner);
+        const cls = opts.cls || "ink";
+        const du = uB - uA, dr = rB - rA;
+        const sl = Math.hypot(du, dr) || 1;
+        const nU = (inner ? 1 : -1) * (-dr / sl);
+        const nR = (inner ? -1 : 1) * (du / sl);
+
+        const pA = [], pB = [];
+        for (let i = 0; i <= steps; i++) {
+          const th = th0 + (i / steps) * (th1 - th0);
+          pA.push(proj(uA, v0 + Math.cos(th) * rA, w0 + Math.sin(th) * rA));
+          pB.push(proj(uB, v0 + Math.cos(th) * rB, w0 + Math.sin(th) * rB));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const th = th0 + ((i + 0.5) / steps) * (th1 - th0);
+          const col = shadeNormal(nU, nR * Math.cos(th), nR * Math.sin(th), rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.55" points="${ptsStr([pA[i], pA[i + 1], pB[i + 1], pB[i]])}"/>`;
+        }
+        if (opts.strokeStart) {
+          html += `<line class="${cls}" x1="${r1(pA[0][0])}" y1="${r1(pA[0][1])}" x2="${r1(pB[0][0])}" y2="${r1(pB[0][1])}"/>`;
+        }
+        if (opts.strokeEnd) {
+          html += `<line class="${cls}" x1="${r1(pA[steps][0])}" y1="${r1(pA[steps][1])}" x2="${r1(pB[steps][0])}" y2="${r1(pB[steps][1])}"/>`;
+        }
+        if (opts.strokeBackArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pB, false)}"/>`;
+        }
+        if (opts.strokeFrontArc) {
+          html += `<path class="${opts.arcCls || cls}" fill="none" d="${pathD(pA, false)}"/>`;
+        }
+        return html;
+      }
+
+      // Annular ring sector on plane u = const facing -u
+      function coaxialAnnulus(u, rIn, rOut, th0, th1, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const steps = opts.steps || 22;
+        const cls = opts.cls || "ink";
+        const outPts = coaxialArc(u, rOut, th0, th1, steps, v0, w0);
+        const inPts = coaxialArc(u, rIn, th1, th0, steps, v0, w0);
+        const col = opts.fill || shadeNormal(-1, 0, 0, rampName, opts.bias || 0);
+        return `<polygon class="${cls}" fill="${col}" points="${ptsStr(outPts.concat(inPts))}"/>`;
+      }
+
+      // Beveled radial cutaway wall along constant angle `thCut` from (uA, rInA..rOutA) to (uB, rInB..rOutB)
+      function cutawayWallQuad(uA, rInA, rOutA, uB, rInB, rOutB, thCut, normalSign, rampName, opts = {}) {
+        const v0 = opts.v0 || 0, w0 = opts.w0 || 0;
+        const c = Math.cos(thCut), s = Math.sin(thCut);
+        const pts = [
+          proj(uA, v0 + c * rOutA, w0 + s * rOutA),
+          proj(uB, v0 + c * rOutB, w0 + s * rOutB),
+          proj(uB, v0 + c * rInB,  w0 + s * rInB),
+          proj(uA, v0 + c * rInA,  w0 + s * rInA)
+        ];
+        const col = shadeNormal(0, -s * normalSign, c * normalSign, rampName, opts.bias || 0.08);
+        return `<polygon class="${opts.cls || "ink-bold"}" fill="${col}" points="${ptsStr(pts)}"/>`;
+      }
+
+      // Vertical cylinder along w (w0 -> w1)
+      function verticalCyl(u0, v0, R, w0, w1, rampName, opts = {}) {
+        const steps = opts.steps || 18;
+        const cls = opts.cls || "ink";
+        const aCam = Math.atan2(CAM[1], CAM[0]);
+        const a0 = aCam - Math.PI / 2;
+        const a1 = aCam + Math.PI / 2;
+
+        const pBot = [], pTop = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = a0 + (i / steps) * (a1 - a0);
+          pBot.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w0));
+          pTop.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w1));
+        }
+        let html = "";
+        for (let i = 0; i < steps; i++) {
+          const a = a0 + ((i + 0.5) / steps) * (a1 - a0);
+          const col = shadeNormal(Math.cos(a), Math.sin(a), 0, rampName, opts.bias || 0);
+          html += `<polygon fill="${col}" stroke="${col}" stroke-width="0.55" points="${ptsStr([pBot[i], pBot[i + 1], pTop[i + 1], pTop[i]])}"/>`;
+        }
+        html += `<path class="${cls}" fill="none" d="${pathD(pBot, false)} M${r1(pBot[0][0])},${r1(pBot[0][1])}L${r1(pTop[0][0])},${r1(pTop[0][1])} M${r1(pBot[steps][0])},${r1(pBot[steps][1])}L${r1(pTop[steps][0])},${r1(pTop[steps][1])}"/>`;
+        if (opts.topCap) {
+          const cap = [];
+          for (let i = 0; i < steps; i++) {
+            const a = (i / steps) * Math.PI * 2;
+            cap.push(proj(u0 + Math.cos(a) * R, v0 + Math.sin(a) * R, w1));
+          }
+          html += `<path class="${cls}" fill="${shadeNormal(0, 0, 1, rampName, 0.1)}" d="${pathD(cap, true)}"/>`;
+        }
+        return html;
+      }
+
+      // Smooth filleted 3D pipe with dark outline + matte shaded cylinder body + specular highlight ridge
+      function smoothPipe3D(points3D, radiusPx, rampName, opts = {}) {
+        const cornerR = opts.cornerR || 12;
+        const dense = [];
+        for (let i = 0; i < points3D.length; i++) {
+          if (i === 0 || i === points3D.length - 1) {
+            dense.push(points3D[i]);
+            continue;
+          }
+          const prev = points3D[i - 1], cur = points3D[i], next = points3D[i + 1];
+          const v1 = [prev[0] - cur[0], prev[1] - cur[1], prev[2] - cur[2]];
+          const v2 = [next[0] - cur[0], next[1] - cur[1], next[2] - cur[2]];
+          const l1 = Math.hypot(...v1) || 1, l2 = Math.hypot(...v2) || 1;
+          const cr = Math.min(cornerR, l1 * 0.45, l2 * 0.45);
+          const pA = [cur[0] + (v1[0] / l1) * cr, cur[1] + (v1[1] / l1) * cr, cur[2] + (v1[2] / l1) * cr];
+          const pB = [cur[0] + (v2[0] / l2) * cr, cur[1] + (v2[1] / l2) * cr, cur[2] + (v2[2] / l2) * cr];
+          const segs = 6;
+          for (let s = 0; s <= segs; s++) {
+            const t = s / segs, omt = 1 - t;
+            dense.push([
+              omt * omt * pA[0] + 2 * omt * t * cur[0] + t * t * pB[0],
+              omt * omt * pA[1] + 2 * omt * t * cur[1] + t * t * pB[1],
+              omt * omt * pA[2] + 2 * omt * t * cur[2] + t * t * pB[2]
+            ]);
+          }
+        }
+        const pts2D = dense.map((p) => proj(p[0], p[1], p[2]));
+        const d = pathD(pts2D, false);
+        const colDark = sampleRamp(rampName, opts.darkT ?? 0.22);
+        const colMid  = sampleRamp(rampName, opts.midT ?? 0.56);
+        const colHi   = sampleRamp(rampName, opts.hiT ?? 0.92);
+
+        let html = "";
+        html += `<path fill="none" stroke="#222933" stroke-width="${(radiusPx * 2 + 2.8).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" d="${d}"/>`;
+        html += `<path fill="none" stroke="${colDark}" stroke-width="${(radiusPx * 2).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" d="${d}"/>`;
+        html += `<path fill="none" stroke="${colMid}" stroke-width="${(radiusPx * 1.4).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" transform="translate(-0.7,-0.9)" d="${d}"/>`;
+        html += `<path fill="none" stroke="${colHi}" stroke-width="${Math.max(1.8, radiusPx * 0.45).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" transform="translate(-1.4,-1.7)" opacity="0.88" d="${d}"/>`;
+        return { html, d, pts2D };
+      }
+
+      // L-stepped beveled horizontal slab (used for the exact dark-slate industrial plinth)
+      function lSteppedPlinth(wBot, wTop) {
+        // CCW outline of L-stepped base in (u, v) plane
+        const polyUV = [
+          [-368,  98],
+          [-368, -98],
+          [  38, -98],
+          [  38, -226],
+          [ 402, -226],
+          [ 402,  98]
+        ];
+        const topPts = polyUV.map(([u, v]) => proj(u, v, wTop));
+        const botPts = polyUV.map(([u, v]) => proj(u, v, wBot));
+        // Soft drop shadow beneath plinth
+        const shPts = polyUV.map(([u, v]) => proj(u - 6, v - 8, wBot - 8));
+
+        let html = `<polygon fill="#1e293b" opacity="0.18" filter="url(#plinthShadow)" points="${ptsStr(shPts)}"/>`;
+
+        // Render camera-facing vertical rim edges (front-left, main front, step return, wide front)
+        const visibleEdges = [
+          { i: 0, j: 1, nx: -1, ny:  0, col: "#475569" }, // Front-left end rim (-u)
+          { i: 1, j: 2, nx:  0, ny: -1, col: "#334155" }, // Left section front rim (-v)
+          { i: 2, j: 3, nx: -1, ny:  0, col: "#475569" }, // Step offset vertical face (-u)
+          { i: 3, j: 4, nx:  0, ny: -1, col: "#334155" }  // Right wide section front rim (-v)
+        ];
+        for (const e of visibleEdges) {
+          html += `<polygon class="ink-bold" fill="${e.col}" points="${ptsStr([botPts[e.i], botPts[e.j], topPts[e.j], topPts[e.i]])}"/>`;
+        }
+        // Main top deck with subtle brushed dark-slate gradient
+        html += `<polygon class="ink-bold" fill="url(#plinthTopGrad)" points="${ptsStr(topPts)}"/>`;
+
+        // Crisp subtle chamfered bevel inset line around top perimeter
+        const insetUV = [
+          [-358,  88],
+          [-358, -88],
+          [  48, -88],
+          [  48, -216],
+          [ 392, -216],
+          [ 392,  88]
+        ];
+        const insetPts = insetUV.map(([u, v]) => proj(u, v, wTop + 0.2));
+        html += `<polygon class="ink-faint" fill="none" stroke="#94a3b8" opacity="0.45" points="${ptsStr(insetPts)}"/>`;
+
+        // Soft grounded contact shadows beneath major footprints
+        const shadows = [
+          [[-320, -68], [-150, -68], [-150, 68], [-320, 68]],
+          [[-132, -74], [ -20, -74], [ -20, 74], [-132, 74]],
+          [[  -8, -68], [ 134, -68], [ 134, 68], [  -8, 68]],
+          [[ 166, -74], [ 346, -74], [ 346, 74], [ 166, 74]],
+          [[ 146, -212], [ 346, -212], [ 346, -112], [ 146, -112]]
+        ];
+        for (const s of shadows) {
+          const sp = s.map(([u, v]) => proj(u, v, wTop + 0.3));
+          html += `<polygon fill="#0f172a" opacity="0.22" points="${ptsStr(sp)}"/>`;
+        }
+
+        return html;
+      }
+
+      /* =======================================================================
+         3. SHARED 3D AXES & BUILD ALL 5 MODULAR ASSEMBLIES
+         ======================================================================= */
+      const PLINTH_TOP = -96;
+      const MAIN = { v: 0, w: 20 };      // Main Brayton + HRSG centerline
+      const STEAM = { v: -164, w: -22 }; // Parallel front-right Steam Turbine centerline
+
+      function buildAllAssemblies() {
+        /* ---------------------------------------------------------------------
+           0) PART-PLINTH
+           --------------------------------------------------------------------- */
+        document.getElementById("part-plinth").innerHTML = lSteppedPlinth(-114, PLINTH_TOP);
+
+        /* ---------------------------------------------------------------------
+           4) PART-HRSG_BOILER (Upper-Right along main axis: u = 148 .. 364)
+           --------------------------------------------------------------------- */
+        {
+          const U0 = 152, U1 = 362;
+          const V_MIN = -68, V_MAX = 68;
+          const W_BOT = -38, W_TOP = 112;
+          const ARCH_R = 46; // Rounded top corner arch
+
+          // Profile helper for rounded-top rectangular HRSG shell in (v, w)
+          function hrsgArchPoints(u, inset = 0) {
+            const vm = V_MIN + inset, vx = V_MAX - inset;
+            const wb = W_BOT + inset, wt = W_TOP - inset;
+            const r = Math.max(8, ARCH_R - inset);
+            const pts = [];
+            // Bottom-back -> top-back curve -> top-front curve -> bottom-front
+            pts.push(proj(u, vx, wb));
+            for (let i = 0; i <= 7; i++) {
+              const a = (i / 7) * (Math.PI / 2);
+              pts.push(proj(u, vx - r + Math.cos(a) * r, wt - r + Math.sin(a) * r));
+            }
+            for (let i = 0; i <= 7; i++) {
+              const a = Math.PI / 2 + (i / 7) * (Math.PI / 2);
+              pts.push(proj(u, vm + r + Math.cos(a) * r, wt - r + Math.sin(a) * r));
+            }
+            pts.push(proj(u, vm, wb));
+            return pts;
+          }
+
+          // --- HRSG BACK ---
+          let back = "";
+          // Twin heavy dark-slate support pedestals anchored to plinth
+          back += cradleLeg(178, 210, 0, 56, 62, PLINTH_TOP, W_BOT + 4, "slate", { webCut: true });
+          back += cradleLeg(308, 340, 0, 56, 62, PLINTH_TOP, W_BOT + 4, "slate", { webCut: true });
+
+          // Lower rounded cylindrical belly transitioning into rectangular upper enclosure
+          back += coaxialStrip(U0, 68, U1, 68, Math.PI * 0.96, TH_BOT_SIL, "ivory", {
+            v0: 0, w0: 14, steps: 14, cls: "ink-bold", strokeEnd: true, strokeBackArc: true, bias: -0.04
+          });
+
+          // Back-top roof & back-left curved arch shell (extrusions along u = U0 .. U1)
+          const roofSteps = 12;
+          const roofA = [], roofB = [];
+          for (let i = 0; i <= roofSteps; i++) {
+            const t = i / roofSteps;
+            let v, w;
+            if (t < 0.35) {
+              const a = 0.45 + (t / 0.35) * (Math.PI / 2 - 0.45);
+              v = V_MAX - ARCH_R + Math.cos(a) * ARCH_R;
+              w = W_TOP - ARCH_R + Math.sin(a) * ARCH_R;
+            } else if (t < 0.72) {
+              const k = (t - 0.35) / 0.37;
+              v = (V_MAX - ARCH_R) * (1 - k) + (V_MIN + ARCH_R) * k;
+              w = W_TOP;
+            } else {
+              const a = Math.PI / 2 + ((t - 0.72) / 0.28) * 1.15;
+              v = V_MIN + ARCH_R + Math.cos(a) * ARCH_R;
+              w = W_TOP - ARCH_R + Math.sin(a) * ARCH_R;
+            }
+            roofA.push(proj(U0, v, w));
+            roofB.push(proj(U1, v, w));
+          }
+          for (let i = 0; i < roofSteps; i++) {
+            const col = shadeNormal(0, i < 4 ? 0.4 : (i > 8 ? -0.55 : 0), i > 8 ? 0.7 : 0.95, "ivory", 0.04);
+            back += `<polygon fill="${col}" stroke="${col}" stroke-width="0.6" points="${ptsStr([roofA[i], roofA[i + 1], roofB[i + 1], roofB[i]])}"/>`;
+          }
+          back += `<path class="ink-bold" fill="none" d="${pathD(roofA, false)} ${pathD(roofB, false)} M${r1(roofA[0][0])},${r1(roofA[0][1])}L${r1(roofB[0][0])},${r1(roofB[0][1])} M${r1(roofA[roofSteps][0])},${r1(roofA[roofSteps][1])}L${r1(roofB[roofSteps][0])},${r1(roofB[roofSteps][1])}"/>`;
+
+          // Two dark-slate structural stiffening bands wrapping the HRSG ivory enclosure
+          for (const bu of [U0 + 18, U1 - 24]) {
+            const bA = [], bB = [];
+            for (let i = 0; i <= roofSteps; i++) {
+              const t = i / roofSteps;
+              let v, w;
+              if (t < 0.35) {
+                const a = 0.45 + (t / 0.35) * (Math.PI / 2 - 0.45);
+                v = V_MAX - ARCH_R + Math.cos(a) * (ARCH_R + 2.5);
+                w = W_TOP - ARCH_R + Math.sin(a) * (ARCH_R + 2.5);
+              } else if (t < 0.72) {
+                const k = (t - 0.35) / 0.37;
+                v = (V_MAX - ARCH_R) * (1 - k) + (V_MIN + ARCH_R) * k;
+                w = W_TOP + 2.5;
+              } else {
+                const a = Math.PI / 2 + ((t - 0.72) / 0.28) * 1.15;
+                v = V_MIN + ARCH_R + Math.cos(a) * (ARCH_R + 2.5);
+                w = W_TOP - ARCH_R + Math.sin(a) * (ARCH_R + 2.5);
+              }
+              bA.push(proj(bu - 4, v, w));
+              bB.push(proj(bu + 4, v, w));
+            }
+            back += `<polygon class="ink-seam" fill="#475569" points="${ptsStr(bA.concat(bB.slice().reverse()))}"/>`;
+          }
+
+          // Front-left face of HRSG enclosure (facing gas turbine diffuser at u = U0)
+          back += `<polygon class="ink-bold" fill="${shadeNormal(-1, 0, 0, "ivory", -0.04)}" points="${ptsStr(hrsgArchPoints(U0, 0))}"/>`;
+          // Exhaust diffuser transition collar connecting gas turbine to HRSG front face
+          back += coaxialCyl(138, 56, U0 + 4, 62, "steel", {
+            v0: MAIN.v, w0: MAIN.w, steps: 22, frontCap: false, cls: "ink-bold", bias: -0.02
+          });
+
+          // Deep recessed warm-charcoal interior heat-exchanger cavity (visible inside cutaway)
+          const cavBack = [proj(U0 + 18, 44, -22), proj(U1 - 24, 44, -22), proj(U1 - 24, 44, 96), proj(U0 + 18, 44, 96)];
+          const cavEnd  = [proj(U1 - 24, -56, -22), proj(U1 - 24, 44, -22), proj(U1 - 24, 44, 96), proj(U1 - 24, -56, 96)];
+          const cavFlr  = [proj(U0 + 18, -56, -22), proj(U1 - 24, -56, -22), proj(U1 - 24, 44, -22), proj(U0 + 18, 44, -22)];
+          back += `<polygon class="ink-seam" fill="#232224" points="${ptsStr(cavBack)}"/>`;
+          back += `<polygon class="ink-seam" fill="#3a2f2a" points="${ptsStr(cavEnd)}"/>`;
+          back += `<polygon class="ink-seam" fill="#1d1b1d" points="${ptsStr(cavFlr)}"/>`;
+
+          // Sweeping warm exhaust heat plume backdrop entering cavity from turbine
+          const hp = [
+            proj(142, -16, 48), proj(330, 12, 92),
+            proj(330, -32, -12), proj(142, -26, -6)
+          ];
+          back += `<polygon id="hrsgHeatBackdrop" fill="url(#exhaustHeatGrad)" points="${ptsStr(hp)}"/>`;
+
+          document.getElementById("part-hrsg_boiler-back").innerHTML = back;
+
+          // --- HRSG COILS (8 DENSE VERTICAL SERPENTINE COPPER/TERRACOTTA HEAT-EXCHANGER LOOPS) ---
+          let coils = "";
+          const COIL_COUNT = 8;
+          // Draw back-to-front (i = 7 -> 0 since +u is farther!)
+          for (let i = COIL_COUNT - 1; i >= 0; i--) {
+            const cu = 178 + i * 21.5;
+            // Alternate rich copper and warm terracotta-amber tubes for visual depth & separation
+            const ramp = i % 2 === 0 ? "terracotta" : "copper";
+            // Serpentine vertical W-shaped loop spanning across v = +36 .. -52, w = -14 .. +88
+            const pts = [
+              [cu,  34, -12],
+              [cu,  34,  86],
+              [cu,  12,  86],
+              [cu,  12, -12],
+              [cu, -10, -12],
+              [cu, -10,  86],
+              [cu, -32,  86],
+              [cu, -32, -12],
+              [cu, -50, -12],
+              [cu, -50,  82]
+            ];
+            const pipe = smoothPipe3D(pts, 4.9, ramp, { cornerR: 8.5, darkT: 0.24, midT: 0.58, hiT: 0.90 });
+            coils += pipe.html;
+            // Subtle thermal pulse dash rising through every second serpentine tube bank
+            if (i % 2 === 0) {
+              coils += `<path class="hrsg-coil-pulse flow-hot" data-idx="${i}" d="${pipe.d}" stroke="#fef3c7" stroke-width="2.6" opacity="0.52"/>`;
+            }
+          }
+          // Dynamic heat wave ribbons & rising soft steam vapor wisps above coils
+          coils += `<g id="hrsgDynamicFlow"></g>`;
+          document.getElementById("part-hrsg_boiler-coils").innerHTML = coils;
+
+          // --- HRSG FRONT (BEVELED CUTAWAY FRAME & LOWER FOREGROUND APRON) ---
+          let front = "";
+          // Lower foreground ivory wall below cutaway window (v = V_MIN)
+          const lowWall = [
+            proj(U0, V_MIN, W_BOT), proj(U1, V_MIN, W_BOT),
+            proj(U1, V_MIN, -14),   proj(U0, V_MIN, -14)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -1, 0, "ivory", 0.02)}" points="${ptsStr(lowWall)}"/>`;
+          // Lower cutaway horizontal sill thickness edge
+          const botSill = [
+            proj(U0 + 18, V_MIN, -14), proj(U1 - 22, V_MIN, -14),
+            proj(U1 - 22, V_MIN + 14, -14), proj(U0 + 18, V_MIN + 14, -14)
+          ];
+          front += `<polygon class="ink" fill="${shadeNormal(0, 0, 1, "ivory", 0.12)}" points="${ptsStr(botSill)}"/>`;
+          // Right vertical structural end-pillar of cutaway frame (u = U1 - 22 .. U1)
+          const rPillar = [
+            proj(U1 - 22, V_MIN, -14), proj(U1, V_MIN, -14),
+            proj(U1, V_MIN, W_TOP - ARCH_R + 12), proj(U1 - 22, V_MIN, W_TOP - ARCH_R + 12)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -1, 0, "ivory", 0.04)}" points="${ptsStr(rPillar)}"/>`;
+          // Dark-slate vertical band continuation on right pillar
+          const rBand = [
+            proj(U1 - 28, V_MIN - 1.5, -16), proj(U1 - 20, V_MIN - 1.5, -16),
+            proj(U1 - 20, V_MIN - 1.5, W_TOP - ARCH_R + 14), proj(U1 - 28, V_MIN - 1.5, W_TOP - ARCH_R + 14)
+          ];
+          front += `<polygon class="ink-seam" fill="#475569" points="${ptsStr(rBand)}"/>`;
+          // Left vertical framing pillar of cutaway window (u = U0 .. U0 + 18)
+          const lPillar = [
+            proj(U0, V_MIN, -14), proj(U0 + 18, V_MIN, -14),
+            proj(U0 + 18, V_MIN, W_TOP - ARCH_R + 10), proj(U0, V_MIN, W_TOP - ARCH_R + 10)
+          ];
+          front += `<polygon class="ink-bold" fill="${shadeNormal(0, -1, 0, "ivory", 0.04)}" points="${ptsStr(lPillar)}"/>`;
+          // Top narrow cutaway arch lip bridging left & right pillars
+          const tLip = [
+            proj(U0 + 18, V_MIN, W_TOP - ARCH_R + 10), proj(U1 - 22, V_MIN, W_TOP - ARCH_R + 10),
+            proj(U1 - 22, V_MIN + 14, W_TOP - ARCH_R + 22), proj(U0 + 18, V_MIN + 14, W_TOP - ARCH_R + 22)
+          ];
+          front += `<polygon class="ink" fill="${shadeNormal(0, -0.5, 0.85, "ivory", 0.08)}" points="${ptsStr(tLip)}"/>`;
+
+          document.getElementById("part-hrsg_boiler-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           3) PART-GAS_TURBINE (Center along main axis: u = -12 .. +146)
+           --------------------------------------------------------------------- */
+        {
+          const U0 = -12, U1 = 144;
+          const R_A = 50, R_B = 64; // Expanding casing from combustor exit -> exhaust cone
+          const R_IN_A = 41, R_IN_B = 55;
+          const CUT_TOP = (96 * Math.PI) / 180;
+          const CUT_BOT = (212 * Math.PI) / 180;
+
+          // --- GAS TURBINE BACK ---
+          let back = "";
+          // Slate support pedestal anchored to plinth
+          back += cradleLeg(44, 72, MAIN.v, 48, 56, PLINTH_TOP, MAIN.w - 44, "slate", { webCut: true });
+
+          // Outer brushed silver-steel expanding cutaway cylinder (upper-back arc)
+          back += coaxialStrip(U0, R_A, U1, R_B, TH_TOP_SIL, CUT_TOP, "steel", {
+            v0: MAIN.v, w0: MAIN.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Concave machined metallic interior chamber
+          back += coaxialStrip(U0 + 6, R_IN_A, U1 - 6, R_IN_B, CUT_BOT, CUT_TOP + Math.PI * 2, "steel", {
+            v0: MAIN.v, w0: MAIN.w, inner: true, steps: 24, cls: "ink-seam", bias: -0.16
+          });
+          // Inter-stage stator guide vane rings inside turbine cavity
+          for (const [su, sr] of [[16, 43], [40, 47], [64, 51]]) {
+            const sArc = coaxialArc(su, sr, CUT_BOT, CUT_TOP + Math.PI * 2, 18, MAIN.v, MAIN.w);
+            back += `<path class="ink-seam" fill="none" stroke="#475569" stroke-width="2.2" d="${pathD(sArc, false)}"/>`;
+          }
+          // Warm glowing exhaust gas aura inside expanding turbine stage cavity
+          const gCenter = proj(52, -8, MAIN.w - 2);
+          back += `<ellipse id="gasTurbineGlow" cx="${r1(gCenter[0])}" cy="${r1(gCenter[1])}" rx="72" ry="44" transform="rotate(-21 ${r1(gCenter[0])} ${r1(gCenter[1])})" fill="url(#combustorBloomGrad)" opacity="0.58"/>`;
+
+          // Upper beveled cutaway flange wall
+          back += cutawayWallQuad(U0, R_IN_A, R_A, U1, R_IN_B, R_B, CUT_TOP, -1, "steel", { bias: 0.10 });
+
+          // Compact warm brushed-copper electromagnetic stator block (upper-back half) at u = 92 .. 134
+          back += coaxialStrip(92, 46, 132, 46, 0.72, 1.82, "copper", {
+            v0: MAIN.v, w0: MAIN.w, steps: 12, cls: "ink-seam", strokeFrontArc: true, strokeBackArc: true, bias: 0.06
+          });
+          back += box3D(94, 130, 8, 42, MAIN.w + 26, MAIN.w + 46, "copper", { cls: "ink-seam" });
+
+          document.getElementById("part-gas_turbine-back").innerHTML = back;
+
+          // --- GAS TURBINE ROTOR (4 EXPANDING ALLOY BLADE STAGES + COPPER COUPLING CORE) ---
+          let rot = "";
+          rot += `<g id="gasTurbineDynamic"></g>`;
+          document.getElementById("part-gas_turbine-rotor").innerHTML = rot;
+
+          // --- GAS TURBINE FRONT (LOWER FOREGROUND CUTAWAY SILVER CASING + LOWER COPPER BLOCK) ---
+          let front = "";
+          // Lower foreground brushed-copper stator winding block at shaft end
+          front += box3D(94, 130, -40, -10, MAIN.w - 42, MAIN.w - 24, "copper", { cls: "ink" });
+          // Lower-front outer silver cylinder arc
+          front += coaxialStrip(U0, R_A, U1, R_B, CUT_BOT, TH_BOT_SIL, "steel", {
+            v0: MAIN.v, w0: MAIN.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Lower beveled cutaway wall facing viewer-upward
+          front += cutawayWallQuad(U0, R_IN_A, R_A, U1, R_IN_B, R_B, CUT_BOT, 1, "steel", { bias: 0.16 });
+          // Front-left transition flange collar meeting combustor
+          front += coaxialAnnulus(U0, R_IN_A, R_A, CUT_BOT, CUT_TOP + Math.PI * 2, "steel", {
+            v0: MAIN.v, w0: MAIN.w, steps: 24, cls: "ink"
+          });
+
+          document.getElementById("part-gas_turbine-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           2) PART-COMBUSTOR (Middle-Left along main axis: u = -142 .. -12)
+           --------------------------------------------------------------------- */
+        {
+          const U0 = -142, U1 = -12;
+          const R_OUT = 74, R_IN = 62;
+          const CUT_TOP = (92 * Math.PI) / 180;
+          const CUT_BOT = (218 * Math.PI) / 180;
+
+          // --- COMBUSTOR BACK ---
+          let back = "";
+          // Steel support leg mounted on plinth
+          back += cradleLeg(-92, -62, MAIN.v, 52, 60, PLINTH_TOP, MAIN.w - 58, "slate", { webCut: true });
+
+          // Enlarged ceramic ivory outer annular shell (upper-back section)
+          back += coaxialStrip(U0, R_OUT, U1 - 24, R_OUT, TH_TOP_SIL, CUT_TOP, "ivory", {
+            v0: MAIN.v, w0: MAIN.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Dark-slate rear reinforcing collar band transitioning into gas turbine
+          back += coaxialStrip(U1 - 24, R_OUT, U1, 52, TH_TOP_SIL, CUT_TOP, "slate", {
+            v0: MAIN.v, w0: MAIN.w, steps: 16, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true
+          });
+          // Recessed dark-slate interior annular plenum cavity
+          back += coaxialStrip(U0 + 8, R_IN, U1 - 8, R_IN - 6, CUT_BOT, CUT_TOP + Math.PI * 2, "darkCavity", {
+            v0: MAIN.v, w0: MAIN.w, inner: true, steps: 22, cls: "ink-seam"
+          });
+          // Upper beveled ceramic ivory cutaway edge
+          back += cutawayWallQuad(U0, R_IN, R_OUT, U1 - 24, R_IN, R_OUT, CUT_TOP, -1, "ivory", { bias: 0.08 });
+          back += cutawayWallQuad(U1 - 24, R_IN - 6, R_OUT, U1, 42, 52, CUT_TOP, -1, "slate", { bias: 0.06 });
+
+          // Upper metallic annular flame liner can (cut open to show glowing combustion inside!)
+          back += coaxialStrip(-126, 20, -34, 18, TH_TOP_SIL, (118 * Math.PI) / 180, "steel", {
+            v0: MAIN.v - 6, w0: MAIN.w + 42, steps: 14, cls: "ink", strokeFrontArc: true, strokeBackArc: true
+          });
+          back += coaxialStrip(-124, 17, -36, 15, (215 * Math.PI) / 180, (118 * Math.PI) / 180 + Math.PI * 2, "copper", {
+            v0: MAIN.v - 6, w0: MAIN.w + 42, inner: true, steps: 14, cls: "ink-seam", bias: -0.15
+          });
+
+          // Lower metallic annular flame liner can (visible at bottom cutaway)
+          back += coaxialStrip(-122, 18, -36, 16, TH_TOP_SIL, (125 * Math.PI) / 180, "steel", {
+            v0: MAIN.v - 20, w0: MAIN.w - 38, steps: 14, cls: "ink", strokeFrontArc: true, strokeBackArc: true
+          });
+          back += coaxialStrip(-120, 15, -38, 13, (220 * Math.PI) / 180, (125 * Math.PI) / 180 + Math.PI * 2, "copper", {
+            v0: MAIN.v - 20, w0: MAIN.w - 38, inner: true, steps: 14, cls: "ink-seam", bias: -0.15
+          });
+
+          // Machined bronze/copper twin fuel injector nozzles & curved supply manifolds
+          const fPipeTop = smoothPipe3D([[-148, -16, MAIN.w + 18], [-134, -14, MAIN.w + 40], [-120, -8, MAIN.w + 42]], 3.6, "copper", { cornerR: 6 });
+          const fPipeBot = smoothPipe3D([[-146, -24, MAIN.w - 18], [-132, -24, MAIN.w - 36], [-118, -20, MAIN.w - 38]], 3.4, "copper", { cornerR: 6 });
+          back += fPipeTop.html + fPipeBot.html;
+          // Twin top fuel nozzle bosses on upper flame can
+          back += verticalCyl(-96, -8, 5.5, MAIN.w + 54, MAIN.w + 68, "copper", { steps: 12, topCap: true, cls: "ink-seam" });
+          back += verticalCyl(-78, -6, 5.5, MAIN.w + 54, MAIN.w + 68, "copper", { steps: 12, topCap: true, cls: "ink-seam" });
+
+          // Central satin-steel main shaft & inner air diffuser sleeve passing cleanly through combustor
+          back += coaxialCyl(U0 - 2, 14, U1 + 6, 14, "steel", {
+            v0: MAIN.v, w0: MAIN.w, steps: 18, frontCap: false, cls: "ink", bias: 0.05
+          });
+
+          document.getElementById("part-combustor-back").innerHTML = back;
+
+          // --- COMBUSTOR FLAMES (DYNAMIC MULTI-LAYERED UPPER & LOWER COMBUSTION) ---
+          document.getElementById("part-combustor-flames").innerHTML = `<g id="combustorFlamesDynamic"></g>`;
+
+          // --- COMBUSTOR FRONT (LOWER CERAMIC IVORY & DARK-SLATE CUTAWAY LIP) ---
+          let front = "";
+          // Lower-front ivory outer shell arc (CUT_BOT -> TH_BOT_SIL)
+          front += coaxialStrip(U0, R_OUT, U1 - 24, R_OUT, CUT_BOT, TH_BOT_SIL, "ivory", {
+            v0: MAIN.v, w0: MAIN.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.02
+          });
+          // Dark-slate rear lower taper band
+          front += coaxialStrip(U1 - 24, R_OUT, U1, 52, CUT_BOT, TH_BOT_SIL, "slate", {
+            v0: MAIN.v, w0: MAIN.w, steps: 10, cls: "ink-bold", strokeEnd: true, strokeBackArc: true
+          });
+          // Lower cutaway bevel edge
+          front += cutawayWallQuad(U0, R_IN, R_OUT, U1 - 24, R_IN, R_OUT, CUT_BOT, 1, "ivory", { bias: 0.14 });
+          // Front annular wall transitioning from compressor casing
+          front += coaxialAnnulus(U0, 44, R_OUT, CUT_BOT, CUT_TOP + Math.PI * 2, "ivory", {
+            v0: MAIN.v, w0: MAIN.w, steps: 26, cls: "ink-bold"
+          });
+          // Lower flame can foreground cut rim
+          front += coaxialStrip(-122, 18, -36, 16, (220 * Math.PI) / 180, TH_BOT_SIL, "steel", {
+            v0: MAIN.v - 20, w0: MAIN.w - 38, steps: 8, cls: "ink-seam", strokeEnd: true
+          });
+
+          document.getElementById("part-combustor-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           1) PART-COMPRESSOR (Front-Left along main axis: u = -332 .. -142)
+           --------------------------------------------------------------------- */
+        {
+          const U0 = -332, U1 = -142;
+          const R_A = 68, R_B = 56; // Tapered outer casing matching air compression!
+          const R_IN_A = 58, R_IN_B = 46;
+          const CUT_TOP = (98 * Math.PI) / 180;
+          const CUT_BOT = (212 * Math.PI) / 180;
+
+          // --- COMPRESSOR BACK ---
+          let back = "";
+          // Twin angled slate mounting feet bolted cleanly onto the dark-slate plinth
+          back += cradleLeg(-302, -276, MAIN.v, 52, 62, PLINTH_TOP, MAIN.w - 50, "slate", { webCut: true });
+          back += cradleLeg(-186, -160, MAIN.v, 46, 56, PLINTH_TOP, MAIN.w - 42, "slate", { webCut: true });
+
+          // Rich cerulean/cobalt blue ribbed cylindrical casing (upper-back arc)
+          back += coaxialStrip(U0, R_A, U1, R_B, TH_TOP_SIL, CUT_TOP, "cerulean", {
+            v0: MAIN.v, w0: MAIN.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Raised structural exterior stiffening ribs along cobalt compressor shell (upper-back)
+          for (const ru of [-294, -252, -210, -172]) {
+            const k = (ru - U0) / (U1 - U0);
+            const rr = R_A + (R_B - R_A) * k + 3.5;
+            back += coaxialStrip(ru - 5, rr, ru + 5, rr, TH_TOP_SIL, CUT_TOP, "cobalt", {
+              v0: MAIN.v, w0: MAIN.w, steps: 14, cls: "ink-seam", strokeFrontArc: true, strokeBackArc: true, bias: 0.08
+            });
+          }
+          // Concave deep-blue compressor interior chamber with inter-stage stator rings
+          back += coaxialStrip(U0 + 10, R_IN_A, U1 - 4, R_IN_B, CUT_BOT, CUT_TOP + Math.PI * 2, "cerulean", {
+            v0: MAIN.v, w0: MAIN.w, inner: true, steps: 24, cls: "ink-seam", bias: -0.24
+          });
+          for (let s = 0; s < 6; s++) {
+            const su = -290 + s * 22;
+            const sr = R_IN_A + ((su - U0) / (U1 - U0)) * (R_IN_B - R_IN_A) - 1;
+            const sArc = coaxialArc(su, sr, CUT_BOT, CUT_TOP + Math.PI * 2, 18, MAIN.v, MAIN.w);
+            back += `<path class="ink-faint" fill="none" stroke="#1e3a8a" stroke-width="2.0" d="${pathD(sArc, false)}"/>`;
+          }
+          // Upper beveled cobalt cutaway wall
+          back += cutawayWallQuad(U0, R_IN_A, R_A, U1, R_IN_B, R_B, CUT_TOP, -1, "cerulean", { bias: 0.14 });
+
+          document.getElementById("part-compressor-back").innerHTML = back;
+
+          // --- COMPRESSOR ROTOR (7 PROGRESSIVELY DECREASING AXIAL STAGES + CYAN AIRFLOW) ---
+          document.getElementById("part-compressor-rotor").innerHTML = `<g id="compressorDynamic"></g>`;
+
+          // --- COMPRESSOR FRONT (LOWER RIBBED CUTAWAY CASING & INTAKE BELLMOUTH) ---
+          let front = "";
+          // Lower-front cobalt ribbed casing outer strip
+          front += coaxialStrip(U0, R_A, U1, R_B, CUT_BOT, TH_BOT_SIL, "cerulean", {
+            v0: MAIN.v, w0: MAIN.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.02
+          });
+          // Lower raised structural ribs
+          for (const ru of [-294, -252, -210, -172]) {
+            const k = (ru - U0) / (U1 - U0);
+            const rr = R_A + (R_B - R_A) * k + 3.5;
+            front += coaxialStrip(ru - 5, rr, ru + 5, rr, CUT_BOT, TH_BOT_SIL, "cobalt", {
+              v0: MAIN.v, w0: MAIN.w, steps: 10, cls: "ink-seam", strokeFrontArc: true, strokeBackArc: true, bias: 0.06
+            });
+          }
+          // Lower beveled cutaway wall facing viewer-upward
+          front += cutawayWallQuad(U0, R_IN_A, R_A, U1, R_IN_B, R_B, CUT_BOT, 1, "cerulean", { bias: 0.22 });
+
+          // Circular front intake bellmouth rim (u = U0 - 16 .. U0)
+          front += coaxialCyl(U0 - 14, R_A + 4, U0, R_A, "cerulean", {
+            v0: MAIN.v, w0: MAIN.w, steps: 28, frontCap: false, cls: "ink-bold", bias: 0.06
+          });
+          // Front intake bellmouth face (uncut ring around open intake mouth)
+          front += coaxialAnnulus(U0 - 14, 44, R_A + 4, CUT_BOT - 0.18, CUT_TOP + Math.PI * 2 + 0.12, "cerulean", {
+            v0: MAIN.v, w0: MAIN.w, steps: 30, cls: "ink-bold", bias: 0.08
+          });
+          // Front central bearing hub & projecting satin-steel intake shaft nose
+          front += coaxialCyl(U0 - 28, 22, U0 - 8, 25, "steel", { v0: MAIN.v, w0: MAIN.w, steps: 22, cls: "ink-bold", bias: 0.05 });
+          front += coaxialCyl(U0 - 50, 12, U0 - 28, 12, "steel", { v0: MAIN.v, w0: MAIN.w, steps: 18, cls: "ink-bold", bias: 0.08 });
+          // 3 radial intake support struts connecting bearing hub to bellmouth
+          for (const deg of [60, 220, 315]) {
+            const a = (deg * Math.PI) / 180;
+            const p0 = proj(U0 - 16, MAIN.v + Math.cos(a) * 20, MAIN.w + Math.sin(a) * 20);
+            const p1 = proj(U0 - 16, MAIN.v + Math.cos(a) * 45, MAIN.w + Math.sin(a) * 45);
+            front += `<line class="ink-bold" x1="${r1(p0[0])}" y1="${r1(p0[1])}" x2="${r1(p1[0])}" y2="${r1(p1[1])}" stroke="#64748b" stroke-width="5"/>`;
+          }
+
+          document.getElementById("part-compressor-front").innerHTML = front;
+        }
+
+        /* ---------------------------------------------------------------------
+           5) PART-STEAM_TURBINE (Front-Right parallel step: u = 148 .. 356, v = -164)
+           --------------------------------------------------------------------- */
+        {
+          const U0 = 154, U1 = 348;
+          const R_OUT = 54, R_IN = 45;
+          const CUT_TOP = (96 * Math.PI) / 180;
+          const CUT_BOT = (212 * Math.PI) / 180;
+
+          // --- STEAM TURBINE OVERHEAD COPPER-BRONZE MANIFOLD ---
+          let mani = "";
+          // Horizontal feed branch emerging cleanly from front-right HRSG wall -> overhead header
+          const branchPts = [
+            [292, -68, 56],
+            [292, STEAM.v, 56]
+          ];
+          const branchPipe = smoothPipe3D(branchPts, 7.2, "copper", { cornerR: 8 });
+          mani += branchPipe.html;
+          // Flanged wall collar where steam outlet exits HRSG housing
+          mani += coaxialCyl(292 - 4, 12, 292 + 4, 12, "copper", { v0: -70, w0: 56, steps: 16, cls: "ink-seam" });
+
+          // Main horizontal overhead copper-bronze steam manifold running parallel above steam turbine
+          const headerPts = [
+            [176, STEAM.v, 56],
+            [334, STEAM.v, 56]
+          ];
+          const headerPipe = smoothPipe3D(headerPts, 9.2, "copper", { cornerR: 8 });
+          // Two vertical flanged drop inlet pipes feeding down into steam turbine casing!
+          const drop1Pts = [[192, STEAM.v, 54], [192, STEAM.v, STEAM.w + R_OUT - 6]];
+          const drop2Pts = [[314, STEAM.v, 54], [314, STEAM.v, STEAM.w + R_OUT - 6]];
+          const drop1 = smoothPipe3D(drop1Pts, 6.2, "copper", { cornerR: 4 });
+          const drop2 = smoothPipe3D(drop2Pts, 6.2, "copper", { cornerR: 4 });
+
+          mani += drop2.html + drop1.html + headerPipe.html;
+          // Machined flanged bronze end-caps & drop-pipe collars
+          mani += coaxialCyl(170, 11.5, 178, 11.5, "copper", { v0: STEAM.v, w0: 56, steps: 18, cls: "ink" });
+          mani += coaxialCyl(330, 11.5, 338, 11.5, "copper", { v0: STEAM.v, w0: 56, steps: 18, cls: "ink" });
+          mani += verticalCyl(192, STEAM.v, 9.5, STEAM.w + R_OUT - 2, STEAM.w + R_OUT + 5, "copper", { steps: 14, topCap: true, cls: "ink-seam" });
+          mani += verticalCyl(314, STEAM.v, 9.5, STEAM.w + R_OUT - 2, STEAM.w + R_OUT + 5, "copper", { steps: 14, topCap: true, cls: "ink-seam" });
+
+          // Animated luminous steam pressure pulses along manifold & vertical drop pipes!
+          mani += `<path id="maniFlowBranch" class="flow-steam" d="${branchPipe.d}" stroke="#e0f2fe" stroke-width="4.2" opacity="0.9"/>`;
+          mani += `<path id="maniFlowHeader" class="flow-steam" d="${headerPipe.d}" stroke="#e0f2fe" stroke-width="4.6" opacity="0.92"/>`;
+          mani += `<path id="maniFlowDrop1" class="flow-steam" d="${drop1.d}" stroke="#bae6fd" stroke-width="3.6" opacity="0.9"/>`;
+          mani += `<path id="maniFlowDrop2" class="flow-steam" d="${drop2.d}" stroke="#bae6fd" stroke-width="3.6" opacity="0.9"/>`;
+
+          document.getElementById("part-steam_turbine-manifold").innerHTML = mani;
+
+          // --- STEAM TURBINE BACK ---
+          let back = "";
+          // Vivid cobalt-blue front & rear end pedestals anchored cleanly to the stepped plinth
+          back += box3D(U0 - 8, U0 + 22, STEAM.v - 52, STEAM.v + 52, PLINTH_TOP, STEAM.w - 28, "cobalt", { cls: "ink-bold" });
+          back += box3D(U1 - 22, U1 + 8, STEAM.v - 52, STEAM.v + 52, PLINTH_TOP, STEAM.w - 28, "cobalt", { cls: "ink-bold" });
+          // Cobalt-blue rear end mounting ring
+          back += coaxialStrip(U1 - 14, R_OUT + 4, U1 + 2, R_OUT + 4, TH_TOP_SIL, TH_BOT_SIL, "cobalt", {
+            v0: STEAM.v, w0: STEAM.w, steps: 20, cls: "ink-bold", strokeFrontArc: true, strokeBackArc: true
+          });
+
+          // Satin silver-steel cutaway steam turbine barrel (upper-back arc)
+          back += coaxialStrip(U0, R_OUT, U1, R_OUT, TH_TOP_SIL, CUT_TOP, "steel", {
+            v0: STEAM.v, w0: STEAM.w, steps: 20, cls: "ink-bold", strokeStart: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.05
+          });
+          // Concave bright-steel interior steam cavity
+          back += coaxialStrip(U0 + 8, R_IN, U1 - 8, R_IN, CUT_BOT, CUT_TOP + Math.PI * 2, "steel", {
+            v0: STEAM.v, w0: STEAM.w, inner: true, steps: 24, cls: "ink-seam", bias: -0.10
+          });
+          // Rear casing closure ring around right exhaust shaft
+          back += coaxialAnnulus(U1 - 6, 16, R_OUT, TH_TOP_SIL, TH_BOT_SIL, "steel", {
+            v0: STEAM.v, w0: STEAM.w, steps: 24, cls: "ink"
+          });
+          // Upper beveled silver cutaway wall
+          back += cutawayWallQuad(U0, R_IN, R_OUT, U1, R_IN, R_OUT, CUT_TOP, -1, "steel", { bias: 0.12 });
+
+          // Luminous cyan-ice steam aura inside steam turbine chamber
+          const stMid = proj((U0 + U1) * 0.5, STEAM.v - 6, STEAM.w);
+          back += `<ellipse id="steamTurbineAura" cx="${r1(stMid[0])}" cy="${r1(stMid[1])}" rx="86" ry="42" transform="rotate(-21 ${r1(stMid[0])} ${r1(stMid[1])})" fill="url(#steamTurbineGrad)" filter="url(#vaporBlur)" opacity="0.68"/>`;
+
+          document.getElementById("part-steam_turbine-back").innerHTML = back;
+
+          // --- STEAM TURBINE ROTOR (6 PROGRESSIVELY EXPANDING PRECISION STEEL STAGES + CYAN STEAM) ---
+          document.getElementById("part-steam_turbine-rotor").innerHTML = `<g id="steamTurbineDynamic"></g>`;
+
+          // --- STEAM TURBINE FRONT ---
+          let front = "";
+          // Lower-front silver cutaway barrel arc
+          front += coaxialStrip(U0, R_OUT, U1, R_OUT, CUT_BOT, TH_BOT_SIL, "steel", {
+            v0: STEAM.v, w0: STEAM.w, steps: 12, cls: "ink-bold", strokeEnd: true, strokeFrontArc: true, strokeBackArc: true, bias: 0.04
+          });
+          // Lower beveled cutaway wall facing viewer-upward
+          front += cutawayWallQuad(U0, R_IN, R_OUT, U1, R_IN, R_OUT, CUT_BOT, 1, "steel", { bias: 0.18 });
+          // Front-left circular bearing end-shield + cobalt-blue rim collar
+          front += coaxialCyl(U0 - 10, R_OUT + 3, U0, R_OUT + 3, "cobalt", {
+            v0: STEAM.v, w0: STEAM.w, steps: 24, frontCap: false, cls: "ink-bold", bias: 0.04
+          });
+          front += coaxialAnnulus(U0 - 10, 16, R_OUT + 3, CUT_BOT - 0.12, CUT_TOP + Math.PI * 2 + 0.1, "steel", {
+            v0: STEAM.v, w0: STEAM.w, steps: 28, cls: "ink-bold", bias: 0.06
+          });
+          // Front-left bearing nose & projecting shaft end
+          front += coaxialCyl(U0 - 24, 18, U0 - 10, 20, "steel", { v0: STEAM.v, w0: STEAM.w, steps: 18, cls: "ink" });
+          front += coaxialCyl(U0 - 38, 10, U0 - 24, 10, "steel", { v0: STEAM.v, w0: STEAM.w, steps: 16, cls: "ink" });
+
+          document.getElementById("part-steam_turbine-front").innerHTML = front;
+        }
+      }
+
+      /* =======================================================================
+         4. PROCEDURAL 60 FPS PHYSICS & BLADE-WHEEL RENDERERS
+         ======================================================================= */
+      // 7 Compressor axial stages (decreasing outer diameter as air compresses!)
+      const COMP_STAGES = [
+        { u: -302, rHub: 15, rTip: 52, blades: 16 },
+        { u: -280, rHub: 15, rTip: 49, blades: 16 },
+        { u: -258, rHub: 16, rTip: 46, blades: 15 },
+        { u: -236, rHub: 16, rTip: 43, blades: 15 },
+        { u: -214, rHub: 16, rTip: 40, blades: 14 },
+        { u: -192, rHub: 16, rTip: 38, blades: 14 },
+        { u: -170, rHub: 16, rTip: 35, blades: 13 }
+      ];
+
+      // 4 Gas turbine stages (progressively expanding as hot combustion gas expands!)
+      const GAS_STAGES = [
+        { u:  6, rHub: 15, rTip: 34, blades: 14 },
+        { u: 30, rHub: 15, rTip: 40, blades: 16 },
+        { u: 54, rHub: 15, rTip: 45, blades: 18 },
+        { u: 78, rHub: 16, rTip: 50, blades: 20 }
+      ];
+
+      // 6 Steam turbine stages (progressively expanding in luminous cyan steam!)
+      const STEAM_STAGES = [
+        { u: 178, rHub: 12, rTip: 24, blades: 13 },
+        { u: 204, rHub: 12, rTip: 28, blades: 14 },
+        { u: 230, rHub: 12, rTip: 33, blades: 16 },
+        { u: 256, rHub: 13, rTip: 37, blades: 17 },
+        { u: 284, rHub: 13, rTip: 41, blades: 18 },
+        { u: 312, rHub: 13, rTip: 45, blades: 20 }
+      ];
+
+      // Pre-seeded particles for intake air, hot exhaust gas, HRSG rising vapor & steam turbine flow
+      const AIR_PARTICLES = Array.from({ length: 14 }, (_, i) => ({
+        t: i / 14,
+        speed: 0.58 + (i % 4) * 0.14,
+        ang: (i * 1.45) % (Math.PI * 2),
+        rFrac: 0.48 + (i % 3) * 0.18
+      }));
+
+      const EXHAUST_PARTICLES = Array.from({ length: 14 }, (_, i) => ({
+        t: i / 14,
+        speed: 0.62 + (i % 4) * 0.16,
+        vOff: -24 + ((i * 17) % 44),
+        wOff: -20 + ((i * 23) % 44)
+      }));
+
+      const VAPOR_WISPS = Array.from({ length: 9 }, (_, i) => ({
+        u: 184 + i * 19,
+        v: -24 + ((i * 19) % 46),
+        phase: i / 9,
+        speed: 0.28 + (i % 3) * 0.08
+      }));
+
+      const STEAM_PARTICLES = Array.from({ length: 14 }, (_, i) => ({
+        t: i / 14,
+        speed: 0.66 + (i % 4) * 0.15,
+        ang: (i * 1.7) % (Math.PI * 2),
+        rFrac: 0.42 + (i % 3) * 0.20
+      }));
+
+      // Shared helper: render a multi-stage isometric blade wheel assembly with exact back-to-front depth sorting
+      function renderBladeWheelAssembly(stages, axis, shaftU0, shaftU1, theta, rampName, warmTint, bladeSpeedGlow) {
+        let html = "";
+        for (let s = stages.length - 1; s >= 0; s--) {
+          const st = stages[s];
+          const uNext = s === stages.length - 1 ? shaftU1 : stages[s + 1].u - 3.5;
+          // Shaft segment behind this disc
+          html += coaxialCyl(st.u + 3, st.rHub - 2.5, uNext, st.rHub - 2.5, "steel", {
+            v0: axis.v, w0: axis.w, steps: 10, frontCap: false, noBackArc: true, cls: "ink-seam"
+          });
+
+          // Sort blades back-to-front by camera depth
+          const blades = [];
+          for (let b = 0; b < st.blades; b++) {
+            const ang = theta + (b / st.blades) * Math.PI * 2 + s * 0.37;
+            const depth = Math.cos(ang) * CAM[1] + Math.sin(ang) * CAM[2];
+            blades.push({ ang, depth });
+          }
+          blades.sort((a, b) => a.depth - b.depth);
+          const mid = blades.length >> 1;
+
+          const drawBlade = (b) => {
+            const a = b.ang;
+            const twist = 0.22;
+            const c0 = Math.cos(a - 0.10), s0 = Math.sin(a - 0.10);
+            const c1 = Math.cos(a + 0.10), s1 = Math.sin(a + 0.10);
+            const ct0 = Math.cos(a - 0.08 + twist), st0 = Math.sin(a - 0.08 + twist);
+            const ct1 = Math.cos(a + 0.08 + twist), st1 = Math.sin(a + 0.08 + twist);
+            const poly = [
+              proj(st.u - 2.4, axis.v + c0 * st.rHub, axis.w + s0 * st.rHub),
+              proj(st.u + 2.4, axis.v + c1 * st.rHub, axis.w + s1 * st.rHub),
+              proj(st.u + 3.0, axis.v + ct1 * st.rTip, axis.w + st1 * st.rTip),
+              proj(st.u - 3.0, axis.v + ct0 * st.rTip, axis.w + st0 * st.rTip)
+            ];
+            let col = shadeNormal(-0.32, Math.cos(a + 0.45), Math.sin(a + 0.45), rampName, bladeSpeedGlow);
+            if (warmTint && Math.sin(a) < 0.35) {
+              col = lerpColor("#cbd5e1", "#fdba74", 0.38);
+            }
+            return `<polygon class="ink-faint" fill="${col}" points="${ptsStr(poly)}"/>`;
+          };
+
+          for (let i = 0; i < mid; i++) html += drawBlade(blades[i]);
+          // Machined rotor hub collar
+          html += coaxialCyl(st.u - 3.5, st.rHub + 2.5, st.u + 3.5, st.rHub + 2.5, "steel", {
+            v0: axis.v, w0: axis.w, steps: 12, cls: "ink-seam", bias: 0.05
+          });
+          for (let i = mid; i < blades.length; i++) html += drawBlade(blades[i]);
+        }
+        // Front shaft segment
+        html += coaxialCyl(shaftU0, stages[0].rHub - 2.5, stages[0].u - 3, stages[0].rHub - 2.5, "steel", {
+          v0: axis.v, w0: axis.w, steps: 10, frontCap: false, cls: "ink-seam"
+        });
+        return html;
+      }
+
+      // 1) Compressor dynamic rotor + translucent cyan-blue intake airflow ribbons & particles
+      function renderCompressor(clock, dt, mult) {
+        const el = document.getElementById("compressorDynamic");
+        const theta = clock * 5.2 * mult;
+        let html = renderBladeWheelAssembly(COMP_STAGES, MAIN, -334, -142, theta, "blade", false, 0.05);
+
+        // Sweeping cyan intake airflow ribbons curving into bellmouth and accelerating through stages
+        const dashOff = (-clock * 115 * mult).toFixed(1);
+        const ribbons = [
+          [proj(-395, -24, MAIN.w + 18), proj(-340, -28, MAIN.w + 26), proj(-245, -28, MAIN.w + 22), proj(-146, -20, MAIN.w + 14)],
+          [proj(-398, -16, MAIN.w - 6),  proj(-342, -26, MAIN.w - 4),  proj(-240, -28, MAIN.w - 6),  proj(-146, -20, MAIN.w - 8)],
+          [proj(-386, -22, MAIN.w - 28), proj(-335, -34, MAIN.w - 24), proj(-240, -30, MAIN.w - 20), proj(-148, -22, MAIN.w - 16)]
+        ];
+        for (let i = 0; i < ribbons.length; i++) {
+          html += `<path class="flow-air" d="${pathD(ribbons[i], false)}" stroke="url(#intakeCyanGrad)" stroke-width="${i === 1 ? 4.4 : 3.2}" stroke-dashoffset="${dashOff}" filter="url(#cyanGlow)" opacity="${(0.82 * Math.min(1.2, mult)).toFixed(2)}"/>`;
+        }
+
+        // Accelerating cyan intake air particles
+        for (const p of AIR_PARTICLES) {
+          p.t = (p.t + dt * p.speed * mult) % 1;
+          const u = -396 + p.t * 252;
+          const rMax = 46 - p.t * 16;
+          const swirl = p.ang + p.t * 2.6;
+          const pt = proj(u, MAIN.v + Math.cos(swirl) * rMax * p.rFrac - 10, MAIN.w + Math.sin(swirl) * rMax * p.rFrac);
+          const op = Math.sin(p.t * Math.PI) * 0.88 * Math.min(1, mult + 0.15);
+          html += `<circle cx="${r1(pt[0])}" cy="${r1(pt[1])}" r="${(1.8 + (1 - p.t) * 1.4).toFixed(1)}" fill="#a5f3fc" opacity="${op.toFixed(2)}"/>`;
+        }
+        el.innerHTML = html;
+      }
+
+      // 2) Combustor dynamic flickering flames inside BOTH upper and lower flame cans + hot discharge
+      function renderCombustor(clock, mult) {
+        const el = document.getElementById("combustorFlamesDynamic");
+        const pulse = 0.86 + 0.14 * Math.sin(clock * 13.4) * Math.cos(clock * 8.1);
+        let html = "";
+
+        function renderCanFlame(vC, wC, rad, seed) {
+          const glowPt = proj(-78, vC - 6, wC);
+          html += `<ellipse cx="${r1(glowPt[0])}" cy="${r1(glowPt[1])}" rx="${(52 * pulse).toFixed(1)}" ry="${(28 * pulse).toFixed(1)}" transform="rotate(-21 ${r1(glowPt[0])} ${r1(glowPt[1])})" fill="url(#combustorBloomGrad)" opacity="${(0.86 * mult).toFixed(2)}"/>`;
+
+          // 3 layered flame tongues shooting rightward (+u) from fuel injector into turbine
+          const layers = [
+            { rScale: 1.0, len: 88, fill: "#f97316", op: 0.88, filt: 'filter="url(#fireGlow)"' },
+            { rScale: 0.68, len: 74, fill: "#fbbf24", op: 0.94, filt: "" },
+            { rScale: 0.38, len: 54, fill: "#fff7ed", op: 0.96, filt: "" }
+          ];
+          for (let l = 0; l < layers.length; l++) {
+            const L = layers[l];
+            const pts = [];
+            const steps = 8;
+            for (let i = 0; i <= steps; i++) {
+              const t = i / steps;
+              const u = -118 + t * L.len * (0.9 + 0.14 * Math.sin(clock * (10 + l * 3) + seed));
+              const wWave = Math.sin(clock * 14 + t * 9 + seed + l) * 3.8 * t;
+              const rEnv = Math.sin(Math.pow(t, 0.72) * Math.PI) * rad * L.rScale;
+              pts.push(proj(u, vC - 6, wC + rEnv + wWave));
+            }
+            for (let i = steps; i >= 0; i--) {
+              const t = i / steps;
+              const u = -118 + t * L.len * (0.9 + 0.14 * Math.sin(clock * (10 + l * 3) + seed));
+              const wWave = Math.cos(clock * 12 + t * 8 + seed + l) * 3.5 * t;
+              const rEnv = Math.sin(Math.pow(t, 0.72) * Math.PI) * rad * L.rScale;
+              pts.push(proj(u, vC - 6, wC - rEnv + wWave));
+            }
+            html += `<path fill="${L.fill}" opacity="${(L.op * Math.min(1.15, mult)).toFixed(2)}" ${L.filt} d="${pathD(pts, true)}"/>`;
+          }
+        }
+
+        // Upper flame can & lower flame can combustion
+        renderCanFlame(MAIN.v - 6, MAIN.w + 42, 13.5, 0.4);
+        renderCanFlame(MAIN.v - 20, MAIN.w - 38, 12.2, 2.7);
+
+        // Hot combustion gas jets discharging rightward into gas turbine inlet
+        const dOff = (-clock * 128 * mult).toFixed(1);
+        const jetTop = [proj(-44, -8, MAIN.w + 38), proj(-12, -10, MAIN.w + 22), proj(18, -12, MAIN.w + 14)];
+        const jetBot = [proj(-46, -20, MAIN.w - 34), proj(-14, -18, MAIN.w - 20), proj(18, -16, MAIN.w - 14)];
+        html += `<path class="flow-hot" d="${pathD(jetTop, false)}" stroke="url(#flameHotGrad)" stroke-width="5.2" stroke-dashoffset="${dOff}" filter="url(#fireGlow)" opacity="${(0.88 * mult).toFixed(2)}"/>`;
+        html += `<path class="flow-hot" d="${pathD(jetBot, false)}" stroke="url(#flameHotGrad)" stroke-width="4.6" stroke-dashoffset="${dOff}" filter="url(#fireGlow)" opacity="${(0.84 * mult).toFixed(2)}"/>`;
+
+        el.innerHTML = html;
+      }
+
+      // 3) Gas turbine dynamic 4 expanding stages + copper coupling core + rushing hot exhaust
+      function renderGasTurbine(clock, dt, mult) {
+        const el = document.getElementById("gasTurbineDynamic");
+        const theta = clock * 5.8 * mult;
+        let html = "";
+
+        // Compact warm brushed-copper electromagnetic coupling / generator core at shaft end (u = 94 .. 132)
+        html += coaxialCyl(94, 30, 130, 30, "copper", {
+          v0: MAIN.v, w0: MAIN.w, steps: 22, cls: "ink-bold", frontCap: true, bias: 0.04
+        });
+        // Rear shaft stub emerging from copper core
+        html += coaxialCyl(130, 12, 148, 12, "steel", {
+          v0: MAIN.v, w0: MAIN.w, steps: 14, frontCap: false, cls: "ink-seam"
+        });
+        // Subtle electromagnetic shimmer pulse rings around copper coupling core
+        const ringPulse = 0.55 + 0.45 * Math.sin(clock * 9.0);
+        for (const ru of [102, 114, 124]) {
+          const rArc = coaxialArc(ru, 31.5, TH_TOP_SIL + 0.25, TH_BOT_SIL - 0.25, 16, MAIN.v, MAIN.w);
+          html += `<path fill="none" stroke="#67e8f9" stroke-width="2.0" stroke-dasharray="7 9" stroke-dashoffset="${(-clock * 60 * mult).toFixed(1)}" opacity="${(0.68 * ringPulse * Math.min(1, mult)).toFixed(2)}" filter="url(#cyanGlow)" d="${pathD(rArc, false)}"/>`;
+        }
+
+        // 4 progressively expanding alloy turbine rotor stages
+        html += renderBladeWheelAssembly(GAS_STAGES, MAIN, -12, 94, theta, "blade", true, 0.08);
+
+        // Hot amber exhaust gas streamlines rushing through stages into HRSG diffuser
+        const exOff = (-clock * 135 * mult).toFixed(1);
+        const exPaths = [
+          [proj(2, -16, MAIN.w + 18), proj(72, -22, MAIN.w + 30), proj(164, -14, MAIN.w + 36)],
+          [proj(4, -18, MAIN.w - 16), proj(74, -24, MAIN.w - 22), proj(166, -16, MAIN.w - 10)]
+        ];
+        for (const ep of exPaths) {
+          html += `<path class="flow-hot" d="${pathD(ep, false)}" stroke="url(#flameHotGrad)" stroke-width="4.2" stroke-dashoffset="${exOff}" opacity="${(0.76 * Math.min(1.2, mult)).toFixed(2)}"/>`;
+        }
+
+        // Glowing hot exhaust particles streaming into HRSG
+        for (const p of EXHAUST_PARTICLES) {
+          p.t = (p.t + dt * p.speed * mult) % 1;
+          const u = 0 + p.t * 172;
+          const pt = proj(u, MAIN.v + p.vOff * (0.4 + p.t * 0.7), MAIN.w + p.wOff * (0.4 + p.t * 0.8));
+          const op = Math.sin(p.t * Math.PI) * 0.85 * Math.min(1, mult + 0.15);
+          html += `<circle cx="${r1(pt[0])}" cy="${r1(pt[1])}" r="${(1.8 + p.t * 1.4).toFixed(1)}" fill="${p.t < 0.5 ? "#fde047" : "#fb923c"}" opacity="${op.toFixed(2)}"/>`;
+        }
+        el.innerHTML = html;
+      }
+
+      // 4) HRSG sweeping exhaust heat waves across copper coils + soft rising steam vapor wisps
+      function renderHRSG(clock, dt, mult) {
+        const el = document.getElementById("hrsgDynamicFlow");
+        const off = (-clock * 95 * mult).toFixed(1);
+        let html = "";
+
+        // Update thermal pulse dashes on serpentine coils
+        const coilPulses = document.querySelectorAll(".hrsg-coil-pulse");
+        coilPulses.forEach((node, idx) => {
+          node.style.strokeDashoffset = `${(-clock * (72 + idx * 8) * mult).toFixed(1)}px`;
+          node.setAttribute("opacity", (0.48 * Math.min(1.25, mult)).toFixed(2));
+        });
+
+        // Sweeping warm exhaust heat waves threading horizontally across the copper coil bank
+        for (let k = 0; k < 3; k++) {
+          const wBase = -4 + k * 34;
+          const wavePts = [];
+          for (let s = 0; s <= 12; s++) {
+            const t = s / 12;
+            const u = 158 + t * 184;
+            const sway = Math.sin(t * 9 - clock * 5.2 * mult + k * 2) * 8;
+            wavePts.push(proj(u, -24 + sway * 0.5, wBase + sway));
+          }
+          html += `<path class="flow-hot" d="${pathD(wavePts, false)}" stroke="url(#flameHotGrad)" stroke-width="4.0" stroke-dashoffset="${off}" opacity="${(0.55 * Math.min(1.2, mult)).toFixed(2)}"/>`;
+        }
+
+        // Soft translucent white-ice steam vapor wisps rising gently above the heated coils
+        for (const w of VAPOR_WISPS) {
+          w.phase = (w.phase + dt * w.speed * mult) % 1;
+          const t = w.phase;
+          const u = w.u + Math.sin(clock * 2.4 + w.u) * 6;
+          const wPos = 72 + t * 76;
+          const pt = proj(u, w.v, wPos);
+          const op = Math.sin(t * Math.PI) * 0.44 * Math.min(1.2, mult);
+          const rx = 14 + t * 22;
+          const ry = 20 + t * 28;
+          html += `<ellipse cx="${r1(pt[0])}" cy="${r1(pt[1])}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="url(#hrsgVaporGrad)" filter="url(#vaporBlur)" opacity="${op.toFixed(2)}"/>`;
+        }
+
+        el.innerHTML = html;
+      }
+
+      // 5) Secondary Steam Turbine 6 expanding stages + luminous cyan steam ribbons & exhaust
+      function renderSteamTurbine(clock, dt, mult) {
+        const el = document.getElementById("steamTurbineDynamic");
+        const theta = clock * 6.2 * mult;
+        let html = "";
+
+        // Far-right projecting steel shaft end
+        html += coaxialCyl(346, 10, 376, 10, "steel", {
+          v0: STEAM.v, w0: STEAM.w, steps: 14, frontCap: false, cls: "ink"
+        });
+
+        // 6 progressively expanding precision steel steam turbine blade wheels
+        html += renderBladeWheelAssembly(STEAM_STAGES, STEAM, 152, 348, theta, "blade", false, 0.08);
+
+        // Swirling luminous cyan-white steam ribbons expanding through blades and exhausting right
+        const sOff = (-clock * 128 * mult).toFixed(1);
+        const sPaths = [
+          [proj(170, STEAM.v - 14, STEAM.w + 22), proj(248, STEAM.v - 24, STEAM.w + 26), proj(340, STEAM.v - 26, STEAM.w + 28), proj(394, STEAM.v - 16, STEAM.w + 18)],
+          [proj(176, STEAM.v - 22, STEAM.w),      proj(254, STEAM.v - 30, STEAM.w + 4),  proj(348, STEAM.v - 26, STEAM.w + 4),  proj(404, STEAM.v - 18, STEAM.w + 2)],
+          [proj(174, STEAM.v - 16, STEAM.w - 18), proj(252, STEAM.v - 26, STEAM.w - 24), proj(344, STEAM.v - 24, STEAM.w - 22), proj(392, STEAM.v - 16, STEAM.w - 16)]
+        ];
+        for (let i = 0; i < sPaths.length; i++) {
+          html += `<path class="flow-steam" d="${pathD(sPaths[i], false)}" stroke="url(#steamTurbineGrad)" stroke-width="${i === 1 ? 5.2 : 3.8}" stroke-dashoffset="${sOff}" filter="url(#cyanGlow)" opacity="${(0.88 * Math.min(1.2, mult)).toFixed(2)}"/>`;
+        }
+
+        // Luminous cyan-ice steam particles accelerating through blades & exhausting smoothly right
+        for (const p of STEAM_PARTICLES) {
+          p.t = (p.t + dt * p.speed * mult) % 1;
+          const u = 166 + p.t * 234;
+          const rExp = 18 + p.t * 24;
+          const swirl = p.ang + p.t * 3.2;
+          const pt = proj(u, STEAM.v + Math.cos(swirl) * rExp * p.rFrac - 12, STEAM.w + Math.sin(swirl) * rExp * p.rFrac);
+          const op = Math.sin(p.t * Math.PI) * 0.92 * Math.min(1, mult + 0.15);
+          html += `<circle cx="${r1(pt[0])}" cy="${r1(pt[1])}" r="${(1.8 + p.t * 1.5).toFixed(1)}" fill="${p.t < 0.5 ? "#e0f2fe" : "#38bdf8"}" opacity="${op.toFixed(2)}"/>`;
+        }
+        el.innerHTML = html;
+      }
+
+      /* =======================================================================
+         5. AUTO-SPOTLIGHT TOUR, EXPLODED VIEW & MIRVO SCENE API
+         ======================================================================= */
+      function pctFrom3D(u, v, w) {
+        const [x, y] = proj(u, v, w);
+        return {
+          x: Math.round((x / 1600) * 1000) / 10,
+          y: Math.round((y / 900) * 1000) / 10
+        };
+      }
+
+      const TOUR_SEQUENCE = ["full", "compressor", "combustor", "gas_turbine", "hrsg_boiler", "steam_turbine"];
+
+      const PARTS_DICT = {
+        compressor:    { nameUz: "O‘qli havo kompressori",      ...pctFrom3D(-242, -6, 16),   zoom: 2.08, phase: "brayton" },
+        combustor:     { nameUz: "Yonish kamerasi",             ...pctFrom3D(-78, -6, 20),    zoom: 2.22, phase: "brayton" },
+        gas_turbine:   { nameUz: "Gaz turbinasi",               ...pctFrom3D(64, -4, 22),     zoom: 2.15, phase: "brayton" },
+        hrsg_boiler:   { nameUz: "Utilizator-qozon (HRSG)",     ...pctFrom3D(258, -10, 42),   zoom: 1.92, phase: "hrsg" },
+        steam_turbine: { nameUz: "Bug‘ turbinasi",              ...pctFrom3D(254, -158, 2),   zoom: 2.05, phase: "rankine" }
+      };
+
+      const FULL_VIEW = { nameUz: "Bug‘-gaz qurilmasi (umumiy)", x: 50, y: 50, zoom: 1.0 };
+
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        playing: !prefersReducedMotion,
+        mode: "auto",              // "auto" | "brayton" | "hrsg" | "rankine" | "idle"
+        clock: prefersReducedMotion ? 2.4 : 0,
+        lastTs: 0,
+        activePart: null,
+        autoTour: !prefersReducedMotion,
+        tourIdx: 0,
+        tourTimer: 0,
+        expTarget: 0,
+        expCur: 0,
+        expVel: 0
+      };
+
+      const stageEl = document.getElementById("stage");
+      const viewportEl = document.getElementById("viewport");
+      const plinthEl = document.getElementById("part-plinth");
+
+      let dom = null;
+      function cacheDom() {
+        dom = {
+          plinth:     document.getElementById("part-plinth"),
+          compB:      document.getElementById("part-compressor-back"),
+          compR:      document.getElementById("part-compressor-rotor"),
+          compF:      document.getElementById("part-compressor-front"),
+          combB:      document.getElementById("part-combustor-back"),
+          combFl:     document.getElementById("part-combustor-flames"),
+          combF:      document.getElementById("part-combustor-front"),
+          gtB:        document.getElementById("part-gas_turbine-back"),
+          gtR:        document.getElementById("part-gas_turbine-rotor"),
+          gtF:        document.getElementById("part-gas_turbine-front"),
+          hrsgB:      document.getElementById("part-hrsg_boiler-back"),
+          hrsgC:      document.getElementById("part-hrsg_boiler-coils"),
+          hrsgF:      document.getElementById("part-hrsg_boiler-front"),
+          stM:        document.getElementById("part-steam_turbine-manifold"),
+          stB:        document.getElementById("part-steam_turbine-back"),
+          stR:        document.getElementById("part-steam_turbine-rotor"),
+          stF:        document.getElementById("part-steam_turbine-front"),
+          maniBranch: document.getElementById("maniFlowBranch"),
+          maniHeader: document.getElementById("maniFlowHeader"),
+          maniDrop1:  document.getElementById("maniFlowDrop1"),
+          maniDrop2:  document.getElementById("maniFlowDrop2")
+        };
+      }
+
+      function focus(partIdOrCoords) {
+        const target =
+          typeof partIdOrCoords === "string"
+            ? (partIdOrCoords === "full" ? FULL_VIEW : PARTS_DICT[partIdOrCoords] || FULL_VIEW)
+            : partIdOrCoords || FULL_VIEW;
+        const z = Math.max(0.85, Math.min(3.5, Number(target.zoom) || 1.0));
+        const tx = 50 - (Number(target.x) ?? 50);
+        const ty = 50 - (Number(target.y) ?? 50);
+        stageEl.style.transform = `scale(${z}) translate(${tx.toFixed(2)}%, ${ty.toFixed(2)}%)`;
+      }
+
+      function highlight(partId) {
+        state.activePart = partId || null;
+        const allParts = document.querySelectorAll(".mirvo-part");
+        if (!state.activePart) {
+          allParts.forEach((el) => el.classList.remove("is-dimmed", "is-focused"));
+          plinthEl.classList.remove("is-dimmed");
+          return;
+        }
+        allParts.forEach((el) => {
+          const match = el.dataset.part === state.activePart;
+          el.classList.toggle("is-focused", match);
+          el.classList.toggle("is-dimmed", !match);
+        });
+        plinthEl.classList.add("is-dimmed");
+      }
+
+      function scheduleNextTour() {
+        clearTimeout(state.tourTimer);
+        if (!state.autoTour || prefersReducedMotion) return;
+        const waitMs = state.tourIdx === 0 ? 2500 : 3600;
+        state.tourTimer = setTimeout(() => {
+          if (!state.autoTour) return;
+          state.tourIdx = (state.tourIdx + 1) % TOUR_SEQUENCE.length;
+          const id = TOUR_SEQUENCE[state.tourIdx];
+          if (id === "full") {
+            highlight(null);
+            focus("full");
+          } else {
+            highlight(id);
+            focus(id);
+          }
+          scheduleNextTour();
+        }, waitMs);
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled) && !prefersReducedMotion;
+        clearTimeout(state.tourTimer);
+        if (state.autoTour) scheduleNextTour();
+      }
+
+      function setStep(index) {
+        const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.round(Number(index) || 0)));
+        setAutoTour(false);
+        state.tourIdx = idx;
+        const id = TOUR_SEQUENCE[idx];
+        if (id === "full") {
+          highlight(null);
+          focus("full");
+          state.mode = "auto";
+        } else {
+          highlight(id);
+          focus(id);
+          state.mode = PARTS_DICT[id].phase;
+        }
+      }
+
+      function setExploded(amount) {
+        state.expTarget = Math.max(0, Math.min(1, Number(amount) || 0));
+      }
+
+      function setPhase(mode) {
+        const valid = ["auto", "brayton", "hrsg", "rankine", "idle"];
+        state.mode = valid.includes(mode) ? mode : "auto";
+      }
+
+      function setPlaying(flag) {
+        state.playing = Boolean(flag);
+      }
+
+      function reset() {
+        highlight(null);
+        focus("full");
+        setExploded(0);
+        state.mode = "auto";
+        state.tourIdx = 0;
+        setPlaying(!prefersReducedMotion);
+        setAutoTour(!prefersReducedMotion);
+      }
+
+      // Critically-damped spring interpolation for smooth Exploded View separation
+      function updateExplodedSpring(dt) {
+        const k = 120.0;
+        const c = 2 * Math.sqrt(k);
+        const force = k * (state.expTarget - state.expCur) - c * state.expVel;
+        state.expVel += force * dt;
+        state.expCur += state.expVel * dt;
+        if (Math.abs(state.expTarget - state.expCur) < 0.0005 && Math.abs(state.expVel) < 0.001) {
+          state.expCur = state.expTarget;
+          state.expVel = 0;
+        }
+
+        const e = state.expCur;
+        const sh = (du, dv, dw) =>
+          `translate(${(du * UX + dv * VX + dw * WX).toFixed(2)}, ${(du * UY + dv * VY + dw * WY).toFixed(2)})`;
+
+        dom.plinth.setAttribute("transform", sh(0, 0, -18 * e));
+
+        // 1. Compressor -> down-left along -u
+        dom.compB.setAttribute("transform", sh(-48 * e, 0, 4 * e));
+        dom.compR.setAttribute("transform", sh(-48 * e, 0, 4 * e));
+        dom.compF.setAttribute("transform", sh(-48 * e, -16 * e, 4 * e));
+
+        // 2. Combustor -> slightly up-left
+        dom.combB.setAttribute("transform", sh(-18 * e, 6 * e, 22 * e));
+        dom.combFl.setAttribute("transform", sh(-18 * e, 6 * e, 22 * e));
+        dom.combF.setAttribute("transform", sh(-18 * e, -12 * e, 22 * e));
+
+        // 3. Gas turbine -> center-up
+        dom.gtB.setAttribute("transform", sh(12 * e, 0, 26 * e));
+        dom.gtR.setAttribute("transform", sh(12 * e, 0, 26 * e));
+        dom.gtF.setAttribute("transform", sh(12 * e, -16 * e, 26 * e));
+
+        // 4. HRSG boiler -> up-right
+        dom.hrsgB.setAttribute("transform", sh(52 * e, 16 * e, 24 * e));
+        dom.hrsgC.setAttribute("transform", sh(52 * e, 8 * e, 24 * e));
+        dom.hrsgF.setAttribute("transform", sh(52 * e, -8 * e, 24 * e));
+
+        // 5. Steam turbine -> down-right along -v
+        dom.stM.setAttribute("transform", sh(22 * e, -36 * e, 14 * e));
+        dom.stB.setAttribute("transform", sh(22 * e, -38 * e, -4 * e));
+        dom.stR.setAttribute("transform", sh(22 * e, -38 * e, -4 * e));
+        dom.stF.setAttribute("transform", sh(22 * e, -52 * e, -4 * e));
+      }
+
+      // Main 60 FPS physical animation loop
+      function tick(ts) {
+        if (!state.lastTs) state.lastTs = ts;
+        const dt = Math.min(1 / 30, Math.max(0.001, (ts - state.lastTs) / 1000));
+        state.lastTs = ts;
+
+        if (state.playing) {
+          state.clock += dt;
+        }
+
+        updateExplodedSpring(dt);
+
+        // Phase-aware intensity multipliers
+        const m = state.mode;
+        const braytonMult = m === "idle" ? 0.35 : (m === "brayton" ? 1.38 : 1.0);
+        const hrsgMult    = m === "idle" ? 0.35 : (m === "hrsg"    ? 1.42 : 1.0);
+        const rankineMult = m === "idle" ? 0.35 : (m === "rankine" ? 1.42 : 1.0);
+
+        const animDt = state.playing ? dt : 0;
+        renderCompressor(state.clock, animDt, braytonMult);
+        renderCombustor(state.clock, braytonMult);
+        renderGasTurbine(state.clock, animDt, braytonMult);
+        renderHRSG(state.clock, animDt, hrsgMult);
+        renderSteamTurbine(state.clock, animDt, rankineMult);
+
+        // Animate steam pressure pulses along overhead copper-bronze manifold & drop pipes
+        const mOff = (-state.clock * 108 * rankineMult).toFixed(1);
+        dom.maniBranch.style.strokeDashoffset = `${mOff}px`;
+        dom.maniHeader.style.strokeDashoffset = `${(-state.clock * 96 * rankineMult).toFixed(1)}px`;
+        dom.maniDrop1.style.strokeDashoffset  = `${mOff}px`;
+        dom.maniDrop2.style.strokeDashoffset  = `${mOff}px`;
+
+        requestAnimationFrame(tick);
+      }
+
+      /* =======================================================================
+         6. INTEGRATION API (window.MirvoScene + postMessage) & USER EVENTS
+         ======================================================================= */
+      const MirvoScene = {
+        deviceId: "bgq_ccgt_plant",
+        parts: PARTS_DICT,
+        focus,
+        highlight,
+        setStep,
+        setAutoTour,
+        setExploded,
+        setPhase,
+        setPlaying,
+        reset
+      };
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (e) => {
+        const msg = e.data;
+        if (!msg || typeof msg !== "object") return;
+        switch (msg.type) {
+          case "FOCUS":
+            setAutoTour(false);
+            focus(msg.target ?? msg.partId);
+            break;
+          case "HIGHLIGHT":
+            highlight(msg.partId ?? null);
+            break;
+          case "SET_STEP":
+            setStep(msg.index);
+            break;
+          case "SET_AUTO_TOUR":
+            setAutoTour(msg.enabled ?? true);
+            break;
+          case "EXPLODE":
+            setExploded(msg.amount ?? msg.value ?? 0);
+            break;
+          case "SET_PHASE":
+            setPhase(msg.mode);
+            break;
+          case "SET_PLAYING":
+            setPlaying(msg.playing);
+            break;
+          case "RESET":
+            reset();
+            break;
+        }
+      });
+
+      // Click / double-click & keyboard interactions
+      let clickTimer = 0;
+      viewportEl.addEventListener("click", (e) => {
+        const partEl = e.target.closest(".mirvo-part");
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+          if (!partEl) {
+            reset();
+            return;
+          }
+          const partId = partEl.dataset.part;
+          setAutoTour(false);
+          highlight(partId);
+          focus(partId);
+          const meta = PARTS_DICT[partId] || { nameUz: partId };
+          try {
+            window.parent.postMessage(
+              { type: "PART_CLICK", deviceId: "bgq_ccgt_plant", partId, nameUz: meta.nameUz },
+              "*"
+            );
+          } catch (_) {}
+        }, 175);
+      });
+
+      viewportEl.addEventListener("dblclick", () => {
+        clearTimeout(clickTimer);
+        setExploded(state.expTarget > 0.5 ? 0 : 1);
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          e.preventDefault();
+          setPlaying(!state.playing);
+        } else if (e.key === "e" || e.key === "E") {
+          e.preventDefault();
+          setExploded(state.expTarget > 0.5 ? 0 : 1);
+        } else if (e.key === "r" || e.key === "R" || e.key === "Escape") {
+          e.preventDefault();
+          reset();
+        }
+      });
+
+      /* =======================================================================
+         7. BOOTSTRAP
+         ======================================================================= */
+      buildAllAssemblies();
+      cacheDom();
+      focus("full");
+      if (state.autoTour) scheduleNextTour();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

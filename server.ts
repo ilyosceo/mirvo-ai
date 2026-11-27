@@ -4,6 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import { createTutorResolveRouter } from './tutor/resolve.js';
 import { generateQwenOmni3DLesson } from './lib/qwenOmni3DDirector.js';
 import { streamQwenHtmlLesson } from './lib/qwenHtmlGenerator.js';
+import { adaptMirvoSceneWithQwen } from './lib/qwenSceneAdapter.js';
 import {
   applyRateLimitHeaders,
   checkIpRateLimit,
@@ -71,6 +72,36 @@ async function startServer() {
       res,
       maxRunMs: 180_000,
     });
+  });
+
+  app.post('/api/tutor/html-scene-adapt', async (req, res) => {
+    const qwenApiKey =
+      process.env.QWEN_API_KEY?.trim() || process.env.DASHSCOPE_API_KEY?.trim();
+    const { query = '', modelId = '', stepCount = 5 } = req.body || {};
+    const trimmedQuery = String(query || '').trim();
+    const trimmedModelId = String(modelId || '').trim();
+    if (!trimmedQuery || !trimmedModelId) {
+      res.status(400).json({ error: 'query va modelId kiritilishi shart.' });
+      return;
+    }
+    if (!qwenApiKey) {
+      res.status(503).json({ error: 'QWEN_API_KEY sozlanmagan.' });
+      return;
+    }
+    try {
+      const result = await adaptMirvoSceneWithQwen({
+        apiKey: qwenApiKey,
+        query: trimmedQuery,
+        modelId: trimmedModelId,
+        stepCount: Math.max(4, Math.min(6, Number(stepCount) || 5)),
+        originUrl: `http://127.0.0.1:${PORT}`,
+      });
+      res.json(result);
+    } catch (err: unknown) {
+      res.status(502).json({
+        error: err instanceof Error ? err.message : 'Scene adapt xatosi.',
+      });
+    }
   });
 
   app.post('/api/tutor/resolve', async (req, res, next) => {

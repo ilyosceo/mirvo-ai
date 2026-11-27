@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Biogaz kogeneratsiya qurilmasi (CHP)</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — ZERO-UI PURE #FFFFFF VIEWPORT & SEQUENTIAL SPOTLIGHT STYLES
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body, .mirvo-viewport {
+      background: #ffffff;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: block;
+    }
+
+    #biogas-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Interactive modular anatomy parts */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, filter, transform;
+    }
+
+    .mirvo-housing {
+      cursor: default;
+    }
+
+    /* Dimmed non-focused assemblies during Spotlight Tour */
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    /* Focused assembly crisp spotlight lift */
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Technical outline baseline */
+    .ink {
+      stroke: #222933;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    /* Respect accessibility reduced-motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage,
+      .mirvo-part {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pure #FFFFFF canvas container with strictly ZERO UI chrome -->
+  <div id="mirvo-viewport" class="mirvo-viewport">
+    <div id="mirvo-stage" class="mirvo-stage">
+      <svg
+        id="biogas-svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Anaerobic Biogas Digester and CHP Cogeneration Unit Cutaway"
+      >
+        <defs>
+          <!-- ===============================================================
+               SOFT SHADOWS & LUMINOUS ENERGY FILTERS
+               =============================================================== -->
+          <filter id="plinth-shadow" x="-18%" y="-25%" width="136%" height="160%">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+
+          <filter id="thermal-aura" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="24" />
+          </filter>
+
+          <filter id="combustion-blur" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="8.5" />
+          </filter>
+
+          <filter id="energy-glow" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="3.6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- ===============================================================
+               HARMONIC 4-TONE ENGINEERING GRADIENTS
+               =============================================================== -->
+          <!-- Sleek light-ivory / cool-slate base plinth -->
+          <linearGradient id="grad-plinth-top" x1="5%" y1="0%" x2="95%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="55%" stop-color="#F1F5F9" />
+            <stop offset="100%" stop-color="#E2E8F0" />
+          </linearGradient>
+
+          <!-- Digester satin ivory-white 4-tone cylindrical shell -->
+          <linearGradient id="grad-digester-shell" x1="0%" y1="15%" x2="100%" y2="35%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="32%" stop-color="#F8FAFC" />
+            <stop offset="72%" stop-color="#DCE4EE" />
+            <stop offset="100%" stop-color="#B0BECE" />
+          </linearGradient>
+
+          <!-- Digester steel reinforcing band -->
+          <linearGradient id="grad-steel-band" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="38%" stop-color="#CBD5E1" />
+            <stop offset="78%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <!-- Digester warm amber-gold top cap -->
+          <linearGradient id="grad-gold-cap" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#FEF3C7" />
+            <stop offset="40%" stop-color="#FBBF24" />
+            <stop offset="80%" stop-color="#E59836" />
+            <stop offset="100%" stop-color="#B46214" />
+          </linearGradient>
+
+          <!-- Digester warm interior headspace dome -->
+          <radialGradient id="grad-dome-interior" cx="50%" cy="22%" r="72%">
+            <stop offset="0%" stop-color="#FDE8B4" />
+            <stop offset="48%" stop-color="#E1B87D" />
+            <stop offset="82%" stop-color="#B0814E" />
+            <stop offset="100%" stop-color="#7B5530" />
+          </radialGradient>
+
+          <!-- Organic biomass slurry depth shading -->
+          <linearGradient id="grad-biomass-body" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#6B4C35" />
+            <stop offset="38%" stop-color="#523A28" />
+            <stop offset="78%" stop-color="#3E2B1E" />
+            <stop offset="100%" stop-color="#2D1F15" />
+          </linearGradient>
+
+          <radialGradient id="grad-biomass-top" cx="48%" cy="45%" r="58%">
+            <stop offset="0%" stop-color="#7B5C43" />
+            <stop offset="60%" stop-color="#5E4431" />
+            <stop offset="100%" stop-color="#443022" />
+          </radialGradient>
+
+          <!-- Methane glossy amber bubble gradient -->
+          <radialGradient id="grad-methane-bubble" cx="34%" cy="30%" r="68%">
+            <stop offset="0%" stop-color="#FFFBEB" />
+            <stop offset="32%" stop-color="#FDE08D" />
+            <stop offset="72%" stop-color="#F59E0B" />
+            <stop offset="100%" stop-color="#B45309" />
+          </radialGradient>
+
+          <!-- Gas scrubber cerulean/cobalt-blue cylinder -->
+          <linearGradient id="grad-scrubber-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6EC6F5" />
+            <stop offset="28%" stop-color="#2E96D8" />
+            <stop offset="70%" stop-color="#176FA8" />
+            <stop offset="100%" stop-color="#0E4A75" />
+          </linearGradient>
+
+          <!-- Scrubber ice-blue viewing cavity -->
+          <linearGradient id="grad-scrubber-cavity" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0D4B78" />
+            <stop offset="26%" stop-color="#7DD3FC" />
+            <stop offset="65%" stop-color="#BAE6FD" />
+            <stop offset="100%" stop-color="#38BDF8" />
+          </linearGradient>
+
+          <!-- Overhead pipe cyan-to-warm-copper thermal gradient -->
+          <linearGradient id="grad-top-conduit" x1="0%" y1="0%" x2="100%" y2="30%">
+            <stop offset="0%" stop-color="#38BDF8" />
+            <stop offset="36%" stop-color="#2FA6D6" />
+            <stop offset="68%" stop-color="#A89A82" />
+            <stop offset="100%" stop-color="#E69F68" />
+          </linearGradient>
+
+          <!-- Brushed copper 4-tone shading (heat exchanger, coils, rotor windings) -->
+          <linearGradient id="grad-copper-fin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="38%" stop-color="#E8A26B" />
+            <stop offset="75%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#87451A" />
+          </linearGradient>
+
+          <linearGradient id="grad-copper-tube" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FDE8D2" />
+            <stop offset="42%" stop-color="#E69F68" />
+            <stop offset="78%" stop-color="#B85F27" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Warm orange thermal halo behind heat exchanger -->
+          <radialGradient id="grad-heat-aura" cx="50%" cy="50%" r="54%">
+            <stop offset="0%" stop-color="#FB923C" stop-opacity="0.62" />
+            <stop offset="48%" stop-color="#F59E0B" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Engine satin steel 4-tone block -->
+          <linearGradient id="grad-engine-block" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="45%" stop-color="#CBD5E1" />
+            <stop offset="82%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="grad-engine-sump" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#E2E8F0" />
+            <stop offset="55%" stop-color="#B8C4D4" />
+            <stop offset="100%" stop-color="#8494A7" />
+          </linearGradient>
+
+          <!-- Warm bronze-tinted cylinder bore liner -->
+          <linearGradient id="grad-bore-liner" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8C522B" />
+            <stop offset="32%" stop-color="#D99862" />
+            <stop offset="68%" stop-color="#C47C46" />
+            <stop offset="100%" stop-color="#6B3B1B" />
+          </linearGradient>
+
+          <!-- Machined metallic piston body -->
+          <linearGradient id="grad-piston-body" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="30%" stop-color="#F8FAFC" />
+            <stop offset="62%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <!-- Radiant combustion chamber flame -->
+          <radialGradient id="grad-combustion-flame" cx="50%" cy="62%" r="58%">
+            <stop offset="0%" stop-color="#FFFBEB" stop-opacity="1" />
+            <stop offset="35%" stop-color="#FDE047" stop-opacity="0.96" />
+            <stop offset="68%" stop-color="#F97316" stop-opacity="0.82" />
+            <stop offset="100%" stop-color="#EA580C" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Alternator cobalt/cerulean ribbed housing -->
+          <linearGradient id="grad-alt-blue" x1="15%" y1="0%" x2="85%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8" />
+            <stop offset="38%" stop-color="#0284C7" />
+            <stop offset="76%" stop-color="#0369A1" />
+            <stop offset="100%" stop-color="#0C4A6E" />
+          </linearGradient>
+
+          <!-- Alternator rotating copper rotor cylinder -->
+          <linearGradient id="grad-rotor-copper" x1="25%" y1="0%" x2="75%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="34%" stop-color="#E69F68" />
+            <stop offset="72%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Emerald-green electrical energy aura -->
+          <radialGradient id="grad-elec-aura" cx="50%" cy="50%" r="52%">
+            <stop offset="0%" stop-color="#34D399" stop-opacity="0.72" />
+            <stop offset="55%" stop-color="#10B981" stop-opacity="0.28" />
+            <stop offset="100%" stop-color="#10B981" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Cross-hatch pattern for desulfurization mesh filter beds -->
+          <pattern id="pat-scrubber-mesh" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="8" height="8" fill="#CBD5E1" />
+            <path d="M 0 0 L 0 8 M 0 0 L 8 0" stroke="#475569" stroke-width="1.35" />
+          </pattern>
+
+          <!-- Clip paths for digester interior and scrubber chambers -->
+          <clipPath id="clip-digester-window">
+            <path d="M 264 510 L 264 316 C 264 218 326 154 402 154 C 478 154 540 218 540 316 L 540 510 Q 402 554 264 510 Z" />
+          </clipPath>
+
+          <clipPath id="clip-scrubber-upper">
+            <path d="M 672 204 C 672 190 732 190 732 204 L 732 288 Q 702 304 672 288 Z" />
+          </clipPath>
+
+          <clipPath id="clip-scrubber-lower">
+            <path d="M 672 342 C 672 328 732 328 732 342 L 732 430 Q 702 446 672 430 Z" />
+          </clipPath>
+        </defs>
+
+        <!-- =================================================================
+             EXACT PAINTER'S-ORDER MODULAR LAYER STACK (BACK -> FRONT)
+             Each `.mirvo-part` wraps an inner `.explode-wrap` so CSS spotlight
+             opacity/filter transitions never conflict with Exploded View offsets.
+             ================================================================= -->
+
+        <!-- 1. HOUSING BACK: Grounded shadow, sleek contoured plinth & mounting pads -->
+        <g id="part-housing-back" class="mirvo-part mirvo-housing" data-part="housing">
+          <g class="explode-wrap" data-explode="housing_back"></g>
+        </g>
+
+        <!-- 2. DIGESTER DOME: Anaerobic fermenter, biomass slurry & rising methane bubbles -->
+        <g id="part-digester_dome" class="mirvo-part" data-part="digester_dome">
+          <g class="explode-wrap" data-explode="digester_dome"></g>
+        </g>
+
+        <!-- 3. HEAT RECOVERY: Back-right elevated copper fin stack, coiled tubes & top conduit -->
+        <g id="part-heat_recovery" class="mirvo-part" data-part="heat_recovery">
+          <g class="explode-wrap" data-explode="heat_recovery"></g>
+        </g>
+
+        <!-- 4. GAS SCRUBBER: Cerulean desulfurization tower, mesh beds, droplets & gas pipe -->
+        <g id="part-gas_scrubber" class="mirvo-part" data-part="gas_scrubber">
+          <g class="explode-wrap" data-explode="gas_scrubber"></g>
+        </g>
+
+        <!-- 5. PISTON ENGINE: 4-cylinder inline CHP gas engine with true crank-slider kinematics -->
+        <g id="part-piston_engine" class="mirvo-part" data-part="piston_engine">
+          <g class="explode-wrap" data-explode="piston_engine"></g>
+        </g>
+
+        <!-- 6. ALTERNATOR: Ribbed cobalt synchronous generator, copper rotor & emerald output -->
+        <g id="part-alternator" class="mirvo-part" data-part="alternator">
+          <g class="explode-wrap" data-explode="alternator"></g>
+        </g>
+
+        <!-- 7. HOUSING FRONT: Foreground beveled plinth highlight & anchor bolts -->
+        <g id="part-housing-front" class="mirvo-part mirvo-housing" data-part="housing">
+          <g class="explode-wrap" data-explode="housing_front"></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. DEVICE METADATA, PART NAMES & CONFIGURATION
+         ===================================================================== */
+      const DEVICE_ID = "biogas_cogen_unit";
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const INK = "#222933";
+
+      const PART_NAMES_UZ = {
+        digester_dome: "Anaerob biogaz fermentatori (gumbazli reaktor)",
+        gas_scrubber: "Gaz tozalash (skrubber) va oltingugurtdan ajratish filtri",
+        piston_engine: "Porshenli gaz-ichki yonuv dvigateli",
+        heat_recovery: "Issiqlikni utilizatsiya qilish (kogeneratsiya) almashinuvchisi",
+        alternator: "Sinxron elektr generatori (alternator)"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "digester_dome",
+        "gas_scrubber",
+        "piston_engine",
+        "heat_recovery",
+        "alternator"
+      ];
+
+      // Clean isometric displacement vectors for Exploded View (scaled by 0..1)
+      const EXPLODE_VECTORS = {
+        housing_back: [0, 34],
+        housing_front: [0, 34],
+        digester_dome: [-86, -24],
+        gas_scrubber: [-12, -74],
+        piston_engine: [12, 46],
+        heat_recovery: [62, -78],
+        alternator: [88, 34]
+      };
+
+      // Calibrated hero focus targets inside the 1600x900 viewBox (never clips off-screen)
+      const FOCUS_TARGETS = {
+        full: { x: 800, y: 450, zoom: 1.0 },
+        digester_dome: { x: 405, y: 342, zoom: 1.56 },
+        gas_scrubber: { x: 726, y: 342, zoom: 1.54 },
+        piston_engine: { x: 982, y: 486, zoom: 1.72 },
+        heat_recovery: { x: 1128, y: 266, zoom: 1.88 },
+        alternator: { x: 1284, y: 634, zoom: 2.02 }
+      };
+
+      /* =====================================================================
+         2. SVG DOM HELPER UTILITIES
+         ===================================================================== */
+      function el(tag, attrs, parent) {
+        const node = document.createElementNS(SVG_NS, tag);
+        if (attrs) {
+          for (const k in attrs) {
+            if (Object.prototype.hasOwnProperty.call(attrs, k) && attrs[k] !== undefined && attrs[k] !== null) {
+              node.setAttribute(k, String(attrs[k]));
+            }
+          }
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      /**
+       * Renders a clean multi-tone shaded cylindrical pipe along any SVG path string `d`.
+       */
+      function drawShadedPipe(parent, d, width, colors) {
+        const g = el("g", null, parent);
+        // Dark-slate outline
+        el("path", {
+          d: d,
+          fill: "none",
+          stroke: INK,
+          "stroke-width": width + 3.6,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round"
+        }, g);
+        // Outer shadow body
+        el("path", {
+          d: d,
+          fill: "none",
+          stroke: colors.dark,
+          "stroke-width": width,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round"
+        }, g);
+        // Mid primary tone shifted subtly toward top-left light source
+        el("path", {
+          d: d,
+          fill: "none",
+          stroke: colors.mid,
+          "stroke-width": width * 0.72,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          transform: "translate(-1.2, -1.2)"
+        }, g);
+        // Crisp specular highlight streak
+        el("path", {
+          d: d,
+          fill: "none",
+          stroke: colors.light,
+          "stroke-width": width * 0.24,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          opacity: 0.85,
+          transform: "translate(-2.2, -2.2)"
+        }, g);
+        return g;
+      }
+
+      /**
+       * Draws a circular isometric bolted flange collar centered at (cx, cy).
+       */
+      function drawHorizontalFlange(parent, cx, cy, rx, ry, thickness, boltCount) {
+        const g = el("g", null, parent);
+        // Bottom cylindrical rim of flange
+        el("path", {
+          d:
+            "M " + (cx - rx) + " " + cy +
+            " L " + (cx - rx) + " " + (cy + thickness) +
+            " A " + rx + " " + ry + " 0 0 0 " + (cx + rx) + " " + (cy + thickness) +
+            " L " + (cx + rx) + " " + cy + " Z",
+          fill: "url(#grad-steel-band)",
+          stroke: INK,
+          "stroke-width": 1.9,
+          "stroke-linejoin": "round"
+        }, g);
+        // Top beveled face of flange
+        el("ellipse", {
+          cx: cx,
+          cy: cy,
+          rx: rx,
+          ry: ry,
+          fill: "#E2E8F0",
+          stroke: INK,
+          "stroke-width": 1.9
+        }, g);
+        // Subtle inner machined recess ring
+        el("ellipse", {
+          cx: cx,
+          cy: cy,
+          rx: rx * 0.82,
+          ry: ry * 0.80,
+          fill: "none",
+          stroke: "#94A3B8",
+          "stroke-width": 1.2
+        }, g);
+        // Flange bolts around perimeter
+        const n = boltCount || 8;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2 + 0.15;
+          const bx = cx + Math.cos(a) * rx * 0.89;
+          const by = cy + Math.sin(a) * ry * 0.86;
+          el("circle", {
+            cx: bx.toFixed(1),
+            cy: by.toFixed(1),
+            r: 2.3,
+            fill: "#475569",
+            stroke: INK,
+            "stroke-width": 0.9
+          }, g);
+        }
+        return g;
+      }
+
+      /* =====================================================================
+         3. LIVE 60 FPS PHYSICS ANIMATION REGISTRIES
+         ===================================================================== */
+      const animBubbles = [];        // Rising golden methane bubbles + wavy tails
+      const animDroplets = [];       // Falling cyan scrubber water droplets
+      const animFlowStreams = [];    // Animated glowing flow dashes along pipes
+      const animChevrons = [];       // Oriented directional chevrons along pipes
+      const animThermalAuras = [];   // Pulsing warm thermal aura & fin heat glows
+      const animRotorBands = [];     // Rotating copper winding stripes on alternator rotor
+      const animElecPulses = [];     // Emerald electrical energy streaks on alternator terminals
+      const engineCylinders = [];    // 4-cylinder crank-slider SVG node references
+      let animEndRingSpokes = null;  // Rotating emerald end-ring on alternator shaft
+      let animOutputShaftMarks = null; // Rotating shaft groove lines between engine & alternator
+
+      /**
+       * Registers an animated fluid streamline + directional chevrons along `pathD`.
+       */
+      function registerPipeFlow(parent, pathD, opts) {
+        const o = opts || {};
+        const dash = el("path", {
+          d: pathD,
+          fill: "none",
+          stroke: o.dashColor || "#A7F3D0",
+          "stroke-width": o.dashWidth || 3.4,
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          "stroke-dasharray": o.dashArray || "12 24",
+          opacity: o.opacity !== undefined ? o.opacity : 0.9,
+          filter: "url(#energy-glow)"
+        }, parent);
+
+        animFlowStreams.push({
+          el: dash,
+          speed: o.speed || 46,
+          dir: o.dir || 1,
+          offset: Math.random() * 36,
+          channel: o.channel || "gas"
+        });
+
+        const arrowCount = o.arrows || 0;
+        if (arrowCount > 0) {
+          const totalLen = dash.getTotalLength();
+          const sz = o.arrowSize || 6.2;
+          for (let i = 0; i < arrowCount; i++) {
+            const chev = el("path", {
+              d:
+                "M " + (-sz * 0.9).toFixed(1) + " " + (-sz * 0.72).toFixed(1) +
+                " L " + (sz * 0.6).toFixed(1) + " 0 L " +
+                (-sz * 0.9).toFixed(1) + " " + (sz * 0.72).toFixed(1),
+              fill: "none",
+              stroke: o.arrowColor || "#5EEAD4",
+              "stroke-width": o.arrowStroke || 2.5,
+              "stroke-linecap": "round",
+              "stroke-linejoin": "round",
+              filter: "url(#energy-glow)"
+            }, parent);
+            animChevrons.push({
+              el: chev,
+              pathEl: dash,
+              length: totalLen,
+              t: (i + 0.35) / arrowCount,
+              speed: (o.arrowSpeed || 0.28) * (o.dir || 1),
+              channel: o.channel || "gas"
+            });
+          }
+        }
+      }
+
+      /* =====================================================================
+         4. LAYER WRAPPER REFERENCES
+         ===================================================================== */
+      const wHousingBack = document.querySelector('[data-explode="housing_back"]');
+      const wDigester = document.querySelector('[data-explode="digester_dome"]');
+      const wHeatRec = document.querySelector('[data-explode="heat_recovery"]');
+      const wScrubber = document.querySelector('[data-explode="gas_scrubber"]');
+      const wEngine = document.querySelector('[data-explode="piston_engine"]');
+      const wAlternator = document.querySelector('[data-explode="alternator"]');
+      const wHousingFront = document.querySelector('[data-explode="housing_front"]');
+
+      /* =====================================================================
+         5.1. HOUSING BACK: Soft Grounded Shadow, Elongated Contoured Plinth
+         ===================================================================== */
+      function buildHousingBack() {
+        // Soft grounded contact shadow underneath the entire base plinth
+        el("path", {
+          d:
+            "M 62 536 Q 58 518 88 504 L 460 368 Q 492 356 528 366 L 1468 656 " +
+            "Q 1492 666 1476 688 L 1272 848 Q 1244 866 1206 854 L 490 644 " +
+            "Q 462 634 446 644 Q 422 658 390 646 L 80 554 Q 64 548 62 536 Z",
+          fill: "rgba(15, 23, 42, 0.14)",
+          filter: "url(#plinth-shadow)"
+        }, wHousingBack);
+
+        // Tighter ambient occlusion shadow directly beneath plinth edges
+        el("path", {
+          d:
+            "M 68 532 L 456 640 L 1228 846 L 1468 682 L 1468 666 L 1228 830 L 68 518 Z",
+          fill: "rgba(15, 23, 42, 0.18)",
+          filter: "url(#plinth-shadow)"
+        }, wHousingBack);
+
+        // Plinth Front-Left Side Extrusion (thickness ~20px, includes gentle concave indent)
+        el("path", {
+          d:
+            "M 62 508 L 62 528 Q 62 538 76 544 L 388 638 " +
+            "Q 412 644 428 632 Q 446 618 476 628 L 1204 838 " +
+            "Q 1236 846 1262 830 L 1262 810 Q 1236 826 1204 818 " +
+            "L 476 608 Q 446 598 428 612 Q 412 624 388 618 L 76 524 Q 62 518 62 508 Z",
+          fill: "#CBD5E1",
+          stroke: INK,
+          "stroke-width": 2.0,
+          "stroke-linejoin": "round"
+        }, wHousingBack);
+
+        // Plinth Front-Right Beveled Extrusion
+        el("path", {
+          d:
+            "M 1262 810 L 1262 830 L 1462 696 Q 1470 690 1470 678 L 1470 658 " +
+            "Q 1470 670 1462 676 Z",
+          fill: "#94A3B8",
+          stroke: INK,
+          "stroke-width": 2.0,
+          "stroke-linejoin": "round"
+        }, wHousingBack);
+
+        // Main Top Surface of Sleek Elongated Isometric Plinth
+        el("path", {
+          d:
+            "M 76 524 Q 54 514 76 498 L 444 366 Q 474 354 508 364 " +
+            "L 1456 648 Q 1480 656 1462 676 L 1262 810 " +
+            "Q 1236 826 1204 818 L 476 608 Q 446 598 428 612 " +
+            "Q 412 624 388 618 Z",
+          fill: "url(#grad-plinth-top)",
+          stroke: INK,
+          "stroke-width": 2.1,
+          "stroke-linejoin": "round"
+        }, wHousingBack);
+
+        // Subtle recessed shadow pads underneath digester, scrubber, engine & alternator
+        el("ellipse", { cx: 404, cy: 526, rx: 224, ry: 82, fill: "rgba(15, 23, 42, 0.08)" }, wHousingBack);
+        el("ellipse", { cx: 702, cy: 586, rx: 72, ry: 28, fill: "rgba(15, 23, 42, 0.11)" }, wHousingBack);
+        el("polygon", {
+          points: "780,640 1054,734 1142,672 868,582",
+          fill: "rgba(15, 23, 42, 0.09)"
+        }, wHousingBack);
+        el("polygon", {
+          points: "1122,732 1264,782 1384,698 1244,650",
+          fill: "rgba(15, 23, 42, 0.11)"
+        }, wHousingBack);
+      }
+
+      /* =====================================================================
+         5.2. DIGESTER DOME: Anaerobic Fermenter, Slurry & Methane Bubbles
+         ===================================================================== */
+      function buildDigesterDome() {
+        const cx = 404;
+
+        // --- A) LOWER CONNECTING FEED PIPE TO GAS SCRUBBER BASE ---
+        const feedD = "M 588 476 L 656 498";
+        drawShadedPipe(wDigester, feedD, 15, {
+          dark: "#7C5A3C",
+          mid: "#C29B72",
+          light: "#F1DFC6"
+        });
+        // Small circular flange collar where feed pipe exits digester wall
+        el("ellipse", {
+          cx: 590, cy: 477, rx: 7.5, ry: 15,
+          transform: "rotate(14 590 477)",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.8
+        }, wDigester);
+
+        // --- B) BOTTOM BASE SKIRT FLANGE RING ---
+        el("path", {
+          d:
+            "M 180 484 L 180 510 A 224 84 0 0 0 628 510 L 628 484 " +
+            "A 224 84 0 0 1 180 484 Z",
+          fill: "url(#grad-steel-band)",
+          stroke: INK,
+          "stroke-width": 2.1,
+          "stroke-linejoin": "round"
+        }, wDigester);
+        el("ellipse", {
+          cx: cx, cy: 484, rx: 224, ry: 84,
+          fill: "#E2E8F0", stroke: INK, "stroke-width": 2.0
+        }, wDigester);
+
+        // --- C) MAIN CYLINDRICAL BODY + HEMISPHERICAL DOMED ROOF ---
+        el("path", {
+          d:
+            "M 186 482 L 186 276 C 186 144 282 86 404 86 " +
+            "C 526 86 622 144 622 276 L 622 482 " +
+            "A 218 80 0 0 1 186 482 Z",
+          fill: "url(#grad-digester-shell)",
+          stroke: INK,
+          "stroke-width": 2.2,
+          "stroke-linejoin": "round"
+        }, wDigester);
+
+        // Subtle architectural shading contour along right exterior curvature
+        el("path", {
+          d:
+            "M 552 132 C 594 166 616 218 616 276 L 616 482 " +
+            "A 218 80 0 0 1 552 536 L 552 132 Z",
+          fill: "rgba(100, 116, 139, 0.14)"
+        }, wDigester);
+
+        // --- D) TWO HORIZONTAL REINFORCING STEEL FLANGE BANDS ---
+        // Lower-middle band (left wing & right wing flanking the front cutaway)
+        el("path", {
+          d:
+            "M 178 394 L 178 414 Q 214 434 252 444 L 252 424 Q 214 414 178 394 Z",
+          fill: "url(#grad-steel-band)", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wDigester);
+        el("path", {
+          d:
+            "M 554 424 L 554 444 Q 594 434 630 414 L 630 394 Q 594 414 554 424 Z",
+          fill: "url(#grad-steel-band)", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wDigester);
+
+        // Upper dome-springing band (left wing & right wing flanking the front cutaway)
+        el("path", {
+          d:
+            "M 176 268 L 176 288 Q 212 310 252 322 L 252 302 Q 212 290 176 268 Z",
+          fill: "url(#grad-steel-band)", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wDigester);
+        el("path", {
+          d:
+            "M 554 302 L 554 322 Q 596 310 632 288 L 632 268 Q 596 290 554 302 Z",
+          fill: "url(#grad-steel-band)", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wDigester);
+
+        // --- E) LARGE ARCHED CUTAWAY OPENING WITH BEVELED WALL THICKNESS ---
+        // Outer beveled frame of cutaway opening
+        el("path", {
+          d:
+            "M 250 518 L 250 314 C 250 206 318 140 402 140 " +
+            "C 486 140 554 206 554 314 L 554 518 " +
+            "Q 402 566 250 518 Z",
+          fill: "#DCE4EE",
+          stroke: INK,
+          "stroke-width": 2.1,
+          "stroke-linejoin": "round"
+        }, wDigester);
+
+        // Inner beveled side thickness shadow on right cut edge
+        el("path", {
+          d:
+            "M 540 510 L 540 316 C 540 218 478 154 402 154 L 402 140 " +
+            "C 486 140 554 206 554 314 L 554 518 Z",
+          fill: "#B8C4D4",
+          stroke: INK,
+          "stroke-width": 1.5
+        }, wDigester);
+
+        // Clipped interior chamber: warm dome headspace + organic biomass slurry + bubbles
+        const innerG = el("g", { "clip-path": "url(#clip-digester-window)" }, wDigester);
+
+        // Warm amber-cream interior dome wall
+        el("rect", {
+          x: 256, y: 148, width: 292, height: 398,
+          fill: "url(#grad-dome-interior)"
+        }, innerG);
+
+        // Subtle arched depth shadow near inner dome walls
+        el("path", {
+          d:
+            "M 264 316 C 264 218 326 154 402 154 C 478 154 540 218 540 316 " +
+            "L 540 340 C 512 246 462 190 402 190 C 342 190 292 246 264 340 Z",
+          fill: "rgba(92, 58, 28, 0.20)"
+        }, innerG);
+
+        // Organic undulating top surface of biomass slurry
+        el("path", {
+          d:
+            "M 258 312 Q 308 266 368 274 Q 424 260 476 278 Q 518 286 546 312 " +
+            "L 546 360 Q 478 390 402 388 Q 326 390 258 360 Z",
+          fill: "url(#grad-biomass-top)",
+          stroke: "#38261A",
+          "stroke-width": 1.6
+        }, innerG);
+
+        // Front cross-section body of dark organic biomass substrate
+        el("path", {
+          d:
+            "M 258 348 Q 308 368 358 362 Q 408 378 460 364 Q 506 372 546 348 " +
+            "L 546 550 L 258 550 Z",
+          fill: "url(#grad-biomass-body)",
+          stroke: "#2C1D13",
+          "stroke-width": 1.6
+        }, innerG);
+
+        // Sediment stratification ripples & organic speckle texture inside slurry
+        const strataCurves = [
+          "M 262 406 Q 332 422 404 414 Q 476 426 542 408",
+          "M 262 456 Q 344 472 414 462 Q 486 476 542 458",
+          "M 262 496 Q 336 510 404 504 Q 474 514 542 498"
+        ];
+        strataCurves.forEach(function (sd) {
+          el("path", {
+            d: sd, fill: "none", stroke: "#2D1E14", "stroke-width": 2.2, opacity: 0.45
+          }, innerG);
+        });
+
+        // Deterministic organic texture speckles across biomass cross-section & top surface
+        const speckles = [
+          [292, 330, 3.2], [336, 310, 2.8], [384, 326, 3.5], [442, 316, 2.6], [492, 330, 3.0],
+          [314, 344, 2.4], [412, 348, 3.0], [468, 342, 2.5], [286, 392, 3.6], [326, 424, 2.8],
+          [364, 398, 4.0], [408, 434, 3.2], [452, 404, 3.8], [498, 426, 2.9], [520, 386, 3.1],
+          [298, 466, 3.4], [346, 488, 2.7], [392, 470, 4.2], [438, 492, 3.0], [486, 468, 3.5],
+          [518, 496, 2.6], [318, 514, 3.2], [374, 522, 2.8], [428, 516, 3.4], [478, 518, 2.9]
+        ];
+        speckles.forEach(function (sp, idx) {
+          el("circle", {
+            cx: sp[0], cy: sp[1], r: sp[2],
+            fill: idx % 3 === 0 ? "#7C5B40" : "#261910",
+            opacity: idx % 3 === 0 ? 0.55 : 0.48
+          }, innerG);
+        });
+
+        // Subtle dark circular ripple rings on top surface where methane bubbles emerge
+        const emitSpots = [
+          [314, 314], [358, 348], [372, 294], [418, 316], [454, 336], [490, 312]
+        ];
+        emitSpots.forEach(function (pt) {
+          el("ellipse", {
+            cx: pt[0], cy: pt[1], rx: 9.5, ry: 3.4,
+            fill: "none", stroke: "#2D1E14", "stroke-width": 1.3, opacity: 0.6
+          }, innerG);
+        });
+
+        // --- ANIMATED RISING GOLDEN-AMBER METHANE BUBBLES + WAVY TAILS ---
+        const bubbleConfigs = [
+          { x: 316, yStart: 320, yEnd: 205, r: 8.5, speed: 0.16, t: 0.25, amp: 5.5 },
+          { x: 344, yStart: 304, yEnd: 178, r: 13.5, speed: 0.13, t: 0.62, amp: 7.0 },
+          { x: 358, yStart: 348, yEnd: 235, r: 7.2, speed: 0.19, t: 0.12, amp: 4.5 },
+          { x: 374, yStart: 298, yEnd: 184, r: 6.5, speed: 0.21, t: 0.48, amp: 5.0 },
+          { x: 392, yStart: 282, yEnd: 164, r: 9.5, speed: 0.15, t: 0.82, amp: 6.0 },
+          { x: 422, yStart: 312, yEnd: 174, r: 14.2, speed: 0.12, t: 0.44, amp: 6.8 },
+          { x: 454, yStart: 338, yEnd: 215, r: 7.5, speed: 0.18, t: 0.22, amp: 4.8 },
+          { x: 462, yStart: 292, yEnd: 176, r: 9.2, speed: 0.16, t: 0.76, amp: 5.6 },
+          { x: 490, yStart: 318, yEnd: 204, r: 8.4, speed: 0.17, t: 0.36, amp: 5.2 }
+        ];
+
+        bubbleConfigs.forEach(function (cfg, idx) {
+          const bGroup = el("g", null, innerG);
+          // Wavy rising trail tail below each bubble
+          const tail = el("path", {
+            d: "M 0 0 Q 3 12 0 24",
+            fill: "none",
+            stroke: "#FDE68A",
+            "stroke-width": Math.max(1.6, cfg.r * 0.22).toFixed(1),
+            "stroke-linecap": "round",
+            opacity: 0.72
+          }, bGroup);
+          // Main glossy amber-gold sphere
+          const orb = el("circle", {
+            cx: 0, cy: 0, r: cfg.r,
+            fill: "url(#grad-methane-bubble)",
+            stroke: INK,
+            "stroke-width": 1.35
+          }, bGroup);
+          // Specular glossy dot
+          el("circle", {
+            cx: (-cfg.r * 0.32).toFixed(1),
+            cy: (-cfg.r * 0.34).toFixed(1),
+            r: (cfg.r * 0.26).toFixed(1),
+            fill: "#FFFFFF",
+            opacity: 0.88
+          }, bGroup);
+
+          animBubbles.push({
+            group: bGroup,
+            tail: tail,
+            orb: orb,
+            baseX: cfg.x,
+            yStart: cfg.yStart,
+            yEnd: cfg.yEnd,
+            r: cfg.r,
+            speed: cfg.speed,
+            t: cfg.t,
+            amp: cfg.amp,
+            phase: idx * 1.37
+          });
+        });
+
+        // Clean inner rim outline around cutaway window
+        el("path", {
+          d:
+            "M 264 510 L 264 316 C 264 218 326 154 402 154 " +
+            "C 478 154 540 218 540 316 L 540 510 Q 402 554 264 510 Z",
+          fill: "none",
+          stroke: INK,
+          "stroke-width": 2.0,
+          "stroke-linejoin": "round"
+        }, wDigester);
+
+        // --- F) WARM AMBER-GOLD CIRCULAR TOP DOME CAP ---
+        el("path", {
+          d:
+            "M 338 118 L 338 128 A 66 28 0 0 0 470 128 L 470 118 Z",
+          fill: "#B46214",
+          stroke: INK,
+          "stroke-width": 2.0,
+          "stroke-linejoin": "round"
+        }, wDigester);
+        el("ellipse", {
+          cx: cx, cy: 118, rx: 66, ry: 28,
+          fill: "url(#grad-gold-cap)",
+          stroke: INK,
+          "stroke-width": 2.1
+        }, wDigester);
+        el("ellipse", {
+          cx: cx - 10, cy: 112, rx: 38, ry: 12,
+          fill: "#FEF3C7",
+          opacity: 0.45
+        }, wDigester);
+      }
+
+      /* =====================================================================
+         5.3. HEAT RECOVERY: Copper Fin Stack, Coiled Tubes & Overhead Conduit
+         ===================================================================== */
+      function buildHeatRecovery() {
+        // --- A) SOFT WARM ORANGE-AMBER THERMAL AURA GLOW BEHIND FIN STACK ---
+        const aura = el("ellipse", {
+          cx: 1172, cy: 256, rx: 185, ry: 122,
+          transform: "rotate(18 1172 256)",
+          fill: "url(#grad-heat-aura)",
+          filter: "url(#thermal-aura)",
+          opacity: 0.85
+        }, wHeatRec);
+        animThermalAuras.push({ el: aura, baseOp: 0.78, amp: 0.16, phase: 0 });
+
+        // --- B) LONG OVERHEAD ARCHED CONDUIT PIPE (SCRUBBER TOP -> HEAT RECOVERY) ---
+        const topConduitD =
+          "M 702 124 L 702 96 Q 702 62 746 72 L 1068 166";
+        drawShadedPipe(wHeatRec, topConduitD, 16.5, {
+          dark: "#1C5D88",
+          mid: "url(#grad-top-conduit)",
+          light: "#E0F2FE"
+        });
+        registerPipeFlow(wHeatRec, "M 702 118 L 702 96 Q 702 64 746 74 L 1054 162", {
+          dashColor: "#99F6E4",
+          dashWidth: 3.4,
+          dashArray: "12 26",
+          speed: 44,
+          dir: 1,
+          arrows: 3,
+          arrowColor: "#6EE7B7",
+          arrowSize: 6.0,
+          arrowSpeed: 0.24,
+          channel: "recovery"
+        });
+
+        // --- C) LOWER COPPER THERMAL EXHAUST & WATER RETURN PIPES TO ENGINE ---
+        const leftReturnD = "M 1014 260 L 948 286";
+        drawShadedPipe(wHeatRec, leftReturnD, 13.5, {
+          dark: "#87451A",
+          mid: "#D98245",
+          light: "#FDE2C4"
+        });
+        const rightReturnD =
+          "M 1270 356 L 1228 386 Q 1206 400 1180 390 L 1144 374";
+        drawShadedPipe(wHeatRec, rightReturnD, 14.5, {
+          dark: "#87451A",
+          mid: "#E69F68",
+          light: "#FDE8D2"
+        });
+        registerPipeFlow(wHeatRec, rightReturnD, {
+          dashColor: "#FEF08A",
+          dashWidth: 2.8,
+          dashArray: "9 18",
+          speed: 36,
+          dir: -1,
+          arrows: 1,
+          arrowColor: "#FDE047",
+          arrowSize: 5.0,
+          arrowSpeed: 0.34,
+          channel: "recovery"
+        });
+
+        // --- D) LEFT-BACK COILED COPPER U-BEND LOOPS (6 STACKED COILS) ---
+        for (let i = 5; i >= 0; i--) {
+          const cy = 186 + i * 18.5;
+          const coilD =
+            "M 1068 " + (cy - 6).toFixed(1) +
+            " L 1022 " + (cy - 10).toFixed(1) +
+            " C 992 " + (cy - 12).toFixed(1) + " 990 " + (cy + 16).toFixed(1) +
+            " 1022 " + (cy + 14).toFixed(1) +
+            " L 1068 " + (cy + 12).toFixed(1);
+          drawShadedPipe(wHeatRec, coilD, 9.2, {
+            dark: "#7C3F17",
+            mid: "#D98245",
+            light: "#FDE2C4"
+          });
+        }
+
+        // --- E) DENSE PARALLEL STACK OF 19 VERTICAL ISOMETRIC BRUSHED-COPPER FINS ---
+        // Drawn back-left to front-right so each copper fin crisply overlaps the previous!
+        const finCount = 19;
+        for (let i = 0; i < finCount; i++) {
+          const fx = 1046 + i * 9.5;
+          const fy = 176 + i * 4.4;
+          const fw = 52;
+          const fSkewY = -28; // top-right isometric rise of each fin plate
+          const fh = 114;
+
+          // Fin face polygon (parallelogram with rounded-looking crisp technical bevel)
+          const p1x = fx, p1y = fy;
+          const p2x = fx + fw, p2y = fy + fSkewY;
+          const p3x = fx + fw, p3y = fy + fSkewY + fh;
+          const p4x = fx, p4y = fy + fh;
+
+          const isLast = i === finCount - 1;
+          el("polygon", {
+            points:
+              p1x.toFixed(1) + "," + p1y.toFixed(1) + " " +
+              p2x.toFixed(1) + "," + p2y.toFixed(1) + " " +
+              p3x.toFixed(1) + "," + p3y.toFixed(1) + " " +
+              p4x.toFixed(1) + "," + p4y.toFixed(1),
+            fill: isLast ? "url(#grad-copper-fin)" : (i % 2 === 0 ? "#E69F68" : "#D5834B"),
+            stroke: INK,
+            "stroke-width": isLast ? 2.0 : 1.5,
+            "stroke-linejoin": "round"
+          }, wHeatRec);
+
+          // Bright upper bevel edge highlight on every fin
+          el("line", {
+            x1: p1x.toFixed(1), y1: p1y.toFixed(1),
+            x2: p2x.toFixed(1), y2: p2y.toFixed(1),
+            stroke: "#FDE8D2",
+            "stroke-width": 1.35,
+            opacity: 0.72
+          }, wHeatRec);
+        }
+
+        // Subtle pulsing heat shimmer stripes over front-most copper fin face
+        const finGlow = el("polygon", {
+          points: "1218,255 1270,227 1270,341 1218,369",
+          fill: "#FBBF24",
+          opacity: 0.16,
+          filter: "url(#combustion-blur)"
+        }, wHeatRec);
+        animThermalAuras.push({ el: finGlow, baseOp: 0.16, amp: 0.12, phase: 1.7 });
+
+        // --- F) RIGHT-FRONT COILED COPPER U-BEND LOOPS (6 STACKED COILS) ---
+        for (let i = 0; i < 6; i++) {
+          const cy = 248 + i * 18.8;
+          const coilD =
+            "M 1244 " + (cy - 4).toFixed(1) +
+            " L 1296 " + (cy + 14).toFixed(1) +
+            " C 1336 " + (cy + 26).toFixed(1) + " 1340 " + (cy + 2).toFixed(1) +
+            " 1304 " + (cy - 10).toFixed(1) +
+            " L 1262 " + (cy - 24).toFixed(1);
+          drawShadedPipe(wHeatRec, coilD, 9.6, {
+            dark: "#7C3F17",
+            mid: "#E69F68",
+            light: "#FDE8D2"
+          });
+        }
+      }
+
+      /* =====================================================================
+         5.4. GAS SCRUBBER: Cerulean Tower, Mesh Beds, Droplets & Purified Pipe
+         ===================================================================== */
+      function buildGasScrubber() {
+        const cx = 702;
+        const rCyl = 55;
+
+        // --- A) BOLTED CIRCULAR STEEL BASE FLANGE ---
+        drawHorizontalFlange(wScrubber, cx, 558, 67, 25, 16, 10);
+
+        // --- B) MAIN VERTICAL CERULEAN/COBALT-BLUE CYLINDRICAL TOWER ---
+        el("path", {
+          d:
+            "M " + (cx - rCyl) + " 556 L " + (cx - rCyl) + " 168 " +
+            "C " + (cx - rCyl) + " 132 " + (cx + rCyl) + " 132 " + (cx + rCyl) + " 168 " +
+            "L " + (cx + rCyl) + " 556 A 55 21 0 0 1 " + (cx - rCyl) + " 556 Z",
+          fill: "url(#grad-scrubber-blue)",
+          stroke: INK,
+          "stroke-width": 2.2,
+          "stroke-linejoin": "round"
+        }, wScrubber);
+
+        // Specular vertical sheen stripe along left side of blue tower
+        el("path", {
+          d: "M 664 166 L 664 554",
+          stroke: "#BAE6FD",
+          "stroke-width": 7.5,
+          "stroke-linecap": "round",
+          opacity: 0.30
+        }, wScrubber);
+
+        // --- C) LOWER-MID & UPPER-MID BOLTED FLANGE COLLARS ---
+        drawHorizontalFlange(wScrubber, cx, 456, 67, 24, 15, 10);
+        drawHorizontalFlange(wScrubber, cx, 294, 67, 24, 15, 10);
+
+        // --- D) TOP BOLTED NECK COLLAR ---
+        drawHorizontalFlange(wScrubber, cx, 126, 38, 15, 12, 8);
+        // Dark inner pipe bore on top collar
+        el("ellipse", {
+          cx: cx, cy: 126, rx: 14, ry: 6.2,
+          fill: "#0C4A6E", stroke: INK, "stroke-width": 1.6
+        }, wScrubber);
+
+        // --- E) TWO CUTAWAY VIEWING CHAMBERS WITH DESULFURIZATION MESH & DROPLETS ---
+        function buildScrubberChamber(clipId, yTop, yBot, meshYTop, meshYBot) {
+          // Outer dark-bevel recess rim
+          el("path", {
+            d:
+              "M 667 " + yTop + " C 667 " + (yTop - 16) + " 737 " + (yTop - 16) + " 737 " + yTop +
+              " L 737 " + yBot + " Q 702 " + (yBot + 18) + " 667 " + yBot + " Z",
+            fill: "#0C4A6E",
+            stroke: INK,
+            "stroke-width": 2.0
+          }, wScrubber);
+
+          const chG = el("g", { "clip-path": "url(#" + clipId + ")" }, wScrubber);
+
+          // Ice-blue gas cavity background
+          el("rect", {
+            x: 668, y: yTop - 16, width: 68, height: (yBot - yTop) + 34,
+            fill: "url(#grad-scrubber-cavity)"
+          }, chG);
+
+          // Cross-hatched metallic/ceramic desulfurization mesh filter bed
+          el("path", {
+            d:
+              "M 672 " + meshYTop + " Q 702 " + (meshYTop + 12) + " 732 " + meshYTop +
+              " L 732 " + meshYBot + " Q 702 " + (meshYBot + 12) + " 672 " + meshYBot + " Z",
+            fill: "url(#pat-scrubber-mesh)",
+            stroke: INK,
+            "stroke-width": 1.6
+          }, chG);
+          // Top beveled edge of filter media
+          el("path", {
+            d: "M 672 " + meshYTop + " Q 702 " + (meshYTop + 12) + " 732 " + meshYTop,
+            fill: "none", stroke: "#F8FAFC", "stroke-width": 2.2, opacity: 0.78
+          }, chG);
+
+          // Animated falling cyan water/scrubber droplets inside upper space of each chamber
+          const dropCols = [683, 702, 720];
+          dropCols.forEach(function (dx, idx) {
+            const drop = el("path", {
+              d: "M 0 -7 C 4.2 -1 5.2 4.5 0 7 C -5.2 4.5 -4.2 -1 0 -7 Z",
+              fill: "#E0F2FE",
+              stroke: "#0369A1",
+              "stroke-width": 1.35
+            }, chG);
+            animDroplets.push({
+              el: drop,
+              x: dx,
+              yStart: yTop - 2,
+              yEnd: meshYTop + 4,
+              t: (idx * 0.34 + (yTop > 300 ? 0.5 : 0)) % 1,
+              speed: 0.42 + idx * 0.06
+            });
+          });
+
+          // Crisp vertical cyan flow pulse inside chamber
+          const flowD = "M 702 " + (yTop - 6) + " L 702 " + (yBot + 6);
+          registerPipeFlow(chG, flowD, {
+            dashColor: "#67E8F9",
+            dashWidth: 2.6,
+            dashArray: "7 15",
+            speed: 34,
+            dir: 1,
+            arrows: 1,
+            arrowColor: "#22D3EE",
+            arrowSize: 5.0,
+            arrowSpeed: 0.48,
+            channel: "scrubbing"
+          });
+
+          // Crisp inner window outline
+          el("path", {
+            d:
+              "M 672 " + yTop + " C 672 " + (yTop - 14) + " 732 " + (yTop - 14) + " 732 " + yTop +
+              " L 732 " + yBot + " Q 702 " + (yBot + 16) + " 672 " + yBot + " Z",
+            fill: "none",
+            stroke: INK,
+            "stroke-width": 1.8
+          }, wScrubber);
+        }
+
+        buildScrubberChamber("clip-scrubber-upper", 204, 288, 250, 294);
+        buildScrubberChamber("clip-scrubber-lower", 342, 430, 382, 420);
+
+        // Lower chamber subtle upward gas swirl flow indicator
+        registerPipeFlow(wScrubber, "M 678 524 Q 702 518 702 492", {
+          dashColor: "#67E8F9",
+          dashWidth: 3.0,
+          dashArray: "8 14",
+          speed: 32,
+          dir: 1,
+          arrows: 1,
+          arrowColor: "#A5F3FC",
+          arrowSize: 5.2,
+          arrowSpeed: 0.44,
+          channel: "scrubbing"
+        });
+
+        // --- F) LOWER-RIGHT FLANGED OUTLET & PURIFIED BIOGAS RISER TO ENGINE ---
+        // Circular outlet boss flange on right side of lower scrubber drum
+        el("ellipse", {
+          cx: 754, cy: 506, rx: 14, ry: 25,
+          transform: "rotate(-10 754 506)",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 2.0
+        }, wScrubber);
+        el("ellipse", {
+          cx: 758, cy: 506, rx: 10, ry: 18,
+          transform: "rotate(-10 758 506)",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.6
+        }, wScrubber);
+
+        // Purified biogas riser pipe sweeping upward into the engine intake flange
+        const purifiedPipeD =
+          "M 760 508 L 774 512 Q 792 516 792 492 L 792 288 Q 792 260 818 268 L 838 274";
+        drawShadedPipe(wScrubber, purifiedPipeD, 16.0, {
+          dark: "#0E4A75",
+          mid: "#2B8AC6",
+          light: "#BAE6FD"
+        });
+
+        registerPipeFlow(wScrubber, purifiedPipeD, {
+          dashColor: "#6EE7B7",
+          dashWidth: 3.6,
+          dashArray: "12 22",
+          speed: 52,
+          dir: 1,
+          arrows: 3,
+          arrowColor: "#34D399",
+          arrowSize: 6.2,
+          arrowSpeed: 0.30,
+          channel: "scrubbing"
+        });
+      }
+
+      /* =====================================================================
+         5.5. PISTON ENGINE: 4-Cylinder Inline CHP Engine (60 FPS Kinematics)
+         ===================================================================== */
+      function buildPistonEngine() {
+        // --- A) HORIZONTAL CYLINDRICAL INTAKE / EXHAUST MANIFOLD RAIL ---
+        // Main upper manifold barrel spanning behind cylinder heads
+        el("path", {
+          d:
+            "M 894 268 L 916 254 Q 926 248 940 254 L 1172 332 " +
+            "C 1190 338 1184 374 1164 378 L 1142 384 L 894 298 Z",
+          fill: "url(#grad-engine-block)",
+          stroke: INK,
+          "stroke-width": 2.1,
+          "stroke-linejoin": "round"
+        }, wEngine);
+        // Right rounded manifold end cap
+        el("ellipse", {
+          cx: 1166, cy: 356, rx: 15, ry: 24,
+          transform: "rotate(18 1166 356)",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 2.0
+        }, wEngine);
+
+        // Left flanged intake neck meeting the scrubber's purified gas pipe
+        el("ellipse", {
+          cx: 830, cy: 274, rx: 14, ry: 24,
+          transform: "rotate(-16 830 274)",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 2.0
+        }, wEngine);
+        el("path", {
+          d: "M 832 262 L 882 280 L 882 302 L 830 284 Z",
+          fill: "#E2E8F0", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wEngine);
+
+        // --- B) ENGINE BLOCK OUTER BACK & RIGHT WALLS ---
+        // Right end face of cylinder block
+        el("polygon", {
+          points: "1108,358 1146,342 1146,568 1108,596",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 2.1, "stroke-linejoin": "round"
+        }, wEngine);
+        // Right side rectangular inspection cover plate on block
+        el("polygon", {
+          points: "1120,418 1148,406 1148,494 1120,508",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.8, "stroke-linejoin": "round"
+        }, wEngine);
+
+        // Top cylinder head deck surface
+        el("polygon", {
+          points: "836,282 894,258 1146,342 1108,358",
+          fill: "#F1F5F9", stroke: INK, "stroke-width": 2.1, "stroke-linejoin": "round"
+        }, wEngine);
+
+        // Back-left dark crankcase cavity wall behind crankshaft & rods
+        el("polygon", {
+          points: "838,314 1108,412 1108,616 838,518",
+          fill: "#334155", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wEngine);
+
+        // --- C) LEFT FLYWHEEL / FRONT CRANK BEARING HOUSING ---
+        el("ellipse", {
+          cx: 828, cy: 492, rx: 22, ry: 34,
+          transform: "rotate(-16 828 492)",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 2.1
+        }, wEngine);
+        el("ellipse", {
+          cx: 834, cy: 494, rx: 14, ry: 22,
+          transform: "rotate(-16 834 494)",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.8
+        }, wEngine);
+
+        // --- D) 4 PARALLEL VERTICAL CUTAWAY CYLINDER BORES ---
+        // Cylinder geometry along the isometric slope (dx=+62, dy=+24 per cylinder)
+        // Standard flat-plane 4-cylinder firing order 1-3-4-2:
+        // At initial crank angle theta = 0, Cylinder #3 is brightly firing right past TDC!
+        const cylSpecs = [
+          { idx: 0, cx: 880, topY: 326, botY: 462, crankY: 526, crankPhase: Math.PI, cycleOffset: 0.28 + Math.PI },
+          { idx: 1, cx: 942, topY: 350, botY: 486, crankY: 550, crankPhase: 0,       cycleOffset: 0.28 - 2 * Math.PI },
+          { idx: 2, cx: 1004, topY: 374, botY: 510, crankY: 574, crankPhase: 0,      cycleOffset: 0.28 },
+          { idx: 3, cx: 1066, topY: 398, botY: 534, crankY: 598, crankPhase: Math.PI, cycleOffset: 0.28 - Math.PI }
+        ];
+
+        // Static cylinder bores (bronze-tinted cutaway sleeves)
+        cylSpecs.forEach(function (c) {
+          const halfW = 24;
+          // Recessed bronze-tinted cylinder liner wall
+          el("path", {
+            d:
+              "M " + (c.cx - halfW) + " " + c.topY +
+              " Q " + c.cx + " " + (c.topY - 12) + " " + (c.cx + halfW) + " " + c.topY +
+              " L " + (c.cx + halfW) + " " + c.botY +
+              " Q " + c.cx + " " + (c.botY + 12) + " " + (c.cx - halfW) + " " + c.botY + " Z",
+            fill: "url(#grad-bore-liner)",
+            stroke: INK,
+            "stroke-width": 1.9
+          }, wEngine);
+
+          // Metallic cut wall divider pillars between adjacent bores
+          el("rect", {
+            x: c.cx - halfW - 6, y: c.topY - 4, width: 6.5, height: (c.botY - c.topY) + 8,
+            fill: "#CBD5E1", stroke: INK, "stroke-width": 1.6
+          }, wEngine);
+        });
+        // Rightmost outer wall pillar of cylinder 4
+        el("rect", {
+          x: 1090, y: 394, width: 10, height: 148,
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.8
+        }, wEngine);
+
+        // --- E) DYNAMIC CRANKSHAFT, RODS, PISTONS & COMBUSTION LAYERS ---
+        const crankLayer = el("g", { id: "engine-dynamic-kinematics" }, wEngine);
+
+        // Main horizontal crankshaft backbone line segments & main bearing journals
+        const mainBearings = [
+          [850, 514], [911, 538], [973, 562], [1035, 586], [1096, 610]
+        ];
+        mainBearings.forEach(function (mb) {
+          el("ellipse", {
+            cx: mb[0], cy: mb[1], rx: 11, ry: 17,
+            transform: "rotate(-16 " + mb[0] + " " + mb[1] + ")",
+            fill: "#64748B", stroke: INK, "stroke-width": 1.8
+          }, crankLayer);
+        });
+
+        // Create dynamic SVG parts for each of the 4 cylinders
+        cylSpecs.forEach(function (c) {
+          const gCyl = el("g", null, crankLayer);
+
+          // 1) Radiant combustion glow & flame core inside upper cylinder bore
+          const combGlow = el("ellipse", {
+            cx: c.cx, cy: c.topY + 32, rx: 25, ry: 34,
+            fill: "url(#grad-combustion-flame)",
+            filter: "url(#combustion-blur)",
+            opacity: 0
+          }, gCyl);
+          const combCore = el("ellipse", {
+            cx: c.cx, cy: c.topY + 28, rx: 14, ry: 18,
+            fill: "#FFFBEB",
+            opacity: 0
+          }, gCyl);
+
+          // 2) Rotating crank web / counterweight lobe
+          const web = el("path", {
+            d: "",
+            fill: "#94A3B8",
+            stroke: INK,
+            "stroke-width": 1.8,
+            "stroke-linejoin": "round"
+          }, gCyl);
+
+          // 3) Articulated forged-steel connecting rod
+          const rodOuter = el("line", {
+            x1: c.cx, y1: c.topY + 60, x2: c.cx, y2: c.crankY,
+            stroke: INK, "stroke-width": 12.5, "stroke-linecap": "round"
+          }, gCyl);
+          const rodInner = el("line", {
+            x1: c.cx, y1: c.topY + 60, x2: c.cx, y2: c.crankY,
+            stroke: "#CBD5E1", "stroke-width": 8.2, "stroke-linecap": "round"
+          }, gCyl);
+          const rodFlute = el("line", {
+            x1: c.cx, y1: c.topY + 60, x2: c.cx, y2: c.crankY,
+            stroke: "#64748B", "stroke-width": 2.6, "stroke-linecap": "round"
+          }, gCyl);
+
+          // 4) Crank pin journal cap
+          const journal = el("circle", {
+            cx: c.cx, cy: c.crankY, r: 7.5,
+            fill: "#E2E8F0", stroke: INK, "stroke-width": 1.7
+          }, gCyl);
+
+          // 5) Detailed metallic piston assembly (moves strictly vertically along bore)
+          const pistonG = el("g", null, gCyl);
+          // Cylindrical piston skirt body
+          el("path", {
+            d: "M -22 0 L -22 38 Q 0 49 22 38 L 22 0 Z",
+            fill: "url(#grad-piston-body)",
+            stroke: INK,
+            "stroke-width": 1.8,
+            "stroke-linejoin": "round"
+          }, pistonG);
+          // Elliptical machined piston crown
+          el("ellipse", {
+            cx: 0, cy: 0, rx: 22, ry: 9.5,
+            fill: "#F8FAFC",
+            stroke: INK,
+            "stroke-width": 1.8
+          }, pistonG);
+          // Subtle inner dish ring on piston crown
+          el("ellipse", {
+            cx: 0, cy: 0, rx: 14, ry: 5.5,
+            fill: "#E2E8F0",
+            stroke: "#64748B",
+            "stroke-width": 1.1
+          }, pistonG);
+          // Dual dark compression piston rings
+          el("path", {
+            d: "M -21.5 10 Q 0 20 21.5 10",
+            fill: "none", stroke: "#334155", "stroke-width": 2.3
+          }, pistonG);
+          el("path", {
+            d: "M -21.5 17 Q 0 27 21.5 17",
+            fill: "none", stroke: "#334155", "stroke-width": 2.3
+          }, pistonG);
+          // Wrist pin circular boss
+          el("circle", {
+            cx: 0, cy: 29, r: 5.2,
+            fill: "#94A3B8", stroke: INK, "stroke-width": 1.4
+          }, pistonG);
+
+          engineCylinders.push({
+            cx: c.cx,
+            topY: c.topY,
+            crankY: c.crankY,
+            crankPhase: c.crankPhase,
+            cycleOffset: c.cycleOffset,
+            combGlow: combGlow,
+            combCore: combCore,
+            web: web,
+            rodOuter: rodOuter,
+            rodInner: rodInner,
+            rodFlute: rodFlute,
+            journal: journal,
+            pistonG: pistonG
+          });
+        });
+
+        // --- F) LOWER TRAPEZOIDAL CRANKCASE / SUMP HOUSING FOREGROUND ---
+        // Upper beveled crankcase rim lip
+        el("polygon", {
+          points: "814,522 1094,624 1054,660 784,562",
+          fill: "#E2E8F0", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wEngine);
+        // Front vertical crankcase sump wall
+        el("polygon", {
+          points: "784,562 1054,660 1054,704 784,606",
+          fill: "url(#grad-engine-sump)", stroke: INK, "stroke-width": 2.1, "stroke-linejoin": "round"
+        }, wEngine);
+        // Right side sump wall
+        el("polygon", {
+          points: "1054,660 1134,606 1134,650 1054,704",
+          fill: "#7C8B9E", stroke: INK, "stroke-width": 2.1, "stroke-linejoin": "round"
+        }, wEngine);
+        // Bottom flanged engine mounting skirt + corner bolts
+        el("polygon", {
+          points: "774,616 1056,718 1068,708 784,606",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wEngine);
+        el("polygon", {
+          points: "774,616 1056,718 1056,728 774,626",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wEngine);
+        el("polygon", {
+          points: "1056,718 1146,656 1146,666 1056,728",
+          fill: "#64748B", stroke: INK, "stroke-width": 1.9, "stroke-linejoin": "round"
+        }, wEngine);
+
+        // Recessed structural rib line on front sump wall
+        el("line", {
+          x1: 794, y1: 590, x2: 1044, y2: 682,
+          stroke: "#64748B", "stroke-width": 2.0
+        }, wEngine);
+        // Sump base bolts
+        [[796, 622], [1042, 710]].forEach(function (pt) {
+          el("circle", { cx: pt[0], cy: pt[1], r: 3.2, fill: "#334155", stroke: INK, "stroke-width": 1.1 }, wEngine);
+        });
+
+        // --- G) 4 OVERHEAD SPARK PLUGS & VALVE ACTUATOR ASSEMBLIES ---
+        cylSpecs.forEach(function (c) {
+          const px = c.cx;
+          const py = c.topY - 12;
+
+          // Valve actuator stem (left twin)
+          el("rect", {
+            x: px - 14, y: py - 34, width: 7.5, height: 34, rx: 2,
+            fill: "#CBD5E1", stroke: INK, "stroke-width": 1.6
+          }, wEngine);
+          // Main spark plug ceramic body & hex nut (center-right)
+          el("rect", {
+            x: px + 2, y: py - 42, width: 9.5, height: 22, rx: 3,
+            fill: "#F8FAFC", stroke: INK, "stroke-width": 1.6
+          }, wEngine);
+          el("rect", {
+            x: px + 0.5, y: py - 22, width: 12.5, height: 11, rx: 1.5,
+            fill: "#94A3B8", stroke: INK, "stroke-width": 1.6
+          }, wEngine);
+          // Top ignition terminal boot
+          el("circle", {
+            cx: px + 6.8, cy: py - 44, r: 4.5,
+            fill: "#64748B", stroke: INK, "stroke-width": 1.5
+          }, wEngine);
+          // Thin spark tip extending down into combustion roof
+          el("line", {
+            x1: px + 6.8, y1: py - 11, x2: px + 6.8, y2: py + 6,
+            stroke: INK, "stroke-width": 2.4, "stroke-linecap": "round"
+          }, wEngine);
+        });
+
+        // --- H) RIGHT-SIDE ROTATING STEEL OUTPUT COUPLING SHAFT -> ALTERNATOR ---
+        // Bearing collar on right engine wall
+        el("ellipse", {
+          cx: 1122, cy: 618, rx: 15, ry: 25,
+          transform: "rotate(-16 1122 618)",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 2.0
+        }, wEngine);
+        // Cylindrical coupling shaft bridging to alternator rotor
+        el("path", {
+          d: "M 1118 604 L 1172 624 L 1164 648 L 1110 628 Z",
+          fill: "url(#grad-piston-body)", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wEngine);
+        // Animated rotating keyway/groove indicator on output shaft
+        animOutputShaftMarks = el("line", {
+          x1: 1124, y1: 616, x2: 1164, y2: 630,
+          stroke: "#475569", "stroke-width": 2.4, "stroke-linecap": "round"
+        }, wEngine);
+      }
+
+      /* =====================================================================
+         5.6. ALTERNATOR: Ribbed Cobalt Housing, Copper Rotor & Emerald Output
+         ===================================================================== */
+      function buildAlternator() {
+        // --- A) EMERALD ELECTRICAL OUTPUT TERMINALS & ANIMATED ENERGY AURA ---
+        const elecAura = el("ellipse", {
+          cx: 1404, cy: 594, rx: 46, ry: 44,
+          fill: "url(#grad-elec-aura)",
+          filter: "url(#thermal-aura)",
+          opacity: 0.82
+        }, wAlternator);
+        animThermalAuras.push({ el: elecAura, baseOp: 0.72, amp: 0.24, phase: 2.6 });
+
+        // Upper & lower electrical terminal bushings protruding from right rear
+        const termPaths = [
+          { base: [1358, 566], tip: [1408, 584], wave: "M 1406 583 Q 1424 584 1444 594" },
+          { base: [1358, 598], tip: [1408, 616], wave: "M 1406 615 Q 1426 618 1446 626" }
+        ];
+        termPaths.forEach(function (tp, idx) {
+          // Metallic terminal pin
+          el("line", {
+            x1: tp.base[0], y1: tp.base[1], x2: tp.tip[0], y2: tp.tip[1],
+            stroke: INK, "stroke-width": 11, "stroke-linecap": "round"
+          }, wAlternator);
+          el("line", {
+            x1: tp.base[0], y1: tp.base[1], x2: tp.tip[0], y2: tp.tip[1],
+            stroke: "#10B981", "stroke-width": 7.2, "stroke-linecap": "round"
+          }, wAlternator);
+          el("line", {
+            x1: tp.base[0], y1: tp.base[1] - 1.5, x2: tp.tip[0], y2: tp.tip[1] - 1.5,
+            stroke: "#A7F3D0", "stroke-width": 2.2, "stroke-linecap": "round"
+          }, wAlternator);
+
+          // Animated emerald electrical energy pulse streak shooting outward
+          const pulse = el("path", {
+            d: tp.wave,
+            fill: "none",
+            stroke: "#34D399",
+            "stroke-width": 4.2,
+            "stroke-linecap": "round",
+            "stroke-dasharray": "10 14",
+            filter: "url(#energy-glow)"
+          }, wAlternator);
+          animElecPulses.push({ el: pulse, offset: idx * 12, speed: 54 });
+        });
+
+        // --- B) HEAVY BOLTED BLUE MOUNTING FEET ---
+        // Left-front mounting foot base
+        el("polygon", {
+          points: "1120,710 1254,758 1254,774 1120,726",
+          fill: "#0284C7", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wAlternator);
+        el("polygon", {
+          points: "1254,758 1318,714 1318,730 1254,774",
+          fill: "#0369A1", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wAlternator);
+        el("polygon", {
+          points: "1120,710 1168,678 1318,714 1254,758",
+          fill: "#38BDF8", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wAlternator);
+        // Base mounting bolts
+        [[1142, 712], [1248, 748]].forEach(function (pt) {
+          el("circle", { cx: pt[0], cy: pt[1], r: 3.4, fill: "#0C4A6E", stroke: INK, "stroke-width": 1.2 }, wAlternator);
+        });
+
+        // --- C) REAR & UPPER RIBBED COBALT-BLUE ALTERNATOR HOUSING ---
+        el("path", {
+          d:
+            "M 1162 598 L 1162 518 Q 1164 496 1188 504 L 1352 558 " +
+            "C 1384 570 1388 632 1368 672 L 1316 716 L 1138 654 Z",
+          fill: "url(#grad-alt-blue)",
+          stroke: INK,
+          "stroke-width": 2.2,
+          "stroke-linejoin": "round"
+        }, wAlternator);
+
+        // Crisp parallel external cooling fins / ribs along upper cobalt housing
+        for (let r = 0; r < 5; r++) {
+          const rx0 = 1178 + r * 6;
+          const ry0 = 516 + r * 9;
+          el("line", {
+            x1: rx0, y1: ry0, x2: rx0 + 148, y2: ry0 + 52,
+            stroke: r % 2 === 0 ? "#7DD3FC" : "#0C4A6E",
+            "stroke-width": r % 2 === 0 ? 2.2 : 2.6,
+            "stroke-linecap": "round",
+            opacity: 0.78
+          }, wAlternator);
+        }
+
+        // --- D) SURGICAL FRONT CUTAWAY EXPOSING STATOR CORE & COPPER ROTOR ---
+        // Dark-slate laminated stator interior bay
+        el("path", {
+          d:
+            "M 1152 642 L 1170 536 L 1326 592 L 1312 698 Z",
+          fill: "#1E293B",
+          stroke: INK,
+          "stroke-width": 2.0,
+          "stroke-linejoin": "round"
+        }, wAlternator);
+
+        // Visible copper stator end-turn windings tucked inside lower-left & back-upper slots
+        el("path", {
+          d: "M 1164 568 C 1182 544 1218 544 1252 556 L 1308 578 L 1296 602 L 1172 558 Z",
+          fill: "#C26D32", stroke: INK, "stroke-width": 1.6
+        }, wAlternator);
+        el("path", {
+          d: "M 1142 634 C 1154 662 1196 680 1244 694 L 1288 678 L 1164 632 Z",
+          fill: "#B85F27", stroke: INK, "stroke-width": 1.7
+        }, wAlternator);
+        // Fine copper wire strand grooves on lower stator end-turns
+        for (let s = 0; s < 5; s++) {
+          el("path", {
+            d: "M " + (1152 + s * 4) + " " + (642 + s * 4) + " Q 1212 " + (668 + s * 4) + " " + (1262 + s * 3) + " " + (680 + s * 2),
+            fill: "none", stroke: "#FDE2C4", "stroke-width": 1.2, opacity: 0.65
+          }, wAlternator);
+        }
+
+        // --- E) ROTATING BRUSHED-COPPER CYLINDRICAL ROTOR DRUM ---
+        // Left shaft collar entering rotor
+        el("ellipse", {
+          cx: 1172, cy: 616, rx: 14, ry: 22,
+          transform: "rotate(-16 1172 616)",
+          fill: "#CBD5E1", stroke: INK, "stroke-width": 1.9
+        }, wAlternator);
+
+        // Main cylindrical rotor body (angled coaxially along 21.2 deg isometric slope)
+        const rotorPath =
+          "M 1182 586 L 1286 624 C 1304 632 1294 686 1272 686 L 1168 648 " +
+          "C 1152 642 1162 580 1182 586 Z";
+        el("path", {
+          d: rotorPath,
+          fill: "url(#grad-rotor-copper)",
+          stroke: INK,
+          "stroke-width": 2.1,
+          "stroke-linejoin": "round"
+        }, wAlternator);
+
+        // Animated rotating copper coil winding stripes across the cylindrical rotor surface
+        // 8 evenly-spaced longitudinal winding bands that smoothly cycle across the drum!
+        const rotorBandG = el("g", null, wAlternator);
+        for (let b = 0; b < 8; b++) {
+          const line = el("line", {
+            x1: 1182, y1: 600, x2: 1286, y2: 638,
+            stroke: b % 2 === 0 ? "#FDE8D2" : "#7C3F17",
+            "stroke-width": b % 2 === 0 ? 2.1 : 1.7,
+            "stroke-linecap": "round",
+            opacity: 0.82
+          }, rotorBandG);
+          animRotorBands.push({ el: line, index: b, total: 8 });
+        }
+
+        // Right machined dark-slate laminated rotor face & copper end-ring
+        el("ellipse", {
+          cx: 1280, cy: 656, rx: 22, ry: 34,
+          transform: "rotate(-16 1280 656)",
+          fill: "#64748B", stroke: INK, "stroke-width": 2.0
+        }, wAlternator);
+        el("ellipse", {
+          cx: 1282, cy: 656, rx: 15, ry: 24,
+          transform: "rotate(-16 1282 656)",
+          fill: "#94A3B8", stroke: INK, "stroke-width": 1.5
+        }, wAlternator);
+
+        // --- F) LOWER-FRONT COBALT HOUSING CUTAWAY SHELL CRADLE ---
+        el("path", {
+          d:
+            "M 1118 648 L 1252 698 Q 1278 706 1296 694 L 1344 654 L 1344 690 " +
+            "L 1276 742 Q 1256 756 1228 746 L 1134 712 Q 1118 704 1118 684 Z",
+          fill: "url(#grad-alt-blue)",
+          stroke: INK,
+          "stroke-width": 2.2,
+          "stroke-linejoin": "round"
+        }, wAlternator);
+        // Clean beveled cutaway rim along front blue shell
+        el("path", {
+          d: "M 1118 648 L 1252 698 Q 1278 706 1296 694",
+          fill: "none", stroke: "#BAE6FD", "stroke-width": 2.2, opacity: 0.78
+        }, wAlternator);
+
+        // --- G) RIGHT END-BELL SHAFT HUB & ROTATING EMERALD-GREEN COLLAR RING ---
+        // Rear cobalt ribbed end-bell flange visible around shaft
+        el("ellipse", {
+          cx: 1342, cy: 644, rx: 22, ry: 38,
+          transform: "rotate(-16 1342 644)",
+          fill: "#0369A1", stroke: INK, "stroke-width": 2.0
+        }, wAlternator);
+
+        // Steel shaft protruding out through right end-bell
+        el("path", {
+          d: "M 1284 646 L 1352 670 L 1344 692 L 1276 668 Z",
+          fill: "url(#grad-piston-body)", stroke: INK, "stroke-width": 2.0, "stroke-linejoin": "round"
+        }, wAlternator);
+
+        // Prominent emerald-green rotating end-bell collar ring (matching reference!)
+        el("ellipse", {
+          cx: 1358, cy: 682, rx: 16, ry: 26,
+          transform: "rotate(-16 1358 682)",
+          fill: "#059669", stroke: INK, "stroke-width": 2.1
+        }, wAlternator);
+        el("ellipse", {
+          cx: 1364, cy: 684, rx: 14, ry: 23,
+          transform: "rotate(-16 1364 684)",
+          fill: "#34D399", stroke: INK, "stroke-width": 1.9
+        }, wAlternator);
+
+        // Animated rotating spokes inside emerald shaft end hub
+        animEndRingSpokes = el("g", { transform: "translate(1364, 684)" }, wAlternator);
+        for (let k = 0; k < 3; k++) {
+          const a = (k * 120 * Math.PI) / 180;
+          el("line", {
+            x1: 0, y1: 0,
+            x2: (Math.cos(a) * 9).toFixed(1),
+            y2: (Math.sin(a) * 14).toFixed(1),
+            stroke: "#064E3B", "stroke-width": 2.2, "stroke-linecap": "round"
+          }, animEndRingSpokes);
+        }
+        el("ellipse", {
+          cx: 0, cy: 0, rx: 5.5, ry: 8.5,
+          transform: "rotate(-16)",
+          fill: "#A7F3D0", stroke: INK, "stroke-width": 1.5
+        }, animEndRingSpokes);
+      }
+
+      /* =====================================================================
+         5.7. HOUSING FRONT: Subtle Foreground Plinth Highlight & Anchor Bolts
+         ===================================================================== */
+      function buildHousingFront() {
+        // Crisp specular bevel edge highlight running along foreground rim of plinth
+        el("path", {
+          d:
+            "M 76 524 L 388 618 Q 412 624 428 612 Q 446 598 476 608 " +
+            "L 1204 818 Q 1236 826 1262 810 L 1460 677",
+          fill: "none",
+          stroke: "#FFFFFF",
+          "stroke-width": 1.8,
+          opacity: 0.85,
+          "stroke-linecap": "round"
+        }, wHousingFront);
+
+        // Foreground corner anchor fasteners on base plinth
+        const plinthBolts = [
+          [94, 514], [1226, 804], [1442, 666]
+        ];
+        plinthBolts.forEach(function (pt) {
+          el("ellipse", {
+            cx: pt[0], cy: pt[1], rx: 5.2, ry: 2.6,
+            fill: "#CBD5E1", stroke: INK, "stroke-width": 1.2
+          }, wHousingFront);
+        });
+      }
+
+      /* =====================================================================
+         6. ENGINE CRANK-SLIDER & ROTOR KINEMATICS UPDATER (60 FPS)
+         ===================================================================== */
+      /**
+       * Updates all 4 pistons, connecting rods, crank webs, combustion flashes,
+       * output shaft, and synchronized alternator copper rotor bands for angle `theta`.
+       */
+      function updateEngineAndAlternator(theta, combBoost) {
+        const R = 18.5; // crank throw radius
+        const L = 68.0; // connecting rod length
+
+        for (let i = 0; i < engineCylinders.length; i++) {
+          const c = engineCylinders[i];
+          const a = theta + c.crankPhase;
+
+          // Isometric crank journal coordinates rotating around main crankshaft centerline
+          const jx = c.cx + Math.sin(a) * R * 0.56;
+          const jy = c.crankY - Math.cos(a) * R;
+
+          // Exact crank-slider wrist-pin vertical coordinate along cylinder axis
+          const dx = jx - c.cx;
+          const rodVert = Math.sqrt(Math.max(100, L * L - dx * dx));
+          const wristY = jy - rodVert;
+          const crownY = wristY - 29;
+
+          // Position piston assembly
+          c.pistonG.setAttribute(
+            "transform",
+            "translate(" + c.cx.toFixed(1) + ", " + crownY.toFixed(1) + ")"
+          );
+
+          // Position articulated connecting rod from wrist pin to crank journal
+          const wx = c.cx.toFixed(1);
+          const wy = wristY.toFixed(1);
+          const jxS = jx.toFixed(1);
+          const jyS = jy.toFixed(1);
+
+          c.rodOuter.setAttribute("x1", wx);
+          c.rodOuter.setAttribute("y1", wy);
+          c.rodOuter.setAttribute("x2", jxS);
+          c.rodOuter.setAttribute("y2", jyS);
+
+          c.rodInner.setAttribute("x1", wx);
+          c.rodInner.setAttribute("y1", wy);
+          c.rodInner.setAttribute("x2", jxS);
+          c.rodInner.setAttribute("y2", jyS);
+
+          c.rodFlute.setAttribute("x1", wx);
+          c.rodFlute.setAttribute("y1", wy);
+          c.rodFlute.setAttribute("x2", jxS);
+          c.rodFlute.setAttribute("y2", jyS);
+
+          // Position crank journal pin
+          c.journal.setAttribute("cx", jxS);
+          c.journal.setAttribute("cy", jyS);
+
+          // Sculpted rotating crank counterweight web opposite the crank journal
+          const ox = c.cx - Math.sin(a) * R * 0.68;
+          const oy = c.crankY + Math.cos(a) * R * 1.12;
+          const perpX = Math.cos(a) * 10.5;
+          const perpY = Math.sin(a) * 6.5;
+          c.web.setAttribute(
+            "d",
+            "M " + (jx - perpX * 0.7).toFixed(1) + " " + (jy - perpY * 0.7).toFixed(1) +
+            " L " + (ox - perpX * 1.15).toFixed(1) + " " + (oy - perpY * 1.15).toFixed(1) +
+            " Q " + ox.toFixed(1) + " " + (oy + 5).toFixed(1) + " " +
+            (ox + perpX * 1.15).toFixed(1) + " " + (oy + perpY * 1.15).toFixed(1) +
+            " L " + (jx + perpX * 0.7).toFixed(1) + " " + (jy + perpY * 0.7).toFixed(1) + " Z"
+          );
+
+          // 4-stroke combustion flash (720 deg = 4*PI full cycle, firing order 1-3-4-2)
+          let cyc = (theta + c.cycleOffset) % (Math.PI * 4);
+          if (cyc < 0) cyc += Math.PI * 4;
+
+          let flashIntensity = 0;
+          if (cyc >= 0 && cyc < 1.35) {
+            // Sharp ignition peak just past TDC followed by smooth expansion decay
+            const u = cyc / 1.35;
+            flashIntensity = Math.pow(Math.sin(u * Math.PI), 0.75) * Math.exp(-u * 1.15);
+            flashIntensity = Math.min(1, flashIntensity * 1.45 * combBoost);
+          }
+
+          const chamberMidY = (c.topY + crownY) * 0.5;
+          const chamberH = Math.max(14, (crownY - c.topY) * 0.55);
+
+          c.combGlow.setAttribute("cy", chamberMidY.toFixed(1));
+          c.combGlow.setAttribute("ry", (chamberH + 14).toFixed(1));
+          c.combGlow.setAttribute("opacity", flashIntensity.toFixed(3));
+
+          c.combCore.setAttribute("cy", (c.topY + chamberH * 0.72).toFixed(1));
+          c.combCore.setAttribute("ry", Math.max(8, chamberH * 0.62).toFixed(1));
+          c.combCore.setAttribute("opacity", (flashIntensity * 0.92).toFixed(3));
+        }
+
+        // Synchronize output shaft groove oscillation
+        if (animOutputShaftMarks) {
+          const shift = Math.sin(theta) * 6.5;
+          animOutputShaftMarks.setAttribute("y1", (616 + shift).toFixed(1));
+          animOutputShaftMarks.setAttribute("y2", (630 + shift).toFixed(1));
+        }
+
+        // Synchronize alternator copper rotor winding bands (rotating across front cylinder arc)
+        for (let b = 0; b < animRotorBands.length; b++) {
+          const rb = animRotorBands[b];
+          const phase = (theta * 0.85 + (rb.index / rb.total) * Math.PI * 2) % (Math.PI * 2);
+          const norm = Math.sin(phase); // -1..+1 across visible cylindrical face
+          const frontVis = Math.cos(phase); // > -0.15 means visible on front side
+
+          if (frontVis > -0.18) {
+            const dy = norm * 25.5;
+            const dx = -norm * 5.2;
+            rb.el.setAttribute("x1", (1176 + dx).toFixed(1));
+            rb.el.setAttribute("y1", (617 + dy).toFixed(1));
+            rb.el.setAttribute("x2", (1280 + dx).toFixed(1));
+            rb.el.setAttribute("y2", (655 + dy).toFixed(1));
+            rb.el.setAttribute("opacity", Math.max(0, Math.min(0.88, (frontVis + 0.18) * 0.85)).toFixed(2));
+          } else {
+            rb.el.setAttribute("opacity", "0");
+          }
+        }
+
+        // Synchronize emerald end-bell ring rotation on far-right alternator shaft
+        if (animEndRingSpokes) {
+          const deg = ((theta * 180) / Math.PI) % 360;
+          animEndRingSpokes.setAttribute("transform", "translate(1364, 684) rotate(" + deg.toFixed(1) + ")");
+        }
+      }
+
+      /* =====================================================================
+         7. BUILD ALL SVG LAYERS & INITIALIZE POSE (CYLINDER #3 FIRING!)
+         ===================================================================== */
+      buildHousingBack();
+      buildDigesterDome();
+      buildHeatRecovery();
+      buildGasScrubber();
+      buildPistonEngine();
+      buildAlternator();
+      buildHousingFront();
+
+      // Render crisp initial frame immediately so Cylinder #3 glows brightly at startup
+      updateEngineAndAlternator(0.0, 1.0);
+
+      /* =====================================================================
+         8. CAMERA, SPOTLIGHT TOUR, EXPLODED VIEW & INTERACTION ENGINE
+         ===================================================================== */
+      const stageEl = document.getElementById("mirvo-stage");
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+      const allExplodeWraps = Array.from(document.querySelectorAll(".explode-wrap"));
+
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        focusedPart: null,
+        camera: { x: 800, y: 450, zoom: 1.0 },
+        targetExploded: 0,
+        currentExploded: 0,
+        phase: "auto", // "auto" | "fermentation" | "scrubbing" | "combustion" | "recovery" | "generation"
+        playing: true,
+        autoTour: !prefersReducedMotion,
+        stepIndex: 0,
+        tourTimer: null,
+        simTime: 0,
+        crankTheta: 0
+      };
+
+      /**
+       * Smoothly pans and zooms the 16:9 SVG stage around target `(x, y, zoom)`.
+       */
+      function applyCamera(target) {
+        let cam = FOCUS_TARGETS.full;
+        if (typeof target === "string") {
+          cam = FOCUS_TARGETS[target] || FOCUS_TARGETS.full;
+        } else if (target && typeof target === "object") {
+          cam = {
+            x: typeof target.x === "number" ? target.x : 800,
+            y: typeof target.y === "number" ? target.y : 450,
+            zoom: typeof target.zoom === "number" ? Math.max(0.6, Math.min(3.2, target.zoom)) : 1.0
+          };
+        }
+
+        state.camera = cam;
+
+        if (prefersReducedMotion) {
+          stageEl.style.transform = "scale(1) translate(0%, 0%)";
+          return;
+        }
+
+        const txPct = ((800 - cam.x) / 1600) * 100;
+        const tyPct = ((450 - cam.y) / 900) * 100;
+        stageEl.style.transform =
+          "scale(" +
+          cam.zoom.toFixed(3) +
+          ") translate(" +
+          txPct.toFixed(2) +
+          "%, " +
+          tyPct.toFixed(2) +
+          "%)";
+      }
+
+      /**
+       * Spotlights ONLY `partId` at 100% clarity while smoothly dimming all others.
+       */
+      function applyHighlight(partId) {
+        const cleanId =
+          partId && partId !== "full" && partId !== "housing" && PART_NAMES_UZ[partId] ? partId : null;
+        state.focusedPart = cleanId;
+
+        allPartEls.forEach(function (g) {
+          if (!cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.remove("is-focused");
+          } else if (g.dataset.part === cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.add("is-focused");
+          } else {
+            g.classList.remove("is-focused");
+            g.classList.add("is-dimmed");
+          }
+        });
+      }
+
+      /**
+       * Applies smooth exploded separation onto inner `.explode-wrap` groups.
+       */
+      function writeExplodedTransforms(amount) {
+        allExplodeWraps.forEach(function (wrap) {
+          const key = wrap.dataset.explode;
+          const vec = EXPLODE_VECTORS[key] || [0, 0];
+          const dx = vec[0] * amount;
+          const dy = vec[1] * amount;
+          if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+            wrap.removeAttribute("transform");
+          } else {
+            wrap.setAttribute("transform", "translate(" + dx.toFixed(2) + " " + dy.toFixed(2) + ")");
+          }
+        });
+      }
+
+      /* =====================================================================
+         9. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ===================================================================== */
+      function clearTourTimer() {
+        if (state.tourTimer !== null) {
+          clearTimeout(state.tourTimer);
+          state.tourTimer = null;
+        }
+      }
+
+      function scheduleNextTourStep() {
+        clearTourTimer();
+        if (!state.autoTour) return;
+        const holdMs = state.stepIndex === 0 ? 2500 : 3500;
+        state.tourTimer = setTimeout(function () {
+          if (state.autoTour) {
+            runTourStep(state.stepIndex + 1);
+          }
+        }, holdMs);
+      }
+
+      function runTourStep(index) {
+        clearTourTimer();
+        const safeIdx = ((index % TOUR_SEQUENCE.length) + TOUR_SEQUENCE.length) % TOUR_SEQUENCE.length;
+        state.stepIndex = safeIdx;
+        const key = TOUR_SEQUENCE[safeIdx];
+
+        if (key === "full") {
+          applyHighlight(null);
+          applyCamera("full");
+        } else {
+          applyHighlight(key);
+          applyCamera(key);
+        }
+
+        if (state.autoTour) {
+          scheduleNextTourStep();
+        }
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled);
+        clearTourTimer();
+        if (state.autoTour) {
+          scheduleNextTourStep();
+        }
+      }
+
+      /* =====================================================================
+         10. 60 FPS LIVE PHYSICS SIMULATION LOOP
+         ===================================================================== */
+      let lastTs = 0;
+
+      function getPhaseMultipliers() {
+        switch (state.phase) {
+          case "fermentation":
+            return { ferm: 1.65, scrub: 1.0, engine: 0.9, recovery: 0.95, gen: 0.9 };
+          case "scrubbing":
+            return { ferm: 1.05, scrub: 1.75, engine: 1.0, recovery: 1.0, gen: 1.0 };
+          case "combustion":
+            return { ferm: 1.0, scrub: 1.15, engine: 1.55, recovery: 1.25, gen: 1.35 };
+          case "recovery":
+            return { ferm: 1.0, scrub: 1.05, engine: 1.15, recovery: 1.75, gen: 1.15 };
+          case "generation":
+            return { ferm: 1.0, scrub: 1.05, engine: 1.45, recovery: 1.2, gen: 1.8 };
+          case "auto":
+          default:
+            return { ferm: 1.0, scrub: 1.0, engine: 1.0, recovery: 1.0, gen: 1.0 };
+        }
+      }
+
+      function tickPhysics(ts) {
+        try {
+          if (!lastTs) lastTs = ts;
+          const dt = Math.min(0.05, Math.max(0.001, (ts - lastTs) / 1000));
+          lastTs = ts;
+
+          // Keep Exploded View interpolation smooth even while physics is paused
+          if (Math.abs(state.targetExploded - state.currentExploded) > 0.0008) {
+            if (prefersReducedMotion) {
+              state.currentExploded = state.targetExploded;
+            } else {
+              const alpha = 1 - Math.exp(-dt * 8.2);
+              state.currentExploded += (state.targetExploded - state.currentExploded) * alpha;
+            }
+            writeExplodedTransforms(state.currentExploded);
+          } else if (state.currentExploded !== state.targetExploded) {
+            state.currentExploded = state.targetExploded;
+            writeExplodedTransforms(state.currentExploded);
+          }
+
+          if (state.playing) {
+            const mult = getPhaseMultipliers();
+            const motionScale = prefersReducedMotion ? 0.16 : 1.0;
+            state.simTime += dt;
+            const t = state.simTime;
+
+            // 1) Rising golden-amber methane bubbles with wavy tails in digester dome
+            for (let i = 0; i < animBubbles.length; i++) {
+              const b = animBubbles[i];
+              b.t = (b.t + dt * b.speed * mult.ferm * motionScale) % 1;
+              const y = b.yStart + (b.yEnd - b.yStart) * b.t;
+              const sway = Math.sin(t * 2.8 + b.phase + b.t * 4.5) * b.amp;
+              const x = b.baseX + sway;
+
+              // Smooth grow-in at biomass surface & fade near dome roof
+              const edgeFade = Math.min(1, b.t * 5.5, (1 - b.t) * 5.0);
+              const sc = 0.65 + 0.35 * Math.min(1, b.t * 3.5);
+              b.group.setAttribute(
+                "transform",
+                "translate(" + x.toFixed(1) + ", " + y.toFixed(1) + ") scale(" + sc.toFixed(2) + ")"
+              );
+              b.group.setAttribute("opacity", Math.max(0, edgeFade).toFixed(2));
+
+              // Undulating tail curve beneath bubble
+              const w1 = Math.sin(t * 5.5 + b.phase) * 4.2;
+              const w2 = Math.cos(t * 5.0 + b.phase) * 3.8;
+              const tailLen = Math.min(34, 14 + b.r * 1.4);
+              b.tail.setAttribute(
+                "d",
+                "M 0 " + (b.r * 0.85).toFixed(1) +
+                " Q " + w1.toFixed(1) + " " + (b.r + tailLen * 0.48).toFixed(1) +
+                " " + w2.toFixed(1) + " " + (b.r + tailLen).toFixed(1)
+              );
+            }
+
+            // 2) Falling cyan water droplets inside gas scrubber viewing windows
+            for (let i = 0; i < animDroplets.length; i++) {
+              const d = animDroplets[i];
+              d.t = (d.t + dt * d.speed * mult.scrub * motionScale) % 1;
+              const y = d.yStart + (d.yEnd - d.yStart) * (d.t * d.t * 0.45 + d.t * 0.55);
+              const op = Math.min(1, d.t * 6.0, (1 - d.t) * 6.5);
+              d.el.setAttribute("transform", "translate(" + d.x + ", " + y.toFixed(1) + ")");
+              d.el.setAttribute("opacity", op.toFixed(2));
+            }
+
+            // 3) Pipe gas / thermal streamlines & oriented chevrons
+            for (let i = 0; i < animFlowStreams.length; i++) {
+              const s = animFlowStreams[i];
+              const m = s.channel === "recovery" ? mult.recovery : mult.scrub;
+              s.offset -= dt * s.speed * s.dir * m * motionScale;
+              s.el.setAttribute("stroke-dashoffset", s.offset.toFixed(2));
+            }
+
+            for (let i = 0; i < animChevrons.length; i++) {
+              const ch = animChevrons[i];
+              const m = ch.channel === "recovery" ? mult.recovery : mult.scrub;
+              ch.t = (ch.t + dt * ch.speed * m * motionScale) % 1;
+              if (ch.t < 0) ch.t += 1;
+
+              const dist = ch.t * ch.length;
+              const p = ch.pathEl.getPointAtLength(dist);
+              const stepDir = ch.speed >= 0 ? 1 : -1;
+              const dist2 = Math.max(0, Math.min(ch.length, dist + stepDir * 2.5));
+              const p2 = ch.pathEl.getPointAtLength(dist2);
+              const angDeg = (Math.atan2(p2.y - p.y, p2.x - p.x) * 180) / Math.PI;
+              const edgeFade = Math.min(1, ch.t * 8, (1 - ch.t) * 8);
+
+              ch.el.setAttribute(
+                "transform",
+                "translate(" + p.x.toFixed(1) + " " + p.y.toFixed(1) + ") rotate(" + angDeg.toFixed(1) + ")"
+              );
+              ch.el.setAttribute("opacity", (0.95 * edgeFade).toFixed(2));
+            }
+
+            // 4) 4-Cylinder Engine Crank-Slider Kinematics & Alternator Rotor Sync
+            state.crankTheta = (state.crankTheta + dt * 5.2 * mult.engine * motionScale) % (Math.PI * 4);
+            updateEngineAndAlternator(state.crankTheta, mult.engine);
+
+            // 5) Warm thermal aura behind heat exchanger & emerald electrical output aura
+            for (let i = 0; i < animThermalAuras.length; i++) {
+              const au = animThermalAuras[i];
+              const m = i < 2 ? mult.recovery : mult.gen;
+              const op = au.baseOp + au.amp * Math.sin(t * 2.6 * m + au.phase);
+              au.el.setAttribute("opacity", Math.max(0.08, Math.min(1, op)).toFixed(2));
+            }
+
+            // 6) Vibrant emerald electrical energy streaks from alternator terminals
+            for (let i = 0; i < animElecPulses.length; i++) {
+              const ep = animElecPulses[i];
+              ep.offset -= dt * ep.speed * mult.gen * motionScale;
+              ep.el.setAttribute("stroke-dashoffset", ep.offset.toFixed(2));
+            }
+          }
+        } catch (err) {
+          // Keep 60 FPS loop resilient against unexpected browser errors
+        }
+        requestAnimationFrame(tickPhysics);
+      }
+
+      /* =====================================================================
+         11. USER INTERACTIONS (CLICK-TO-ASK, RESET, EXPLODED VIEW, KEYBOARD)
+         ===================================================================== */
+      allPartEls.forEach(function (g) {
+        const partId = g.dataset.part;
+        if (!partId || partId === "housing") return;
+
+        g.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          setAutoTour(false);
+          const idx = TOUR_SEQUENCE.indexOf(partId);
+          if (idx >= 0) state.stepIndex = idx;
+          applyHighlight(partId);
+          applyCamera(partId);
+
+          // Notify host / Mirvo AI lesson controller via Click-to-Ask event
+          try {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId: partId,
+                nameUz: PART_NAMES_UZ[partId] || partId
+              },
+              "*"
+            );
+          } catch (e) {
+            // Safe fallback if standalone
+          }
+        });
+      });
+
+      // Clicking blank white canvas or housing resets view & resumes Auto-Spotlight Tour
+      viewportEl.addEventListener("click", function (ev) {
+        const clickedPart = ev.target && ev.target.closest ? ev.target.closest(".mirvo-part") : null;
+        if (!clickedPart || clickedPart.dataset.part === "housing") {
+          window.MirvoScene.reset();
+        }
+      });
+
+      // Double-clicking anywhere smoothly toggles Exploded View (0 <-> 1)
+      viewportEl.addEventListener("dblclick", function (ev) {
+        ev.preventDefault();
+        window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard controls: R / Esc -> Reset, E -> Exploded View, Space -> Play/Pause
+      window.addEventListener("keydown", function (ev) {
+        const key = ev.key;
+        if (key === "r" || key === "R" || key === "Escape") {
+          window.MirvoScene.reset();
+        } else if (key === "e" || key === "E") {
+          window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+        } else if (key === " ") {
+          ev.preventDefault();
+          window.MirvoScene.setPlaying(!state.playing);
+        }
+      });
+
+      /* =====================================================================
+         12. MANDATORY MIRVO AI INTEGRATION API (`window.MirvoScene` & `postMessage`)
+         ===================================================================== */
+      window.MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: PART_NAMES_UZ,
+
+        focus: function (target) {
+          if (target === null || target === "full") {
+            state.stepIndex = 0;
+            applyCamera("full");
+            return;
+          }
+          setAutoTour(false);
+          if (typeof target === "string") {
+            const idx = TOUR_SEQUENCE.indexOf(target);
+            if (idx >= 0) state.stepIndex = idx;
+          }
+          applyCamera(target);
+        },
+
+        highlight: function (partId) {
+          applyHighlight(partId);
+        },
+
+        setStep: function (index) {
+          setAutoTour(false);
+          const safeIdx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.floor(Number(index) || 0)));
+          state.stepIndex = safeIdx;
+          const key = TOUR_SEQUENCE[safeIdx];
+
+          const phaseMap = {
+            full: "auto",
+            digester_dome: "fermentation",
+            gas_scrubber: "scrubbing",
+            piston_engine: "combustion",
+            heat_recovery: "recovery",
+            alternator: "generation"
+          };
+
+          state.phase = phaseMap[key] || "auto";
+          if (key === "full") {
+            applyHighlight(null);
+            applyCamera("full");
+          } else {
+            applyHighlight(key);
+            applyCamera(key);
+          }
+        },
+
+        setAutoTour: function (enabled) {
+          setAutoTour(enabled);
+        },
+
+        setExploded: function (amount) {
+          state.targetExploded = Math.max(0, Math.min(1, Number(amount) || 0));
+        },
+
+        setPhase: function (mode) {
+          const valid = ["auto", "fermentation", "scrubbing", "combustion", "recovery", "generation"];
+          if (valid.indexOf(mode) !== -1) {
+            state.phase = mode;
+          }
+        },
+
+        setPlaying: function (playing) {
+          state.playing = Boolean(playing);
+        },
+
+        reset: function () {
+          state.targetExploded = 0;
+          state.phase = "auto";
+          state.playing = true;
+          state.stepIndex = 0;
+          applyHighlight(null);
+          applyCamera("full");
+          setAutoTour(!prefersReducedMotion);
+        }
+      };
+
+      // Listen for parent Mirvo AI lesson controller commands via postMessage
+      window.addEventListener("message", function (ev) {
+        try {
+          const msg = ev.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              window.MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              window.MirvoScene.highlight(msg.partId);
+              break;
+            case "SET_STEP":
+              window.MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              window.MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              window.MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              window.MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              window.MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              window.MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          // Safely ignore malformed cross-origin messages
+        }
+      });
+
+      /* =====================================================================
+         13. BOOTSTRAP ON WINDOW LOAD
+         ===================================================================== */
+      window.onload = function () {
+        applyCamera("full");
+        applyHighlight(null);
+        requestAnimationFrame(tickPhysics);
+        if (!prefersReducedMotion) {
+          runTourStep(0);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

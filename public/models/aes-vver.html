@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atom elektr stansiyasi (VVER reaktori)</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — STRICT ZERO-UI & PURE #FFFFFF CANVAS FOUNDATION
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body, .mirvo-viewport {
+      background: #ffffff;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    #mirvo-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: visible;
+    }
+
+    /* =========================================================================
+       SEQUENTIAL SPOTLIGHT FOCUS / DIMMING TRANSITIONS
+       ========================================================================= */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Crisp dark-slate technical engineering outlines */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-bold {
+      stroke: #222933;
+      stroke-width: 2.0;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-thin {
+      stroke: #222933;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-micro {
+      stroke: #222933;
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage {
+        transition: none;
+      }
+      .mirvo-part {
+        transition: opacity 0.2s ease;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="mirvo-viewport">
+    <div class="mirvo-stage" id="mirvo-stage">
+      <svg
+        id="mirvo-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <!-- ================= SOFT SHADOWS & THERMAL GLOW FILTERS ================= -->
+          <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
+
+          <filter id="tight-shadow" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="4" />
+          </filter>
+
+          <filter id="amber-glow-filter" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="cyan-glow-filter" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="4.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="steam-soft" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="6.5" />
+          </filter>
+
+          <!-- ================= 4-TONE MATTE ENGINEERING GRADIENTS ================= -->
+          <!-- Base Plinth -->
+          <linearGradient id="plinth-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="58%" stop-color="#F8FAFC" />
+            <stop offset="100%" stop-color="#EDF2F7" />
+          </linearGradient>
+
+          <linearGradient id="plinth-side-l" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E2E8F0" />
+            <stop offset="100%" stop-color="#CBD5E1" />
+          </linearGradient>
+
+          <linearGradient id="plinth-side-r" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#B8C4D4" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <!-- Satin Anodized Steel (Reactor Pressure Vessel & Piping) -->
+          <linearGradient id="steel-horiz" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="18%" stop-color="#E2E8F0" />
+            <stop offset="34%" stop-color="#F8FAFC" />
+            <stop offset="68%" stop-color="#CBD5E1" />
+            <stop offset="88%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="steel-inner-cavity" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#475569" />
+            <stop offset="35%" stop-color="#64748B" />
+            <stop offset="62%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-barrel-inner" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#334155" />
+            <stop offset="32%" stop-color="#64748B" />
+            <stop offset="65%" stop-color="#8797AC" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <linearGradient id="steel-bevel" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="55%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <linearGradient id="steel-dome" x1="25%" y1="10%" x2="80%" y2="95%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="42%" stop-color="#CBD5E1" />
+            <stop offset="82%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="steel-pipe-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="28%" stop-color="#CBD5E1" />
+            <stop offset="50%" stop-color="#F8FAFC" />
+            <stop offset="78%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-pipe-h" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="34%" stop-color="#CBD5E1" />
+            <stop offset="72%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-shaft" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="40%" stop-color="#F8FAFC" />
+            <stop offset="75%" stop-color="#CBD5E1" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <!-- Warm Amber-Orange Primary Coolant & Nuclear Core Glow -->
+          <linearGradient id="amber-bath" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.72" />
+            <stop offset="48%" stop-color="#D97706" stop-opacity="0.92" />
+            <stop offset="88%" stop-color="#B45309" stop-opacity="0.96" />
+            <stop offset="100%" stop-color="#78350F" stop-opacity="0.98" />
+          </linearGradient>
+
+          <radialGradient id="core-thermal-glow" cx="50%" cy="62%" r="55%">
+            <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.95" />
+            <stop offset="42%" stop-color="#FBBF24" stop-opacity="0.62" />
+            <stop offset="76%" stop-color="#F59E0B" stop-opacity="0.28" />
+            <stop offset="100%" stop-color="#EA580C" stop-opacity="0" />
+          </radialGradient>
+
+          <linearGradient id="hot-leg-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FDE68A" />
+            <stop offset="40%" stop-color="#F59E0B" />
+            <stop offset="100%" stop-color="#EA580C" />
+          </linearGradient>
+
+          <!-- Warm Brushed Copper & Gold (Fuel Rods & Motor Stator Windings) -->
+          <linearGradient id="copper-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="40%" stop-color="#E69F68" />
+            <stop offset="100%" stop-color="#C26D32" />
+          </linearGradient>
+
+          <linearGradient id="copper-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#D98344" />
+            <stop offset="55%" stop-color="#B85F24" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <linearGradient id="copper-stator" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="35%" stop-color="#E69F68" />
+            <stop offset="72%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Cobalt-Blue Control Rod Caps & Motor Housing -->
+          <linearGradient id="cobalt-cap" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E3A8A" />
+            <stop offset="28%" stop-color="#2563EB" />
+            <stop offset="52%" stop-color="#60A5FA" />
+            <stop offset="82%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <linearGradient id="cobalt-motor" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="32%" stop-color="#2563EB" />
+            <stop offset="72%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <!-- Dark-Slate Graphite Absorber Blades & Pump Pedestal -->
+          <linearGradient id="graphite-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="48%" stop-color="#475569" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <linearGradient id="graphite-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#475569" />
+            <stop offset="55%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#1E293B" />
+          </linearGradient>
+
+          <!-- Ceramic-Ivory Steam Generator Shell -->
+          <linearGradient id="ivory-shell" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#E5E1D5" />
+            <stop offset="26%" stop-color="#FFFDF8" />
+            <stop offset="55%" stop-color="#F7F4EC" />
+            <stop offset="84%" stop-color="#E4DFD1" />
+            <stop offset="100%" stop-color="#CBC5B6" />
+          </linearGradient>
+
+          <linearGradient id="ivory-dome" x1="20%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="45%" stop-color="#FAF7F0" />
+            <stop offset="85%" stop-color="#E6E0D2" />
+            <stop offset="100%" stop-color="#CBC4B4" />
+          </linearGradient>
+
+          <!-- Steam Generator Dual-Zone Thermal Interior -->
+          <linearGradient id="sg-chamber-bg" x1="15%" y1="88%" x2="88%" y2="18%">
+            <stop offset="0%" stop-color="#EA580C" />
+            <stop offset="28%" stop-color="#F59E0B" />
+            <stop offset="52%" stop-color="#38BDF8" />
+            <stop offset="78%" stop-color="#0EA5E9" />
+            <stop offset="100%" stop-color="#BAE6FD" />
+          </linearGradient>
+
+          <linearGradient id="sg-secondary-water" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#0284C7" />
+            <stop offset="45%" stop-color="#0EA5E9" />
+            <stop offset="78%" stop-color="#38BDF8" />
+            <stop offset="100%" stop-color="#E0F2FE" />
+          </linearGradient>
+
+          <!-- Vibrant Cyan-Blue Pressurized Coolant -->
+          <linearGradient id="cyan-coolant" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E0F2FE" />
+            <stop offset="35%" stop-color="#38BDF8" />
+            <stop offset="75%" stop-color="#0284C7" />
+            <stop offset="100%" stop-color="#0369A1" />
+          </linearGradient>
+
+          <linearGradient id="cyan-to-amber" x1="100%" y1="50%" x2="0%" y2="50%">
+            <stop offset="0%" stop-color="#38BDF8" />
+            <stop offset="48%" stop-color="#7DD3FC" />
+            <stop offset="75%" stop-color="#FBBF24" />
+            <stop offset="100%" stop-color="#EA580C" />
+          </linearGradient>
+
+          <linearGradient id="rotor-steel" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="26%" stop-color="#F8FAFC" />
+            <stop offset="52%" stop-color="#CBD5E1" />
+            <stop offset="82%" stop-color="#64748B" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+
+          <!-- ================= PRECISION CLIP PATHS ================= -->
+          <!-- Steam generator cutaway cavity clip -->
+          <clipPath id="clip-sg-chamber">
+            <path d="M 845 216 C 845 170 872 152 900 152 C 928 152 955 170 955 216 L 955 554 C 955 574 934 588 914 584 C 902 582 896 575 884 582 C 864 592 845 578 845 558 Z" />
+          </clipPath>
+
+          <!-- Fuel core interior cavity clip -->
+          <clipPath id="clip-core-cavity">
+            <path d="M 526 420 L 690 420 L 690 662 C 690 688 652 702 608 702 C 564 702 526 688 526 662 Z" />
+          </clipPath>
+
+          <!-- Motor rotor sheen clip -->
+          <clipPath id="clip-motor-rotor">
+            <polygon points="1104,548 1172,509 1190,540 1122,579" />
+          </clipPath>
+        </defs>
+
+        <!-- Pure #FFFFFF backdrop hit target for click-to-reset -->
+        <rect id="bg-reset-target" x="0" y="0" width="1600" height="900" fill="#FFFFFF" />
+
+        <!-- =======================================================================
+             LAYER 1 — HOUSING BACK (BASE PLINTH + REAR REACTOR PRESSURE VESSEL)
+             ======================================================================= -->
+        <g id="part-housing-back" class="mirvo-part" data-part="pressure_vessel">
+          <!-- Soft grounded plinth cast shadow -->
+          <path
+            d="M 830 356 L 1318 600 Q 1344 613 1318 626 L 818 876 Q 795 888 772 876 L 284 632 Q 258 619 284 606 L 784 356 Q 807 344 830 356 Z"
+            fill="#94A3B8"
+            opacity="0.28"
+            filter="url(#soft-shadow)"
+            transform="translate(10, 18)"
+            pointer-events="none"
+          />
+
+          <!-- Clean 30° Isometric Rounded Base Plinth -->
+          <!-- Plinth side extrusion (left-front & right-front thickness) -->
+          <path
+            class="ink"
+            d="M 274 608 L 274 628 Q 274 639 288 646 L 774 888 Q 796 899 818 888 L 1306 644 Q 1320 637 1320 626 L 1320 606 Q 1320 617 1306 624 L 818 868 Q 796 879 774 868 L 288 626 Q 274 619 274 608 Z"
+            fill="url(#plinth-side-l)"
+          />
+          <!-- Right-side darker bevel shading on plinth edge -->
+          <path
+            class="ink-thin"
+            d="M 796 873 L 796 893 Q 807 893 818 888 L 1306 644 Q 1320 637 1320 626 L 1320 606 Q 1320 617 1306 624 L 818 868 Q 807 873 796 873 Z"
+            fill="url(#plinth-side-r)"
+          />
+          <!-- Plinth Top Surface -->
+          <path
+            class="ink"
+            d="M 830 342 L 1306 580 Q 1332 593 1306 606 L 818 850 Q 796 861 774 850 L 288 608 Q 262 595 288 582 L 784 342 Q 807 331 830 342 Z"
+            fill="url(#plinth-top)"
+          />
+
+          <!-- Grounded Contact Shadows on Plinth beneath Equipment -->
+          <g pointer-events="none" opacity="0.34" filter="url(#tight-shadow)">
+            <!-- Under Reactor Vessel -->
+            <ellipse cx="622" cy="744" rx="162" ry="68" fill="#64748B" />
+            <!-- Under Steam Generator -->
+            <ellipse cx="914" cy="590" rx="84" ry="38" fill="#64748B" />
+            <!-- Under Pump & Motor -->
+            <polygon points="975,674 1140,702 1264,616 1185,556 1020,618" fill="#64748B" />
+            <!-- Under Return Pipe -->
+            <path d="M 790 668 Q 852 742 968 688" fill="none" stroke="#64748B" stroke-width="26" stroke-linecap="round" />
+          </g>
+
+          <!-- ===== REACTOR PRESSURE VESSEL — REAR SHELL ===== -->
+          <!-- Back-right tall vertical standpipe instrumentation nozzle -->
+          <g id="vessel-rear-standpipe">
+            <rect class="ink" x="712" y="102" width="24" height="82" rx="4" fill="url(#steel-pipe-v)" />
+            <ellipse class="ink" cx="724" cy="102" rx="12" ry="6" fill="#E2E8F0" />
+            <ellipse class="ink-thin" cx="724" cy="102" rx="6" ry="3" fill="#64748B" />
+            <!-- Base collar weld -->
+            <path class="ink-thin" d="M 708 178 C 708 186 740 186 740 178 L 736 168 C 736 174 712 174 712 168 Z" fill="#CBD5E1" />
+          </g>
+
+          <!-- Outer Cylindrical Pressure Vessel Rear Body & Hemispherical Bottom -->
+          <path
+            class="ink-bold"
+            d="M 446 254 L 446 694 C 446 756 518 796 608 796 C 698 796 770 756 770 694 L 770 254 Z"
+            fill="url(#steel-horiz)"
+          />
+
+          <!-- Upper Rear Hemispherical Dome Shell (behind cutaway) -->
+          <path
+            class="ink"
+            d="M 458 232 C 458 158 525 130 608 130 C 691 130 758 158 758 232 Z"
+            fill="url(#steel-dome)"
+          />
+
+          <!-- Upper Bolted Flange Collar — Rear Half -->
+          <path
+            class="ink"
+            d="M 424 232 C 424 180 506 140 608 140 C 710 140 792 180 792 232 L 792 260 C 792 208 710 168 608 168 C 506 168 424 208 424 260 Z"
+            fill="url(#steel-horiz)"
+          />
+          <!-- Top flat ring of flange (full ellipse back layer) -->
+          <ellipse class="ink" cx="608" cy="232" rx="184" ry="90" fill="url(#steel-bevel)" />
+          <!-- Inner flange bore edge -->
+          <ellipse class="ink" cx="608" cy="232" rx="142" ry="68" fill="#64748B" />
+
+          <!-- Dome Rear Interior Shadowed Wall -->
+          <path
+            class="ink"
+            d="M 474 232 C 474 176 534 150 608 150 C 682 150 742 176 742 232 L 742 365 L 474 365 Z"
+            fill="url(#steel-inner-cavity)"
+          />
+
+          <!-- Procedural Rear Flange Hex Bolts -->
+          <g id="vessel-bolts-back"></g>
+
+          <!-- Outer Vessel Inner Cavity Back Wall -->
+          <path
+            class="ink-thin"
+            d="M 476 286 L 476 680 C 476 728 534 756 608 756 C 682 756 740 728 740 680 L 740 286 Z"
+            fill="url(#steel-inner-cavity)"
+          />
+
+          <!-- Downcomer Annular Space (coolant passage between outer vessel & core barrel) -->
+          <path
+            d="M 484 345 L 484 676 C 484 720 538 744 608 744 C 678 744 732 720 732 676 L 732 345 Z"
+            fill="#9A5B2C"
+            opacity="0.42"
+          />
+
+          <!-- Concentric Inner Core Barrel — Rear Half -->
+          <path
+            class="ink"
+            d="M 508 320 C 508 286 552 268 608 268 C 664 268 708 286 708 320 L 708 666 C 708 698 664 716 608 716 C 552 716 508 698 508 666 Z"
+            fill="url(#steel-horiz)"
+          />
+          <!-- Inner Core Barrel Interior Cavity Wall -->
+          <path
+            class="ink"
+            d="M 522 324 C 522 296 560 280 608 280 C 656 280 694 296 694 324 L 694 662 C 694 688 656 704 608 704 C 560 704 522 688 522 662 Z"
+            fill="url(#steel-barrel-inner)"
+          />
+
+          <!-- Upper Barrel Guide Rim Ring (Rear) -->
+          <path
+            class="ink-thin"
+            d="M 508 320 C 508 286 552 268 608 268 C 664 268 708 286 708 320 L 694 324 C 694 296 656 280 608 280 C 560 280 522 296 522 324 Z"
+            fill="#E2E8F0"
+          />
+
+          <!-- Lower Curved Core Support Bowl inside Barrel -->
+          <ellipse class="ink" cx="608" cy="662" rx="84" ry="38" fill="#CBD5E1" />
+          <ellipse class="ink-thin" cx="608" cy="656" rx="72" ry="31" fill="#94A3B8" />
+
+          <!-- Left-Side Flanged Reactor Outlet Nozzle -->
+          <g id="vessel-left-nozzle">
+            <path
+              class="ink"
+              d="M 454 374 L 418 386 C 408 390 408 422 422 430 L 456 418 Z"
+              fill="url(#steel-pipe-h)"
+            />
+            <ellipse
+              class="ink"
+              cx="419"
+              cy="408"
+              rx="18"
+              ry="31"
+              transform="rotate(-14 419 408)"
+              fill="#CBD5E1"
+            />
+            <ellipse
+              class="ink"
+              cx="414"
+              cy="410"
+              rx="16"
+              ry="28"
+              transform="rotate(-14 414 410)"
+              fill="#E2E8F0"
+            />
+            <ellipse
+              class="ink-thin"
+              cx="413"
+              cy="410"
+              rx="9"
+              ry="16"
+              transform="rotate(-14 413 410)"
+              fill="#475569"
+            />
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 2 — PART 2: NUCLEAR FUEL RODS (YOQILG'I STERJENLARI — TVEL)
+             ======================================================================= -->
+        <g id="part-fuel_rods" class="mirvo-part" data-part="fuel_rods">
+          <!-- Glowing Warm Amber-Orange Primary Coolant Bath around Lower Core -->
+          <g clip-path="url(#clip-core-cavity)">
+            <!-- Bath back liquid volume -->
+            <path
+              d="M 522 438 L 694 438 L 694 674 C 694 696 656 708 608 708 C 560 708 522 696 522 674 Z"
+              fill="url(#amber-bath)"
+            />
+            <!-- Liquid meniscus surface ellipse -->
+            <ellipse
+              cx="608"
+              cy="444"
+              rx="86"
+              ry="34"
+              fill="#F59E0B"
+              opacity="0.45"
+            />
+            <!-- Lower radiant thermal halo under fuel rods -->
+            <ellipse
+              id="anim-core-glow-back"
+              cx="608"
+              cy="615"
+              rx="82"
+              ry="66"
+              fill="url(#core-thermal-glow)"
+              opacity="0.82"
+            />
+          </g>
+
+          <!-- Lower Perforated Core Support Grid Plate -->
+          <ellipse class="ink" cx="608" cy="648" rx="74" ry="33" fill="#FDE68A" />
+          <ellipse class="ink-thin" cx="608" cy="645" rx="68" ry="29" fill="#F59E0B" opacity="0.55" />
+
+          <!-- Isometric Prismatic Hexagonal/Diamond Fuel Rod Bundle (Populated cleanly by JS) -->
+          <g id="fuel-bundle-rods"></g>
+
+          <!-- Foreground Radiant Thermal Core Glow Overlay & Micro-Convection Shimmer -->
+          <g pointer-events="none" clip-path="url(#clip-core-cavity)">
+            <ellipse
+              id="anim-core-glow"
+              cx="608"
+              cy="562"
+              rx="78"
+              ry="92"
+              fill="url(#core-thermal-glow)"
+              opacity="0.55"
+              filter="url(#amber-glow-filter)"
+            />
+            <!-- Rising warm thermal convection shimmer particles -->
+            <g id="anim-core-sparks" filter="url(#amber-glow-filter)"></g>
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 3 — PART 3: CONTROL RODS (BOSHQARUV VA HIMOYA STERJENLARI)
+             ======================================================================= -->
+        <g id="part-control_rods" class="mirvo-part" data-part="control_rods">
+          <!-- Movable Absorber Cluster & Drive Shafts (animated vertically by JS) -->
+          <g id="anim-control-rods">
+            <!-- Populated cleanly in strict back-to-front isometric order by JS -->
+            <g id="control-rod-blades"></g>
+          </g>
+
+          <!-- Upper Stationary Cluster of 7 Cobalt-Blue Drive Mechanism Housings -->
+          <!-- Layered cleanly above the shafts so shafts telescope seamlessly inside -->
+          <g id="control-rod-caps"></g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 4 — HOUSING FRONT (BEVELED CUTAWAY REACTOR WALLS & FRONT FLANGE)
+             ======================================================================= -->
+        <g id="part-housing-front" class="mirvo-part" data-part="pressure_vessel">
+          <!-- Outer Pressure Vessel Front Curved Cylindrical Shell (below & around cutaway) -->
+          <!-- Left front curved steel section -->
+          <path
+            class="ink-bold"
+            d="M 446 254 L 446 694 C 446 756 518 796 608 796 C 698 796 770 756 770 694 L 770 254 L 728 292 L 728 666 C 728 712 674 736 608 736 C 542 736 488 712 488 666 L 488 292 Z"
+            fill="url(#steel-horiz)"
+          />
+
+          <!-- Surgical Beveled Cutaway Cross-Section Faces of Outer Pressure Vessel -->
+          <!-- Left thick steel cutaway wall -->
+          <path
+            class="ink"
+            d="M 488 292 L 508 302 L 508 664 C 508 698 552 722 608 722 C 664 722 708 698 708 664 L 708 302 L 728 292 L 728 668 C 728 716 674 742 608 742 C 542 742 488 716 488 668 Z"
+            fill="url(#steel-bevel)"
+          />
+
+          <!-- Surgical Beveled Cutaway Walls of Concentric Inner Core Barrel -->
+          <!-- Left barrel front bevel -->
+          <path
+            class="ink"
+            d="M 516 340 L 530 348 L 530 658 C 530 684 565 700 608 700 C 651 700 686 684 686 658 L 686 348 L 700 340 L 700 662 C 700 696 658 714 608 714 C 558 714 516 696 516 662 Z"
+            fill="#CBD5E1"
+          />
+
+          <!-- Glowing amber coolant visible in lower downcomer annulus gap -->
+          <path
+            class="ink-micro"
+            d="M 508 518 L 516 522 L 516 662 C 516 696 558 714 608 714 C 658 714 700 696 700 662 L 700 522 L 708 518 L 708 664 C 708 698 664 722 608 722 C 552 722 508 698 508 664 Z"
+            fill="#C26D32"
+            opacity="0.72"
+          />
+
+          <!-- Front Upper Bolted Flange Arc (cut open neatly around center front) -->
+          <!-- Left front flange wing -->
+          <path
+            class="ink"
+            d="M 424 232 C 424 272 454 302 488 314 L 488 342 C 454 330 424 300 424 260 Z"
+            fill="url(#steel-horiz)"
+          />
+          <!-- Right front flange wing -->
+          <path
+            class="ink"
+            d="M 792 232 C 792 272 762 302 728 314 L 728 342 C 762 330 792 300 792 260 Z"
+            fill="url(#steel-horiz)"
+          />
+
+          <!-- Front Flange Top Ring Left & Right Beveled Cut Edges -->
+          <path
+            class="ink"
+            d="M 424 232 C 424 268 452 297 488 312 L 538 242 C 518 232 496 226 476 232 Z"
+            fill="url(#steel-bevel)"
+          />
+          <path
+            class="ink"
+            d="M 792 232 C 792 268 764 297 728 312 L 678 242 C 698 232 720 226 740 232 Z"
+            fill="url(#steel-bevel)"
+          />
+
+          <!-- Cutaway Dome Sloped Bevel Edges framing Control Rods -->
+          <polygon class="ink" points="488,312 538,242 548,220 494,284" fill="#94A3B8" />
+          <polygon class="ink" points="728,312 678,242 668,220 722,284" fill="#94A3B8" />
+
+          <!-- Procedural Front Flange Hex Bolts -->
+          <g id="vessel-bolts-front"></g>
+
+          <!-- Left-Front Small Vertical Auxiliary Nozzle on Flange -->
+          <g id="vessel-front-aux-nozzle">
+            <rect class="ink" x="480" y="196" width="24" height="34" rx="3" fill="url(#steel-pipe-v)" />
+            <ellipse class="ink" cx="492" cy="196" rx="18" ry="9" fill="#E2E8F0" />
+            <ellipse class="ink-thin" cx="492" cy="196" rx="10" ry="5" fill="#64748B" />
+          </g>
+
+          <!-- Cutaway Right-Side Reactor Inlet Nozzle Collar (receives cold leg) -->
+          <g id="vessel-right-inlet-collar">
+            <path
+              class="ink"
+              d="M 712 390 L 764 416 C 772 420 770 444 756 446 L 708 422 Z"
+              fill="url(#steel-pipe-h)"
+            />
+            <!-- Glowing coolant entering reactor vessel -->
+            <path
+              d="M 712 400 L 758 424 C 762 426 761 437 754 438 L 710 416 Z"
+              fill="url(#cyan-to-amber)"
+            />
+            <path
+              class="ink-thin"
+              d="M 712 400 L 758 424 M 710 416 L 754 438"
+              fill="none"
+            />
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 5 — PART 4: STEAM GENERATOR (BUG' GENERATORI)
+             ======================================================================= -->
+        <g id="part-steam_generator" class="mirvo-part" data-part="steam_generator">
+          <!-- Primary Hot-Leg Connecting Pipe (Reactor lower-right -> Steam Generator bottom-left) -->
+          <g id="hot-leg-pipe">
+            <!-- Steel pipe outer body -->
+            <path
+              class="ink-bold"
+              d="M 756 616 C 788 602 822 582 854 562"
+              fill="none"
+              stroke="#64748B"
+              stroke-width="26"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 756 616 C 788 602 822 582 854 562"
+              fill="none"
+              stroke="url(#steel-pipe-h)"
+              stroke-width="22"
+              stroke-linecap="round"
+            />
+            <!-- Glowing Amber Cutaway Slot on Hot-Leg Pipe -->
+            <path
+              d="M 762 614 C 792 601 822 583 850 565"
+              fill="none"
+              stroke="url(#hot-leg-flow)"
+              stroke-width="11"
+              stroke-linecap="round"
+            />
+            <!-- Hidden path for hot-leg particles -->
+            <path id="path-hot-leg" d="M 754 617 C 790 602 824 582 856 560" fill="none" stroke="none" />
+          </g>
+
+          <!-- Outer Ivory/Ceramic Cylindrical Shell & Dome of Steam Generator -->
+          <path
+            class="ink-bold"
+            d="M 824 214 C 824 152 858 128 900 128 C 942 128 976 152 976 214 L 976 558 C 976 594 942 612 900 612 C 858 612 824 594 824 558 Z"
+            fill="url(#ivory-shell)"
+          />
+
+          <!-- Top Ivory Dome Shading Cap -->
+          <path
+            class="ink-thin"
+            d="M 824 214 C 824 152 858 128 900 128 C 942 128 976 152 976 214 C 976 238 942 252 900 252 C 858 252 824 238 824 214 Z"
+            fill="url(#ivory-dome)"
+          />
+
+          <!-- Mid-Upper Ceramic Flange Collar Rim -->
+          <path
+            class="ink"
+            d="M 814 212 C 814 242 852 260 900 260 C 948 260 986 242 986 212 L 986 228 C 986 258 948 276 900 276 C 852 276 814 258 814 228 Z"
+            fill="url(#ivory-shell)"
+          />
+          <path
+            class="ink"
+            d="M 814 212 C 814 198 820 190 826 186 L 826 214 C 826 236 858 250 900 250 C 942 250 974 236 974 214 L 974 186 C 980 190 986 198 986 212 C 986 242 948 260 900 260 C 852 260 814 242 814 212 Z"
+            fill="#F8FAFC"
+          />
+
+          <!-- Surgical Cutaway Interior Opening of Steam Generator -->
+          <path
+            class="ink"
+            d="M 838 214 C 838 164 868 145 900 145 C 932 145 962 164 962 214 L 962 556 C 962 580 936 595 914 590 C 902 588 896 581 884 588 C 862 598 838 584 838 560 Z"
+            fill="#CBD5E1"
+          />
+
+          <!-- Clipped Thermal Interior, U-Tubes, Boiling Bubbles & Rising Steam -->
+          <g clip-path="url(#clip-sg-chamber)">
+            <!-- Dual-Zone Thermal Gradient Background -->
+            <rect x="838" y="145" width="126" height="450" fill="url(#sg-chamber-bg)" />
+
+            <!-- Right-side Vibrant Cerulean/Cyan Secondary Water Column -->
+            <path
+              d="M 898 242 C 920 236 942 246 958 238 L 958 588 L 908 588 C 902 560 900 440 898 242 Z"
+              fill="url(#sg-secondary-water)"
+              opacity="0.92"
+            />
+
+            <!-- Warm Amber-Orange Primary Thermal Zone (Lower-Left) -->
+            <path
+              id="anim-sg-amber-zone"
+              d="M 842 420 C 875 432 898 466 908 525 L 916 588 L 842 588 Z"
+              fill="url(#amber-bath)"
+              opacity="0.92"
+            />
+
+            <!-- Soft Billowing Cyan Steam Clouds inside Upper Dome (Animated by JS) -->
+            <g id="anim-sg-steam" filter="url(#steam-soft)"></g>
+
+            <!-- Concentric Layered Curved Stainless-Steel Heat-Exchange U-Tube Bundle -->
+            <g id="sg-utube-bundle" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Tube 1 (Outermost tall U-tube) -->
+              <path d="M 852 544 L 852 314 C 852 244 878 214 912 222 C 938 228 946 254 946 298 L 946 534 C 946 558 920 568 898 552" stroke="#222933" stroke-width="11" />
+              <path d="M 852 544 L 852 314 C 852 244 878 214 912 222 C 938 228 946 254 946 298 L 946 534 C 946 558 920 568 898 552" stroke="#CBD5E1" stroke-width="7.2" />
+              <path d="M 852 544 L 852 314 C 852 244 878 214 912 222 C 938 228 946 254 946 298 L 946 534 C 946 558 920 568 898 552" stroke="#F8FAFC" stroke-width="2.2" />
+
+              <!-- Tube 2 -->
+              <path d="M 862 542 L 862 322 C 862 260 886 236 912 244 C 930 250 936 272 936 308 L 936 526 C 936 544 914 552 898 538" stroke="#222933" stroke-width="10.5" />
+              <path d="M 862 542 L 862 322 C 862 260 886 236 912 244 C 930 250 936 272 936 308 L 936 526 C 936 544 914 552 898 538" stroke="#CBD5E1" stroke-width="6.8" />
+              <path d="M 862 542 L 862 322 C 862 260 886 236 912 244 C 930 250 936 272 936 308 L 936 526 C 936 544 914 552 898 538" stroke="#F8FAFC" stroke-width="2" />
+
+              <!-- Tube 3 -->
+              <path d="M 872 538 L 872 332 C 872 280 892 260 912 266 C 923 270 926 290 926 320 L 926 516 C 926 530 910 536 898 524" stroke="#222933" stroke-width="10" />
+              <path d="M 872 538 L 872 332 C 872 280 892 260 912 266 C 923 270 926 290 926 320 L 926 516 C 926 530 910 536 898 524" stroke="#CBD5E1" stroke-width="6.4" />
+              <path d="M 872 538 L 872 332 C 872 280 892 260 912 266 C 923 270 926 290 926 320 L 926 516 C 926 530 910 536 898 524" stroke="#F8FAFC" stroke-width="1.8" />
+
+              <!-- Tube 4 -->
+              <path d="M 882 532 L 882 344 C 882 302 896 286 908 292 C 915 296 916 312 916 336 L 916 504 C 916 516 904 520 896 512" stroke="#222933" stroke-width="9.5" />
+              <path d="M 882 532 L 882 344 C 882 302 896 286 908 292 C 915 296 916 312 916 336 L 916 504 C 916 516 904 520 896 512" stroke="#94A3B8" stroke-width="5.8" />
+              <path d="M 882 532 L 882 344 C 882 302 896 286 908 292 C 915 296 916 312 916 336 L 916 504 C 916 516 904 520 896 512" stroke="#E2E8F0" stroke-width="1.6" />
+
+              <!-- Upper moisture separator chevron baffles inside dome -->
+              <path d="M 858 208 Q 900 186 942 208" stroke="#0369A1" stroke-width="3.2" opacity="0.48" />
+              <path d="M 862 194 Q 900 174 938 194" stroke="#0284C7" stroke-width="2.6" opacity="0.38" />
+            </g>
+
+            <!-- Hidden Guide Paths for Primary Flow Particles inside U-Tubes -->
+            <path id="path-utube-1" d="M 852 544 L 852 314 C 852 244 878 214 912 222 C 938 228 946 254 946 298 L 946 534" fill="none" stroke="none" />
+            <path id="path-utube-2" d="M 867 540 L 867 328 C 867 272 890 250 912 256 C 926 260 931 282 931 314 L 931 520" fill="none" stroke="none" />
+
+            <!-- Animated Primary Heat-Transfer Glow Particles inside U-Tubes -->
+            <g id="anim-utube-particles" filter="url(#amber-glow-filter)"></g>
+
+            <!-- Animated Secondary Boiling Bubbles Rising in Right Cyan Zone -->
+            <g id="anim-sg-bubbles" filter="url(#cyan-glow-filter)"></g>
+          </g>
+
+          <!-- Crisp Inner Cutaway Rim Outline of Steam Generator -->
+          <path
+            class="ink"
+            fill="none"
+            d="M 845 216 C 845 170 872 152 900 152 C 928 152 955 170 955 216 L 955 554 C 955 574 934 588 914 584 C 902 582 896 575 884 582 C 864 592 845 578 845 558 Z"
+          />
+
+          <!-- Upper-Right Cutaway Outlet Nozzle connecting into Pump Suction Pipe -->
+          <g id="sg-right-outlet">
+            <path
+              class="ink"
+              d="M 946 332 L 1004 362 L 992 388 L 940 360 Z"
+              fill="url(#ivory-shell)"
+            />
+            <!-- Glowing cyan flow cutaway window -->
+            <path
+              class="ink-thin"
+              d="M 946 340 L 998 367 L 991 381 L 942 354 Z"
+              fill="url(#cyan-coolant)"
+            />
+          </g>
+
+          <!-- Hot-Leg Particle Overlay Group -->
+          <g id="anim-hot-leg-particles" filter="url(#amber-glow-filter)"></g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 6 — PART 5: MAIN COOLANT PUMP (ASOSIY SIRKULYATSIYA NASOSI)
+             ======================================================================= -->
+        <g id="part-coolant_pump" class="mirvo-part" data-part="coolant_pump">
+          <!-- ===== 1. UPPER CURVED SUCTION PIPE (STEAM GEN -> PUMP TOP) ===== -->
+          <g id="pump-suction-pipe">
+            <!-- Outer satin-steel curved pipe -->
+            <path
+              d="M 992 372 L 1038 396 Q 1062 410 1062 438 L 1062 504"
+              fill="none"
+              stroke="#222933"
+              stroke-width="34"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M 992 372 L 1038 396 Q 1062 410 1062 438 L 1062 504"
+              fill="none"
+              stroke="url(#steel-pipe-v)"
+              stroke-width="30"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <!-- Specular brushed steel highlight -->
+            <path
+              d="M 994 366 L 1040 390 Q 1058 400 1058 432 L 1058 498"
+              fill="none"
+              stroke="#F8FAFC"
+              stroke-width="5"
+              stroke-linecap="round"
+              opacity="0.7"
+            />
+
+            <!-- Cutaway Window revealing Downward Pressurized Cyan Flow -->
+            <path
+              d="M 995 373 L 1032 393 Q 1056 407 1062 435 L 1062 482"
+              fill="none"
+              stroke="#0369A1"
+              stroke-width="18"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 995 373 L 1032 393 Q 1056 407 1062 435 L 1062 482"
+              fill="none"
+              stroke="url(#cyan-coolant)"
+              stroke-width="14"
+              stroke-linecap="round"
+            />
+
+            <!-- Hidden Guide Path for Suction Flow Particles -->
+            <path id="path-suction-pipe" d="M 952 350 L 1036 394 Q 1062 409 1062 438 L 1062 565" fill="none" stroke="none" />
+
+            <!-- Bolted Circular Steel Top Flange on Pump Intake -->
+            <g id="pump-top-flange" transform="translate(1062, 504)">
+              <ellipse class="ink" cx="0" cy="8" rx="34" ry="17" fill="#94A3B8" />
+              <ellipse class="ink" cx="0" cy="0" rx="34" ry="17" fill="#E2E8F0" />
+              <ellipse class="ink-thin" cx="0" cy="0" rx="18" ry="9" fill="#94A3B8" />
+              <!-- 8 Circular Flange Bolts -->
+              <g fill="#475569" stroke="#222933" stroke-width="0.9">
+                <circle cx="-26" cy="0" r="2.6" />
+                <circle cx="26" cy="0" r="2.6" />
+                <circle cx="0" cy="-12" r="2.6" />
+                <circle cx="0" cy="12" r="2.6" />
+                <circle cx="-18" cy="-8.5" r="2.5" />
+                <circle cx="18" cy="-8.5" r="2.5" />
+                <circle cx="-18" cy="8.5" r="2.5" />
+                <circle cx="18" cy="8.5" r="2.5" />
+              </g>
+            </g>
+          </g>
+
+          <!-- ===== 2. COAXIAL ELECTRIC MOTOR (COBALT-BLUE HOUSING + COPPER COILS + STEEL ROTOR) ===== -->
+          <g id="pump-electric-motor">
+            <!-- Sturdy Dark-Slate Motor Mounting Pedestal Base on Plinth -->
+            <polygon class="ink" points="1090,636 1218,564 1252,586 1126,660" fill="#475569" />
+            <polygon class="ink" points="1090,636 1126,660 1126,674 1090,650" fill="#334155" />
+            <polygon class="ink" points="1126,660 1252,586 1252,600 1126,674" fill="#1E293B" />
+            <!-- Pedestal vertical riser brackets -->
+            <polygon class="ink" points="1102,606 1214,542 1228,582 1118,646" fill="#64748B" />
+
+            <!-- Rear Protruding Drive Shaft & End Cap (Up-Right) -->
+            <g id="motor-rear-shaft">
+              <path
+                class="ink"
+                d="M 1204 494 L 1236 476 C 1244 472 1254 486 1246 496 L 1214 514 Z"
+                fill="url(#steel-pipe-h)"
+              />
+              <ellipse
+                class="ink"
+                cx="1241"
+                cy="486"
+                rx="7"
+                ry="11"
+                transform="rotate(-28 1241 486)"
+                fill="#E2E8F0"
+              />
+            </g>
+
+            <!-- Rich Cobalt-Blue Motor Cylindrical Outer Casing (Back & Top Shell) -->
+            <path
+              class="ink-bold"
+              d="M 1072 528 L 1172 470 C 1196 456 1226 476 1236 510 C 1244 536 1234 562 1216 572 L 1116 630 C 1094 642 1066 620 1058 588 C 1050 558 1058 536 1072 528 Z"
+              fill="url(#cobalt-motor)"
+            />
+
+            <!-- Cutaway Dark Interior Motor Cavity -->
+            <polygon
+              class="ink"
+              points="1086,538 1174,487 1212,554 1124,605"
+              fill="#1E293B"
+            />
+
+            <!-- Upper Warm Brushed-Copper Stator Winding Stack -->
+            <g id="motor-stator-upper">
+              <polygon
+                class="ink"
+                points="1090,536 1170,490 1180,508 1100,554"
+                fill="url(#copper-stator)"
+              />
+              <!-- Copper winding wire ridges -->
+              <g stroke="#7C3F17" stroke-width="1.15" opacity="0.82">
+                <line x1="1102" y1="530" x2="1112" y2="547" />
+                <line x1="1112" y1="524" x2="1122" y2="541" />
+                <line x1="1122" y1="518" x2="1132" y2="535" />
+                <line x1="1132" y1="512" x2="1142" y2="529" />
+                <line x1="1142" y1="506" x2="1152" y2="523" />
+                <line x1="1152" y1="500" x2="1162" y2="517" />
+                <line x1="1162" y1="494" x2="1172" y2="511" />
+              </g>
+            </g>
+
+            <!-- Lower Warm Brushed-Copper Stator Winding Stack -->
+            <g id="motor-stator-lower">
+              <polygon
+                class="ink"
+                points="1116,580 1196,534 1206,552 1126,598"
+                fill="url(#copper-stator)"
+              />
+              <g stroke="#7C3F17" stroke-width="1.15" opacity="0.82">
+                <line x1="1128" y1="574" x2="1138" y2="591" />
+                <line x1="1138" y1="568" x2="1148" y2="585" />
+                <line x1="1148" y1="562" x2="1158" y2="579" />
+                <line x1="1158" y1="556" x2="1168" y2="573" />
+                <line x1="1168" y1="550" x2="1178" y2="567" />
+                <line x1="1178" y1="544" x2="1188" y2="561" />
+                <line x1="1188" y1="538" x2="1198" y2="555" />
+              </g>
+            </g>
+
+            <!-- Spinning Brushed-Steel Cylindrical Rotor & Drive Shaft -->
+            <g id="motor-rotor-assembly">
+              <!-- Coaxial coupling shaft connecting motor rotor into pump impeller -->
+              <polygon
+                class="ink"
+                points="1078,572 1110,554 1120,572 1088,590"
+                fill="url(#steel-pipe-h)"
+              />
+              <!-- Main Cylindrical Rotor Core -->
+              <polygon
+                class="ink"
+                points="1104,548 1172,509 1190,540 1122,579"
+                fill="url(#rotor-steel)"
+              />
+              <!-- Animated Rotating Rotor Surface Sheen Bands -->
+              <g clip-path="url(#clip-motor-rotor)">
+                <g id="anim-rotor">
+                  <line x1="1096" y1="536" x2="1184" y2="485" stroke="#FFFFFF" stroke-width="4" opacity="0.65" />
+                  <line x1="1104" y1="550" x2="1192" y2="499" stroke="#64748B" stroke-width="3" opacity="0.55" />
+                  <line x1="1112" y1="564" x2="1200" y2="513" stroke="#FFFFFF" stroke-width="3.5" opacity="0.6" />
+                  <line x1="1120" y1="578" x2="1208" y2="527" stroke="#475569" stroke-width="3" opacity="0.55" />
+                  <line x1="1128" y1="592" x2="1216" y2="541" stroke="#FFFFFF" stroke-width="3.5" opacity="0.55" />
+                </g>
+              </g>
+              <!-- Rotor end cap ring -->
+              <ellipse
+                class="ink-thin"
+                cx="1181"
+                cy="524"
+                rx="11"
+                ry="18"
+                transform="rotate(-30 1181 524)"
+                fill="#CBD5E1"
+              />
+            </g>
+
+            <!-- Cobalt-Blue Motor Cutaway Front Beveled Rim Edges -->
+            <polygon class="ink" points="1084,532 1176,479 1181,488 1089,541" fill="#93C5FD" />
+            <polygon class="ink" points="1120,598 1212,545 1217,554 1125,607" fill="#60A5FA" />
+            <!-- Rear End-Bell Rim -->
+            <path
+              class="ink"
+              d="M 1182 478 C 1204 476 1226 498 1232 526 C 1236 544 1230 562 1216 572 L 1208 558 C 1218 550 1222 536 1218 522 C 1212 502 1196 488 1182 488 Z"
+              fill="#1D4ED8"
+            />
+          </g>
+
+          <!-- ===== 3. CENTRIFUGAL PUMP VOLUTE HOUSING & SPINNING IMPELLER ===== -->
+          <g id="pump-volute-unit">
+            <!-- Heavy Satin-Steel Centrifugal Volute Outer Casing -->
+            <path
+              class="ink-bold"
+              d="M 1034 514 L 1090 514 L 1096 534 C 1118 554 1124 592 1108 624 C 1092 652 1054 662 1024 646 C 992 630 982 590 996 556 C 1004 536 1018 522 1034 514 Z"
+              fill="url(#steel-horiz)"
+            />
+
+            <!-- Volute Beveled Cutaway Front Rim -->
+            <ellipse
+              class="ink"
+              cx="1056"
+              cy="590"
+              rx="48"
+              ry="56"
+              transform="rotate(-16 1056 590)"
+              fill="#CBD5E1"
+            />
+
+            <!-- Glowing Cerulean-Cyan Pressurized Volute Chamber Interior -->
+            <ellipse
+              class="ink"
+              cx="1056"
+              cy="590"
+              rx="39"
+              ry="46"
+              transform="rotate(-16 1056 590)"
+              fill="url(#cyan-coolant)"
+            />
+
+            <!-- Subtle Swirling Cyan Vortex Ring inside Volute -->
+            <g transform="translate(1056, 590) scale(0.84, 1.0) rotate(-16)">
+              <circle
+                id="anim-volute-swirl"
+                cx="0"
+                cy="0"
+                r="38"
+                fill="none"
+                stroke="#E0F2FE"
+                stroke-width="4.5"
+                stroke-dasharray="22 14"
+                opacity="0.78"
+              />
+            </g>
+
+            <!-- Multi-Blade Machined Stainless-Steel Impeller (Rotates at 60 FPS) -->
+            <g transform="translate(1056, 590) scale(0.82, 0.96) rotate(-16)">
+              <g id="anim-impeller">
+                <!-- Outer shroud guide ring -->
+                <circle class="ink-thin" cx="0" cy="0" r="32" fill="none" stroke="#E0F2FE" stroke-width="2.5" opacity="0.6" />
+                <!-- 6 Curved Hydrodynamic Stainless-Steel Blades -->
+                <g class="ink-thin" fill="url(#steel-bevel)">
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(0)" />
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(60)" />
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(120)" />
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(180)" />
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(240)" />
+                  <path d="M 0,-7 C 11,-11 23,-17 30,-2 C 24,6 13,2 4,3 Z" transform="rotate(300)" />
+                </g>
+                <!-- Central Impeller Hub & Locking Nut -->
+                <circle class="ink" cx="0" cy="0" r="10.5" fill="url(#steel-pipe-v)" />
+                <circle class="ink-micro" cx="0" cy="0" r="4.5" fill="#475569" />
+              </g>
+            </g>
+
+            <!-- Lower Front Steel Support Bracket beneath Volute -->
+            <path
+              class="ink"
+              d="M 1018 640 L 1084 654 L 1110 640 L 1110 662 L 1082 678 L 1018 656 Z"
+              fill="#64748B"
+            />
+          </g>
+
+          <!-- ===== 4. FRONT-LOWER CURVED COLD-LEG RETURN PIPE (PUMP -> REACTOR INLET) ===== -->
+          <g id="pump-return-pipe">
+            <!-- Main Curved Satin-Steel Pipe from Pump Volute around Front to Reactor Inlet -->
+            <path
+              d="M 1030 612 L 950 656 Q 890 688 846 664 Q 802 640 802 588 L 802 470 Q 802 440 778 426 L 748 410"
+              fill="none"
+              stroke="#222933"
+              stroke-width="34"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M 1030 612 L 950 656 Q 890 688 846 664 Q 802 640 802 588 L 802 470 Q 802 440 778 426 L 748 410"
+              fill="none"
+              stroke="url(#steel-pipe-h)"
+              stroke-width="30"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <!-- Specular Steel Brushed Highlight along Pipe -->
+            <path
+              d="M 1026 606 L 948 650 Q 890 680 848 658 Q 808 636 808 588 L 808 470 Q 808 446 782 432 L 752 415"
+              fill="none"
+              stroke="#F8FAFC"
+              stroke-width="5"
+              stroke-linecap="round"
+              opacity="0.68"
+            />
+
+            <!-- Cutaway Window near Pump Discharge showing High-Velocity Cyan Flow -->
+            <path
+              d="M 1030 612 L 964 648"
+              fill="none"
+              stroke="#0369A1"
+              stroke-width="19"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 1030 612 L 964 648"
+              fill="none"
+              stroke="url(#cyan-coolant)"
+              stroke-width="15"
+              stroke-linecap="round"
+            />
+
+            <!-- Cutaway Window near Reactor Inlet showing Cyan -> Warm Amber Transition -->
+            <path
+              d="M 784 429 L 744 408"
+              fill="none"
+              stroke="#7C3F17"
+              stroke-width="17"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 784 429 L 744 408"
+              fill="none"
+              stroke="url(#cyan-to-amber)"
+              stroke-width="13"
+              stroke-linecap="round"
+            />
+
+            <!-- Precision Bolted Steel Flange 1 (Pump Discharge Coupling) -->
+            <g transform="translate(960, 650) rotate(-28)">
+              <ellipse class="ink" cx="5" cy="0" rx="11" ry="26" fill="#94A3B8" />
+              <ellipse class="ink" cx="0" cy="0" rx="11" ry="26" fill="#E2E8F0" />
+              <ellipse class="ink-thin" cx="0" cy="0" rx="6" ry="15" fill="#CBD5E1" />
+              <g fill="#475569">
+                <circle cx="0" cy="-21" r="2" />
+                <circle cx="7" cy="-12" r="2" />
+                <circle cx="7" cy="12" r="2" />
+                <circle cx="0" cy="21" r="2" />
+                <circle cx="-7" cy="12" r="2" />
+                <circle cx="-7" cy="-12" r="2" />
+              </g>
+            </g>
+
+            <!-- Precision Bolted Steel Flange 2 (Reactor Inlet Coupling) -->
+            <g transform="translate(784, 429) rotate(28)">
+              <ellipse class="ink" cx="-4" cy="0" rx="10" ry="25" fill="#94A3B8" />
+              <ellipse class="ink" cx="0" cy="0" rx="10" ry="25" fill="#E2E8F0" />
+              <ellipse class="ink-thin" cx="0" cy="0" rx="5.5" ry="14" fill="#CBD5E1" />
+              <g fill="#475569">
+                <circle cx="0" cy="-20" r="1.9" />
+                <circle cx="6.5" cy="-11" r="1.9" />
+                <circle cx="6.5" cy="11" r="1.9" />
+                <circle cx="0" cy="20" r="1.9" />
+                <circle cx="-6.5" cy="11" r="1.9" />
+                <circle cx="-6.5" cy="-11" r="1.9" />
+              </g>
+            </g>
+
+            <!-- Hidden Guide Path for Cold-Leg Return Flow Particles -->
+            <path
+              id="path-return-pipe"
+              d="M 1030 612 L 950 656 Q 890 688 846 664 Q 802 640 802 588 L 802 470 Q 802 440 778 426 L 732 402"
+              fill="none"
+              stroke="none"
+            />
+          </g>
+
+          <!-- Animated Coolant Flow Particles along Suction & Cold-Leg Pipes -->
+          <g id="anim-suction-particles" filter="url(#cyan-glow-filter)"></g>
+          <g id="anim-return-particles" filter="url(#cyan-glow-filter)"></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =========================================================================
+         1. DEVICE METADATA, UZBEK DICTIONARY & CAMERA PRESETS
+         ========================================================================= */
+      const DEVICE_ID = "aes_vver_reactor";
+
+      const PART_NAMES_UZ = {
+        pressure_vessel: "Bosimli reaktor korpusi",
+        fuel_rods: "Yoqilg‘i sterjenlari (TVEL)",
+        control_rods: "Boshqaruv va himoya sterjenlari",
+        steam_generator: "Bug‘ generatori",
+        coolant_pump: "Asosiy sirkulyatsiya nasosi"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "pressure_vessel",
+        "fuel_rods",
+        "control_rods",
+        "steam_generator",
+        "coolant_pump"
+      ];
+
+      // Calibrated viewBox centers & zoom levels so zero focused parts ever clip
+      const CAMERA_TARGETS = {
+        full: { x: 800, y: 450, zoom: 1.0 },
+        pressure_vessel: { x: 605, y: 460, zoom: 1.35 },
+        fuel_rods: { x: 608, y: 548, zoom: 2.0 },
+        control_rods: { x: 608, y: 268, zoom: 1.72 },
+        steam_generator: { x: 892, y: 368, zoom: 1.6 },
+        coolant_pump: { x: 1018, y: 552, zoom: 1.56 }
+      };
+
+      // Isometric Exploded View translation vectors per outer .mirvo-part group
+      const EXPLODE_VECTORS = {
+        "part-housing-back": { x: 0, y: 0 },
+        "part-housing-front": { x: -46, y: 28 },
+        "part-fuel_rods": { x: -16, y: 36 },
+        "part-control_rods": { x: 0, y: -74 },
+        "part-steam_generator": { x: 48, y: -40 },
+        "part-coolant_pump": { x: 70, y: 42 }
+      };
+
+      const TOUR_DURATION_FULL_MS = 2500;
+      const TOUR_DURATION_PART_MS = 3500;
+
+      const prefersReducedMotion =
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* =========================================================================
+         2. DOM REFERENCES & SVG FACTORY
+         ========================================================================= */
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      function svgEl(tag, attrs = {}) {
+        const el = document.createElementNS(SVG_NS, tag);
+        for (const [key, val] of Object.entries(attrs)) {
+          el.setAttribute(key, String(val));
+        }
+        return el;
+      }
+
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const stageEl = document.getElementById("mirvo-stage");
+      const svgRoot = document.getElementById("mirvo-svg");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+
+      const explodeTargets = Object.keys(EXPLODE_VECTORS).map((id) => ({
+        id,
+        el: document.getElementById(id),
+        vec: EXPLODE_VECTORS[id]
+      }));
+
+      // Animated internal groups
+      const animControlRodsEl = document.getElementById("anim-control-rods");
+      const animCoreGlowEl = document.getElementById("anim-core-glow");
+      const animCoreGlowBackEl = document.getElementById("anim-core-glow-back");
+      const animCoreSparksEl = document.getElementById("anim-core-sparks");
+      const animSgAmberZoneEl = document.getElementById("anim-sg-amber-zone");
+      const animSgSteamEl = document.getElementById("anim-sg-steam");
+      const animSgBubblesEl = document.getElementById("anim-sg-bubbles");
+      const animUtubeParticlesEl = document.getElementById("anim-utube-particles");
+      const animHotLegParticlesEl = document.getElementById("anim-hot-leg-particles");
+      const animSuctionParticlesEl = document.getElementById("anim-suction-particles");
+      const animReturnParticlesEl = document.getElementById("anim-return-particles");
+      const animImpellerEl = document.getElementById("anim-impeller");
+      const animVoluteSwirlEl = document.getElementById("anim-volute-swirl");
+      const animRotorEl = document.getElementById("anim-rotor");
+
+      // SVG motion guide paths
+      const pathHotLeg = document.getElementById("path-hot-leg");
+      const pathUtube1 = document.getElementById("path-utube-1");
+      const pathUtube2 = document.getElementById("path-utube-2");
+      const pathSuction = document.getElementById("path-suction-pipe");
+      const pathReturn = document.getElementById("path-return-pipe");
+
+      /* =========================================================================
+         3. PROCEDURAL PRECISION GEOMETRY BUILDERS
+            (Flange Bolts, 37-Rod TVEL Copper Bundle, 7 Control Rod Clusters)
+         ========================================================================= */
+      function buildVesselFlangeBolts() {
+        const backContainer = document.getElementById("vessel-bolts-back");
+        const frontContainer = document.getElementById("vessel-bolts-front");
+        const cx = 608;
+        const cy = 232;
+        const rx = 164;
+        const ry = 79;
+        const count = 22;
+
+        for (let i = 0; i < count; i++) {
+          const angle = (i / count) * Math.PI * 2;
+          const sinA = Math.sin(angle);
+          const cosA = Math.cos(angle);
+
+          // Leave cutaway front arc open (approx 52° to 128°)
+          if (sinA > 0.72 && Math.abs(cosA) < 0.68) continue;
+
+          const bx = cx + cosA * rx;
+          const by = cy + sinA * ry;
+          const target = sinA < 0.08 ? backContainer : frontContainer;
+
+          const g = svgEl("g", { transform: `translate(${bx.toFixed(1)}, ${by.toFixed(1)})` });
+          g.appendChild(svgEl("ellipse", { cx: 0, cy: 3.5, rx: 7.2, ry: 4.0, fill: "#64748B", class: "ink-micro" }));
+          g.appendChild(svgEl("ellipse", { cx: 0, cy: 0, rx: 6.4, ry: 3.5, fill: "#F1F5F9", class: "ink-micro" }));
+          g.appendChild(svgEl("circle", { cx: 0, cy: 0, r: 1.8, fill: "#94A3B8" }));
+          target.appendChild(g);
+        }
+      }
+
+      function buildFuelRodBundle() {
+        const container = document.getElementById("fuel-bundle-rods");
+        const centerX = 608;
+        const centerTopY = 474;
+        const stepX = 13.4;
+        const stepY = 6.8;
+        const rodH = 152;
+        const halfW = 6.2;
+        const halfD = 3.2;
+
+        const coords = [];
+        for (let i = -3; i <= 3; i++) {
+          for (let j = -3; j <= 3; j++) {
+            // Crisp hexagonal/octagonal isometric TVEL core footprint (37 assemblies)
+            if (Math.abs(i) + Math.abs(j) <= 4) {
+              coords.push({ i, j, depth: i + j });
+            }
+          }
+        }
+
+        // Strict painter's order (back to front)
+        coords.sort((a, b) => a.depth - b.depth || a.i - b.i);
+
+        for (const c of coords) {
+          const x = centerX + (c.i - c.j) * stepX;
+          const y = centerTopY + (c.i + c.j) * stepY;
+
+          const rodG = svgEl("g");
+
+          // Left vertical copper-gold facet
+          rodG.appendChild(
+            svgEl("polygon", {
+              points: `${(x - halfW).toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${(y + halfD).toFixed(1)} ${x.toFixed(1)},${(y + halfD + rodH).toFixed(1)} ${(x - halfW).toFixed(1)},${(y + rodH).toFixed(1)}`,
+              fill: "url(#copper-left)",
+              class: "ink-micro"
+            })
+          );
+
+          // Right vertical darker copper facet
+          rodG.appendChild(
+            svgEl("polygon", {
+              points: `${x.toFixed(1)},${(y + halfD).toFixed(1)} ${(x + halfW).toFixed(1)},${y.toFixed(1)} ${(x + halfW).toFixed(1)},${(y + rodH).toFixed(1)} ${x.toFixed(1)},${(y + halfD + rodH).toFixed(1)}`,
+              fill: "url(#copper-right)",
+              class: "ink-micro"
+            })
+          );
+
+          // Bright brushed-copper/gold isometric diamond top cap
+          rodG.appendChild(
+            svgEl("polygon", {
+              points: `${x.toFixed(1)},${(y - halfD).toFixed(1)} ${(x + halfW).toFixed(1)},${y.toFixed(1)} ${x.toFixed(1)},${(y + halfD).toFixed(1)} ${(x - halfW).toFixed(1)},${y.toFixed(1)}`,
+              fill: "#FDE2C4",
+              class: "ink-micro"
+            })
+          );
+
+          // Tiny metallic nozzle dot on each TVEL top cap
+          rodG.appendChild(
+            svgEl("ellipse", {
+              cx: x.toFixed(1),
+              cy: y.toFixed(1),
+              rx: "2.1",
+              ry: "1.1",
+              fill: "#B85F24",
+              opacity: "0.7"
+            })
+          );
+
+          container.appendChild(rodG);
+        }
+      }
+
+      function buildControlRodCluster() {
+        const bladesContainer = document.getElementById("control-rod-blades");
+        const capsContainer = document.getElementById("control-rod-caps");
+
+        // 7-rod isometric hexagonal cluster (sorted strictly back-to-front)
+        const cluster = [
+          { dx: 0, dy: -22 },
+          { dx: -25, dy: -11 },
+          { dx: 25, dy: -11 },
+          { dx: 0, dy: 0 },
+          { dx: -25, dy: 11 },
+          { dx: 25, dy: 11 },
+          { dx: 0, dy: 22 }
+        ];
+
+        const cx = 608;
+        const capBaseY = 128;
+
+        for (const item of cluster) {
+          const rx = cx + item.dx;
+          const capY = capBaseY + item.dy;
+
+          // --- A. Movable Drive Shaft + Graphite Absorber Blade + Steel Tip ---
+          const bladeG = svgEl("g");
+          const shaftTopY = capY - 28; // tucked cleanly inside blue cap so downward motion never detaches
+          const absorberTopY = 236 + item.dy;
+          const absorberH = 148;
+          const absorberBotY = absorberTopY + absorberH;
+
+          // Polished satin-steel vertical drive shaft
+          bladeG.appendChild(
+            svgEl("rect", {
+              x: (rx - 2.8).toFixed(1),
+              y: shaftTopY.toFixed(1),
+              width: "5.6",
+              height: (absorberTopY - shaftTopY + 4).toFixed(1),
+              fill: "url(#steel-shaft)",
+              class: "ink-micro"
+            })
+          );
+
+          // Shaft coupling collar
+          bladeG.appendChild(
+            svgEl("ellipse", {
+              cx: rx.toFixed(1),
+              cy: absorberTopY.toFixed(1),
+              rx: "8.2",
+              ry: "4.2",
+              fill: "#CBD5E1",
+              class: "ink-micro"
+            })
+          );
+
+          // Dark-slate graphite prismatic absorber blade (left & right 3D facets)
+          bladeG.appendChild(
+            svgEl("polygon", {
+              points: `${(rx - 7.5).toFixed(1)},${absorberTopY.toFixed(1)} ${rx.toFixed(1)},${(absorberTopY + 3.8).toFixed(1)} ${rx.toFixed(1)},${(absorberBotY + 3.8).toFixed(1)} ${(rx - 7.5).toFixed(1)},${absorberBotY.toFixed(1)}`,
+              fill: "url(#graphite-left)",
+              class: "ink-thin"
+            })
+          );
+          bladeG.appendChild(
+            svgEl("polygon", {
+              points: `${rx.toFixed(1)},${(absorberTopY + 3.8).toFixed(1)} ${(rx + 7.5).toFixed(1)},${absorberTopY.toFixed(1)} ${(rx + 7.5).toFixed(1)},${absorberBotY.toFixed(1)} ${rx.toFixed(1)},${(absorberBotY + 3.8).toFixed(1)}`,
+              fill: "url(#graphite-right)",
+              class: "ink-thin"
+            })
+          );
+
+          // Machined stainless-steel lower coupling collar & tapered absorber tip
+          bladeG.appendChild(
+            svgEl("rect", {
+              x: (rx - 5.2).toFixed(1),
+              y: (absorberBotY + 2).toFixed(1),
+              width: "10.4",
+              height: "14",
+              rx: "2",
+              fill: "url(#steel-pipe-v)",
+              class: "ink-micro"
+            })
+          );
+          bladeG.appendChild(
+            svgEl("polygon", {
+              points: `${(rx - 4.2).toFixed(1)},${(absorberBotY + 16).toFixed(1)} ${(rx + 4.2).toFixed(1)},${(absorberBotY + 16).toFixed(1)} ${rx.toFixed(1)},${(absorberBotY + 28).toFixed(1)}`,
+              fill: "#94A3B8",
+              class: "ink-micro"
+            })
+          );
+
+          bladesContainer.appendChild(bladeG);
+
+          // --- B. Stationary Cobalt-Blue Top Drive Housing Cap ---
+          const capG = svgEl("g");
+          const capH = 52;
+          const capTopY = capY - capH;
+
+          // Steel base socket collar
+          capG.appendChild(
+            svgEl("ellipse", {
+              cx: rx.toFixed(1),
+              cy: (capY + 4).toFixed(1),
+              rx: "8.2",
+              ry: "4.1",
+              fill: "#94A3B8",
+              class: "ink-micro"
+            })
+          );
+
+          // Rich cobalt-blue cylindrical drive cap
+          capG.appendChild(
+            svgEl("path", {
+              d: `M ${(rx - 8.2).toFixed(1)} ${capTopY.toFixed(1)} L ${(rx - 8.2).toFixed(1)} ${capY.toFixed(1)} C ${(rx - 8.2).toFixed(1)} ${(capY + 4.6).toFixed(1)} ${(rx + 8.2).toFixed(1)} ${(capY + 4.6).toFixed(1)} ${(rx + 8.2).toFixed(1)} ${capY.toFixed(1)} L ${(rx + 8.2).toFixed(1)} ${capTopY.toFixed(1)} Z`,
+              fill: "url(#cobalt-cap)",
+              class: "ink-thin"
+            })
+          );
+
+          // Rounded cobalt cap dome top
+          capG.appendChild(
+            svgEl("ellipse", {
+              cx: rx.toFixed(1),
+              cy: capTopY.toFixed(1),
+              rx: "8.2",
+              ry: "4.1",
+              fill: "#60A5FA",
+              class: "ink-thin"
+            })
+          );
+
+          capsContainer.appendChild(capG);
+        }
+      }
+
+      /* =========================================================================
+         4. PRE-ALLOCATED 60 FPS PARTICLE POOLS (ZERO RUNTIME ALLOCATIONS)
+         ========================================================================= */
+      // Core convection sparks (18 warm amber rising micro-particles)
+      const coreSparkPool = [];
+      for (let i = 0; i < 18; i++) {
+        const el = svgEl("circle", {
+          r: (1.8 + (i % 3) * 0.9).toFixed(1),
+          fill: i % 2 === 0 ? "#FEF3C7" : "#FBBF24",
+          opacity: "0.7"
+        });
+        animCoreSparksEl.appendChild(el);
+        coreSparkPool.push({
+          el,
+          offset: i / 18,
+          baseX: 548 + ((i * 29) % 120),
+          swayAmp: 3.5 + (i % 4) * 1.4,
+          phase: i * 1.37
+        });
+      }
+
+      // Hot-leg primary amber coolant particles (6 glowing droplets)
+      const hotLegPool = [];
+      for (let i = 0; i < 6; i++) {
+        const el = svgEl("circle", {
+          r: (3.2 + (i % 2) * 0.8).toFixed(1),
+          fill: "#FEF3C7",
+          stroke: "#F59E0B",
+          "stroke-width": "1.2"
+        });
+        animHotLegParticlesEl.appendChild(el);
+        hotLegPool.push({ el, offset: i / 6 });
+      }
+
+      // Steam generator U-tube heat transfer droplets (10 particles across 2 guide paths)
+      const utubePool = [];
+      for (let i = 0; i < 10; i++) {
+        const el = svgEl("circle", { r: "3.0", fill: "#FDE68A" });
+        animUtubeParticlesEl.appendChild(el);
+        utubePool.push({
+          el,
+          path: i % 2 === 0 ? pathUtube1 : pathUtube2,
+          offset: i / 10
+        });
+      }
+
+      // Secondary boiling bubbles inside Steam Generator right cyan column (16 bubbles)
+      const sgBubblePool = [];
+      for (let i = 0; i < 16; i++) {
+        const r = 2.0 + (i % 4) * 1.05;
+        const el = svgEl("circle", {
+          r: r.toFixed(1),
+          fill: i % 3 === 0 ? "#FFFFFF" : "#E0F2FE",
+          stroke: "#38BDF8",
+          "stroke-width": "0.8"
+        });
+        animSgBubblesEl.appendChild(el);
+        sgBubblePool.push({
+          el,
+          offset: i / 16,
+          baseX: 906 + ((i * 19) % 42),
+          speed: 0.78 + (i % 4) * 0.14,
+          phase: i * 1.15
+        });
+      }
+
+      // Billowing soft cyan/white steam clouds drifting upward into Steam Generator top dome (7 wisps)
+      const sgSteamPool = [];
+      for (let i = 0; i < 7; i++) {
+        const el = svgEl("ellipse", {
+          rx: (20 + (i % 3) * 9).toFixed(1),
+          ry: (11 + (i % 2) * 5).toFixed(1),
+          fill: i % 2 === 0 ? "#E0F2FE" : "#7DD3FC"
+        });
+        animSgSteamEl.appendChild(el);
+        sgSteamPool.push({
+          el,
+          offset: i / 7,
+          baseX: 874 + ((i * 23) % 52),
+          phase: i * 1.4
+        });
+      }
+
+      // Cold-leg suction cyan particles (Steam Generator -> Pump Top) (9 particles)
+      const suctionPool = [];
+      for (let i = 0; i < 9; i++) {
+        const el = svgEl("circle", {
+          r: (3.1 + (i % 2) * 0.7).toFixed(1),
+          fill: "#E0F2FE",
+          stroke: "#38BDF8",
+          "stroke-width": "1.1"
+        });
+        animSuctionParticlesEl.appendChild(el);
+        suctionPool.push({ el, offset: i / 9 });
+      }
+
+      // Cold-leg return cyan particles (Pump Discharge -> Reactor Inlet) (12 particles)
+      const returnPool = [];
+      for (let i = 0; i < 12; i++) {
+        const el = svgEl("circle", {
+          r: (3.2 + (i % 2) * 0.8).toFixed(1),
+          fill: "#E0F2FE",
+          stroke: "#0284C7",
+          "stroke-width": "1.1"
+        });
+        animReturnParticlesEl.appendChild(el);
+        returnPool.push({ el, offset: i / 12 });
+      }
+
+      /* =========================================================================
+         5. RUNTIME SIMULATION & INTERACTION STATE
+         ========================================================================= */
+      const state = {
+        playing: true,
+        phaseMode: "auto", // "auto" | "nominal" | "high_power" | "scram"
+        simTime: 0,
+        rodInsertion: 0.35, // 0 = fully withdrawn (high power), 1 = fully inserted (scram)
+        power: 0.7, // coupled thermal reactivity [0.12 .. 1.0]
+        flowPhase: 0,
+        steamPhase: 0,
+        impellerAngle: 0,
+        rotorShift: 0,
+        explodeTarget: 0,
+        explodeCurrent: 0,
+        focusedPart: null,
+        autoTourEnabled: !prefersReducedMotion,
+        tourIndex: 0,
+        tourTimerId: null
+      };
+
+      // Cache SVG path lengths once
+      const pathLengths = {
+        hotLeg: pathHotLeg.getTotalLength(),
+        utube1: pathUtube1.getTotalLength(),
+        utube2: pathUtube2.getTotalLength(),
+        suction: pathSuction.getTotalLength(),
+        returnPipe: pathReturn.getTotalLength()
+      };
+
+      /* =========================================================================
+         6. CAMERA, SPOTLIGHT HIGHLIGHT & EXPLODED VIEW CONTROLLERS
+         ========================================================================= */
+      function applyCamera(target) {
+        try {
+          let cam = CAMERA_TARGETS.full;
+          if (typeof target === "string") {
+            cam = CAMERA_TARGETS[target] || CAMERA_TARGETS.full;
+          } else if (target && typeof target === "object") {
+            const x = Number.isFinite(target.x) ? target.x : 800;
+            const y = Number.isFinite(target.y) ? target.y : 450;
+            const zoom = Number.isFinite(target.zoom) ? Math.max(0.5, Math.min(3.5, target.zoom)) : 1.0;
+            cam = { x, y, zoom };
+          }
+
+          if (prefersReducedMotion && state.autoTourEnabled) {
+            stageEl.style.transform = "scale(1) translate(0%, 0%)";
+            return;
+          }
+
+          const dxPct = ((800 - cam.x) / 1600) * 100;
+          const dyPct = ((450 - cam.y) / 900) * 100;
+          stageEl.style.transform = `scale(${cam.zoom.toFixed(4)}) translate(${dxPct.toFixed(3)}%, ${dyPct.toFixed(3)}%)`;
+        } catch (err) {
+          console.error("applyCamera error:", err);
+        }
+      }
+
+      function applyHighlight(partId) {
+        try {
+          const validPart = partId && PART_NAMES_UZ[partId] ? partId : null;
+          state.focusedPart = validPart;
+
+          for (const el of allPartEls) {
+            const dp = el.getAttribute("data-part");
+            if (!validPart) {
+              el.classList.remove("is-dimmed", "is-focused");
+            } else if (dp === validPart) {
+              el.classList.remove("is-dimmed");
+              el.classList.add("is-focused");
+            } else {
+              el.classList.remove("is-focused");
+              el.classList.add("is-dimmed");
+            }
+          }
+        } catch (err) {
+          console.error("applyHighlight error:", err);
+        }
+      }
+
+      function applyExplodeOffsets(amount) {
+        for (const item of explodeTargets) {
+          if (!item.el) continue;
+          const tx = (item.vec.x * amount).toFixed(2);
+          const ty = (item.vec.y * amount).toFixed(2);
+          if (amount < 0.0005) {
+            item.el.removeAttribute("transform");
+          } else {
+            item.el.setAttribute("transform", `translate(${tx}, ${ty})`);
+          }
+        }
+      }
+
+      /* =========================================================================
+         7. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ========================================================================= */
+      function clearTourTimer() {
+        if (state.tourTimerId !== null) {
+          window.clearTimeout(state.tourTimerId);
+          state.tourTimerId = null;
+        }
+      }
+
+      function scheduleTourTick() {
+        clearTourTimer();
+        if (!state.autoTourEnabled || prefersReducedMotion) return;
+
+        const currentTarget = TOUR_SEQUENCE[state.tourIndex];
+        const waitMs = currentTarget === "full" ? TOUR_DURATION_FULL_MS : TOUR_DURATION_PART_MS;
+
+        state.tourTimerId = window.setTimeout(() => {
+          if (!state.autoTourEnabled) return;
+          state.tourIndex = (state.tourIndex + 1) % TOUR_SEQUENCE.length;
+          const next = TOUR_SEQUENCE[state.tourIndex];
+          if (next === "full") {
+            applyCamera("full");
+            applyHighlight(null);
+          } else {
+            applyCamera(next);
+            applyHighlight(next);
+          }
+          scheduleTourTick();
+        }, waitMs);
+      }
+
+      function startAutoTour(fromStart = false) {
+        if (prefersReducedMotion) {
+          state.autoTourEnabled = false;
+          clearTourTimer();
+          if (fromStart) {
+            applyCamera("full");
+            applyHighlight(null);
+          }
+          return;
+        }
+        state.autoTourEnabled = true;
+        if (fromStart) {
+          state.tourIndex = 0;
+          applyCamera("full");
+          applyHighlight(null);
+        }
+        scheduleTourTick();
+      }
+
+      function stopAutoTour() {
+        state.autoTourEnabled = false;
+        clearTourTimer();
+      }
+
+      /* =========================================================================
+         8. 60 FPS COUPLED VVER NUCLEAR THERMAL-HYDRAULIC PHYSICS ENGINE
+         ========================================================================= */
+      function getTargetRodInsertion(simTime, mode) {
+        if (mode === "high_power") return 0.06;
+        if (mode === "nominal") return 0.42;
+        if (mode === "scram") return 1.0;
+        // "auto": smooth 12-second sinusoidal modulation between 0.08 (high) and 0.82 (inserted)
+        const wave = 0.5 - 0.5 * Math.cos((simTime / 12.0) * Math.PI * 2);
+        return 0.08 + wave * 0.74;
+      }
+
+      function updatePhysics(dt) {
+        // Always smoothly interpolate Exploded View even when simulation is paused
+        const expDiff = state.explodeTarget - state.explodeCurrent;
+        if (Math.abs(expDiff) > 0.0005) {
+          state.explodeCurrent += expDiff * Math.min(1, dt * 7.2);
+          applyExplodeOffsets(state.explodeCurrent);
+        } else if (state.explodeCurrent !== state.explodeTarget) {
+          state.explodeCurrent = state.explodeTarget;
+          applyExplodeOffsets(state.explodeCurrent);
+        }
+
+        if (!state.playing) return;
+
+        state.simTime += dt;
+        const t = state.simTime;
+
+        // 1. Control Rod Position & Coupled Thermal Power
+        const targetInsertion = getTargetRodInsertion(t, state.phaseMode);
+        state.rodInsertion += (targetInsertion - state.rodInsertion) * Math.min(1, dt * 3.4);
+
+        // Higher rods (lower insertion) = higher core reactivity/power
+        const targetPower = 0.16 + (1.0 - state.rodInsertion) * 0.84;
+        state.power += (targetPower - state.power) * Math.min(1, dt * 2.8);
+        const p = state.power;
+
+        // Move nested #anim-control-rods cleanly (0..54px downward insertion into fuel rods)
+        const rodOffsetY = state.rodInsertion * 54;
+        animControlRodsEl.setAttribute("transform", `translate(0, ${rodOffsetY.toFixed(2)})`);
+
+        // 2. Fuel Core Thermal Pulsation & Rising Convection Sparks
+        const pulse = 0.5 + 0.5 * Math.sin(t * (3.6 + p * 2.4));
+        const glowOpacity = 0.18 + p * 0.56 + pulse * 0.14 * p;
+        animCoreGlowEl.setAttribute("opacity", glowOpacity.toFixed(3));
+        animCoreGlowBackEl.setAttribute("opacity", (0.35 + p * 0.55).toFixed(3));
+        animSgAmberZoneEl.setAttribute("opacity", (0.58 + p * 0.38).toFixed(3));
+
+        const sparkSpeed = 0.24 + p * 0.36;
+        for (let i = 0; i < coreSparkPool.length; i++) {
+          const sp = coreSparkPool[i];
+          const prog = (sp.offset + t * sparkSpeed) % 1;
+          const sy = 648 - prog * 195;
+          const sx = sp.baseX + Math.sin(t * 3.2 + sp.phase) * sp.swayAmp;
+          const alpha = Math.sin(prog * Math.PI) * (0.25 + p * 0.72);
+          sp.el.setAttribute("cx", sx.toFixed(1));
+          sp.el.setAttribute("cy", sy.toFixed(1));
+          sp.el.setAttribute("opacity", alpha.toFixed(2));
+        }
+
+        // 3. Coupled Circulation Speed, Impeller & Motor Rotor Spin
+        const flowSpeed = 0.24 + p * 0.26;
+        state.flowPhase = (state.flowPhase + dt * flowSpeed) % 1000;
+        state.steamPhase = (state.steamPhase + dt * (0.22 + p * 0.34)) % 1000;
+
+        // Smooth 60 FPS impeller rotation & volute swirl
+        const rpmDegPerSec = 175 + p * 185;
+        state.impellerAngle = (state.impellerAngle + dt * rpmDegPerSec) % 360;
+        animImpellerEl.setAttribute("transform", `rotate(${state.impellerAngle.toFixed(2)})`);
+        animVoluteSwirlEl.setAttribute("transform", `rotate(${(state.impellerAngle * 0.72).toFixed(2)})`);
+
+        // Coaxial motor rotor brushed sheen cycling
+        state.rotorShift = (state.rotorShift + dt * (26 + p * 28)) % 18;
+        const rDx = state.rotorShift * 0.5;
+        const rDy = state.rotorShift * 0.866;
+        animRotorEl.setAttribute("transform", `translate(${rDx.toFixed(2)}, ${rDy.toFixed(2)})`);
+
+        // 4. Primary Hot-Leg Flow Particles (Reactor -> Steam Generator Bottom-Left)
+        for (let i = 0; i < hotLegPool.length; i++) {
+          const item = hotLegPool[i];
+          const prog = (item.offset + state.flowPhase * 1.45) % 1;
+          const pt = pathHotLeg.getPointAtLength(prog * pathLengths.hotLeg);
+          item.el.setAttribute("cx", pt.x.toFixed(1));
+          item.el.setAttribute("cy", pt.y.toFixed(1));
+          item.el.setAttribute("opacity", (Math.sin(prog * Math.PI) * (0.45 + p * 0.55)).toFixed(2));
+        }
+
+        // 5. Steam Generator U-Tube Heat-Transfer Flow Particles (Amber -> Cool Cyan)
+        for (let i = 0; i < utubePool.length; i++) {
+          const item = utubePool[i];
+          const prog = (item.offset + state.flowPhase * 0.82) % 1;
+          const len = item.path === pathUtube1 ? pathLengths.utube1 : pathLengths.utube2;
+          const pt = item.path.getPointAtLength(prog * len);
+          item.el.setAttribute("cx", pt.x.toFixed(1));
+          item.el.setAttribute("cy", pt.y.toFixed(1));
+          // Transition color smoothly from warm amber on hot side to cyan on cooled side
+          item.el.setAttribute("fill", prog < 0.52 ? "#FDE68A" : "#BAE6FD");
+          item.el.setAttribute("opacity", (Math.sin(prog * Math.PI) * (0.4 + p * 0.55)).toFixed(2));
+        }
+
+        // 6. Steam Generator Secondary Boiling Bubbles & Rising Steam Plumes
+        for (let i = 0; i < sgBubblePool.length; i++) {
+          const b = sgBubblePool[i];
+          const prog = (b.offset + state.steamPhase * b.speed) % 1;
+          const by = 556 - prog * 305;
+          const bx = b.baseX + Math.sin(t * 4.2 + b.phase) * 4.5;
+          const alpha = Math.sin(prog * Math.PI) * (0.35 + p * 0.65);
+          b.el.setAttribute("cx", bx.toFixed(1));
+          b.el.setAttribute("cy", by.toFixed(1));
+          b.el.setAttribute("opacity", alpha.toFixed(2));
+        }
+
+        for (let i = 0; i < sgSteamPool.length; i++) {
+          const s = sgSteamPool[i];
+          const prog = (s.offset + state.steamPhase * 0.62) % 1;
+          const sy = 276 - prog * 114;
+          const sx = s.baseX + Math.sin(t * 2.1 + s.phase) * 8.5;
+          const alpha = Math.sin(prog * Math.PI) * (0.24 + p * 0.44);
+          s.el.setAttribute("cx", sx.toFixed(1));
+          s.el.setAttribute("cy", sy.toFixed(1));
+          s.el.setAttribute("opacity", alpha.toFixed(2));
+        }
+
+        // 7. Cold-Leg Suction Flow Particles (Steam Generator Right -> Pump Top)
+        for (let i = 0; i < suctionPool.length; i++) {
+          const item = suctionPool[i];
+          const prog = (item.offset + state.flowPhase * 1.25) % 1;
+          const pt = pathSuction.getPointAtLength(prog * pathLengths.suction);
+          item.el.setAttribute("cx", pt.x.toFixed(1));
+          item.el.setAttribute("cy", pt.y.toFixed(1));
+          // Show clearly in the cutaway upper elbow & nozzle section
+          const vis = prog < 0.72 ? Math.sin(Math.min(1, prog / 0.72) * Math.PI) : 0;
+          item.el.setAttribute("opacity", (vis * 0.92).toFixed(2));
+        }
+
+        // 8. Cold-Leg Return Flow Particles (Pump Front Volute -> Reactor Inlet)
+        for (let i = 0; i < returnPool.length; i++) {
+          const item = returnPool[i];
+          const prog = (item.offset + state.flowPhase * 0.92) % 1;
+          const pt = pathReturn.getPointAtLength(prog * pathLengths.returnPipe);
+          item.el.setAttribute("cx", pt.x.toFixed(1));
+          item.el.setAttribute("cy", pt.y.toFixed(1));
+          // Visible in cutaway discharge window (0..0.18) and cutaway reactor inlet window (0.87..1.0)
+          let vis = 0;
+          if (prog < 0.18) {
+            vis = Math.sin((prog / 0.18) * Math.PI) * 0.95;
+            item.el.setAttribute("fill", "#E0F2FE");
+            item.el.setAttribute("stroke", "#0284C7");
+          } else if (prog > 0.87) {
+            vis = Math.sin(((prog - 0.87) / 0.13) * Math.PI) * 0.95;
+            item.el.setAttribute("fill", prog > 0.94 ? "#FEF3C7" : "#BAE6FD");
+            item.el.setAttribute("stroke", prog > 0.94 ? "#EA580C" : "#0284C7");
+          }
+          item.el.setAttribute("opacity", vis.toFixed(2));
+        }
+      }
+
+      /* =========================================================================
+         9. 60 FPS ANIMATION LOOP
+         ========================================================================= */
+      let lastTime = performance.now();
+
+      function tick(now) {
+        const dt = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+        updatePhysics(dt);
+        window.requestAnimationFrame(tick);
+      }
+
+      /* =========================================================================
+         10. MIRVO AI PUBLIC API (window.MirvoScene & postMessage BRIDGE)
+         ========================================================================= */
+      const MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: Object.entries(PART_NAMES_UZ).map(([id, nameUz]) => ({ id, nameUz })),
+
+        focus(target) {
+          try {
+            applyCamera(target === null || target === undefined ? "full" : target);
+          } catch (err) {
+            console.error("MirvoScene.focus error:", err);
+          }
+        },
+
+        highlight(partId) {
+          try {
+            applyHighlight(partId ?? null);
+          } catch (err) {
+            console.error("MirvoScene.highlight error:", err);
+          }
+        },
+
+        setStep(index) {
+          try {
+            const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.round(Number(index) || 0)));
+            stopAutoTour();
+            state.tourIndex = idx;
+            const target = TOUR_SEQUENCE[idx];
+            if (target === "full") {
+              applyCamera("full");
+              applyHighlight(null);
+            } else {
+              applyCamera(target);
+              applyHighlight(target);
+            }
+          } catch (err) {
+            console.error("MirvoScene.setStep error:", err);
+          }
+        },
+
+        setAutoTour(enabled) {
+          try {
+            if (Boolean(enabled)) {
+              startAutoTour(false);
+            } else {
+              stopAutoTour();
+            }
+          } catch (err) {
+            console.error("MirvoScene.setAutoTour error:", err);
+          }
+        },
+
+        setExploded(amount) {
+          try {
+            const clamped = Math.max(0, Math.min(1, Number(amount) || 0));
+            state.explodeTarget = clamped;
+          } catch (err) {
+            console.error("MirvoScene.setExploded error:", err);
+          }
+        },
+
+        setPhase(mode) {
+          try {
+            if (mode === "auto" || mode === "nominal" || mode === "high_power" || mode === "scram") {
+              state.phaseMode = mode;
+            }
+          } catch (err) {
+            console.error("MirvoScene.setPhase error:", err);
+          }
+        },
+
+        setPlaying(playing) {
+          try {
+            state.playing = Boolean(playing);
+          } catch (err) {
+            console.error("MirvoScene.setPlaying error:", err);
+          }
+        },
+
+        reset() {
+          try {
+            state.explodeTarget = 0;
+            state.phaseMode = "auto";
+            state.playing = true;
+            startAutoTour(true);
+          } catch (err) {
+            console.error("MirvoScene.reset error:", err);
+          }
+        }
+      };
+
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (event) => {
+        try {
+          const msg = event && event.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              stopAutoTour();
+              MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              MirvoScene.highlight(msg.partId ?? null);
+              break;
+            case "SET_STEP":
+              MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          console.error("postMessage handler error:", err);
+        }
+      });
+
+      /* =========================================================================
+         11. INTERACTIVE CLICK, DOUBLE-CLICK & KEYBOARD HANDLERS
+         ========================================================================= */
+      function emitPartClick(partId) {
+        const nameUz = PART_NAMES_UZ[partId];
+        if (!nameUz) return;
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId,
+                nameUz
+              },
+              "*"
+            );
+          }
+        } catch (err) {
+          console.error("PART_CLICK postMessage error:", err);
+        }
+      }
+
+      svgRoot.addEventListener("click", (e) => {
+        const partGroup = e.target.closest(".mirvo-part");
+        const partId = partGroup ? partGroup.getAttribute("data-part") : null;
+
+        if (partId && PART_NAMES_UZ[partId]) {
+          stopAutoTour();
+          const idx = TOUR_SEQUENCE.indexOf(partId);
+          if (idx !== -1) state.tourIndex = idx;
+          applyCamera(partId);
+          applyHighlight(partId);
+          emitPartClick(partId);
+        } else {
+          MirvoScene.reset();
+        }
+      });
+
+      viewportEl.addEventListener("click", (e) => {
+        if (e.target === viewportEl || e.target === stageEl) {
+          MirvoScene.reset();
+        }
+      });
+
+      // Double-click anywhere smoothly toggles Exploded View
+      viewportEl.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard shortcuts: R / Escape -> Reset, E -> Exploded View toggle
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" || e.key === "r" || e.key === "R") {
+          MirvoScene.reset();
+        } else if (e.key === "e" || e.key === "E") {
+          MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+        }
+      });
+
+      /* =========================================================================
+         12. INITIALIZE PROCEDURAL GEOMETRY & START ENGINE ON LOAD
+         ========================================================================= */
+      window.addEventListener("load", () => {
+        try {
+          buildVesselFlangeBolts();
+          buildFuelRodBundle();
+          buildControlRodCluster();
+          applyCamera("full");
+          applyHighlight(null);
+          startAutoTour(true);
+          lastTime = performance.now();
+          window.requestAnimationFrame(tick);
+        } catch (err) {
+          console.error("Initialization error:", err);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

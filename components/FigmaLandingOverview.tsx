@@ -638,20 +638,35 @@ export const FigmaLandingOverview: React.FC<FigmaLandingOverviewProps> = ({
                     }}
                   >
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      {HTML_MODELS_LIBRARY.map((item) => {
-                        const active = item.id === activePreviewModel.id;
+                      {[
+                        { id: 'ges-francis', short: 'GES Frensis' },
+                        { id: 'aes-vver', short: 'AES (VVER)' },
+                        { id: 'power-transformer', short: 'Transformator' },
+                        { id: 'solar-fes', short: 'Quyosh FES' },
+                        { id: 'wind-shes', short: 'Shamol SHES' },
+                        { id: 'microwave-oven', short: 'Mikroto‘lqin' },
+                      ].map((tab) => {
+                        const active = tab.id === activePreviewModel.id;
                         return (
                           <button
-                            key={item.id}
+                            key={tab.id}
                             type="button"
-                            onClick={() => setPreviewModelId(item.id)}
+                            onClick={() => setPreviewModelId(tab.id)}
                             className={`f-btn ${active ? 'active' : ''}`}
-                            style={{ padding: '6px 12px', fontSize: 12 }}
+                            style={{ padding: '6px 11px', fontSize: 12 }}
                           >
-                            {item.id === 'microwave-oven' ? 'Mikroto‘lqinli pech' : 'GAES-120'}
+                            {tab.short}
                           </button>
                         );
                       })}
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('darslar')}
+                        className="f-btn"
+                        style={{ padding: '6px 11px', fontSize: 12 }}
+                      >
+                        Barchasi ({HTML_MODELS_LIBRARY.length}) →
+                      </button>
                     </div>
 
                     <button

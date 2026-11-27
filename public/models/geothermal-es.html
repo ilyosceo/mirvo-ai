@@ -1,0 +1,2914 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Geotermal elektr stansiya — Binary-Cycle Cutaway</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — ZERO-UI PURE WHITE CANVAS & SEQUENTIAL SPOTLIGHT ARCHITECTURE
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .mirvo-viewport {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      cursor: default;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: block;
+    }
+
+    #geothermal-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Interactive anatomy groups & geological housing transitions */
+    .mirvo-part,
+    .mirvo-housing {
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, filter;
+    }
+
+    .mirvo-part {
+      cursor: pointer;
+    }
+
+    .mirvo-housing {
+      cursor: default;
+    }
+
+    /* Spotlight dimming for non-focused assemblies */
+    .mirvo-part.is-dimmed,
+    .mirvo-housing.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    /* Crisp spotlight lift for the active focused assembly */
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.22));
+    }
+
+    /* Accessibility: disable stage zoom transitions under reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pure #FFFFFF canvas container with strictly ZERO UI chrome -->
+  <div id="mirvo-viewport" class="mirvo-viewport">
+    <div id="mirvo-stage" class="mirvo-stage">
+      <svg
+        id="geothermal-svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Binary-Cycle Geothermal Power Plant Isometric Cutaway"
+      >
+        <defs>
+          <!-- Soft grounded elliptical contact shadow underneath geological block -->
+          <filter id="ground-shadow" x="-18%" y="-18%" width="136%" height="136%">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+
+          <!-- Subtle luminous bloom for active thermal & vapor streamlines -->
+          <filter id="fluid-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Soft radial thermal aura blur -->
+          <filter id="soft-aura" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="14" />
+          </filter>
+
+          <!-- Geological charcoal-slate top deck surface -->
+          <linearGradient id="grad-slab-top" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#5B6777" />
+            <stop offset="55%" stop-color="#4B5665" />
+            <stop offset="100%" stop-color="#3F4957" />
+          </linearGradient>
+
+          <!-- Warm geothermal heat aura around production well bore -->
+          <radialGradient id="grad-geo-heat" cx="50%" cy="62%" r="55%">
+            <stop offset="0%" stop-color="#FDE047" stop-opacity="0.72" />
+            <stop offset="38%" stop-color="#F59E0B" stop-opacity="0.46" />
+            <stop offset="72%" stop-color="#EA580C" stop-opacity="0.18" />
+            <stop offset="100%" stop-color="#EA580C" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Chilled thermal reservoir zone around injection well bore -->
+          <radialGradient id="grad-geo-cool" cx="50%" cy="68%" r="56%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.58" />
+            <stop offset="42%" stop-color="#0284C7" stop-opacity="0.34" />
+            <stop offset="76%" stop-color="#1E3A5F" stop-opacity="0.16" />
+            <stop offset="100%" stop-color="#1E3A5F" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Hot amber geothermal brine column -->
+          <linearGradient id="grad-hot-brine" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#C2410C" />
+            <stop offset="28%" stop-color="#F59E0B" />
+            <stop offset="52%" stop-color="#FDE68A" />
+            <stop offset="76%" stop-color="#F59E0B" />
+            <stop offset="100%" stop-color="#B45309" />
+          </linearGradient>
+
+          <!-- Cooled cerulean-blue brine column -->
+          <linearGradient id="grad-cool-brine" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0369A1" />
+            <stop offset="30%" stop-color="#0284C7" />
+            <stop offset="54%" stop-color="#7DD3FC" />
+            <stop offset="78%" stop-color="#0EA5E9" />
+            <stop offset="100%" stop-color="#075985" />
+          </linearGradient>
+
+          <!-- Satin anodized steel metallic finish -->
+          <linearGradient id="grad-steel-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="28%" stop-color="#F8FAFC" />
+            <stop offset="56%" stop-color="#CBD5E1" />
+            <stop offset="84%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <linearGradient id="grad-steel-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="55%" stop-color="#E2E8F0" />
+            <stop offset="100%" stop-color="#CBD5E1" />
+          </linearGradient>
+
+          <!-- Warm brushed copper four-tone shading -->
+          <linearGradient id="grad-copper-shell" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="32%" stop-color="#E69F68" />
+            <stop offset="68%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <linearGradient id="grad-copper-tube" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="40%" stop-color="#E69F68" />
+            <stop offset="78%" stop-color="#B8622A" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <!-- Clean ivory-ceramic end domes & cradles -->
+          <linearGradient id="grad-ivory-dome" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#FFFDF8" />
+            <stop offset="48%" stop-color="#EFECE3" />
+            <stop offset="82%" stop-color="#D6D1C4" />
+            <stop offset="100%" stop-color="#B8B2A3" />
+          </linearGradient>
+
+          <!-- Luminous emerald-cyan secondary organic working fluid -->
+          <radialGradient id="grad-organic-vapor" cx="45%" cy="45%" r="60%">
+            <stop offset="0%" stop-color="#CCFBF1" stop-opacity="0.96" />
+            <stop offset="38%" stop-color="#34D399" stop-opacity="0.90" />
+            <stop offset="74%" stop-color="#10B981" stop-opacity="0.86" />
+            <stop offset="100%" stop-color="#0F766E" stop-opacity="0.92" />
+          </radialGradient>
+
+          <!-- Rich cobalt-blue turbine & generator housing -->
+          <linearGradient id="grad-cobalt-shell" x1="15%" y1="0%" x2="85%" y2="100%">
+            <stop offset="0%" stop-color="#608CF0" />
+            <stop offset="38%" stop-color="#325CB8" />
+            <stop offset="76%" stop-color="#21408A" />
+            <stop offset="100%" stop-color="#152B61" />
+          </linearGradient>
+
+          <!-- Cerulean-blue condensate drum -->
+          <linearGradient id="grad-drum-blue" x1="18%" y1="0%" x2="82%" y2="100%">
+            <stop offset="0%" stop-color="#BAE6FD" />
+            <stop offset="32%" stop-color="#38BDF8" />
+            <stop offset="70%" stop-color="#0284C7" />
+            <stop offset="100%" stop-color="#0369A1" />
+          </linearGradient>
+
+          <!-- Emerald-to-cerulean condensation transition inside radiator fins -->
+          <linearGradient id="grad-condense-band" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#34D399" />
+            <stop offset="48%" stop-color="#22D3EE" />
+            <stop offset="100%" stop-color="#0284C7" />
+          </linearGradient>
+
+          <!-- Dark-slate insulated casing -->
+          <linearGradient id="grad-slate-casing" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="35%" stop-color="#475569" />
+            <stop offset="78%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#1E293B" />
+          </linearGradient>
+        </defs>
+
+        <!-- =================================================================
+             EXACT PAINTER'S ORDER LAYER STACK (BACK -> FRONT)
+             Each group wraps an inner `.mirvo-explode-wrap` so JS exploded
+             offsets never collide with CSS spotlight opacity/filter effects.
+             ================================================================= -->
+
+        <!-- 0A. Back geological base plinth, strata & carved bore trenches -->
+        <g id="part-housing-back" class="mirvo-housing" data-part="housing">
+          <g class="mirvo-explode-wrap" data-explode="housing_back"></g>
+        </g>
+
+        <!-- 3. Upper-right axial organic turbine + coaxial copper generator -->
+        <g id="part-organic_turbine" class="mirvo-part" data-part="organic_turbine">
+          <g class="mirvo-explode-wrap" data-explode="organic_turbine"></g>
+        </g>
+
+        <!-- 5. Far-right cooled brine reinjection well descending into rock -->
+        <g id="part-injection_well" class="mirvo-part" data-part="injection_well">
+          <g class="mirvo-explode-wrap" data-explode="injection_well"></g>
+        </g>
+
+        <!-- 2. Center-left horizontal shell-and-tube binary heat exchanger -->
+        <g id="part-heat_exchanger" class="mirvo-part" data-part="heat_exchanger">
+          <g class="mirvo-explode-wrap" data-explode="heat_exchanger"></g>
+        </g>
+
+        <!-- 4. Front-center-right finned aluminum condenser & blue drum/pump -->
+        <g id="part-condenser" class="mirvo-part" data-part="condenser">
+          <g class="mirvo-explode-wrap" data-explode="condenser"></g>
+        </g>
+
+        <!-- 1. Left deep hot brine production well, riser, handwheel & arch -->
+        <g id="part-production_well" class="mirvo-part" data-part="production_well">
+          <g class="mirvo-explode-wrap" data-explode="production_well"></g>
+        </g>
+
+        <!-- 0B. Front geological rim lip details framing well entry edges -->
+        <g id="part-housing-front" class="mirvo-housing" data-part="housing">
+          <g class="mirvo-explode-wrap" data-explode="housing_front"></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. DEVICE METADATA, ISOMETRIC PROJECTION & TECHNICAL STYLING CONSTANTS
+         ===================================================================== */
+      const DEVICE_ID = "geothermal_plant";
+
+      const PART_NAMES_UZ = {
+        production_well: "Issiq geotermal suv qazib olish qudug‘i",
+        heat_exchanger: "Issiqlik almashinuvchisi (ikkilamchi bug‘latkich)",
+        organic_turbine: "Organik ishchi jism turbinasi va generatori",
+        condenser: "Kondensator (sovutish va kondensatsiya bloki)",
+        injection_well: "Sovigan suvni yerga qaytarish (injeksiya) qudug‘i"
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "production_well",
+        "heat_exchanger",
+        "organic_turbine",
+        "condenser",
+        "injection_well"
+      ];
+
+      // Clean 30-degree isometric separation offsets for Exploded View (amount 0..1)
+      const EXPLODE_VECTORS = {
+        housing_back: [0, 32],
+        housing_front: [0, 32],
+        production_well: [-78, -26],
+        heat_exchanger: [-28, -56],
+        organic_turbine: [38, -74],
+        condenser: [48, 22],
+        injection_well: [82, 18]
+      };
+
+      const INK = "#222933";
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      // 30-degree isometric basis:
+      // +u -> down-right (+cos30, +sin30) : heat exchanger axis & front-left rock wall
+      // +v -> up-right   (+cos30, -sin30) : turbine/generator axis, condenser fins & front-right rock wall
+      // +z -> straight up (0, -1)
+      const COS30 = Math.cos(Math.PI / 6); // 0.8660254
+      const SIN30 = 0.5;
+      const SCALE = 48.0;
+      const ORIGIN_X = 240.0;
+      const ORIGIN_Y = 374.0;
+
+      /**
+       * Projects a 3D isometric coordinate (u, v, z) into 2D SVG viewport space.
+       */
+      function iso(u, v, z) {
+        const sx = ORIGIN_X + (u + v) * COS30 * SCALE;
+        const sy = ORIGIN_Y + (u - v) * SIN30 * SCALE - z * SCALE;
+        return [sx, sy];
+      }
+
+      /**
+       * Formats an array of 3D or 2D coordinates into an SVG polygon points string.
+       */
+      function pts(list) {
+        return list
+          .map(function (p) {
+            const c = p.length === 3 ? iso(p[0], p[1], p[2]) : p;
+            return c[0].toFixed(1) + "," + c[1].toFixed(1);
+          })
+          .join(" ");
+      }
+
+      /**
+       * Creates an SVG element with attributes and appends it to parent.
+       */
+      function el(tag, attrs, parent) {
+        const node = document.createElementNS(SVG_NS, tag);
+        if (attrs) {
+          for (const k in attrs) {
+            if (Object.prototype.hasOwnProperty.call(attrs, k) && attrs[k] !== undefined && attrs[k] !== null) {
+              node.setAttribute(k, String(attrs[k]));
+            }
+          }
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      /**
+       * Renders a crisp technical polygon from 3D coordinates with non-scaling stroke.
+       */
+      function isoPoly(parent, coords, fill, stroke, sw, extra) {
+        const attrs = Object.assign(
+          {
+            points: pts(coords),
+            fill: fill,
+            stroke: stroke === undefined ? INK : stroke,
+            "stroke-width": sw === undefined ? 1.3 : sw,
+            "stroke-linejoin": "round",
+            "stroke-linecap": "round",
+            "vector-effect": "non-scaling-stroke"
+          },
+          extra || {}
+        );
+        return el("polygon", attrs, parent);
+      }
+
+      /**
+       * Renders an isometric axis-aligned box [u0..u1, v0..v1, z0..z1].
+       * Visible outer faces: front-left (v = v0), front-right (u = u1), top (z = z1).
+       */
+      function isoBox(parent, u0, v0, z0, u1, v1, z1, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.25;
+        const stroke = o.stroke !== undefined ? o.stroke : INK;
+        const g = el("g", o.groupAttrs || null, parent);
+
+        if (o.left !== false) {
+          isoPoly(
+            g,
+            [
+              [u0, v0, z0],
+              [u1, v0, z0],
+              [u1, v0, z1],
+              [u0, v0, z1]
+            ],
+            colors.left,
+            stroke,
+            sw
+          );
+        }
+        if (o.right !== false) {
+          isoPoly(
+            g,
+            [
+              [u1, v0, z0],
+              [u1, v1, z0],
+              [u1, v1, z1],
+              [u1, v0, z1]
+            ],
+            colors.right,
+            stroke,
+            sw
+          );
+        }
+        if (o.top !== false) {
+          isoPoly(
+            g,
+            [
+              [u0, v0, z1],
+              [u1, v0, z1],
+              [u1, v1, z1],
+              [u0, v1, z1]
+            ],
+            colors.top,
+            stroke,
+            sw
+          );
+        }
+        return g;
+      }
+
+      /**
+       * Renders a vertical isometric cylinder centered at (cu, cv) from z0 to z1.
+       * Supports optional front angular cutaway (`cutOpen = true`) for well bores.
+       */
+      function isoCylZ(parent, cu, cv, z0, z1, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.25;
+        const g = el("g", null, parent);
+        const steps = 22;
+
+        // Visible silhouette angles for vertical cylinder in (+u down-right, +v up-right):
+        // Left silhouette: du + dv = -1, du - dv = 0 => du = -1, dv = +1 => angle = 3pi/4 (135 deg)
+        // Right silhouette: du = +1, dv = -1 => angle = -pi/4 (-45 deg)
+        // Front center faces (+u, -v) -> wait: front-left is -v, front-right is +u, so front center is angle = -pi/4?
+        // Let's verify screen X of (cos a, sin a): X = (cos a + sin a)*COS30.
+        // Extreme left X: cos a + sin a = -sqrt(2) => a = -3pi/4 (225 deg).
+        // Extreme right X: cos a + sin a = +sqrt(2) => a = +pi/4 (45 deg).
+        // Front center (max screen Y = (cos a - sin a)*SIN30): cos a - sin a = +sqrt(2) => a = -pi/4 (-45 deg)!
+        // Awesome! So the visible front half sweeps from aStart = -3pi/4 (left) through -pi/4 (front) to aEnd = +pi/4 (right)!
+        const aStart = -(3 * Math.PI) / 4;
+        const aEnd = Math.PI / 4;
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          body.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z0]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aStart + (aEnd - aStart) * (i / steps);
+          body.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z1]);
+        }
+        isoPoly(g, body, colors.side, INK, sw);
+
+        if (colors.shade) {
+          const shade = [];
+          const aMid = -Math.PI / 6;
+          for (let i = 0; i <= 10; i++) {
+            const a = aMid + (aEnd - aMid) * (i / 10);
+            shade.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z0]);
+          }
+          for (let i = 10; i >= 0; i--) {
+            const a = aMid + (aEnd - aMid) * (i / 10);
+            shade.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z1]);
+          }
+          isoPoly(g, shade, colors.shade, "none", 0, { opacity: 0.45 });
+        }
+
+        if (o.top !== false) {
+          const topRing = [];
+          for (let i = 0; i < 28; i++) {
+            const a = (i / 28) * Math.PI * 2;
+            topRing.push([cu + r * Math.cos(a), cv + r * Math.sin(a), z1]);
+          }
+          isoPoly(g, topRing, colors.top, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Renders a horizontal isometric cylinder aligned along the +u axis (down-right).
+       * Cross-section lies in the (v, z) plane. Front cap sits at u = u1.
+       */
+      function isoCylU(parent, u0, u1, cv, cz, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.25;
+        const g = el("g", null, parent);
+        const steps = 22;
+        // Cross-section point: (u, cv + r*cos(a), cz + r*sin(a))
+        // Axis direction in screen space: (COS30, SIN30).
+        // Perpendicular screen normal: (-SIN30, COS30).
+        // Projection onto normal: (r*cos a)*(-COS30*SIN30 - SIN30*COS30) + (r*sin a)*(-COS30)
+        // = -r*COS30 * (cos a * 1 + sin a * 1) -> extremes at a = 3pi/4 (upper-right) and -pi/4 (lower-left).
+        const aTop = (2 * Math.PI) / 3;  // upper-back silhouette
+        const aBot = -Math.PI / 3;       // lower-front silhouette
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([u0, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([u1, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+        }
+        isoPoly(g, body, colors.side, INK, sw);
+
+        if (o.cap !== false) {
+          const cap = [];
+          for (let i = 0; i < 28; i++) {
+            const a = (i / 28) * Math.PI * 2;
+            cap.push([u1, cv + r * Math.cos(a), cz + r * Math.sin(a)]);
+          }
+          isoPoly(g, cap, colors.cap, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Renders a horizontal isometric cylinder aligned along the +v axis (up-right).
+       * Cross-section lies in the (u, z) plane. Front-facing cap sits at v = v0!
+       */
+      function isoCylV(parent, cu, v0, v1, cz, r, colors, opts) {
+        const o = opts || {};
+        const sw = o.sw !== undefined ? o.sw : 1.25;
+        const g = el("g", null, parent);
+        const steps = 22;
+        // Cross-section point: (cu + r*cos a, v, cz + r*sin a)
+        // Axis direction (+v) in screen space: (COS30, -SIN30).
+        // Extreme silhouettes perpendicular to axis:
+        const aTop = Math.PI / 3;         // upper-left silhouette
+        const aBot = -(2 * Math.PI) / 3;  // lower-right silhouette
+
+        const body = [];
+        for (let i = 0; i <= steps; i++) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([cu + r * Math.cos(a), v1, cz + r * Math.sin(a)]);
+        }
+        for (let i = steps; i >= 0; i--) {
+          const a = aTop + (aBot - aTop) * (i / steps);
+          body.push([cu + r * Math.cos(a), v0, cz + r * Math.sin(a)]);
+        }
+        isoPoly(g, body, colors.side, INK, sw);
+
+        if (o.cap !== false) {
+          const cap = [];
+          for (let i = 0; i < 28; i++) {
+            const a = (i / 28) * Math.PI * 2;
+            cap.push([cu + r * Math.cos(a), v0, cz + r * Math.sin(a)]);
+          }
+          isoPoly(g, cap, colors.cap, INK, sw);
+        }
+        return g;
+      }
+
+      /**
+       * Generates a smooth rounded-corner SVG path string from 3D isometric points.
+       */
+      function buildRoundedPath3D(points3D, cornerRadiusPx) {
+        const p2 = points3D.map(function (p) {
+          return iso(p[0], p[1], p[2]);
+        });
+        if (p2.length < 2) return "";
+        if (p2.length === 2 || !cornerRadiusPx) {
+          return (
+            "M " +
+            p2
+              .map(function (c) {
+                return c[0].toFixed(1) + " " + c[1].toFixed(1);
+              })
+              .join(" L ")
+          );
+        }
+
+        let d = "M " + p2[0][0].toFixed(1) + " " + p2[0][1].toFixed(1);
+        for (let i = 1; i < p2.length - 1; i++) {
+          const prev = p2[i - 1];
+          const curr = p2[i];
+          const next = p2[i + 1];
+
+          const v1x = prev[0] - curr[0];
+          const v1y = prev[1] - curr[1];
+          const len1 = Math.hypot(v1x, v1y) || 1;
+
+          const v2x = next[0] - curr[0];
+          const v2y = next[1] - curr[1];
+          const len2 = Math.hypot(v2x, v2y) || 1;
+
+          const r = Math.min(cornerRadiusPx, len1 * 0.44, len2 * 0.44);
+          const a1x = curr[0] + (v1x / len1) * r;
+          const a1y = curr[1] + (v1y / len1) * r;
+          const a2x = curr[0] + (v2x / len2) * r;
+          const a2y = curr[1] + (v2y / len2) * r;
+
+          d +=
+            " L " +
+            a1x.toFixed(1) +
+            " " +
+            a1y.toFixed(1) +
+            " Q " +
+            curr[0].toFixed(1) +
+            " " +
+            curr[1].toFixed(1) +
+            " " +
+            a2x.toFixed(1) +
+            " " +
+            a2y.toFixed(1);
+        }
+        const last = p2[p2.length - 1];
+        d += " L " + last[0].toFixed(1) + " " + last[1].toFixed(1);
+        return d;
+      }
+
+      /**
+       * Renders a shaded multi-tone cylindrical cutaway pipe along a 3D polyline.
+       */
+      function isoTube(parent, points3D, diameterPx, colors, cornerRadiusPx) {
+        const d = buildRoundedPath3D(points3D, cornerRadiusPx !== undefined ? cornerRadiusPx : 16);
+        const g = el("g", null, parent);
+
+        // Dark-slate silhouette border
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: INK,
+            "stroke-width": diameterPx + 3.0,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          g
+        );
+        // Outer casing / wall shadow tone
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.outer || colors.dark,
+            "stroke-width": diameterPx,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          g
+        );
+        // Inner fluid core tone
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.mid,
+            "stroke-width": diameterPx * 0.68,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          g
+        );
+        // Crisp bright specular highlight shifted toward light source
+        el(
+          "path",
+          {
+            d: d,
+            fill: "none",
+            stroke: colors.light,
+            "stroke-width": diameterPx * 0.24,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            opacity: 0.86,
+            transform: "translate(-1.8, -1.8)"
+          },
+          g
+        );
+        return { group: g, d: d };
+      }
+
+      /* =====================================================================
+         2. 60 FPS LIVE PHYSICS ANIMATION REGISTRIES
+         ===================================================================== */
+      const animStreamPaths = [];     // Animated glowing fluid dash paths
+      const animChevrons = [];        // Directional flow chevrons tracking exact SVG paths
+      const animBubbles = [];         // Boiling vapor & thermal buoyancy bubbles
+      const animTurbineWheel = {      // Dynamic 3D isometric spinning rotor wheel
+        group: null,
+        cu: 7.45,
+        cv: 7.72,
+        cz: 1.92,
+        rHub: 0.28,
+        rTip: 0.86,
+        bladeCount: 16,
+        angle: 0
+      };
+      const animGenPulses = [];       // Electromagnetic induction pulses on copper windings
+      const animFinShimmers = [];     // Thermal cooling shimmer bars on condenser radiator
+      const animPumpRotor = { el: null, cx: 0, cy: 0, angle: 0 };
+      const animThermalAuras = [];    // Subtle breathing geothermal & chilled reservoir glows
+
+      /**
+       * Registers an animated fluid streamline + smooth directional chevrons along `pathD`.
+       */
+      function registerFlowStream(parent, pathD, opts) {
+        const o = opts || {};
+        const dashEl = el(
+          "path",
+          {
+            d: pathD,
+            fill: "none",
+            stroke: o.dashColor || "#FEF3C7",
+            "stroke-width": o.dashWidth || 3.2,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-dasharray": o.dashArray || "12 24",
+            opacity: o.opacity !== undefined ? o.opacity : 0.88,
+            filter: "url(#fluid-glow)"
+          },
+          parent
+        );
+
+        animStreamPaths.push({
+          el: dashEl,
+          speed: o.speed || 42,
+          dir: o.dir || 1,
+          offset: Math.random() * 36,
+          channel: o.channel || "brine" // "brine" | "vapor" | "cool"
+        });
+
+        const arrowCount = o.arrows || 0;
+        if (arrowCount > 0) {
+          const totalLen = dashEl.getTotalLength();
+          const sz = o.arrowSize || 6.5;
+          for (let i = 0; i < arrowCount; i++) {
+            const chev = el(
+              "path",
+              {
+                d:
+                  "M " +
+                  (-sz * 0.9).toFixed(1) +
+                  " " +
+                  (-sz * 0.72).toFixed(1) +
+                  " L " +
+                  (sz * 0.55).toFixed(1) +
+                  " 0 L " +
+                  (-sz * 0.9).toFixed(1) +
+                  " " +
+                  (sz * 0.72).toFixed(1),
+                fill: "none",
+                stroke: o.arrowColor || "#FEF08A",
+                "stroke-width": o.arrowStroke || 2.3,
+                "stroke-linecap": "round",
+                "stroke-linejoin": "round",
+                filter: "url(#fluid-glow)"
+              },
+              parent
+            );
+            animChevrons.push({
+              el: chev,
+              pathEl: dashEl,
+              length: totalLen,
+              t: (i + 0.35) / arrowCount,
+              speed: (o.arrowSpeed || 0.24) * (o.dir || 1),
+              channel: o.channel || "brine"
+            });
+          }
+        }
+      }
+
+      /* =====================================================================
+         3. LAYER WRAPPER REFERENCES
+         ===================================================================== */
+      const wHousingBack = document.querySelector('[data-explode="housing_back"]');
+      const wHousingFront = document.querySelector('[data-explode="housing_front"]');
+      const wProdWell = document.querySelector('[data-explode="production_well"]');
+      const wHeatEx = document.querySelector('[data-explode="heat_exchanger"]');
+      const wTurbine = document.querySelector('[data-explode="organic_turbine"]');
+      const wCondenser = document.querySelector('[data-explode="condenser"]');
+      const wInjWell = document.querySelector('[data-explode="injection_well"]');
+
+      // Platform dimensional envelope matching reference chamfered silhouette
+      const U_MAX = 14.55;
+      const V_MAX = 12.25;
+      const SLAB_THICK = 0.24;
+      const ROCK_BOTTOM = -2.68;
+
+      // Exact well center coordinates on the front cutaway walls
+      const PROD_U = 2.68;
+      const PROD_V = 0.14;
+      const INJ_U = U_MAX - 0.14;
+      const INJ_V = 8.42;
+
+      /* ---------------------------------------------------------------------
+         3.0A. HOUSING BACK: Grounded Shadow, Chamfered Slab & Geological Strata
+         --------------------------------------------------------------------- */
+      function buildHousingBack() {
+        // Soft grounded elliptical contact shadow on pure #FFFFFF
+        const shadowBase = [
+          [-0.55, -0.45, ROCK_BOTTOM - 0.16],
+          [U_MAX + 0.55, -0.45, ROCK_BOTTOM - 0.16],
+          [U_MAX + 0.55, V_MAX + 0.45, ROCK_BOTTOM - 0.16],
+          [3.60, V_MAX + 0.45, ROCK_BOTTOM - 0.16],
+          [-0.55, 6.20, ROCK_BOTTOM - 0.16]
+        ];
+        isoPoly(wHousingBack, shadowBase, "rgba(15, 23, 42, 0.14)", "none", 0, {
+          filter: "url(#ground-shadow)"
+        });
+
+        // Tighter contact rim shadow immediately beneath base
+        isoPoly(
+          wHousingBack,
+          [
+            [-0.18, -0.18, ROCK_BOTTOM - 0.08],
+            [U_MAX + 0.18, -0.18, ROCK_BOTTOM - 0.08],
+            [U_MAX + 0.18, V_MAX + 0.18, ROCK_BOTTOM - 0.08],
+            [3.90, V_MAX + 0.18, ROCK_BOTTOM - 0.08],
+            [-0.18, 6.20, ROCK_BOTTOM - 0.08]
+          ],
+          "rgba(15, 23, 42, 0.16)",
+          "none",
+          0,
+          { filter: "url(#ground-shadow)" }
+        );
+
+        // --- FRONT-LEFT GEOLOGICAL CUTAWAY WALL (v = 0, u = 0..U_MAX) ---
+        // Build 4 smooth wavy sedimentary strata layers matching warm terracotta/ochre tones
+        const leftStrataColors = ["#E5A965", "#D4884E", "#BE6B3F", "#9F5333"];
+        const leftStrataDepths = [
+          -SLAB_THICK,
+          -0.88,
+          -1.46,
+          -2.08,
+          ROCK_BOTTOM
+        ];
+        const leftSamples = 26;
+
+        function waveLeft(layerIdx, u) {
+          if (layerIdx === 0) return -SLAB_THICK;
+          if (layerIdx === 4) return ROCK_BOTTOM;
+          const base = leftStrataDepths[layerIdx];
+          return (
+            base +
+            0.13 * Math.sin(u * 0.48 + layerIdx * 1.15) +
+            0.06 * Math.cos(u * 1.05 - layerIdx * 0.8)
+          );
+        }
+
+        for (let s = 0; s < 4; s++) {
+          const polyPts = [];
+          for (let i = 0; i <= leftSamples; i++) {
+            const u = (U_MAX * i) / leftSamples;
+            polyPts.push([u, 0, waveLeft(s, u)]);
+          }
+          for (let i = leftSamples; i >= 0; i--) {
+            const u = (U_MAX * i) / leftSamples;
+            polyPts.push([u, 0, waveLeft(s + 1, u)]);
+          }
+          isoPoly(wHousingBack, polyPts, leftStrataColors[s], "#6D3A1F", 0.85);
+        }
+
+        // Warm geothermal radiant heat aura glowing inside rock around left production well
+        const hotAuraPos = iso(PROD_U + 0.55, 0, -1.65);
+        const hotAura = el(
+          "ellipse",
+          {
+            cx: hotAuraPos[0].toFixed(1),
+            cy: hotAuraPos[1].toFixed(1),
+            rx: 138,
+            ry: 112,
+            fill: "url(#grad-geo-heat)",
+            opacity: 0.86
+          },
+          wHousingBack
+        );
+        animThermalAuras.push({ el: hotAura, baseOp: 0.84, amp: 0.14, channel: "brine", phase: 0 });
+
+        // Crisp dark outline framing front-left geological cutaway face
+        isoPoly(
+          wHousingBack,
+          [
+            [0, 0, -SLAB_THICK],
+            [U_MAX, 0, -SLAB_THICK],
+            [U_MAX, 0, ROCK_BOTTOM],
+            [0, 0, ROCK_BOTTOM]
+          ],
+          "none",
+          INK,
+          1.35
+        );
+
+        // --- FRONT-RIGHT GEOLOGICAL CUTAWAY WALL (u = U_MAX, v = 0..V_MAX) ---
+        const rightStrataColors = ["#C98C4E", "#B66F3B", "#9D542E", "#7E3E22"];
+        const rightSamples = 22;
+
+        function waveRight(layerIdx, v) {
+          if (layerIdx === 0) return -SLAB_THICK;
+          if (layerIdx === 4) return ROCK_BOTTOM;
+          const base = leftStrataDepths[layerIdx];
+          return (
+            base +
+            0.13 * Math.sin(U_MAX * 0.48 + layerIdx * 1.15 - v * 0.42) +
+            0.06 * Math.cos(U_MAX * 1.05 - layerIdx * 0.8 + v * 0.9)
+          );
+        }
+
+        for (let s = 0; s < 4; s++) {
+          const polyPts = [];
+          for (let i = 0; i <= rightSamples; i++) {
+            const v = (V_MAX * i) / rightSamples;
+            polyPts.push([U_MAX, v, waveRight(s, v)]);
+          }
+          for (let i = rightSamples; i >= 0; i--) {
+            const v = (V_MAX * i) / rightSamples;
+            polyPts.push([U_MAX, v, waveRight(s + 1, v)]);
+          }
+          isoPoly(wHousingBack, polyPts, rightStrataColors[s], "#5B2F18", 0.85);
+        }
+
+        // Cool slate-blue chilled thermal reservoir zone glowing around right injection well
+        const coolAuraPos = iso(U_MAX, INJ_V - 0.15, -1.85);
+        const coolAura = el(
+          "ellipse",
+          {
+            cx: coolAuraPos[0].toFixed(1),
+            cy: coolAuraPos[1].toFixed(1),
+            rx: 126,
+            ry: 108,
+            fill: "url(#grad-geo-cool)",
+            opacity: 0.85
+          },
+          wHousingBack
+        );
+        animThermalAuras.push({ el: coolAura, baseOp: 0.82, amp: 0.14, channel: "cool", phase: 2.1 });
+
+        // Crisp dark outline framing front-right geological cutaway face
+        isoPoly(
+          wHousingBack,
+          [
+            [U_MAX, 0, -SLAB_THICK],
+            [U_MAX, V_MAX, -SLAB_THICK],
+            [U_MAX, V_MAX, ROCK_BOTTOM],
+            [U_MAX, 0, ROCK_BOTTOM]
+          ],
+          "none",
+          INK,
+          1.35
+        );
+
+        // --- SEMI-CYLINDRICAL CARVED ROCK TRENCHES FOR BOTH DEEP WELLS ---
+        // Left trench carved into front-left rock face at u = PROD_U
+        isoPoly(
+          wHousingBack,
+          [
+            [PROD_U - 0.56, 0, -SLAB_THICK],
+            [PROD_U + 0.56, 0, -SLAB_THICK],
+            [PROD_U + 0.44, 0, ROCK_BOTTOM - 0.04],
+            [PROD_U - 0.44, 0, ROCK_BOTTOM - 0.04]
+          ],
+          "#2C2523",
+          INK,
+          1.15
+        );
+        // Right trench carved into front-right rock face at v = INJ_V
+        isoPoly(
+          wHousingBack,
+          [
+            [U_MAX, INJ_V - 0.52, -SLAB_THICK],
+            [U_MAX, INJ_V + 0.52, -SLAB_THICK],
+            [U_MAX, INJ_V + 0.42, ROCK_BOTTOM - 0.04],
+            [U_MAX, INJ_V - 0.42, ROCK_BOTTOM - 0.04]
+          ],
+          "#1B2636",
+          INK,
+          1.15
+        );
+
+        // --- CHARCOAL-SLATE TOP DECK SLAB WITH CLEAN BACK-LEFT CHAMFER ---
+        // Left-front slab edge rim
+        isoPoly(
+          wHousingBack,
+          [
+            [0, 0, 0],
+            [U_MAX, 0, 0],
+            [U_MAX, 0, -SLAB_THICK],
+            [0, 0, -SLAB_THICK]
+          ],
+          "#3C4654",
+          INK,
+          1.3
+        );
+        // Right-front slab edge rim
+        isoPoly(
+          wHousingBack,
+          [
+            [U_MAX, 0, 0],
+            [U_MAX, V_MAX, 0],
+            [U_MAX, V_MAX, -SLAB_THICK],
+            [U_MAX, 0, -SLAB_THICK]
+          ],
+          "#2F3845",
+          INK,
+          1.3
+        );
+
+        // Main chamfered dark charcoal-slate top surface
+        const topDeckVerts = [
+          [0, 0, 0],
+          [0, 6.25, 0],
+          [3.95, 10.20, 0],
+          [3.95, V_MAX, 0],
+          [U_MAX, V_MAX, 0],
+          [U_MAX, 0, 0]
+        ];
+        isoPoly(wHousingBack, topDeckVerts, "url(#grad-slab-top)", INK, 1.35);
+
+        // Crisp beveled top-rim highlight line around the dark slate deck
+        const bevelPts = topDeckVerts.map(function (p) {
+          return iso(p[0], p[1], p[2] + 0.02);
+        });
+        el(
+          "polyline",
+          {
+            points: bevelPts
+              .map(function (c) {
+                return c[0].toFixed(1) + "," + c[1].toFixed(1);
+              })
+              .join(" "),
+            fill: "none",
+            stroke: "#7A8696",
+            "stroke-width": 1.4,
+            opacity: 0.72,
+            "stroke-linejoin": "round"
+          },
+          wHousingBack
+        );
+
+        // Subtle recessed dark circular sockets on top slab where wells descend
+        const prodHole = [];
+        const injHole = [];
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          prodHole.push([PROD_U + 0.66 * Math.cos(a), PROD_V + 0.66 * Math.sin(a), 0.01]);
+          injHole.push([INJ_U + 0.60 * Math.cos(a), INJ_V + 0.60 * Math.sin(a), 0.01]);
+        }
+        isoPoly(wHousingBack, prodHole, "#1E2530", INK, 1.15);
+        isoPoly(wHousingBack, injHole, "#1E2530", INK, 1.15);
+      }
+
+      /* ---------------------------------------------------------------------
+         3.0B. HOUSING FRONT: Clean Rock-Edge Lip Accents Framing Well Cutaways
+         --------------------------------------------------------------------- */
+      function buildHousingFront() {
+        // Subtle crisp corner lip brackets along top-edge notches where wells meet slab edge
+        isoPoly(
+          wHousingFront,
+          [
+            [PROD_U - 0.66, 0, 0],
+            [PROD_U - 0.56, 0, 0],
+            [PROD_U - 0.56, 0, -SLAB_THICK],
+            [PROD_U - 0.66, 0, -SLAB_THICK]
+          ],
+          "#475569",
+          INK,
+          1.05
+        );
+        isoPoly(
+          wHousingFront,
+          [
+            [PROD_U + 0.56, 0, 0],
+            [PROD_U + 0.66, 0, 0],
+            [PROD_U + 0.66, 0, -SLAB_THICK],
+            [PROD_U + 0.56, 0, -SLAB_THICK]
+          ],
+          "#334155",
+          INK,
+          1.05
+        );
+
+        isoPoly(
+          wHousingFront,
+          [
+            [U_MAX, INJ_V - 0.62, 0],
+            [U_MAX, INJ_V - 0.52, 0],
+            [U_MAX, INJ_V - 0.52, -SLAB_THICK],
+            [U_MAX, INJ_V - 0.62, -SLAB_THICK]
+          ],
+          "#334155",
+          INK,
+          1.05
+        );
+        isoPoly(
+          wHousingFront,
+          [
+            [U_MAX, INJ_V + 0.52, 0],
+            [U_MAX, INJ_V + 0.62, 0],
+            [U_MAX, INJ_V + 0.62, -SLAB_THICK],
+            [U_MAX, INJ_V + 0.52, -SLAB_THICK]
+          ],
+          "#27303D",
+          INK,
+          1.05
+        );
+      }
+
+      /* ---------------------------------------------------------------------
+         3.1. PRODUCTION WELL: Deep Hot Brine Bore, Riser, Handwheel & Arch
+         --------------------------------------------------------------------- */
+      function buildProductionWell() {
+        const u = PROD_U;
+        const v = PROD_V;
+
+        // --- A) ARCHED COPPER/AMBER INSULATED SUPPLY PIPE TO HEAT EXCHANGER ---
+        // Drawn first so it emerges seamlessly from behind the top valve bonnet
+        const supplyPts = [
+          [u + 0.30, v + 0.12, 4.18],
+          [u + 1.18, v + 0.42, 4.46],
+          [u + 1.72, v + 0.88, 4.22],
+          [u + 1.78, v + 1.15, 2.35],
+          [u + 2.02, v + 1.65, 1.72],
+          [4.88, 2.28, 1.56]
+        ];
+        const supplyTube = isoTube(
+          wProdWell,
+          supplyPts,
+          16.5,
+          { outer: "#B45309", mid: "#F59E0B", light: "#FEF3C7" },
+          22
+        );
+        registerFlowStream(wProdWell, supplyTube.d, {
+          dashColor: "#FEF9C3",
+          dashWidth: 3.4,
+          dashArray: "10 24",
+          speed: 44,
+          dir: 1,
+          arrows: 3,
+          arrowColor: "#FFFBEB",
+          arrowSize: 5.5,
+          arrowSpeed: 0.28,
+          channel: "brine"
+        });
+
+        // --- B) DEEP VERTICAL STEPPED WELL CASING (z = -2.95..0.52) ---
+        // Outer dark-slate & anodized-steel stepped bore casing
+        isoCylZ(wProdWell, u, v, -2.95, -1.65, 0.40, {
+          side: "url(#grad-steel-v)",
+          shade: "#475569",
+          top: "#CBD5E1"
+        }, { top: false, sw: 1.25 });
+
+        isoCylZ(wProdWell, u, v, -1.65, -0.10, 0.48, {
+          side: "url(#grad-steel-v)",
+          shade: "#475569",
+          top: "#E2E8F0"
+        }, { top: false, sw: 1.25 });
+
+        // Stepped ground-level flanged wellhead collar
+        isoCylZ(wProdWell, u, v, -0.18, 0.56, 0.60, {
+          side: "url(#grad-steel-v)",
+          shade: "#64748B",
+          top: "url(#grad-steel-top)"
+        }, { sw: 1.3 });
+
+        // Tall cylindrical ivory/satin-steel insulated riser jacket (z = 0.56..3.66)
+        isoCylZ(wProdWell, u, v, 0.56, 3.66, 0.40, {
+          side: "url(#grad-ivory-dome)",
+          shade: "#94A3B8",
+          top: "#F8FAFC"
+        }, { top: false, sw: 1.3 });
+
+        // --- C) VERTICAL FRONT CUTAWAY WINDOW REVEALING GLOWING AMBER BRINE ---
+        // Cutaway channel spans seamlessly from deep reservoir (-2.95) up to riser top (3.62)
+        const boreHalfW = 0.21;
+        const cutWindow = [
+          [u - boreHalfW, v - 0.34, -2.92],
+          [u + boreHalfW, v - 0.34, -2.92],
+          [u + boreHalfW, v - 0.34, 3.62],
+          [u - boreHalfW, v - 0.34, 3.62]
+        ];
+        // Recessed beveled casing wall edges on left & right of cutaway slot
+        isoPoly(
+          wProdWell,
+          [
+            [u - boreHalfW - 0.08, v - 0.33, -2.92],
+            [u - boreHalfW, v - 0.34, -2.92],
+            [u - boreHalfW, v - 0.34, 3.62],
+            [u - boreHalfW - 0.08, v - 0.33, 3.62]
+          ],
+          "#94A3B8",
+          INK,
+          1.0
+        );
+        isoPoly(
+          wProdWell,
+          [
+            [u + boreHalfW, v - 0.34, -2.92],
+            [u + boreHalfW + 0.08, v - 0.33, -2.92],
+            [u + boreHalfW + 0.08, v - 0.33, 3.62],
+            [u + boreHalfW, v - 0.34, 3.62]
+          ],
+          "#64748B",
+          INK,
+          1.0
+        );
+
+        // Glowing warm-amber geothermal brine column inside the cutaway slot
+        isoPoly(wProdWell, cutWindow, "url(#grad-hot-brine)", INK, 1.15);
+
+        // Clean curved bottom bore opening notch
+        const botLeft = iso(u - boreHalfW, v - 0.34, -2.92);
+        const botRight = iso(u + boreHalfW, v - 0.34, -2.92);
+        const botMid = iso(u, v - 0.34, -2.74);
+        el(
+          "path",
+          {
+            d:
+              "M " +
+              botLeft[0].toFixed(1) +
+              " " +
+              botLeft[1].toFixed(1) +
+              " Q " +
+              botMid[0].toFixed(1) +
+              " " +
+              botMid[1].toFixed(1) +
+              " " +
+              botRight[0].toFixed(1) +
+              " " +
+              botRight[1].toFixed(1),
+            fill: "#2C2523",
+            stroke: INK,
+            "stroke-width": 1.25
+          },
+          wProdWell
+        );
+
+        // Animated upward flow arrows & glowing brine stream inside vertical bore
+        const verticalFlowD = buildRoundedPath3D(
+          [
+            [u, v - 0.36, -2.65],
+            [u, v - 0.36, 3.45]
+          ],
+          0
+        );
+        registerFlowStream(wProdWell, verticalFlowD, {
+          dashColor: "#FEF08A",
+          dashWidth: 3.6,
+          dashArray: "14 26",
+          speed: 48,
+          dir: 1,
+          arrows: 5,
+          arrowColor: "#FEF9C3",
+          arrowSize: 7.0,
+          arrowStroke: 2.5,
+          arrowSpeed: 0.22,
+          channel: "brine"
+        });
+
+        // Rising thermal buoyancy micro-bubbles inside the vertical brine column
+        const colBot = iso(u, v - 0.36, -2.55);
+        const colTop = iso(u, v - 0.36, 3.40);
+        for (let b = 0; b < 10; b++) {
+          const r = 1.8 + (b % 3) * 0.9;
+          const bEl = el(
+            "circle",
+            {
+              cx: colBot[0].toFixed(1),
+              cy: colBot[1].toFixed(1),
+              r: r.toFixed(1),
+              fill: "#FEF9C3",
+              opacity: 0.78
+            },
+            wProdWell
+          );
+          animBubbles.push({
+            el: bEl,
+            x0: colBot[0] + ((b % 5) - 2) * 3.8,
+            y0: colBot[1],
+            x1: colTop[0] + ((b % 5) - 2) * 3.8,
+            y1: colTop[1],
+            t: b / 10,
+            speed: 0.24 + (b % 3) * 0.05,
+            wobble: 2.2,
+            phase: b * 1.3,
+            channel: "brine"
+          });
+        }
+
+        // --- D) TOP MACHINED STEEL FLANGE CAP, VALVE BONNET & SPOKED HANDWHEEL ---
+        // Wide upper flange cap
+        isoCylZ(wProdWell, u, v, 3.62, 3.92, 0.56, {
+          side: "url(#grad-steel-v)",
+          shade: "#64748B",
+          top: "url(#grad-steel-top)"
+        }, { sw: 1.3 });
+
+        // Compact machined valve bonnet body
+        isoCylZ(wProdWell, u, v, 3.92, 4.46, 0.25, {
+          side: "url(#grad-steel-v)",
+          shade: "#64748B",
+          top: "#F8FAFC"
+        }, { sw: 1.2 });
+
+        // Side flanged outlet boss connecting valve bonnet to arched supply pipe
+        isoCylU(wProdWell, u + 0.14, u + 0.42, v + 0.08, 4.18, 0.19, {
+          side: "#CBD5E1",
+          cap: "#94A3B8"
+        }, { sw: 1.15 });
+
+        // Vertical threaded valve stem
+        isoCylZ(wProdWell, u, v, 4.46, 4.92, 0.085, {
+          side: "#CBD5E1",
+          shade: "#64748B",
+          top: "#F8FAFC"
+        }, { sw: 1.05 });
+
+        // Classic circular spoked steel handwheel at the top (clean isometric ellipse)
+        const wheelCenter = iso(u, v, 4.94);
+        const rx = 25;
+        const ry = 14.5;
+
+        // Wheel shadow rim depth
+        el(
+          "ellipse",
+          {
+            cx: wheelCenter[0].toFixed(1),
+            cy: (wheelCenter[1] + 3.2).toFixed(1),
+            rx: rx,
+            ry: ry,
+            fill: "none",
+            stroke: "#475569",
+            "stroke-width": 5.2
+          },
+          wProdWell
+        );
+        // Wheel dark technical outline
+        el(
+          "ellipse",
+          {
+            cx: wheelCenter[0].toFixed(1),
+            cy: wheelCenter[1].toFixed(1),
+            rx: rx,
+            ry: ry,
+            fill: "none",
+            stroke: INK,
+            "stroke-width": 6.4
+          },
+          wProdWell
+        );
+        // Wheel brushed steel rim
+        el(
+          "ellipse",
+          {
+            cx: wheelCenter[0].toFixed(1),
+            cy: wheelCenter[1].toFixed(1),
+            rx: rx,
+            ry: ry,
+            fill: "none",
+            stroke: "#E2E8F0",
+            "stroke-width": 3.8
+          },
+          wProdWell
+        );
+        // 4 crisp spokes
+        const spokeAngles = [0.25, 1.82, 3.39, 4.96];
+        spokeAngles.forEach(function (ang) {
+          const sx = wheelCenter[0] + Math.cos(ang) * (rx - 2);
+          const sy = wheelCenter[1] + Math.sin(ang) * (ry - 1.5);
+          el(
+            "line",
+            {
+              x1: wheelCenter[0].toFixed(1),
+              y1: wheelCenter[1].toFixed(1),
+              x2: sx.toFixed(1),
+              y2: sy.toFixed(1),
+              stroke: INK,
+              "stroke-width": 3.2,
+              "stroke-linecap": "round"
+            },
+            wProdWell
+          );
+          el(
+            "line",
+            {
+              x1: wheelCenter[0].toFixed(1),
+              y1: wheelCenter[1].toFixed(1),
+              x2: sx.toFixed(1),
+              y2: sy.toFixed(1),
+              stroke: "#CBD5E1",
+              "stroke-width": 1.6,
+              "stroke-linecap": "round"
+            },
+            wProdWell
+          );
+        });
+        // Center hub nut on handwheel
+        el(
+          "ellipse",
+          {
+            cx: wheelCenter[0].toFixed(1),
+            cy: wheelCenter[1].toFixed(1),
+            rx: 5.5,
+            ry: 3.4,
+            fill: "#F8FAFC",
+            stroke: INK,
+            "stroke-width": 1.2
+          },
+          wProdWell
+        );
+      }
+
+      /* ---------------------------------------------------------------------
+         3.2. BINARY HEAT EXCHANGER: Copper Shell, Tube Bundle & Emerald Vapor
+         --------------------------------------------------------------------- */
+      function buildHeatExchanger() {
+        const cv = 2.48;
+        const cz = 1.48;
+        const rShell = 0.96;
+        const uRear = 4.90;
+        const uFront = 8.45;
+
+        // --- A) CURVED EMERALD-CYAN VAPOR SUPPLY PIPE RISING INTO TURBINE ---
+        // Drawn first so rear bend sits cleanly behind turbine intake flange
+        const vaporPipePts = [
+          [7.92, cv + 0.15, cz + rShell - 0.04],
+          [7.92, cv + 0.15, 3.28],
+          [6.58, 3.38, 3.44],
+          [6.32, 6.22, 3.32],
+          [6.92, 7.12, 2.75]
+        ];
+        const vaporTube = isoTube(
+          wHeatEx,
+          vaporPipePts,
+          15.5,
+          { outer: "#0F766E", mid: "#10B981", light: "#A7F3D0" },
+          22
+        );
+        registerFlowStream(wHeatEx, vaporTube.d, {
+          dashColor: "#CCFBF1",
+          dashWidth: 3.2,
+          dashArray: "12 22",
+          speed: 52,
+          dir: 1,
+          arrows: 4,
+          arrowColor: "#ECFDF5",
+          arrowSize: 5.6,
+          arrowSpeed: 0.30,
+          channel: "vapor"
+        });
+
+        // --- B) TWO IVORY-CERAMIC TRAPEZOIDAL SADDLE CRADLES ---
+        function drawCradle(uPos) {
+          // Ground mounting pad
+          isoBox(wHeatEx, uPos - 0.24, cv - 1.05, 0.0, uPos + 0.24, cv + 0.92, 0.14, {
+            top: "#F8F6F0",
+            left: "#E5E1D6",
+            right: "#C5C0B3"
+          }, { sw: 1.15 });
+          // Trapezoidal saddle body rising smoothly under cylindrical shell
+          isoPoly(
+            wHeatEx,
+            [
+              [uPos - 0.16, cv - 0.86, 0.14],
+              [uPos + 0.16, cv - 0.86, 0.14],
+              [uPos + 0.16, cv - 0.62, 1.04],
+              [uPos - 0.16, cv - 0.62, 1.04]
+            ],
+            "#EAE6DC",
+            INK,
+            1.2
+          );
+          isoPoly(
+            wHeatEx,
+            [
+              [uPos + 0.16, cv - 0.86, 0.14],
+              [uPos + 0.16, cv + 0.72, 0.14],
+              [uPos + 0.16, cv + 0.58, 1.04],
+              [uPos + 0.16, cv - 0.62, 1.04]
+            ],
+            "#CFCAC0",
+            INK,
+            1.2
+          );
+        }
+        drawCradle(5.58);
+        drawCradle(7.72);
+
+        // --- C) REAR-LEFT IVORY-CERAMIC HEMISPHERICAL END DOME ---
+        // Rendered as layered smooth isometric dome segments behind the copper shell
+        isoCylU(wHeatEx, uRear - 0.56, uRear, cv, cz, rShell * 0.96, {
+          side: "url(#grad-ivory-dome)",
+          cap: "#E5E1D6"
+        }, { cap: false, sw: 1.25 });
+
+        const rearDomeCap = [];
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2;
+          const bulge = -0.24 * Math.sin(a * 0.5);
+          rearDomeCap.push([
+            uRear - 0.56 + bulge * 0.1,
+            cv + rShell * 0.96 * Math.cos(a),
+            cz + rShell * 0.96 * Math.sin(a)
+          ]);
+        }
+        isoPoly(wHeatEx, rearDomeCap, "url(#grad-ivory-dome)", INK, 1.25);
+
+        // --- D) WARM BRUSHED COPPER OUTER SHELL (BACK-UPPER & LOWER-FRONT CRADLE) ---
+        // Full outer copper shell cylinder
+        isoCylU(wHeatEx, uRear, uFront, cv, cz, rShell, {
+          side: "url(#grad-copper-shell)",
+          cap: "#9A4D24"
+        }, { cap: false, sw: 1.35 });
+
+        // Top-left small copper inspection flange nozzle
+        isoCylZ(wHeatEx, uRear + 0.48, cv + 0.04, cz + rShell - 0.10, cz + rShell + 0.34, 0.22, {
+          side: "url(#grad-copper-tube)",
+          shade: "#7C3F17",
+          top: "#FDE2C4"
+        }, { sw: 1.15 });
+        isoCylZ(wHeatEx, uRear + 0.48, cv + 0.04, cz + rShell + 0.28, cz + rShell + 0.38, 0.29, {
+          side: "#C26D32",
+          top: "#FDE2C4"
+        }, { sw: 1.1 });
+
+        // --- E) FRONT-RIGHT IVORY END DOME (LOWER HALF + CUTAWAY VAPOR CHAMBER) ---
+        isoCylU(wHeatEx, uFront, uFront + 0.44, cv, cz, rShell * 0.98, {
+          side: "url(#grad-ivory-dome)",
+          cap: "url(#grad-ivory-dome)"
+        }, { sw: 1.3 });
+
+        // Front-right bottom outlet nozzle connecting smoothly to condensate pipe
+        isoCylU(wHeatEx, uFront + 0.34, uFront + 0.64, cv - 0.06, cz - 0.24, 0.21, {
+          side: "#CBD5E1",
+          cap: "#64748B"
+        }, { sw: 1.15 });
+
+        // --- F) SURGICAL CUTAWAY CAVITY EXPOSING ORGANIC FLUID & 7 COPPER TUBES ---
+        // Clean cutaway cavity opening across the front-upper face of the shell
+        const cavityPoly = [];
+        // Left vertical cut edge at u = uRear + 0.42
+        for (let i = 0; i <= 10; i++) {
+          const a = -0.35 * Math.PI + (0.78 * Math.PI * i) / 10; // sweeps from lower-front to upper-front
+          cavityPoly.push([uRear + 0.44, cv + (rShell - 0.06) * Math.cos(a), cz + (rShell - 0.06) * Math.sin(a)]);
+        }
+        // Right cut edge curving into the front-right dome chamber
+        for (let i = 10; i >= 0; i--) {
+          const a = -0.35 * Math.PI + (0.78 * Math.PI * i) / 10;
+          const uEnd = uFront + 0.24 * Math.sin((i / 10) * Math.PI);
+          cavityPoly.push([uEnd, cv + (rShell - 0.07) * Math.cos(a), cz + (rShell - 0.07) * Math.sin(a)]);
+        }
+
+        // Deep emerald-teal interior organic fluid chamber
+        isoPoly(wHeatEx, cavityPoly, "url(#grad-organic-vapor)", INK, 1.3);
+
+        // Beveled copper shell cut-edge wall thickness along upper & lower rim
+        isoPoly(
+          wHeatEx,
+          [
+            [uRear + 0.44, cv + (rShell - 0.04) * Math.cos(0.43 * Math.PI), cz + (rShell - 0.04) * Math.sin(0.43 * Math.PI)],
+            [uFront, cv + (rShell - 0.04) * Math.cos(0.43 * Math.PI), cz + (rShell - 0.04) * Math.sin(0.43 * Math.PI)],
+            [uFront, cv + (rShell - 0.13) * Math.cos(0.43 * Math.PI), cz + (rShell - 0.13) * Math.sin(0.43 * Math.PI)],
+            [uRear + 0.44, cv + (rShell - 0.13) * Math.cos(0.43 * Math.PI), cz + (rShell - 0.13) * Math.sin(0.43 * Math.PI)]
+          ],
+          "#FDE2C4",
+          INK,
+          1.05
+        );
+
+        // --- 7 PARALLEL WARM BRUSHED COPPER HEAT-TRANSFER TUBES INSIDE CAVITY ---
+        // Sorted from back-bottom to front-top for crisp 3D depth overlap
+        const tubeOffsets = [
+          [0.34, 0.30],
+          [0.14, 0.44],
+          [0.38, -0.04],
+          [0.08, 0.08],
+          [-0.22, 0.26],
+          [0.14, -0.32],
+          [-0.22, -0.10]
+        ];
+
+        tubeOffsets.forEach(function (off, idx) {
+          const tv = cv + off[0];
+          const tz = cz + off[1];
+          isoCylU(wHeatEx, uRear + 0.48, uFront - 0.26, tv, tz, 0.115, {
+            side: "url(#grad-copper-tube)",
+            cap: "#7C3F17"
+          }, { sw: 1.0 });
+
+          // Glowing amber hot brine core visible in open tube end & interior pulse
+          const tip = iso(uFront - 0.25, tv, tz);
+          el(
+            "ellipse",
+            {
+              cx: tip[0].toFixed(1),
+              cy: tip[1].toFixed(1),
+              rx: 3.2,
+              ry: 4.1,
+              fill: "#FBBF24",
+              stroke: "#7C3F17",
+              "stroke-width": 0.7
+            },
+            wHeatEx
+          );
+
+          // Subtle animated thermal flow pulse moving lengthwise along each copper tube
+          if (idx % 2 === 0) {
+            const tPathD = buildRoundedPath3D(
+              [
+                [uRear + 0.62, tv, tz + 0.02],
+                [uFront - 0.34, tv, tz + 0.02]
+              ],
+              0
+            );
+            registerFlowStream(wHeatEx, tPathD, {
+              dashColor: "#FEF08A",
+              dashWidth: 2.0,
+              dashArray: "8 26",
+              speed: 34 + idx * 3,
+              dir: 1,
+              opacity: 0.72,
+              channel: "brine"
+            });
+          }
+        });
+
+        // Swirling luminous vapor streamlines inside front-right dome rising toward vapor nozzle
+        const swirlD = buildRoundedPath3D(
+          [
+            [uFront - 0.10, cv - 0.18, cz - 0.30],
+            [uFront + 0.18, cv + 0.04, cz + 0.08],
+            [uFront - 0.08, cv + 0.18, cz + 0.56],
+            [7.92, cv + 0.15, cz + rShell - 0.05]
+          ],
+          16
+        );
+        registerFlowStream(wHeatEx, swirlD, {
+          dashColor: "#CCFBF1",
+          dashWidth: 3.2,
+          dashArray: "10 18",
+          speed: 44,
+          dir: 1,
+          arrows: 2,
+          arrowColor: "#ECFDF5",
+          arrowSize: 5.2,
+          arrowSpeed: 0.36,
+          channel: "vapor"
+        });
+
+        // Boiling emerald-cyan vapor bubbles rising from copper tube bundle inside cutaway
+        for (let b = 0; b < 14; b++) {
+          const bu = uRear + 0.95 + (b / 14) * (uFront - uRear - 0.85);
+          const bv = cv - 0.25 + ((b * 37) % 10) * 0.06;
+          const p0 = iso(bu, bv, cz - 0.34);
+          const p1 = iso(bu + 0.12, bv + 0.08, cz + 0.66);
+          const bub = el(
+            "circle",
+            {
+              cx: p0[0].toFixed(1),
+              cy: p0[1].toFixed(1),
+              r: (1.7 + (b % 3) * 0.85).toFixed(1),
+              fill: "#CCFBF1",
+              stroke: "#10B981",
+              "stroke-width": 0.6,
+              opacity: 0.85
+            },
+            wHeatEx
+          );
+          animBubbles.push({
+            el: bub,
+            x0: p0[0],
+            y0: p0[1],
+            x1: p1[0],
+            y1: p1[1],
+            t: (b * 0.19) % 1,
+            speed: 0.34 + (b % 4) * 0.07,
+            wobble: 3.4,
+            phase: b * 1.7,
+            channel: "vapor"
+          });
+        }
+
+        // Top vapor exit flange collar on copper shell
+        isoCylZ(wHeatEx, 7.92, cv + 0.15, cz + rShell - 0.12, cz + rShell + 0.16, 0.24, {
+          side: "#0F766E",
+          shade: "#115E59",
+          top: "#6EE7B7"
+        }, { sw: 1.15 });
+      }
+
+      /* ---------------------------------------------------------------------
+         3.3. ORGANIC RANKINE TURBINE & COAXIAL COPPER GENERATOR
+         --------------------------------------------------------------------- */
+      function buildOrganicTurbine() {
+        const cu = 7.45;
+        const cz = 1.92;
+
+        // --- A) BEVELED MOUNTING BASE FEET (ANCHORED ON CHARCOAL SLAB z = 0) ---
+        // Generator rear cobalt-blue mounting plinth
+        isoBox(wTurbine, cu - 1.12, 9.45, 0.0, cu + 1.12, 11.45, 0.36, {
+          top: "#4F7CE0",
+          left: "#21408A",
+          right: "#152B61"
+        }, { sw: 1.25 });
+
+        // Turbine front steel mounting pedestal
+        isoBox(wTurbine, cu - 0.96, 6.82, 0.0, cu + 0.96, 8.78, 0.38, {
+          top: "#E2E8F0",
+          left: "#94A3B8",
+          right: "#64748B"
+        }, { sw: 1.25 });
+
+        // --- B) REAR-RIGHT COAXIAL GENERATOR HOUSING (v = 9.35..11.40) ---
+        // Outer cobalt-blue generator shell
+        isoCylV(wTurbine, cu, 9.35, 11.42, cz, 1.14, {
+          side: "url(#grad-cobalt-shell)",
+          cap: "#21408A"
+        }, { sw: 1.35 });
+
+        // Cutaway dark-slate laminated stator interior recess on front-upper generator quadrant
+        isoPoly(
+          wTurbine,
+          [
+            [cu - 0.15, 9.52, cz + 0.98],
+            [cu - 0.15, 11.24, cz + 0.98],
+            [cu + 0.98, 11.24, cz + 0.10],
+            [cu + 0.98, 9.52, cz + 0.10]
+          ],
+          "#1E293B",
+          INK,
+          1.2
+        );
+        // Laminated stator core back-inner cutaway frame
+        isoPoly(
+          wTurbine,
+          [
+            [cu - 0.15, 9.52, cz + 0.98],
+            [cu + 0.98, 9.52, cz + 0.10],
+            [cu + 0.98, 9.52, cz - 0.55],
+            [cu - 0.15, 9.52, cz + 0.10]
+          ],
+          "#334155",
+          INK,
+          1.15
+        );
+
+        // Rich warm brushed copper cylindrical generator stator/rotor windings
+        isoCylV(wTurbine, cu, 9.58, 11.08, cz, 0.72, {
+          side: "url(#grad-copper-shell)",
+          cap: "#B8622A"
+        }, { sw: 1.25 });
+
+        // Crisp parallel copper coil winding grooves across generator drum
+        for (let w = 0; w < 10; w++) {
+          const ang = -0.35 + w * 0.22;
+          const pA = iso(cu + 0.72 * Math.cos(ang), 9.62, cz + 0.72 * Math.sin(ang));
+          const pB = iso(cu + 0.72 * Math.cos(ang), 11.04, cz + 0.72 * Math.sin(ang));
+          el(
+            "line",
+            {
+              x1: pA[0].toFixed(1),
+              y1: pA[1].toFixed(1),
+              x2: pB[0].toFixed(1),
+              y2: pB[1].toFixed(1),
+              stroke: w % 2 === 0 ? "#FDE2C4" : "#7C3F17",
+              "stroke-width": 1.35,
+              opacity: 0.78
+            },
+            wTurbine
+          );
+        }
+
+        // Animated warm gold electromagnetic induction shimmer arcs across copper windings
+        for (let p = 0; p < 3; p++) {
+          const pv = 9.85 + p * 0.48;
+          const arcPts = [];
+          for (let k = 0; k <= 12; k++) {
+            const ang = -0.4 + (k / 12) * 1.9;
+            arcPts.push([cu + 0.75 * Math.cos(ang), pv, cz + 0.75 * Math.sin(ang)]);
+          }
+          const pulsePath = el(
+            "path",
+            {
+              d: buildRoundedPath3D(arcPts, 2),
+              fill: "none",
+              stroke: "#FDE047",
+              "stroke-width": 3.0,
+              "stroke-linecap": "round",
+              opacity: 0.25,
+              filter: "url(#fluid-glow)"
+            },
+            wTurbine
+          );
+          animGenPulses.push({ el: pulsePath, phase: p * 1.5 });
+        }
+
+        // Rear protruding polished steel generator shaft stub
+        isoCylV(wTurbine, cu, 11.20, 11.72, cz, 0.20, {
+          side: "url(#grad-steel-v)",
+          cap: "#E2E8F0"
+        }, { sw: 1.15 });
+
+        // Clean cobalt-blue stepped cutaway front rim framing generator coil bay
+        isoPoly(
+          wTurbine,
+          [
+            [cu + 0.98, 9.48, cz + 0.10],
+            [cu + 0.98, 11.30, cz + 0.10],
+            [cu + 1.12, 11.30, cz + 0.10],
+            [cu + 1.12, 9.48, cz + 0.10]
+          ],
+          "#CBD5E1",
+          INK,
+          1.05
+        );
+
+        // --- C) CENTRAL POLISHED STEEL COUPLING SHAFT (TURBINE <-> GENERATOR) ---
+        isoCylV(wTurbine, cu, 7.65, 9.65, cz, 0.22, {
+          side: "url(#grad-steel-v)",
+          cap: "#F8FAFC"
+        }, { sw: 1.2 });
+
+        // --- D) FRONT-LEFT AXIAL TURBINE HOUSING & EMERALD VAPOR SCROLL ---
+        // Rear half of turbine scroll shell (behind spinning blades)
+        isoCylV(wTurbine, cu, 7.80, 9.15, cz, 1.10, {
+          side: "url(#grad-cobalt-shell)",
+          cap: "#0F766E"
+        }, { sw: 1.35 });
+
+        // Satin anodized steel outer scroll collar wrap
+        isoCylV(wTurbine, cu, 7.28, 8.65, cz, 1.06, {
+          side: "url(#grad-steel-top)",
+          cap: "#1E293B"
+        }, { cap: false, sw: 1.3 });
+
+        // Luminous emerald-cyan vapor chamber interior behind rotor blades
+        const scrollChamber = [];
+        for (let i = 0; i < 26; i++) {
+          const a = (i / 26) * Math.PI * 2;
+          scrollChamber.push([cu + 0.94 * Math.cos(a), 7.88, cz + 0.94 * Math.sin(a)]);
+        }
+        isoPoly(wTurbine, scrollChamber, "url(#grad-organic-vapor)", INK, 1.25);
+
+        // Swirling emerald vapor streamlines inside turbine scroll
+        const scrollFlowD = buildRoundedPath3D(
+          [
+            [cu - 0.55, 7.86, cz + 0.65],
+            [cu + 0.35, 7.86, cz + 0.72],
+            [cu + 0.72, 7.86, cz - 0.10],
+            [cu + 0.12, 7.86, cz - 0.72]
+          ],
+          14
+        );
+        registerFlowStream(wTurbine, scrollFlowD, {
+          dashColor: "#ECFDF5",
+          dashWidth: 3.0,
+          dashArray: "8 14",
+          speed: 72,
+          dir: 1,
+          opacity: 0.86,
+          channel: "vapor"
+        });
+
+        // --- E) DYNAMIC 60 FPS 3D ISOMETRIC SPINNING TURBINE ROTOR WHEEL ---
+        // Populated & updated smoothly each frame in `renderTurbineBlades()`
+        animTurbineWheel.group = el("g", { id: "turbine-rotor-blades" }, wTurbine);
+
+        // Front nose shaft & machined steel bearing ring in front of the rotor hub
+        isoCylV(wTurbine, cu, 6.72, 7.42, cz, 0.22, {
+          side: "url(#grad-steel-v)",
+          cap: "#F8FAFC"
+        }, { sw: 1.2 });
+
+        // Front lower cutaway cobalt-blue & steel bearing end-shield (leaves upper-right blades wide open!)
+        const frontArc = [];
+        const arcSteps = 18;
+        // Sweeps along lower-left front quadrant (from angle 0.62*pi to 1.85*pi)
+        for (let i = 0; i <= arcSteps; i++) {
+          const a = 0.62 * Math.PI + (1.26 * Math.PI * i) / arcSteps;
+          frontArc.push([cu + 1.06 * Math.cos(a), 7.12, cz + 1.06 * Math.sin(a)]);
+        }
+        for (let i = arcSteps; i >= 0; i--) {
+          const a = 0.62 * Math.PI + (1.26 * Math.PI * i) / arcSteps;
+          frontArc.push([cu + 0.42 * Math.cos(a), 7.12, cz + 0.42 * Math.sin(a)]);
+        }
+        isoPoly(wTurbine, frontArc, "url(#grad-steel-top)", INK, 1.3);
+
+        // Accent cobalt-blue bearing collar ring on the front cutaway shield
+        const blueRing = [];
+        for (let i = 0; i <= arcSteps; i++) {
+          const a = 0.66 * Math.PI + (1.18 * Math.PI * i) / arcSteps;
+          blueRing.push([cu + 0.86 * Math.cos(a), 7.08, cz + 0.86 * Math.sin(a)]);
+        }
+        for (let i = arcSteps; i >= 0; i--) {
+          const a = 0.66 * Math.PI + (1.18 * Math.PI * i) / arcSteps;
+          blueRing.push([cu + 0.56 * Math.cos(a), 7.08, cz + 0.56 * Math.sin(a)]);
+        }
+        isoPoly(wTurbine, blueRing, "url(#grad-cobalt-shell)", INK, 1.15);
+
+        // Exhaust port stub at lower-right side of turbine scroll leading toward condenser
+        isoCylU(wTurbine, cu + 0.78, cu + 1.25, 7.65, cz - 0.25, 0.25, {
+          side: "#0F766E",
+          cap: "#34D399"
+        }, { sw: 1.15 });
+      }
+
+      /**
+       * Renders 16 sculpted 3D isometric turbine blades around the rotor hub,
+       * sorted back-to-front by isometric depth for genuine 3D rotation at 60 FPS.
+       */
+      function renderTurbineBlades(angleRad) {
+        const g = animTurbineWheel.group;
+        if (!g) return;
+
+        // Clear previous frame's blade nodes
+        while (g.firstChild) {
+          g.removeChild(g.firstChild);
+        }
+
+        const cu = animTurbineWheel.cu;
+        const cv = animTurbineWheel.cv;
+        const cz = animTurbineWheel.cz;
+        const rHub = animTurbineWheel.rHub;
+        const rTip = animTurbineWheel.rTip;
+        const count = animTurbineWheel.bladeCount;
+
+        const blades = [];
+        for (let i = 0; i < count; i++) {
+          const a = angleRad + (i / count) * Math.PI * 2;
+          const aNext = a + 0.24;
+          // Depth sorting metric: lower-right (+u) and higher (+z) appear closer to viewer
+          const depth = Math.cos(a) - Math.sin(a) * 0.4;
+
+          // Subtle airfoil twist across axial v depth (v - 0.14 to v + 0.18)
+          const p0 = [cu + rHub * Math.cos(a), cv + 0.14, cz + rHub * Math.sin(a)];
+          const p1 = [cu + rTip * Math.cos(a - 0.08), cv + 0.18, cz + rTip * Math.sin(a - 0.08)];
+          const p2 = [cu + rTip * Math.cos(aNext), cv - 0.14, cz + rTip * Math.sin(aNext)];
+          const p3 = [cu + rHub * Math.cos(aNext - 0.06), cv - 0.10, cz + rHub * Math.sin(aNext - 0.06)];
+
+          // Dynamic lighting across blade face as it rotates in emerald vapor light
+          const shadeVal = Math.sin(a + 0.85);
+          let fillCol = "#CBD5E1";
+          if (shadeVal > 0.45) {
+            fillCol = "#CCFBF1";
+          } else if (shadeVal > 0.0) {
+            fillCol = "#6EE7B7";
+          } else if (shadeVal > -0.45) {
+            fillCol = "#94A3B8";
+          } else {
+            fillCol = "#0F766E";
+          }
+
+          blades.push({ pts: [p0, p1, p2, p3], depth: depth, fill: fillCol });
+        }
+
+        // Sort strictly back-to-front
+        blades.sort(function (a, b) {
+          return a.depth - b.depth;
+        });
+
+        for (let i = 0; i < blades.length; i++) {
+          isoPoly(g, blades[i].pts, blades[i].fill, INK, 1.0);
+        }
+
+        // Central machined steel rotor hub cap over blade roots
+        isoCylV(g, cu, cv - 0.22, cv + 0.18, cz, rHub + 0.04, {
+          side: "url(#grad-steel-v)",
+          cap: "#E2E8F0"
+        }, { sw: 1.15 });
+      }
+
+      /* ---------------------------------------------------------------------
+         3.4. FINNED COOLING CONDENSER, BLUE RECEIVER DRUM & LOOP PIPING
+         --------------------------------------------------------------------- */
+      function buildCondenser() {
+        const u0 = 10.12;
+        const u1 = 11.44;
+        const v0 = 4.30;
+        const v1 = 7.25;
+
+        // --- A) CURVED EMERALD-CYAN TURBINE EXHAUST LOOP INTO CONDENSER ---
+        const exhaustPts = [
+          [8.68, 7.65, 1.65],
+          [9.95, 7.65, 1.65],
+          [11.02, 7.72, 1.56],
+          [11.02, 7.68, 0.88],
+          [10.96, 7.12, 0.72]
+        ];
+        const exTube = isoTube(
+          wCondenser,
+          exhaustPts,
+          13.0,
+          { outer: "#0F766E", mid: "#10B981", light: "#A7F3D0" },
+          16
+        );
+        registerFlowStream(wCondenser, exTube.d, {
+          dashColor: "#CCFBF1",
+          dashWidth: 2.8,
+          dashArray: "10 18",
+          speed: 48,
+          dir: 1,
+          arrows: 2,
+          arrowColor: "#ECFDF5",
+          arrowSize: 5.0,
+          arrowSpeed: 0.30,
+          channel: "vapor"
+        });
+
+        // --- B) COOLED CERULEAN DISCHARGE HEADER TOWARD INJECTION WELL ---
+        const injHeaderPts = [
+          [10.72, v1 - 0.10, 2.28],
+          [12.35, v1 + 0.95, 2.38],
+          [13.45, INJ_V, 2.38]
+        ];
+        const injHeadTube = isoTube(
+          wCondenser,
+          injHeaderPts,
+          14.5,
+          { outer: "#0369A1", mid: "#0EA5E9", light: "#BAE6FD" },
+          18
+        );
+        registerFlowStream(wCondenser, injHeadTube.d, {
+          dashColor: "#E0F2FE",
+          dashWidth: 3.0,
+          dashArray: "10 20",
+          speed: 42,
+          dir: 1,
+          arrows: 2,
+          arrowColor: "#F0F9FF",
+          arrowSize: 5.2,
+          arrowSpeed: 0.28,
+          channel: "cool"
+        });
+
+        // --- C) LOWER CERULEAN-BLUE CYLINDRICAL CONDENSATE RECEIVER DRUM ---
+        // Support saddles anchored at z = 0
+        [4.88, 6.62].forEach(function (sv) {
+          isoBox(wCondenser, 10.48, sv - 0.16, 0.0, 11.42, sv + 0.16, 0.44, {
+            top: "#38BDF8",
+            left: "#0284C7",
+            right: "#0369A1"
+          }, { sw: 1.15 });
+        });
+
+        // Horizontal cerulean-blue receiver drum along +v axis
+        isoCylV(wCondenser, 10.96, 4.46, 7.12, 0.72, 0.44, {
+          side: "url(#grad-drum-blue)",
+          cap: "#38BDF8"
+        }, { sw: 1.3 });
+
+        // Vertical drop-tubes linking upper radiator header to lower condensate drum
+        [5.12, 6.42].forEach(function (tv) {
+          isoCylZ(wCondenser, 10.88, tv, 1.08, 1.46, 0.13, {
+            side: "#0284C7",
+            shade: "#0369A1",
+            top: "#7DD3FC"
+          }, { top: false, sw: 1.05 });
+        });
+
+        // Front-mounted compact centrifugal circulation pump volute on drum front-right (+u face)
+        isoCylU(wCondenser, 11.15, 11.66, 5.72, 0.70, 0.34, {
+          side: "url(#grad-drum-blue)",
+          cap: "#0284C7"
+        }, { sw: 1.25 });
+
+        // Circular flanged pump face + subtle animated impeller hub indicator
+        const pumpFace = iso(11.66, 5.72, 0.70);
+        el(
+          "ellipse",
+          {
+            cx: pumpFace[0].toFixed(1),
+            cy: pumpFace[1].toFixed(1),
+            rx: 10.5,
+            ry: 13.5,
+            transform: "rotate(-26 " + pumpFace[0].toFixed(1) + " " + pumpFace[1].toFixed(1) + ")",
+            fill: "#0369A1",
+            stroke: INK,
+            "stroke-width": 1.15
+          },
+          wCondenser
+        );
+
+        const pumpRotorGroup = el(
+          "g",
+          { transform: "translate(" + pumpFace[0].toFixed(1) + " " + pumpFace[1].toFixed(1) + ")" },
+          wCondenser
+        );
+        for (let b = 0; b < 3; b++) {
+          const ang = (b * 120 * Math.PI) / 180;
+          el(
+            "line",
+            {
+              x1: 0,
+              y1: 0,
+              x2: (Math.cos(ang) * 7.2).toFixed(1),
+              y2: (Math.sin(ang) * 7.2).toFixed(1),
+              stroke: "#BAE6FD",
+              "stroke-width": 2.2,
+              "stroke-linecap": "round"
+            },
+            pumpRotorGroup
+          );
+        }
+        el("circle", { cx: 0, cy: 0, r: 2.6, fill: "#E0F2FE", stroke: INK, "stroke-width": 0.9 }, pumpRotorGroup);
+        animPumpRotor.el = pumpRotorGroup;
+        animPumpRotor.cx = pumpFace[0];
+        animPumpRotor.cy = pumpFace[1];
+
+        // --- D) UPPER RECTANGULAR FINNED ANODIZED ALUMINUM RADIATOR STACK ---
+        // Recessed internal thermal core showing emerald -> cerulean condensation transition
+        isoBox(wCondenser, u0 + 0.08, v0 + 0.08, 1.42, u1 - 0.06, v1 - 0.08, 2.62, {
+          top: "#94A3B8",
+          left: "#334155",
+          right: "#1E293B"
+        }, { sw: 1.15 });
+
+        // Crisp glowing condensation transition strips recessed inside the fin stack
+        [1.68, 2.02, 2.34].forEach(function (fz, idx) {
+          const shimmerPoly = isoPoly(
+            wCondenser,
+            [
+              [u1 - 0.04, v0 + 0.24, fz],
+              [u1 - 0.04, v1 - 0.24, fz],
+              [u1 - 0.04, v1 - 0.24, fz + 0.14],
+              [u1 - 0.04, v0 + 0.24, fz + 0.14]
+            ],
+            "url(#grad-condense-band)",
+            "none",
+            0,
+            { opacity: 0.78, filter: "url(#fluid-glow)" }
+          );
+          animFinShimmers.push({ el: shimmerPoly, phase: idx * 1.4 });
+        });
+
+        // 9 crisp parallel horizontal anodized aluminum cooling fins stacked vertically
+        const finCount = 9;
+        const finZ0 = 1.42;
+        const finZ1 = 2.68;
+        const finStep = (finZ1 - finZ0) / (finCount - 1);
+        for (let i = 0; i < finCount; i++) {
+          const zf = finZ0 + i * finStep;
+          const isCap = i === finCount - 1;
+          isoBox(wCondenser, u0, v0, zf, u1, v1, zf + (isCap ? 0.12 : 0.065), {
+            top: isCap ? "url(#grad-steel-top)" : "#F8FAFC",
+            left: isCap ? "#CBD5E1" : "#E2E8F0",
+            right: isCap ? "#94A3B8" : "#CBD5E1"
+          }, { sw: isCap ? 1.3 : 1.0 });
+        }
+
+        // Front-left machined aluminum end manifold plate with fastener rivets
+        isoBox(wCondenser, u0 - 0.02, v0 - 0.08, 1.42, u1 + 0.02, v0 + 0.10, 2.80, {
+          top: "#F8FAFC",
+          left: "#E2E8F0",
+          right: "#CBD5E1"
+        }, { sw: 1.25 });
+
+        // Micro rivets on front-left manifold plate
+        [
+          [u0 + 0.22, 2.55],
+          [u1 - 0.22, 2.55],
+          [u0 + 0.22, 1.66],
+          [u1 - 0.22, 1.66]
+        ].forEach(function (rv) {
+          const rp = iso(rv[0], v0 - 0.09, rv[1]);
+          el("circle", { cx: rp[0].toFixed(1), cy: rp[1].toFixed(1), r: 2.1, fill: "#94A3B8", stroke: INK, "stroke-width": 0.7 }, wCondenser);
+        });
+
+        // --- E) CERULEAN-BLUE LIQUID CONDENSATE RETURN PIPE (HEAT EXCHANGER <-> CONDENSER) ---
+        const condReturnPts = [
+          [9.02, 2.42, 1.24],
+          [10.32, 3.05, 0.56],
+          [10.52, 3.68, 0.58],
+          [10.52, 3.74, 2.22],
+          [10.52, v0 - 0.06, 2.24]
+        ];
+        const condReturnTube = isoTube(
+          wCondenser,
+          condReturnPts,
+          14.5,
+          { outer: "#0369A1", mid: "#0EA5E9", light: "#BAE6FD" },
+          18
+        );
+        // Binary cycle condensate flows smoothly from condenser back into heat exchanger
+        registerFlowStream(wCondenser, condReturnTube.d, {
+          dashColor: "#E0F2FE",
+          dashWidth: 3.0,
+          dashArray: "10 22",
+          speed: 44,
+          dir: -1,
+          arrows: 3,
+          arrowColor: "#F0F9FF",
+          arrowSize: 5.4,
+          arrowSpeed: 0.28,
+          channel: "cool"
+        });
+      }
+
+      /* ---------------------------------------------------------------------
+         3.5. REINJECTION WELL: Cooled Brine Return Arch & Deep Vertical Bore
+         --------------------------------------------------------------------- */
+      function buildInjectionWell() {
+        const u = INJ_U;
+        const v = INJ_V;
+
+        // --- A) DEEP VERTICAL DARK-SLATE / ANODIZED-STEEL BORE CASING ---
+        isoCylZ(wInjWell, u, v, -2.96, -1.55, 0.38, {
+          side: "url(#grad-slate-casing)",
+          shade: "#0F172A",
+          top: "#64748B"
+        }, { top: false, sw: 1.25 });
+
+        isoCylZ(wInjWell, u, v, -1.55, 0.02, 0.46, {
+          side: "url(#grad-slate-casing)",
+          shade: "#0F172A",
+          top: "#64748B"
+        }, { top: false, sw: 1.25 });
+
+        // Ground-level cylindrical dark-slate & satin-steel reinjection wellhead cap
+        isoCylZ(wInjWell, u, v, -0.05, 1.28, 0.52, {
+          side: "url(#grad-slate-casing)",
+          shade: "#1E293B",
+          top: "#94A3B8"
+        }, { sw: 1.3 });
+
+        // Top beveled rim ring on wellhead cap
+        isoCylZ(wInjWell, u, v, 1.22, 1.38, 0.42, {
+          side: "#64748B",
+          shade: "#334155",
+          top: "#CBD5E1"
+        }, { sw: 1.15 });
+
+        // --- B) VERTICAL FRONT CUTAWAY SLOT REVEALING CHILLED CERULEAN BRINE ---
+        // Faces outward along +u (front-right geological wall)
+        const slotHalfW = 0.20;
+        const injWindow = [
+          [u + 0.34, v - slotHalfW, -2.94],
+          [u + 0.34, v + slotHalfW, -2.94],
+          [u + 0.34, v + slotHalfW, 0.88],
+          [u + 0.34, v - slotHalfW, 0.88]
+        ];
+        // Beveled dark-steel cut wall edges framing the slot
+        isoPoly(
+          wInjWell,
+          [
+            [u + 0.33, v - slotHalfW - 0.08, -2.94],
+            [u + 0.34, v - slotHalfW, -2.94],
+            [u + 0.34, v - slotHalfW, 0.88],
+            [u + 0.33, v - slotHalfW - 0.08, 0.88]
+          ],
+          "#64748B",
+          INK,
+          1.0
+        );
+        isoPoly(
+          wInjWell,
+          [
+            [u + 0.34, v + slotHalfW, -2.94],
+            [u + 0.33, v + slotHalfW + 0.08, -2.94],
+            [u + 0.33, v + slotHalfW + 0.08, 0.88],
+            [u + 0.34, v + slotHalfW, 0.88]
+          ],
+          "#334155",
+          INK,
+          1.0
+        );
+
+        // Chilled cerulean-blue brine column descending inside the bore
+        isoPoly(wInjWell, injWindow, "url(#grad-cool-brine)", INK, 1.15);
+
+        // Curved bottom dispersion bore opening
+        const bL = iso(u + 0.34, v - slotHalfW, -2.94);
+        const bR = iso(u + 0.34, v + slotHalfW, -2.94);
+        const bM = iso(u + 0.34, v, -2.76);
+        el(
+          "path",
+          {
+            d:
+              "M " +
+              bL[0].toFixed(1) +
+              " " +
+              bL[1].toFixed(1) +
+              " Q " +
+              bM[0].toFixed(1) +
+              " " +
+              bM[1].toFixed(1) +
+              " " +
+              bR[0].toFixed(1) +
+              " " +
+              bR[1].toFixed(1),
+            fill: "#1B2636",
+            stroke: INK,
+            "stroke-width": 1.25
+          },
+          wInjWell
+        );
+
+        // Animated downward flow arrows & descending cerulean pulses inside the bore
+        const downFlowD = buildRoundedPath3D(
+          [
+            [u + 0.36, v, 0.78],
+            [u + 0.36, v, -2.72]
+          ],
+          0
+        );
+        registerFlowStream(wInjWell, downFlowD, {
+          dashColor: "#BAE6FD",
+          dashWidth: 3.4,
+          dashArray: "12 24",
+          speed: 46,
+          dir: 1,
+          arrows: 4,
+          arrowColor: "#E0F2FE",
+          arrowSize: 6.6,
+          arrowStroke: 2.4,
+          arrowSpeed: 0.24,
+          channel: "cool"
+        });
+
+        // --- C) CURVED CERULEAN-BLUE RETURN ARCH ENTERING WELLHEAD TOP ---
+        const injArchPts = [
+          [13.28, v, 2.38],
+          [u, v, 2.38],
+          [u, v, 1.32]
+        ];
+        const archTube = isoTube(
+          wInjWell,
+          injArchPts,
+          14.5,
+          { outer: "#0369A1", mid: "#0EA5E9", light: "#BAE6FD" },
+          18
+        );
+        registerFlowStream(wInjWell, archTube.d, {
+          dashColor: "#E0F2FE",
+          dashWidth: 2.8,
+          dashArray: "8 18",
+          speed: 42,
+          dir: 1,
+          arrows: 1,
+          arrowColor: "#F0F9FF",
+          arrowSize: 5.0,
+          arrowSpeed: 0.32,
+          channel: "cool"
+        });
+      }
+
+      /* =====================================================================
+         4. BUILD COMPLETE GEOTHERMAL SCENE & COMPUTE DYNAMIC CAMERA TARGETS
+         ===================================================================== */
+      buildHousingBack();
+      buildOrganicTurbine();
+      renderTurbineBlades(0);
+      buildInjectionWell();
+      buildHeatExchanger();
+      buildCondenser();
+      buildProductionWell();
+      buildHousingFront();
+
+      const stageEl = document.getElementById("mirvo-stage");
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+      const allHousingEls = Array.from(document.querySelectorAll(".mirvo-housing"));
+      const allExplodeWraps = Array.from(document.querySelectorAll(".mirvo-explode-wrap"));
+
+      /**
+       * Calculates accurate center (x, y) and safe framing zoom for every part
+       * directly from its real rendered SVG bounding box so nothing ever clips.
+       */
+      function computeFocusTargets() {
+        const targets = {
+          full: { x: 800, y: 450, zoom: 1.0 }
+        };
+
+        allPartEls.forEach(function (g) {
+          const partId = g.dataset.part;
+          try {
+            const b = g.getBBox();
+            if (b.width > 0 && b.height > 0) {
+              const cx = b.x + b.width * 0.5;
+              const cy = b.y + b.height * 0.5;
+              const fitZoom = Math.min((1600 * 0.72) / b.width, (900 * 0.78) / b.height);
+              const zoom = Math.max(1.52, Math.min(2.05, fitZoom));
+              targets[partId] = {
+                x: Number(cx.toFixed(1)),
+                y: Number(cy.toFixed(1)),
+                zoom: Number(zoom.toFixed(2))
+              };
+            }
+          } catch (err) {
+            targets[partId] = { x: 800, y: 450, zoom: 1.75 };
+          }
+        });
+
+        return targets;
+      }
+
+      const FOCUS_TARGETS = computeFocusTargets();
+
+      /* =====================================================================
+         5. SCENE STATE, CAMERA ENGINE, SPOTLIGHT & SMOOTH EXPLODED VIEW
+         ===================================================================== */
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const state = {
+        focusedPart: null,
+        camera: { x: 800, y: 450, zoom: 1.0 },
+        targetExploded: 0,
+        currentExploded: 0,
+        phase: "auto", // "auto" | "heating" | "generation" | "cooling" | "idle"
+        playing: true,
+        autoTour: !prefersReducedMotion,
+        stepIndex: 0,
+        tourTimer: null,
+        simTime: 0
+      };
+
+      /**
+       * Moves and scales the 16:9 SVG stage smoothly around the requested focal target.
+       */
+      function applyCamera(target) {
+        let cam = FOCUS_TARGETS.full;
+        if (typeof target === "string") {
+          cam = FOCUS_TARGETS[target] || FOCUS_TARGETS.full;
+        } else if (target && typeof target === "object") {
+          cam = {
+            x: typeof target.x === "number" ? target.x : 800,
+            y: typeof target.y === "number" ? target.y : 450,
+            zoom: typeof target.zoom === "number" ? Math.max(0.65, Math.min(3.0, target.zoom)) : 1.0
+          };
+        }
+
+        state.camera = cam;
+
+        if (prefersReducedMotion) {
+          stageEl.style.transform = "scale(1) translate(0%, 0%)";
+          return;
+        }
+
+        const txPct = ((800 - cam.x) / 1600) * 100;
+        const tyPct = ((450 - cam.y) / 900) * 100;
+        stageEl.style.transform =
+          "scale(" +
+          cam.zoom.toFixed(3) +
+          ") translate(" +
+          txPct.toFixed(2) +
+          "%, " +
+          tyPct.toFixed(2) +
+          "%)";
+      }
+
+      /**
+       * Spotlights ONLY `partId` at 100% clarity while smoothly dimming all other
+       * parts and the geological housing. Clears all dimming when `partId` is null/"full".
+       */
+      function applyHighlight(partId) {
+        const cleanId =
+          partId && partId !== "full" && partId !== "housing" && PART_NAMES_UZ[partId] ? partId : null;
+        state.focusedPart = cleanId;
+
+        allPartEls.forEach(function (g) {
+          if (!cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.remove("is-focused");
+          } else if (g.dataset.part === cleanId) {
+            g.classList.remove("is-dimmed");
+            g.classList.add("is-focused");
+          } else {
+            g.classList.remove("is-focused");
+            g.classList.add("is-dimmed");
+          }
+        });
+
+        allHousingEls.forEach(function (h) {
+          if (!cleanId) {
+            h.classList.remove("is-dimmed");
+          } else {
+            h.classList.add("is-dimmed");
+          }
+        });
+      }
+
+      /**
+       * Writes interpolated exploded-view translation onto inner wrappers so
+       * CSS spotlight transitions on outer groups never clash.
+       */
+      function writeExplodedTransforms(amount) {
+        allExplodeWraps.forEach(function (wrap) {
+          const key = wrap.dataset.explode;
+          const vec = EXPLODE_VECTORS[key] || [0, 0];
+          const dx = vec[0] * amount;
+          const dy = vec[1] * amount;
+          if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) {
+            wrap.removeAttribute("transform");
+          } else {
+            wrap.setAttribute("transform", "translate(" + dx.toFixed(2) + " " + dy.toFixed(2) + ")");
+          }
+        });
+      }
+
+      /* =====================================================================
+         6. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ===================================================================== */
+      function clearTourTimer() {
+        if (state.tourTimer !== null) {
+          clearTimeout(state.tourTimer);
+          state.tourTimer = null;
+        }
+      }
+
+      function scheduleNextTourTick() {
+        clearTourTimer();
+        if (!state.autoTour) return;
+        const holdMs = state.stepIndex === 0 ? 2500 : 3600;
+        state.tourTimer = setTimeout(function () {
+          if (state.autoTour) {
+            runTourStep(state.stepIndex + 1);
+          }
+        }, holdMs);
+      }
+
+      function runTourStep(index) {
+        clearTourTimer();
+        const safeIdx = ((index % TOUR_SEQUENCE.length) + TOUR_SEQUENCE.length) % TOUR_SEQUENCE.length;
+        state.stepIndex = safeIdx;
+        const key = TOUR_SEQUENCE[safeIdx];
+
+        if (key === "full") {
+          applyHighlight(null);
+          applyCamera("full");
+        } else {
+          applyHighlight(key);
+          applyCamera(key);
+        }
+
+        if (state.autoTour) {
+          scheduleNextTourTick();
+        }
+      }
+
+      function setAutoTour(enabled) {
+        state.autoTour = Boolean(enabled);
+        clearTourTimer();
+        if (state.autoTour) {
+          scheduleNextTourTick();
+        }
+      }
+
+      /* =====================================================================
+         7. 60 FPS LIVE PHYSICS SIMULATION LOOP
+         ===================================================================== */
+      let lastTs = 0;
+
+      /**
+       * Computes per-subsystem speed multipliers according to `state.phase`.
+       */
+      function getPhaseMultipliers() {
+        switch (state.phase) {
+          case "heating":
+            return { brine: 1.55, vapor: 1.25, turbine: 0.95, cool: 0.85 };
+          case "generation":
+            return { brine: 1.05, vapor: 1.45, turbine: 1.65, cool: 1.0 };
+          case "cooling":
+            return { brine: 0.90, vapor: 1.05, turbine: 0.95, cool: 1.60 };
+          case "idle":
+            return { brine: 0.25, vapor: 0.22, turbine: 0.20, cool: 0.25 };
+          case "auto":
+          default:
+            return { brine: 1.0, vapor: 1.0, turbine: 1.0, cool: 1.0 };
+        }
+      }
+
+      function tickSimulation(ts) {
+        try {
+          if (!lastTs) lastTs = ts;
+          const dt = Math.min(0.05, Math.max(0.001, (ts - lastTs) / 1000));
+          lastTs = ts;
+
+          // Always keep Exploded View lerp responsive even if physics is paused
+          if (Math.abs(state.targetExploded - state.currentExploded) > 0.0008) {
+            if (prefersReducedMotion) {
+              state.currentExploded = state.targetExploded;
+            } else {
+              const lerpAlpha = 1 - Math.exp(-dt * 8.5);
+              state.currentExploded += (state.targetExploded - state.currentExploded) * lerpAlpha;
+            }
+            writeExplodedTransforms(state.currentExploded);
+          } else if (state.currentExploded !== state.targetExploded) {
+            state.currentExploded = state.targetExploded;
+            writeExplodedTransforms(state.currentExploded);
+          }
+
+          if (state.playing) {
+            const mult = getPhaseMultipliers();
+            const motionFactor = prefersReducedMotion ? 0.18 : 1.0;
+            state.simTime += dt;
+            const t = state.simTime;
+
+            // 1) Fluid dash streamlines (brine, vapor, cooled condensate)
+            for (let i = 0; i < animStreamPaths.length; i++) {
+              const sp = animStreamPaths[i];
+              const m = mult[sp.channel] || 1.0;
+              sp.offset -= dt * sp.speed * sp.dir * m * motionFactor;
+              sp.el.setAttribute("stroke-dashoffset", sp.offset.toFixed(2));
+            }
+
+            // 2) Directional flow chevrons accurately oriented along curved pipe tangents
+            for (let i = 0; i < animChevrons.length; i++) {
+              const ch = animChevrons[i];
+              const m = mult[ch.channel] || 1.0;
+              ch.t = (ch.t + dt * ch.speed * m * motionFactor) % 1;
+              if (ch.t < 0) ch.t += 1;
+
+              const dist = ch.t * ch.length;
+              const p = ch.pathEl.getPointAtLength(dist);
+              const stepDir = ch.speed >= 0 ? 1 : -1;
+              const dist2 = Math.max(0, Math.min(ch.length, dist + stepDir * 2.5));
+              const p2 = ch.pathEl.getPointAtLength(dist2);
+              const angDeg = (Math.atan2(p2.y - p.y, p2.x - p.x) * 180) / Math.PI;
+
+              // Fade gracefully near pipe endpoints
+              const edgeFade = Math.min(1, ch.t * 8, (1 - ch.t) * 8);
+              ch.el.setAttribute(
+                "transform",
+                "translate(" + p.x.toFixed(1) + " " + p.y.toFixed(1) + ") rotate(" + angDeg.toFixed(1) + ")"
+              );
+              ch.el.setAttribute("opacity", (0.94 * edgeFade).toFixed(2));
+            }
+
+            // 3) Rising thermal & boiling organic vapor bubbles
+            for (let i = 0; i < animBubbles.length; i++) {
+              const b = animBubbles[i];
+              const m = mult[b.channel] || 1.0;
+              b.t = (b.t + dt * b.speed * m * motionFactor) % 1;
+              const bx = b.x0 + (b.x1 - b.x0) * b.t + Math.sin(t * 4.2 + b.phase) * b.wobble;
+              const by = b.y0 + (b.y1 - b.y0) * b.t;
+              const op = Math.sin(b.t * Math.PI) * 0.86;
+              b.el.setAttribute("cx", bx.toFixed(1));
+              b.el.setAttribute("cy", by.toFixed(1));
+              b.el.setAttribute("opacity", op.toFixed(2));
+            }
+
+            // 4) True 3D isometric spinning axial turbine blades
+            animTurbineWheel.angle =
+              (animTurbineWheel.angle + dt * 2.65 * mult.turbine * motionFactor) % (Math.PI * 2);
+            renderTurbineBlades(animTurbineWheel.angle);
+
+            // 5) Electromagnetic induction pulses along copper generator windings
+            for (let i = 0; i < animGenPulses.length; i++) {
+              const gp = animGenPulses[i];
+              const pulse = 0.12 + 0.42 * (0.5 + 0.5 * Math.sin(t * 4.8 * mult.turbine - gp.phase));
+              gp.el.setAttribute("opacity", pulse.toFixed(3));
+            }
+
+            // 6) Condenser radiator cooling shimmer & centrifugal pump impeller rotation
+            for (let i = 0; i < animFinShimmers.length; i++) {
+              const fs = animFinShimmers[i];
+              const op = 0.45 + 0.40 * (0.5 + 0.5 * Math.sin(t * 3.1 * mult.cool - fs.phase));
+              fs.el.setAttribute("opacity", op.toFixed(2));
+            }
+            if (animPumpRotor.el) {
+              animPumpRotor.angle =
+                (animPumpRotor.angle + dt * 220 * mult.cool * motionFactor) % 360;
+              animPumpRotor.el.setAttribute(
+                "transform",
+                "translate(" +
+                  animPumpRotor.cx.toFixed(1) +
+                  " " +
+                  animPumpRotor.cy.toFixed(1) +
+                  ") rotate(" +
+                  animPumpRotor.angle.toFixed(1) +
+                  ")"
+              );
+            }
+
+            // 7) Subtle breathing geothermal heat & chilled reservoir glows
+            for (let i = 0; i < animThermalAuras.length; i++) {
+              const au = animThermalAuras[i];
+              const m = mult[au.channel] || 1.0;
+              const op = au.baseOp + au.amp * Math.sin(t * 1.8 * m + au.phase);
+              au.el.setAttribute("opacity", Math.max(0.25, Math.min(1, op)).toFixed(2));
+            }
+          }
+        } catch (err) {
+          // Keep animation loop resilient against unexpected browser states
+        }
+        requestAnimationFrame(tickSimulation);
+      }
+
+      /* =====================================================================
+         8. INTERACTIVE CONTROLS (CLICK-TO-ASK, RESET, EXPLODED VIEW, KEYS)
+         ===================================================================== */
+      allPartEls.forEach(function (g) {
+        const partId = g.dataset.part;
+        if (!partId) return;
+
+        g.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          setAutoTour(false);
+          const idx = TOUR_SEQUENCE.indexOf(partId);
+          if (idx >= 0) state.stepIndex = idx;
+          applyHighlight(partId);
+          applyCamera(partId);
+
+          // Notify host / Mirvo AI parent frame via Click-to-Ask protocol
+          try {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId: partId,
+                nameUz: PART_NAMES_UZ[partId] || partId
+              },
+              "*"
+            );
+          } catch (e) {
+            // Safely ignore if running standalone
+          }
+        });
+      });
+
+      // Clicking blank white background or geological housing resets view & resumes tour
+      viewportEl.addEventListener("click", function (ev) {
+        const clickedPart = ev.target && ev.target.closest ? ev.target.closest(".mirvo-part") : null;
+        if (!clickedPart) {
+          window.MirvoScene.reset();
+        }
+      });
+
+      // Double-clicking anywhere smoothly toggles Exploded View (0 <-> 1)
+      viewportEl.addEventListener("dblclick", function (ev) {
+        ev.preventDefault();
+        window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard shortcuts: R / Esc -> Reset, E -> Exploded View, Space -> Play/Pause
+      window.addEventListener("keydown", function (ev) {
+        const key = ev.key;
+        if (key === "r" || key === "R" || key === "Escape") {
+          window.MirvoScene.reset();
+        } else if (key === "e" || key === "E") {
+          window.MirvoScene.setExploded(state.targetExploded > 0.5 ? 0 : 1);
+        } else if (key === " ") {
+          ev.preventDefault();
+          window.MirvoScene.setPlaying(!state.playing);
+        }
+      });
+
+      /* =====================================================================
+         9. MANDATORY MIRVO AI INTEGRATION API (`window.MirvoScene` & `postMessage`)
+         ===================================================================== */
+      window.MirvoScene = {
+        focus: function (target) {
+          if (target === null || target === "full") {
+            state.stepIndex = 0;
+            applyCamera("full");
+            return;
+          }
+          setAutoTour(false);
+          if (typeof target === "string") {
+            const idx = TOUR_SEQUENCE.indexOf(target);
+            if (idx >= 0) state.stepIndex = idx;
+          }
+          applyCamera(target);
+        },
+
+        highlight: function (partId) {
+          applyHighlight(partId);
+        },
+
+        setStep: function (index) {
+          setAutoTour(false);
+          const safeIdx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.floor(Number(index) || 0)));
+          state.stepIndex = safeIdx;
+          const key = TOUR_SEQUENCE[safeIdx];
+
+          if (key === "full") {
+            applyHighlight(null);
+            applyCamera("full");
+            state.phase = "auto";
+          } else {
+            applyHighlight(key);
+            applyCamera(key);
+            if (key === "production_well" || key === "heat_exchanger") {
+              state.phase = "heating";
+            } else if (key === "organic_turbine") {
+              state.phase = "generation";
+            } else {
+              state.phase = "cooling";
+            }
+          }
+        },
+
+        setAutoTour: function (enabled) {
+          setAutoTour(enabled);
+        },
+
+        setExploded: function (amount) {
+          const val = Math.max(0, Math.min(1, Number(amount) || 0));
+          state.targetExploded = val;
+        },
+
+        setPhase: function (mode) {
+          const valid = ["auto", "heating", "generation", "cooling", "idle"];
+          if (valid.indexOf(mode) !== -1) {
+            state.phase = mode;
+          }
+        },
+
+        setPlaying: function (playing) {
+          state.playing = Boolean(playing);
+        },
+
+        reset: function () {
+          state.targetExploded = 0;
+          state.phase = "auto";
+          state.playing = true;
+          state.stepIndex = 0;
+          applyHighlight(null);
+          applyCamera("full");
+          setAutoTour(!prefersReducedMotion);
+        },
+
+        getState: function () {
+          return {
+            deviceId: DEVICE_ID,
+            parts: Object.assign({}, PART_NAMES_UZ),
+            tourSequence: TOUR_SEQUENCE.slice(),
+            stepIndex: state.stepIndex,
+            focusedPart: state.focusedPart,
+            exploded: Number(state.targetExploded.toFixed(2)),
+            phase: state.phase,
+            playing: state.playing,
+            autoTour: state.autoTour,
+            camera: Object.assign({}, state.camera)
+          };
+        }
+      };
+
+      // Listen for parent Mirvo AI lesson controller commands via postMessage
+      window.addEventListener("message", function (ev) {
+        try {
+          const msg = ev.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              window.MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              window.MirvoScene.highlight(msg.partId);
+              break;
+            case "SET_STEP":
+              window.MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              window.MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              window.MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              window.MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              window.MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              window.MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          // Ignore malformed cross-window payloads safely
+        }
+      });
+
+      /* =====================================================================
+         10. BOOTSTRAP ON WINDOW LOAD
+         ===================================================================== */
+      window.onload = function () {
+        applyCamera("full");
+        applyHighlight(null);
+        requestAnimationFrame(tickSimulation);
+        if (!prefersReducedMotion) {
+          runTourStep(0);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

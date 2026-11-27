@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAES — Gidroakkumulyator Stansiya</title>
+  <style>
+    /* =========================================================================
+       MIRVO AI — STRICT ZERO-UI & PURE #FFFFFF CANVAS FOUNDATION
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #ffffff;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .mirvo-viewport {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .mirvo-stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      transform-origin: 50% 50%;
+      transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    #mirvo-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      overflow: visible;
+    }
+
+    /* =========================================================================
+       SEQUENTIAL SPOTLIGHT FOCUS / DIMMING TRANSITIONS
+       ========================================================================= */
+    .mirvo-part {
+      cursor: pointer;
+      transition:
+        opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mirvo-part[data-part="housing"] {
+      cursor: default;
+    }
+
+    .mirvo-part.is-dimmed {
+      opacity: 0.22;
+      filter: blur(1.2px) saturate(0.45);
+    }
+
+    .mirvo-part.is-focused {
+      opacity: 1;
+      filter: drop-shadow(0 6px 16px rgba(2, 132, 199, 0.24));
+    }
+
+    /* Crisp technical ink outlines across all zoom levels */
+    .ink {
+      stroke: #222933;
+      stroke-width: 1.25;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-thin {
+      stroke: #222933;
+      stroke-width: 0.9;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-subtle {
+      stroke: #334155;
+      stroke-width: 0.75;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .ink-water {
+      stroke: #0369A1;
+      stroke-width: 0.9;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mirvo-stage {
+        transition: none;
+      }
+      .mirvo-part {
+        transition: opacity 0.2s ease;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mirvo-viewport" id="mirvo-viewport">
+    <div class="mirvo-stage" id="mirvo-stage">
+      <svg
+        id="mirvo-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1600 900"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <!-- ================= SHADOWS & SOFT GLOW FILTERS ================= -->
+          <filter id="ground-shadow-blur" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
+
+          <filter id="energy-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="4.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <filter id="water-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- ================= 4-TONE MATTE ENGINEERING GRADIENTS ================= -->
+          <!-- Base Plinth & Ceramic White -->
+          <linearGradient id="plinth-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="65%" stop-color="#F6F8FB" />
+            <stop offset="100%" stop-color="#EAEFF5" />
+          </linearGradient>
+
+          <linearGradient id="plinth-left" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E2E8F0" />
+            <stop offset="100%" stop-color="#CBD5E1" />
+          </linearGradient>
+
+          <linearGradient id="plinth-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#B6C3D2" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <!-- Stratified Ivory / Sandstone Rock -->
+          <linearGradient id="hill-top-ivory" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FCF9F2" />
+            <stop offset="60%" stop-color="#F5EFE0" />
+            <stop offset="100%" stop-color="#EAE2CE" />
+          </linearGradient>
+
+          <linearGradient id="hill-slope-left" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8F4E9" />
+            <stop offset="55%" stop-color="#EFE8D6" />
+            <stop offset="100%" stop-color="#E2D9C5" />
+          </linearGradient>
+
+          <linearGradient id="hill-cut-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#DFD7C4" />
+            <stop offset="50%" stop-color="#CFC6B2" />
+            <stop offset="100%" stop-color="#B9AF9B" />
+          </linearGradient>
+
+          <linearGradient id="strata-light" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#B8C4D0" />
+            <stop offset="100%" stop-color="#8E9DAC" />
+          </linearGradient>
+
+          <linearGradient id="strata-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#768697" />
+            <stop offset="55%" stop-color="#5E6E7F" />
+            <stop offset="100%" stop-color="#485666" />
+          </linearGradient>
+
+          <!-- Concrete / Retaining Walls -->
+          <linearGradient id="concrete-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="100%" stop-color="#E2E8F0" />
+          </linearGradient>
+
+          <linearGradient id="concrete-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#DCE4EE" />
+            <stop offset="100%" stop-color="#BCC7D5" />
+          </linearGradient>
+
+          <linearGradient id="concrete-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#AAB7C7" />
+            <stop offset="100%" stop-color="#7D8C9F" />
+          </linearGradient>
+
+          <linearGradient id="concrete-inner-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#64748B" />
+          </linearGradient>
+
+          <!-- Cerulean & Cobalt Water Gradients -->
+          <linearGradient id="upper-water-surf" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#BAE6FD" />
+            <stop offset="38%" stop-color="#38BDF8" />
+            <stop offset="82%" stop-color="#0EA5E9" />
+            <stop offset="100%" stop-color="#0284C7" />
+          </linearGradient>
+
+          <linearGradient id="upper-water-depth" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.88" />
+            <stop offset="100%" stop-color="#0369A1" stop-opacity="0.96" />
+          </linearGradient>
+
+          <linearGradient id="lower-water-surf" x1="10%" y1="0%" x2="90%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8" />
+            <stop offset="45%" stop-color="#0284C7" />
+            <stop offset="100%" stop-color="#0369A1" />
+          </linearGradient>
+
+          <linearGradient id="lower-water-front" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98" />
+          </linearGradient>
+
+          <linearGradient id="penstock-water" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#E0F2FE" />
+            <stop offset="30%" stop-color="#38BDF8" />
+            <stop offset="72%" stop-color="#0284C7" />
+            <stop offset="100%" stop-color="#0369A1" />
+          </linearGradient>
+
+          <linearGradient id="draft-water-col" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0369A1" stop-opacity="0.82" />
+            <stop offset="35%" stop-color="#38BDF8" stop-opacity="0.9" />
+            <stop offset="65%" stop-color="#BAE6FD" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.85" />
+          </linearGradient>
+
+          <!-- Satin Anodized Steel (Cylindrical 4-Tone) -->
+          <linearGradient id="steel-cyl-y" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC" />
+            <stop offset="28%" stop-color="#CBD5E1" />
+            <stop offset="68%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-cyl-x" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#64748B" />
+            <stop offset="28%" stop-color="#CBD5E1" />
+            <stop offset="52%" stop-color="#F8FAFC" />
+            <stop offset="82%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <linearGradient id="steel-blade" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="40%" stop-color="#CBD5E1" />
+            <stop offset="78%" stop-color="#94A3B8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+
+          <!-- Rich Cobalt Turbine & Generator Casing -->
+          <linearGradient id="cobalt-casing" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA" />
+            <stop offset="36%" stop-color="#2563EB" />
+            <stop offset="76%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#1E3A8A" />
+          </linearGradient>
+
+          <linearGradient id="cobalt-tube" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E3A8A" />
+            <stop offset="32%" stop-color="#3B82F6" />
+            <stop offset="58%" stop-color="#60A5FA" />
+            <stop offset="85%" stop-color="#1D4ED8" />
+            <stop offset="100%" stop-color="#172554" />
+          </linearGradient>
+
+          <linearGradient id="cobalt-inner" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1E3A8A" />
+            <stop offset="100%" stop-color="#0F172A" />
+          </linearGradient>
+
+          <!-- Warm Brushed Copper / Terracotta Windings -->
+          <linearGradient id="copper-cyl-h" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FDE2C4" />
+            <stop offset="28%" stop-color="#E69F68" />
+            <stop offset="68%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#7C3F17" />
+          </linearGradient>
+
+          <linearGradient id="copper-cyl-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7C3F17" />
+            <stop offset="28%" stop-color="#D97C3E" />
+            <stop offset="52%" stop-color="#FDE2C4" />
+            <stop offset="76%" stop-color="#C26D32" />
+            <stop offset="100%" stop-color="#6E3512" />
+          </linearGradient>
+
+          <!-- Ceramic Ivory Bushings -->
+          <linearGradient id="ceramic-v" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#CBD5E1" />
+            <stop offset="38%" stop-color="#FFFFFF" />
+            <stop offset="72%" stop-color="#F1F5F9" />
+            <stop offset="100%" stop-color="#94A3B8" />
+          </linearGradient>
+
+          <!-- Warm Golden-Amber Electrical Energy -->
+          <radialGradient id="amber-radial" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.95" />
+            <stop offset="48%" stop-color="#FBBF24" stop-opacity="0.72" />
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+          </radialGradient>
+
+          <linearGradient id="amber-pulse-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#F59E0B" stop-opacity="0" />
+            <stop offset="50%" stop-color="#FEF3C7" stop-opacity="1" />
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+          </linearGradient>
+
+          <!-- ================= PRECISION CLIP PATHS ================= -->
+          <!-- Upper basin interior cavity clip -->
+          <clipPath id="clip-upper-basin">
+            <path d="M 832 142 Q 828 136 838 131 L 942 79 Q 950 75 959 79 L 1185 192 Q 1193 196 1185 201 L 1081 253 Q 1072 257 1063 253 L 838 145 Q 834 143 832 142 Z" />
+          </clipPath>
+
+          <!-- Lower basin interior cavity clip -->
+          <clipPath id="clip-lower-basin">
+            <polygon points="348,592 492,520 838,693 694,765 694,812 348,639" />
+          </clipPath>
+
+          <!-- Lower basin water volume clip (for crisp waterline framing) -->
+          <clipPath id="clip-lower-cavity">
+            <polygon points="348,592 492,520 838,693 694,765" />
+          </clipPath>
+
+          <!-- Penstock two cutaway slots clip (in local pipe space) -->
+          <clipPath id="clip-penstock-slots">
+            <rect x="-126" y="-21" width="68" height="32" rx="9" />
+            <rect x="-24" y="-21" width="136" height="32" rx="9" />
+          </clipPath>
+
+          <!-- Turbine scroll cutaway interior clip -->
+          <clipPath id="clip-scroll-interior">
+            <ellipse cx="739" cy="566" rx="43" ry="49" transform="rotate(-12 739 566)" />
+          </clipPath>
+        </defs>
+
+        <!-- Pure white backdrop hit target for reset click -->
+        <rect id="bg-reset-target" x="0" y="0" width="1600" height="900" fill="#FFFFFF" />
+
+        <!-- =======================================================================
+             GROUND CONTACT SHADOW ON #FFFFFF
+             ======================================================================= -->
+        <g id="ground-shadow" pointer-events="none">
+          <!-- Soft elongated cast shadow to the right-lower side -->
+          <polygon
+            points="745,890 1368,570 1515,590 1288,438 1190,485 745,882"
+            fill="#CBD5E1"
+            opacity="0.42"
+            filter="url(#ground-shadow-blur)"
+          />
+          <!-- Tight plinth contact shadow -->
+          <polygon
+            points="250,648 745,896 1374,574 1364,566 745,886 258,642"
+            fill="#94A3B8"
+            opacity="0.34"
+            filter="url(#ground-shadow-blur)"
+          />
+        </g>
+
+        <!-- =======================================================================
+             LAYER 1 — HOUSING BACK (BASE PLINTH + STRATIFIED CUTAWAY HILLSIDE)
+             ======================================================================= -->
+        <g id="part-housing-back" class="mirvo-part" data-part="housing">
+          <!-- Base Plinth Slab -->
+          <polygon class="ink" points="255,622 878,302 1368,548 745,868" fill="url(#plinth-top)" />
+          <polygon class="ink" points="255,622 745,868 745,890 255,644" fill="url(#plinth-left)" />
+          <polygon class="ink" points="745,868 1368,548 1368,570 745,890" fill="url(#plinth-right)" />
+
+          <!-- Subtle plinth inner concrete border pad under lower basin & hillside -->
+          <polygon
+            class="ink-thin"
+            points="314,590 858,318 1296,536 742,818"
+            fill="#E2E8F0"
+            opacity="0.72"
+          />
+          <polygon
+            class="ink-thin"
+            points="314,590 742,818 742,832 314,604"
+            fill="#94A3B8"
+          />
+          <polygon
+            class="ink-thin"
+            points="742,818 1296,536 1296,550 742,832"
+            fill="#64748B"
+          />
+
+          <!-- ===== STRATIFIED CUTAWAY HILLSIDE ===== -->
+          <!-- Far-left sloping hillside outer body -->
+          <polygon
+            class="ink"
+            points="820,108 776,162 722,232 692,286 606,380 534,448 518,476 745,592 848,538 898,468 955,375 1020,275 820,108"
+            fill="url(#hill-slope-left)"
+          />
+
+          <!-- Geological Slate Strata Bands on Left Slope -->
+          <polygon
+            class="ink-thin"
+            points="730,222 752,202 846,262 824,282"
+            fill="url(#strata-light)"
+          />
+          <polygon
+            class="ink-thin"
+            points="694,284 714,264 818,328 796,348"
+            fill="url(#strata-light)"
+          />
+          <polygon
+            class="ink-thin"
+            points="608,378 634,354 756,422 732,446"
+            fill="#CBD5E1"
+            opacity="0.75"
+          />
+
+          <!-- Front-Center Sloping Hillside Face (supporting Penstock & Transformer Terrace) -->
+          <polygon
+            class="ink"
+            points="820,108 1192,294 1142,334 1098,408 1036,492 980,582 918,658 848,718 742,818 742,612 518,476 606,380 692,286 722,232 776,162"
+            fill="url(#hill-slope-left)"
+          />
+
+          <!-- Subtle shadow bevels & strata across front-right face behind transformer -->
+          <polygon
+            class="ink-thin"
+            points="992,374 1086,422 1068,452 974,404"
+            fill="url(#strata-light)"
+          />
+          <polygon
+            class="ink-thin"
+            points="962,438 1052,484 1034,514 944,468"
+            fill="#B4C0CE"
+          />
+
+          <!-- Recessed Concrete Terrace Pad for Transformer -->
+          <polygon
+            class="ink"
+            points="822,534 926,482 1044,540 940,592"
+            fill="url(#concrete-top)"
+          />
+          <polygon
+            class="ink-thin"
+            points="926,482 1044,540 1056,512 940,456"
+            fill="url(#concrete-left)"
+          />
+          <!-- Terrace drop wall toward lower basin apron -->
+          <polygon
+            class="ink"
+            points="822,534 940,592 940,614 822,556"
+            fill="url(#concrete-left)"
+          />
+          <polygon
+            class="ink"
+            points="940,592 1044,540 1020,588 940,630"
+            fill="url(#concrete-right)"
+          />
+
+          <!-- Lower Apron Concrete Deck connecting powerhouse & lower basin -->
+          <polygon
+            class="ink"
+            points="322,588 518,476 920,676 742,768"
+            fill="url(#concrete-top)"
+          />
+
+          <!-- Upper Plateau Top Rim Surface (surrounding Upper Basin) -->
+          <polygon
+            class="ink"
+            points="820,108 946,44 1288,215 1192,294"
+            fill="url(#hill-top-ivory)"
+          />
+
+          <!-- Right Vertical Cutaway Geological Profile Face -->
+          <polygon
+            class="ink"
+            points="1288,215 1288,536 862,756 918,658 980,582 1036,492 1098,408 1142,334 1192,294"
+            fill="url(#hill-cut-right)"
+          />
+
+          <!-- Geological Strata Bands along Right Vertical Cutaway -->
+          <!-- Band 1 (upper slate) -->
+          <polygon
+            class="ink-thin"
+            points="1288,274 1288,314 1118,402 1098,408 1124,364"
+            fill="url(#strata-dark)"
+          />
+          <!-- Band 2 (mid slate) -->
+          <polygon
+            class="ink-thin"
+            points="1288,354 1288,388 1058,506 1036,492 1066,466"
+            fill="url(#strata-dark)"
+          />
+          <!-- Band 3 (deep bedrock slate base) -->
+          <polygon
+            class="ink-thin"
+            points="1288,432 1288,536 862,756 912,670 980,592 1140,508"
+            fill="url(#strata-dark)"
+          />
+          <!-- Front slope cutaway wedge connecting hillside to lower concrete corner -->
+          <polygon
+            class="ink"
+            points="862,756 918,658 940,630 886,698 848,764"
+            fill="#C7BFAC"
+          />
+
+          <!-- Subtle sunlit hillside ridge crease lines -->
+          <polyline
+            class="ink-subtle"
+            fill="none"
+            points="820,108 866,184 912,248"
+            opacity="0.55"
+          />
+          <polyline
+            class="ink-subtle"
+            fill="none"
+            points="1192,294 1142,334 1098,408 1036,492 980,582 918,658"
+            opacity="0.7"
+          />
+        </g>
+
+        <!-- =======================================================================
+             LAYER 2 — PART 1: UPPER BASIN (YUQORI SUV OMBORI)
+             ======================================================================= -->
+        <g id="part-upper_basin" class="mirvo-part" data-part="upper_basin">
+          <g class="mirvo-explode-wrap" id="explode-upper_basin">
+            <!-- Concrete front intake apron & beveled headwall face -->
+            <path
+              class="ink"
+              d="M 822 142 L 1068 265 Q 1080 271 1093 265 L 1146 238 L 1102 308 Q 1090 315 1076 312 L 995 314 L 910 270 L 870 218 L 822 162 Z"
+              fill="url(#concrete-left)"
+            />
+
+            <!-- Outer beveled concrete coping rim of upper reservoir -->
+            <path
+              class="ink"
+              d="M 816 142 Q 810 135 820 130 L 940 70 Q 950 65 961 70 L 1204 191 Q 1214 196 1204 202 L 1084 262 Q 1073 267 1062 262 L 822 145 Q 818 143 816 142 Z"
+              fill="url(#concrete-top)"
+            />
+
+            <!-- Recessed concrete inner retaining walls (left-back & right-back) -->
+            <path
+              class="ink"
+              d="M 832 142 Q 828 136 838 131 L 942 79 Q 950 75 959 79 L 1185 192 Q 1193 196 1185 201 L 1081 253 Q 1072 257 1063 253 L 838 145 Z"
+              fill="#CBD5E1"
+            />
+            <!-- Shaded back-left inner wall -->
+            <polygon
+              class="ink-thin"
+              points="832,140 946,82 946,144 868,182"
+              fill="#94A3B8"
+            />
+            <!-- Lit back-right inner wall -->
+            <polygon
+              class="ink-thin"
+              points="946,82 1188,200 1152,218 946,144"
+              fill="#CBD5E1"
+            />
+
+            <!-- Clipped Animated Upper Basin Water Volume -->
+            <g clip-path="url(#clip-upper-basin)">
+              <g id="upper-water-group">
+                <!-- Deep translucent water body -->
+                <polygon
+                  points="820,146 950,82 1202,204 1074,274 820,274"
+                  fill="url(#upper-water-depth)"
+                />
+                <!-- Bright sunlit water surface -->
+                <polygon
+                  points="826,146 948,86 1196,204 1074,264"
+                  fill="url(#upper-water-surf)"
+                />
+
+                <!-- Underwater shadow cast by back-left concrete wall -->
+                <polygon
+                  points="826,146 948,86 986,120 882,172"
+                  fill="#0369A1"
+                  opacity="0.28"
+                />
+
+                <!-- Animated Surface Shimmer & Caustic Ripples -->
+                <g id="upper-ripples" fill="none" stroke-linecap="round">
+                  <path
+                    id="upper-wave-1"
+                    d="M 915 136 Q 960 124 1005 142 T 1095 162"
+                    stroke="#E0F2FE"
+                    stroke-width="2.2"
+                    opacity="0.58"
+                  />
+                  <path
+                    id="upper-wave-2"
+                    d="M 885 156 Q 940 144 995 166 T 1110 194"
+                    stroke="#BAE6FD"
+                    stroke-width="1.8"
+                    opacity="0.48"
+                  />
+                  <path
+                    id="upper-wave-3"
+                    d="M 950 116 Q 1005 112 1055 134 T 1140 168"
+                    stroke="#FFFFFF"
+                    stroke-width="1.4"
+                    opacity="0.45"
+                  />
+                  <ellipse
+                    id="upper-shimmer-1"
+                    cx="1038"
+                    cy="176"
+                    rx="48"
+                    ry="16"
+                    transform="rotate(24 1038 176)"
+                    fill="#E0F2FE"
+                    opacity="0.22"
+                  />
+                  <ellipse
+                    id="upper-shimmer-2"
+                    cx="962"
+                    cy="158"
+                    rx="32"
+                    ry="10"
+                    transform="rotate(-14 962 158)"
+                    fill="#FFFFFF"
+                    opacity="0.18"
+                  />
+                </g>
+
+                <!-- Animated Intake Vortex / Outflow Rings near Penstock Mouth -->
+                <g id="upper-intake-vortex" transform="translate(972, 206)">
+                  <ellipse
+                    id="vortex-ring-1"
+                    cx="0"
+                    cy="0"
+                    rx="26"
+                    ry="12"
+                    fill="none"
+                    stroke="#E0F2FE"
+                    stroke-width="1.6"
+                    opacity="0.65"
+                  />
+                  <ellipse
+                    id="vortex-ring-2"
+                    cx="0"
+                    cy="0"
+                    rx="14"
+                    ry="6.5"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    stroke-width="1.3"
+                    opacity="0.72"
+                  />
+                  <path
+                    id="vortex-swirl"
+                    d="M -18 0 A 18 8 0 1 1 14 5"
+                    fill="none"
+                    stroke="#BAE6FD"
+                    stroke-width="1.5"
+                    opacity="0.7"
+                  />
+                </g>
+
+                <!-- Crisp Waterline Meniscus Edge -->
+                <polyline
+                  points="832,146 948,89 1190,204"
+                  fill="none"
+                  stroke="#E0F2FE"
+                  stroke-width="1.5"
+                  opacity="0.65"
+                />
+              </g>
+            </g>
+
+            <!-- Crisp Inner Rim Outline over Water -->
+            <path
+              class="ink"
+              fill="none"
+              d="M 832 142 Q 828 136 838 131 L 942 79 Q 950 75 959 79 L 1185 192 Q 1193 196 1185 201 L 1081 253 Q 1072 257 1063 253 L 838 145 Z"
+            />
+
+            <!-- Penstock Intake Concrete Collar on Front Headwall -->
+            <ellipse
+              class="ink"
+              cx="978"
+              cy="260"
+              rx="29"
+              ry="37"
+              transform="rotate(-38 978 260)"
+              fill="#94A3B8"
+            />
+            <ellipse
+              class="ink-thin"
+              cx="973"
+              cy="264"
+              rx="23"
+              ry="30"
+              transform="rotate(-38 973 264)"
+              fill="#64748B"
+            />
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 3 — PART 5: LOWER BASIN (QUYI SUV OMBORI)
+             ======================================================================= -->
+        <g id="part-lower_basin" class="mirvo-part" data-part="lower_basin">
+          <g class="mirvo-explode-wrap" id="explode-lower_basin">
+            <!-- Outer Left & Front Concrete Basin Retaining Wall Faces -->
+            <polygon
+              class="ink"
+              points="324,590 694,775 694,826 324,641"
+              fill="url(#concrete-left)"
+            />
+            <polygon
+              class="ink"
+              points="694,775 860,692 860,743 694,826"
+              fill="url(#concrete-right)"
+            />
+
+            <!-- Back Inner Retaining Walls of Lower Basin -->
+            <polygon
+              class="ink"
+              points="348,592 492,520 492,584 348,656"
+              fill="#94A3B8"
+            />
+            <polygon
+              class="ink"
+              points="492,520 838,693 838,754 492,584"
+              fill="#CBD5E1"
+            />
+
+            <!-- Basin Floor (visible subtly through water) -->
+            <polygon
+              points="348,644 492,572 838,745 694,817"
+              fill="#0C4A6E"
+            />
+
+            <!-- Clipped Animated Lower Basin Water Volume -->
+            <g clip-path="url(#clip-lower-cavity)">
+              <g id="lower-water-group">
+                <!-- Submerged deep front-side water volume -->
+                <polygon
+                  points="336,616 492,538 850,717 694,795 336,690"
+                  fill="url(#lower-water-front)"
+                />
+                <!-- Main cobalt-cyan water surface -->
+                <polygon
+                  points="342,616 492,541 844,717 694,792"
+                  fill="url(#lower-water-surf)"
+                />
+
+                <!-- Shadow cast by left-back wall onto water -->
+                <polygon
+                  points="342,616 492,541 536,568 394,640"
+                  fill="#0C4A6E"
+                  opacity="0.34"
+                />
+
+                <!-- Submerged Concrete Powerhouse Pedestal Base inside Water -->
+                <polygon
+                  class="ink-thin"
+                  points="596,612 698,562 794,610 692,660"
+                  fill="#94A3B8"
+                  opacity="0.55"
+                />
+                <polygon
+                  points="596,612 692,660 692,704 596,656"
+                  fill="#0369A1"
+                  opacity="0.55"
+                />
+                <polygon
+                  points="692,660 794,610 794,654 692,704"
+                  fill="#0C4A6E"
+                  opacity="0.5"
+                />
+
+                <!-- Animated Surface Waves & Specular Reflections -->
+                <g id="lower-ripples" fill="none" stroke-linecap="round">
+                  <path
+                    id="lower-wave-1"
+                    d="M 420 622 Q 495 612 565 645 T 698 708"
+                    stroke="#7DD3FC"
+                    stroke-width="2"
+                    opacity="0.52"
+                  />
+                  <path
+                    id="lower-wave-2"
+                    d="M 465 656 Q 535 650 600 682 T 718 738"
+                    stroke="#BAE6FD"
+                    stroke-width="1.6"
+                    opacity="0.44"
+                  />
+                  <path
+                    id="lower-wave-3"
+                    d="M 390 606 Q 450 595 510 620"
+                    stroke="#E0F2FE"
+                    stroke-width="1.4"
+                    opacity="0.4"
+                  />
+                  <ellipse
+                    id="lower-shimmer-1"
+                    cx="535"
+                    cy="664"
+                    rx="66"
+                    ry="19"
+                    transform="rotate(26 535 664)"
+                    fill="#7DD3FC"
+                    opacity="0.18"
+                  />
+                </g>
+
+                <!-- Animated Concentric Discharge / Suction Plume Rings at Draft Tube Exit -->
+                <g id="lower-plume-group" transform="translate(772, 690)">
+                  <!-- Submerged glowing plume glow -->
+                  <ellipse
+                    id="plume-glow"
+                    cx="0"
+                    cy="8"
+                    rx="34"
+                    ry="17"
+                    fill="#38BDF8"
+                    opacity="0.45"
+                    filter="url(#water-glow)"
+                  />
+                  <ellipse
+                    id="plume-ring-1"
+                    cx="0"
+                    cy="0"
+                    rx="20"
+                    ry="10"
+                    fill="none"
+                    stroke="#E0F2FE"
+                    stroke-width="1.9"
+                    opacity="0.85"
+                  />
+                  <ellipse
+                    id="plume-ring-2"
+                    cx="0"
+                    cy="0"
+                    rx="36"
+                    ry="18"
+                    fill="none"
+                    stroke="#BAE6FD"
+                    stroke-width="1.5"
+                    opacity="0.6"
+                  />
+                  <ellipse
+                    id="plume-ring-3"
+                    cx="0"
+                    cy="0"
+                    rx="52"
+                    ry="26"
+                    fill="none"
+                    stroke="#7DD3FC"
+                    stroke-width="1.1"
+                    opacity="0.35"
+                  />
+                </g>
+
+                <!-- Waterline Meniscus Highlight -->
+                <polyline
+                  points="348,616 694,789 838,717"
+                  fill="none"
+                  stroke="#BAE6FD"
+                  stroke-width="1.4"
+                  opacity="0.68"
+                />
+              </g>
+            </g>
+
+            <!-- Concrete Coping Top Rim (drawn cleanly around water opening) -->
+            <path
+              class="ink"
+              fill="url(#concrete-top)"
+              fill-rule="evenodd"
+              d="M 324 590 L 492 506 L 860 692 L 694 775 Z M 348 592 L 694 765 L 838 693 L 492 520 Z"
+            />
+
+            <!-- Front-Left Cutaway Window Accent showing concrete wall lip cleanly -->
+            <polyline
+              class="ink"
+              fill="none"
+              points="348,592 694,765 838,693"
+            />
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 4 — PART 2: PENSTOCK (BOSIMLI SUV QUVURI)
+             ======================================================================= -->
+        <g id="part-penstock" class="mirvo-part" data-part="penstock">
+          <g class="mirvo-explode-wrap" id="explode-penstock">
+            <!-- Ground shadow beneath inclined steel pipe -->
+            <polygon
+              points="968,284 774,528 796,542 992,296"
+              fill="#64748B"
+              opacity="0.22"
+            />
+
+            <!-- Pipe local frame: center (862.5, 377.5), +X points DOWN-LEFT to turbine (angle 128.8°) -->
+            <g transform="translate(862.5, 377.5) rotate(128.8)">
+              <!-- Main cylindrical satin steel barrel -->
+              <rect
+                class="ink"
+                x="-158"
+                y="-31"
+                width="316"
+                height="62"
+                rx="8"
+                fill="url(#steel-cyl-y)"
+              />
+
+              <!-- Specular brushed highlight strip along upper barrel -->
+              <rect
+                x="-154"
+                y="-25"
+                width="308"
+                height="9"
+                rx="4"
+                fill="#FFFFFF"
+                opacity="0.45"
+              />
+
+              <!-- Beveled Cutaway Slot 1 (Upper Section) -->
+              <rect
+                class="ink"
+                x="-130"
+                y="-25"
+                width="76"
+                height="40"
+                rx="11"
+                fill="#475569"
+              />
+              <!-- Beveled Cutaway Slot 2 (Lower Section) -->
+              <rect
+                class="ink"
+                x="-28"
+                y="-25"
+                width="144"
+                height="40"
+                rx="11"
+                fill="#475569"
+              />
+
+              <!-- Pressurized Cyan Water Inside Cutaway Slots -->
+              <g clip-path="url(#clip-penstock-slots)">
+                <rect x="-135" y="-24" width="260" height="38" fill="url(#penstock-water)" />
+
+                <!-- Animated Hydro Flow Group (Ribbons, Directional Chevrons & Bubbles) -->
+                <g id="penstock-flow-group">
+                  <!-- Continuous glowing laminar flow streams -->
+                  <g id="penstock-streams" fill="none" stroke-linecap="round">
+                    <line x1="-220" y1="-11" x2="220" y2="-11" stroke="#E0F2FE" stroke-width="3.2" stroke-dasharray="28 18" opacity="0.88" />
+                    <line x1="-220" y1="-2" x2="220" y2="-2" stroke="#FFFFFF" stroke-width="2.2" stroke-dasharray="18 22" opacity="0.72" />
+                    <line x1="-220" y1="6" x2="220" y2="6" stroke="#7DD3FC" stroke-width="2.6" stroke-dasharray="24 20" opacity="0.65" />
+                  </g>
+
+                  <!-- Animated directional pressure chevrons (updated dynamically by JS) -->
+                  <g id="penstock-chevrons" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"></g>
+
+                  <!-- Animated pressurized micro-bubbles -->
+                  <g id="penstock-bubbles" fill="#E0F2FE"></g>
+                </g>
+
+                <!-- Inner glass/cut-edge shading -->
+                <rect x="-135" y="-22" width="260" height="5" fill="#0C4A6E" opacity="0.22" />
+                <rect x="-135" y="7" width="260" height="6" fill="#0369A1" opacity="0.28" />
+              </g>
+
+              <!-- Crisp Cutaway Slot Inner Rim Outlines -->
+              <rect class="ink-thin" x="-126" y="-21" width="68" height="32" rx="9" fill="none" />
+              <rect class="ink-thin" x="-24" y="-21" width="136" height="32" rx="9" fill="none" />
+
+              <!-- 4 Precision Bolted Circular Flange Couplings -->
+              <!-- Flange 1 (Top intake end) -->
+              <g transform="translate(-148, 0)">
+                <ellipse class="ink" cx="6" cy="0" rx="15" ry="41" fill="url(#steel-cyl-y)" />
+                <ellipse class="ink" cx="0" cy="0" rx="15" ry="41" fill="#E2E8F0" />
+                <ellipse class="ink-thin" cx="0" cy="0" rx="10" ry="30" fill="url(#steel-cyl-y)" />
+                <g fill="#334155">
+                  <circle cx="0" cy="-35" r="2.1" />
+                  <circle cx="8" cy="-27" r="2.1" />
+                  <circle cx="12" cy="-12" r="2.1" />
+                  <circle cx="12" cy="12" r="2.1" />
+                  <circle cx="8" cy="27" r="2.1" />
+                  <circle cx="0" cy="35" r="2.1" />
+                  <circle cx="-8" cy="27" r="2.1" />
+                  <circle cx="-12" cy="12" r="2.1" />
+                  <circle cx="-12" cy="-12" r="2.1" />
+                  <circle cx="-8" cy="-27" r="2.1" />
+                </g>
+              </g>
+
+              <!-- Flange 2 (Mid-upper coupling) -->
+              <g transform="translate(-44, 0)">
+                <ellipse class="ink" cx="5" cy="0" rx="14" ry="39" fill="url(#steel-cyl-y)" />
+                <ellipse class="ink" cx="0" cy="0" rx="14" ry="39" fill="#E2E8F0" />
+                <ellipse class="ink-thin" cx="0" cy="0" rx="9.5" ry="29" fill="url(#steel-cyl-y)" />
+                <g fill="#334155">
+                  <circle cx="0" cy="-33.5" r="2" />
+                  <circle cx="8" cy="-24" r="2" />
+                  <circle cx="11" cy="-9" r="2" />
+                  <circle cx="11" cy="9" r="2" />
+                  <circle cx="8" cy="24" r="2" />
+                  <circle cx="0" cy="33.5" r="2" />
+                  <circle cx="-8" cy="24" r="2" />
+                  <circle cx="-11" cy="9" r="2" />
+                  <circle cx="-11" cy="-9" r="2" />
+                  <circle cx="-8" cy="-24" r="2" />
+                </g>
+              </g>
+
+              <!-- Flange 3 (Mid-lower coupling) -->
+              <g transform="translate(56, 0)">
+                <ellipse class="ink" cx="5" cy="0" rx="14" ry="39" fill="url(#steel-cyl-y)" />
+                <ellipse class="ink" cx="0" cy="0" rx="14" ry="39" fill="#E2E8F0" />
+                <ellipse class="ink-thin" cx="0" cy="0" rx="9.5" ry="29" fill="url(#steel-cyl-y)" />
+                <g fill="#334155">
+                  <circle cx="0" cy="-33.5" r="2" />
+                  <circle cx="8" cy="-24" r="2" />
+                  <circle cx="11" cy="-9" r="2" />
+                  <circle cx="11" cy="9" r="2" />
+                  <circle cx="8" cy="24" r="2" />
+                  <circle cx="0" cy="33.5" r="2" />
+                  <circle cx="-8" cy="24" r="2" />
+                  <circle cx="-11" cy="9" r="2" />
+                  <circle cx="-11" cy="-9" r="2" />
+                  <circle cx="-8" cy="-24" r="2" />
+                </g>
+              </g>
+
+              <!-- Flange 4 (Turbine inlet coupling) -->
+              <g transform="translate(148, 0)">
+                <ellipse class="ink" cx="6" cy="0" rx="15" ry="41" fill="url(#steel-cyl-y)" />
+                <ellipse class="ink" cx="0" cy="0" rx="15" ry="41" fill="#E2E8F0" />
+                <ellipse class="ink-thin" cx="0" cy="0" rx="10" ry="30" fill="url(#steel-cyl-y)" />
+                <g fill="#334155">
+                  <circle cx="0" cy="-35" r="2.1" />
+                  <circle cx="8" cy="-27" r="2.1" />
+                  <circle cx="12" cy="-12" r="2.1" />
+                  <circle cx="12" cy="12" r="2.1" />
+                  <circle cx="8" cy="27" r="2.1" />
+                  <circle cx="0" cy="35" r="2.1" />
+                  <circle cx="-8" cy="27" r="2.1" />
+                  <circle cx="-12" cy="12" r="2.1" />
+                  <circle cx="-12" cy="-12" r="2.1" />
+                  <circle cx="-8" cy="-27" r="2.1" />
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 5 — PART 3: REVERSIBLE TURBINE-GENERATOR (REVERSIV AGREGAT)
+             ======================================================================= -->
+        <g id="part-reversible_turbine" class="mirvo-part" data-part="reversible_turbine">
+          <g class="mirvo-explode-wrap" id="explode-reversible_turbine">
+            <!-- Insulated Power Busbar Conduit connecting Generator to Transformer -->
+            <g id="busbar-duct">
+              <polygon
+                class="ink"
+                points="746,506 878,546 878,558 746,518"
+                fill="#CBD5E1"
+              />
+              <polygon
+                class="ink"
+                points="746,506 756,501 888,541 878,546"
+                fill="#F1F5F9"
+              />
+              <!-- Inner glowing busbar track -->
+              <line
+                x1="752"
+                y1="510"
+                x2="876"
+                y2="548"
+                stroke="#F59E0B"
+                stroke-width="2.6"
+                stroke-linecap="round"
+                opacity="0.45"
+              />
+              <!-- Animated electrical pulses along busbar -->
+              <g id="busbar-pulses" filter="url(#energy-glow)"></g>
+            </g>
+
+            <!-- Concrete Powerhouse Pedestal & Cutaway Chamber -->
+            <!-- Concrete pedestal base resting in lower basin edge -->
+            <polygon
+              class="ink"
+              points="590,612 694,560 806,616 702,668"
+              fill="url(#concrete-top)"
+            />
+            <polygon
+              class="ink"
+              points="590,612 702,668 702,688 590,632"
+              fill="url(#concrete-left)"
+            />
+            <polygon
+              class="ink"
+              points="702,668 806,616 806,636 702,688"
+              fill="url(#concrete-right)"
+            />
+
+            <!-- Powerhouse Back-Right & Back-Left Sectioned Concrete Walls -->
+            <!-- Interior shadowed back walls -->
+            <polygon
+              class="ink"
+              points="612,478 696,436 696,574 612,616"
+              fill="url(#concrete-inner-dark)"
+            />
+            <polygon
+              class="ink"
+              points="696,436 748,462 748,596 696,574"
+              fill="#64748B"
+            />
+            <!-- Exterior Left Concrete Wall -->
+            <polygon
+              class="ink"
+              points="600,472 612,478 612,616 600,610"
+              fill="url(#concrete-left)"
+            />
+            <!-- Chamber Beveled Concrete Top Coping -->
+            <polygon
+              class="ink"
+              points="600,472 696,424 760,456 748,462 696,436 612,478"
+              fill="url(#concrete-top)"
+            />
+            <!-- Right-side Cut Wall Rim -->
+            <polygon
+              class="ink"
+              points="748,462 760,456 760,520 748,526"
+              fill="url(#concrete-right)"
+            />
+            <!-- Concrete Floor Deck inside Chamber -->
+            <polygon
+              class="ink-thin"
+              points="612,616 696,574 786,619 702,661"
+              fill="#CBD5E1"
+            />
+
+            <!-- Lower Drainage Sump / Aux Pipe Cutaway under Generator -->
+            <path
+              class="ink"
+              d="M 656 602 L 656 632 Q 674 646 692 636 L 718 622 L 718 594 Z"
+              fill="#38BDF8"
+              opacity="0.65"
+            />
+            <ellipse class="ink-thin" cx="674" cy="624" rx="11" ry="15" fill="#0284C7" />
+            <ellipse class="ink-thin" cx="674" cy="624" rx="7" ry="10" fill="#BAE6FD" />
+
+            <!-- ===== LEFT HALF: HORIZONTAL CUTAWAY MOTOR-GENERATOR ===== -->
+            <g id="motor-generator-unit">
+              <!-- Outer Cobalt-Blue Stator Housing Back Cylinder -->
+              <path
+                class="ink"
+                d="M 658 504 L 712 530 C 728 538 730 572 714 594 C 702 610 684 616 668 608 L 634 590 C 618 580 618 544 634 522 C 642 511 650 506 658 504 Z"
+                fill="url(#cobalt-casing)"
+              />
+
+              <!-- Rear End-Bell & Ventilation Ring -->
+              <ellipse
+                class="ink"
+                cx="644"
+                cy="550"
+                rx="22"
+                ry="38"
+                transform="rotate(24 644 550)"
+                fill="#1D4ED8"
+              />
+              <ellipse
+                class="ink-thin"
+                cx="648"
+                cy="552"
+                rx="14"
+                ry="25"
+                transform="rotate(24 648 552)"
+                fill="#1E3A8A"
+              />
+
+              <!-- Cutaway Interior Cavity Wall -->
+              <path
+                class="ink"
+                d="M 658 504 L 712 530 L 702 586 L 642 558 Z"
+                fill="url(#cobalt-inner)"
+              />
+
+              <!-- Warm Brushed-Copper Stator/Rotor Winding Drum -->
+              <g id="generator-copper-core">
+                <!-- Animated Electromagnetic Golden-Amber Glow -->
+                <ellipse
+                  id="generator-em-glow"
+                  cx="676"
+                  cy="552"
+                  rx="36"
+                  ry="28"
+                  fill="url(#amber-radial)"
+                  opacity="0.45"
+                />
+
+                <!-- Copper Winding Drum -->
+                <path
+                  class="ink"
+                  d="M 664 517 L 704 536 C 714 542 714 568 702 583 C 694 592 684 595 676 591 L 644 574 C 635 568 636 544 647 529 C 653 521 659 518 664 517 Z"
+                  fill="url(#copper-cyl-h)"
+                />
+
+                <!-- Crisp Axial Copper Slot Bars & End-Turns -->
+                <g class="ink-subtle" stroke="#7C3F17" opacity="0.8">
+                  <line x1="654" y1="528" x2="695" y2="548" />
+                  <line x1="648" y1="538" x2="690" y2="558" />
+                  <line x1="644" y1="549" x2="686" y2="569" />
+                  <line x1="643" y1="560" x2="684" y2="580" />
+                  <line x1="646" y1="570" x2="684" y2="588" />
+                </g>
+
+                <!-- Front-facing Copper End-Turn Ring -->
+                <ellipse
+                  class="ink"
+                  cx="694"
+                  cy="562"
+                  rx="16"
+                  ry="28"
+                  transform="rotate(24 694 562)"
+                  fill="#C26D32"
+                />
+                <ellipse
+                  class="ink-thin"
+                  cx="696"
+                  cy="563"
+                  rx="11"
+                  ry="19"
+                  transform="rotate(24 696 563)"
+                  fill="#E69F68"
+                />
+              </g>
+
+              <!-- Cutaway Beveled Blue Stator Frame Rim (Lower Front Lip) -->
+              <path
+                class="ink"
+                d="M 632 584 L 682 609 C 694 614 708 606 716 594 L 706 588 C 699 598 688 603 678 598 L 638 577 Z"
+                fill="#60A5FA"
+              />
+              <!-- Upper Cut Edge Bevel -->
+              <path
+                class="ink"
+                d="M 656 502 L 712 529 L 708 536 L 652 509 Z"
+                fill="#93C5FD"
+              />
+
+              <!-- Central Machined Stainless-Steel Drive Shaft -->
+              <path
+                class="ink"
+                d="M 692 554 L 736 575 L 729 589 L 685 568 Z"
+                fill="url(#steel-cyl-y)"
+              />
+              <ellipse
+                class="ink-thin"
+                cx="688"
+                cy="561"
+                rx="5"
+                ry="8"
+                transform="rotate(24 688 561)"
+                fill="#CBD5E1"
+              />
+            </g>
+
+            <!-- ===== RIGHT HALF: REVERSIBLE FRANCIS RUNNER & SPIRAL CASING ===== -->
+            <g id="francis-turbine-unit">
+              <!-- Spiral Casing Inlet Throat joining Penstock -->
+              <path
+                class="ink"
+                d="M 730 518 L 764 494 L 792 518 L 774 552 Z"
+                fill="url(#cobalt-casing)"
+              />
+              <!-- Glowing Pressurized Water Entering Spiral Throat -->
+              <path
+                class="ink-water"
+                d="M 734 522 Q 756 500 778 516 Q 770 536 752 544 Z"
+                fill="#38BDF8"
+              />
+              <path
+                d="M 744 522 Q 760 508 772 516"
+                fill="none"
+                stroke="#E0F2FE"
+                stroke-width="2.4"
+                stroke-linecap="round"
+              />
+
+              <!-- Main Cutaway Cobalt-Blue Spiral Volute Shell -->
+              <path
+                class="ink"
+                d="M 712 530 C 734 510 772 514 788 544 C 802 570 792 608 764 622 C 738 634 708 624 698 598 C 688 574 696 544 712 530 Z"
+                fill="url(#cobalt-casing)"
+              />
+
+              <!-- Cutaway Interior Volute Water Chamber -->
+              <ellipse
+                class="ink"
+                cx="739"
+                cy="566"
+                rx="41"
+                ry="47"
+                transform="rotate(-12 739 566)"
+                fill="#0369A1"
+              />
+
+              <!-- Animated Swirling Water Arcs inside Scroll Casing -->
+              <g clip-path="url(#clip-scroll-interior)">
+                <g transform="translate(739, 566) scale(0.86, 1.0) rotate(-12)">
+                  <g id="scroll-water-swirl">
+                    <circle cx="0" cy="0" r="39" fill="none" stroke="#38BDF8" stroke-width="7" stroke-dasharray="28 16" opacity="0.72" />
+                    <circle cx="0" cy="0" r="34" fill="none" stroke="#BAE6FD" stroke-width="3" stroke-dasharray="18 20" opacity="0.8" />
+                    <circle cx="0" cy="0" r="28" fill="none" stroke="#E0F2FE" stroke-width="2" stroke-dasharray="12 18" opacity="0.65" />
+                  </g>
+                </g>
+              </g>
+
+              <!-- Rotating 7-Blade Machined Stainless-Steel Francis Runner Wheel -->
+              <g transform="translate(739, 566) scale(0.84, 0.96) rotate(-12)">
+                <g id="runner-wheel">
+                  <!-- Outer runner shroud ring -->
+                  <circle class="ink" cx="0" cy="0" r="33" fill="none" stroke="#E2E8F0" stroke-width="4.5" />
+                  <circle class="ink-thin" cx="0" cy="0" r="33" fill="none" />
+                  <circle class="ink-thin" cx="0" cy="0" r="29" fill="none" />
+
+                  <!-- 7 Curved Hydrodynamic Francis Blades -->
+                  <g fill="url(#steel-blade)" class="ink-thin">
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(0)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(51.43)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(102.86)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(154.29)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(205.71)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(257.14)" />
+                    <path d="M 0,-9 C 10,-12 22,-18 29,-4 C 24,5 12,2 4,3 Z" transform="rotate(308.57)" />
+                  </g>
+
+                  <!-- Central Runner Nose Cone Hub -->
+                  <circle class="ink" cx="0" cy="0" r="11" fill="url(#steel-cyl-x)" />
+                  <circle class="ink-thin" cx="0" cy="0" r="4.5" fill="#475569" />
+                </g>
+              </g>
+
+              <!-- ===== DRAFT TUBE ELBOW PLUNGING INTO LOWER BASIN ===== -->
+              <!-- Translucent Cyan Water Column entering Lower Basin -->
+              <g id="draft-water-column">
+                <path
+                  d="M 753 648 L 751 694 C 751 704 793 704 793 694 L 791 648 Z"
+                  fill="url(#draft-water-col)"
+                />
+                <!-- Animated Draft Tube Flow Streaks & Underwater Bubbles -->
+                <g id="draft-flow-lines" stroke="#E0F2FE" stroke-linecap="round" opacity="0.82"></g>
+                <g id="draft-bubbles" fill="#E0F2FE"></g>
+              </g>
+
+              <!-- Curved Cobalt-Blue Draft Tube Elbow -->
+              <path
+                class="ink"
+                d="M 744 584 C 776 584 796 604 796 634 L 796 648 C 796 658 748 658 748 648 L 748 634 C 748 618 740 612 728 610 C 734 602 740 594 744 584 Z"
+                fill="url(#cobalt-tube)"
+              />
+
+              <!-- Draft Tube Lower Flange Collar -->
+              <ellipse class="ink" cx="772" cy="648" rx="28" ry="13" fill="#2563EB" />
+              <ellipse class="ink-thin" cx="772" cy="645" rx="26" ry="11.5" fill="#60A5FA" />
+              <ellipse class="ink" cx="772" cy="644" rx="20" ry="8.5" fill="#1D4ED8" />
+
+              <!-- Front Volute Rim Highlight connecting Elbow cleanly -->
+              <path
+                class="ink"
+                d="M 742 582 C 760 582 778 594 786 614"
+                fill="none"
+                stroke="#93C5FD"
+                stroke-width="2"
+              />
+            </g>
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 6 — PART 4: POWER TRANSFORMER (KUCH TRANSFORMATORI)
+             ======================================================================= -->
+        <g id="part-transformer" class="mirvo-part" data-part="transformer">
+          <g class="mirvo-explode-wrap" id="explode-transformer">
+            <!-- Ground shadow beneath transformer -->
+            <polygon
+              points="856,554 940,598 1026,554 942,512"
+              fill="#64748B"
+              opacity="0.28"
+            />
+
+            <!-- Steel Skid Mounting Rails -->
+            <polygon class="ink" points="864,552 938,590 938,598 864,560" fill="#64748B" />
+            <polygon class="ink" points="938,590 950,584 950,592 938,598" fill="#475569" />
+            <polygon class="ink" points="944,580 1002,550 1002,558 944,588" fill="#475569" />
+            <!-- Rail mounting feet -->
+            <rect class="ink-thin" x="876" y="558" width="12" height="8" fill="#94A3B8" transform="skewY(26)" />
+            <rect class="ink-thin" x="920" y="580" width="12" height="8" fill="#94A3B8" transform="skewY(26)" />
+
+            <!-- Transformer Main Steel Tank Back & Right Structure -->
+            <!-- Main tank right wall behind radiator fins -->
+            <polygon
+              class="ink"
+              points="942,516 1002,486 1002,558 942,588"
+              fill="#94A3B8"
+            />
+
+            <!-- Main tank front-left exterior frame -->
+            <polygon
+              class="ink"
+              points="864,478 942,516 942,588 864,550"
+              fill="#CBD5E1"
+            />
+
+            <!-- Cutaway Interior Core Cavity -->
+            <polygon
+              class="ink"
+              points="872,489 934,520 934,578 872,547"
+              fill="#263140"
+            />
+
+            <!-- Animated Magnetic Flux Amber Glow inside Transformer Core -->
+            <ellipse
+              id="transformer-flux-glow"
+              cx="903"
+              cy="534"
+              rx="34"
+              ry="26"
+              fill="url(#amber-radial)"
+              opacity="0.5"
+            />
+
+            <!-- Laminated Iron Core Upper & Lower Yokes -->
+            <polygon
+              class="ink-thin"
+              points="875,496 931,524 931,531 875,503"
+              fill="#64748B"
+            />
+            <polygon
+              class="ink-thin"
+              points="875,539 931,567 931,574 875,546"
+              fill="#475569"
+            />
+
+            <!-- 3 Tall Vertical Warm Terracotta-Copper HV/LV Coil Windings -->
+            <!-- Coil 1 (Left Phase) -->
+            <g id="tx-coil-1">
+              <rect class="ink-thin" x="878" y="502" width="15" height="43" rx="3" fill="url(#copper-cyl-v)" />
+              <g stroke="#7C3F17" stroke-width="0.7" opacity="0.72">
+                <line x1="879" y1="508" x2="892" y2="508" />
+                <line x1="879" y1="513" x2="892" y2="513" />
+                <line x1="879" y1="518" x2="892" y2="518" />
+                <line x1="879" y1="523" x2="892" y2="523" />
+                <line x1="879" y1="528" x2="892" y2="528" />
+                <line x1="879" y1="533" x2="892" y2="533" />
+                <line x1="879" y1="538" x2="892" y2="538" />
+              </g>
+            </g>
+
+            <!-- Coil 2 (Center Phase) -->
+            <g id="tx-coil-2">
+              <rect class="ink-thin" x="896" y="511" width="15" height="43" rx="3" fill="url(#copper-cyl-v)" />
+              <g stroke="#7C3F17" stroke-width="0.7" opacity="0.72">
+                <line x1="897" y1="517" x2="910" y2="517" />
+                <line x1="897" y1="522" x2="910" y2="522" />
+                <line x1="897" y1="527" x2="910" y2="527" />
+                <line x1="897" y1="532" x2="910" y2="532" />
+                <line x1="897" y1="537" x2="910" y2="537" />
+                <line x1="897" y1="542" x2="910" y2="542" />
+                <line x1="897" y1="547" x2="910" y2="547" />
+              </g>
+            </g>
+
+            <!-- Coil 3 (Right Phase) -->
+            <g id="tx-coil-3">
+              <rect class="ink-thin" x="914" y="520" width="15" height="43" rx="3" fill="url(#copper-cyl-v)" />
+              <g stroke="#7C3F17" stroke-width="0.7" opacity="0.72">
+                <line x1="915" y1="526" x2="928" y2="526" />
+                <line x1="915" y1="531" x2="928" y2="531" />
+                <line x1="915" y1="536" x2="928" y2="536" />
+                <line x1="915" y1="541" x2="928" y2="541" />
+                <line x1="915" y1="546" x2="928" y2="546" />
+                <line x1="915" y1="551" x2="928" y2="551" />
+                <line x1="915" y1="556" x2="928" y2="556" />
+              </g>
+            </g>
+
+            <!-- Beveled Cutaway Tank Window Border -->
+            <polygon
+              class="ink"
+              fill="none"
+              points="872,489 934,520 934,578 872,547"
+            />
+
+            <!-- Tightly Spaced Vertical Steel Cooling Radiator Fins (Right Face) -->
+            <g id="tx-radiator-fins">
+              <polygon class="ink-thin" points="948,518 954,515 954,583 948,586" fill="#E2E8F0" />
+              <polygon class="ink-thin" points="956,514 962,511 962,579 956,582" fill="#CBD5E1" />
+              <polygon class="ink-thin" points="964,510 970,507 970,575 964,578" fill="#E2E8F0" />
+              <polygon class="ink-thin" points="972,506 978,503 978,571 972,574" fill="#CBD5E1" />
+              <polygon class="ink-thin" points="980,502 986,499 986,567 980,570" fill="#E2E8F0" />
+              <polygon class="ink-thin" points="988,498 994,495 994,563 988,566" fill="#CBD5E1" />
+              <polygon class="ink-thin" points="996,494 1002,491 1002,559 996,562" fill="#E2E8F0" />
+              <!-- Upper & lower radiator collector manifolds -->
+              <line class="ink" x1="946" y1="523" x2="1003" y2="495" />
+              <line class="ink" x1="946" y1="581" x2="1003" y2="553" />
+            </g>
+
+            <!-- Transformer Top Deck Plate -->
+            <polygon
+              class="ink"
+              points="862,476 924,445 1004,485 942,516"
+              fill="url(#concrete-top)"
+            />
+            <!-- Bolt flange lip on top cover -->
+            <polyline class="ink-thin" fill="none" points="864,479 942,518 1002,488" />
+
+            <!-- 3 Ribbed Ceramic-Ivory HV Insulator Bushings -->
+            <!-- Bushing 1 (Back-Left) -->
+            <g id="hv-bushing-1" transform="translate(894, 472)">
+              <ellipse class="ink-thin" cx="0" cy="0" rx="7.5" ry="4" fill="#64748B" />
+              <rect class="ink-thin" x="-3.5" y="-44" width="7" height="44" fill="url(#ceramic-v)" />
+              <!-- 5 Porcelain Sheds -->
+              <ellipse class="ink-thin" cx="0" cy="-8" rx="7.2" ry="3.2" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-16" rx="6.8" ry="3" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-24" rx="6.3" ry="2.8" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-32" rx="5.8" ry="2.6" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-40" rx="5.2" ry="2.4" fill="url(#ceramic-v)" />
+              <!-- Copper terminal cap -->
+              <rect class="ink-thin" x="-2.4" y="-50" width="4.8" height="7" rx="1.5" fill="url(#copper-cyl-v)" />
+              <circle class="ink-thin" cx="0" cy="-51" r="2.8" fill="#E69F68" />
+            </g>
+
+            <!-- Bushing 2 (Center) -->
+            <g id="hv-bushing-2" transform="translate(918, 484)">
+              <ellipse class="ink-thin" cx="0" cy="0" rx="7.5" ry="4" fill="#64748B" />
+              <rect class="ink-thin" x="-3.5" y="-46" width="7" height="46" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-8" rx="7.2" ry="3.2" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-16.5" rx="6.8" ry="3" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-25" rx="6.3" ry="2.8" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-33.5" rx="5.8" ry="2.6" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-42" rx="5.2" ry="2.4" fill="url(#ceramic-v)" />
+              <rect class="ink-thin" x="-2.4" y="-52" width="4.8" height="7" rx="1.5" fill="url(#copper-cyl-v)" />
+              <circle class="ink-thin" cx="0" cy="-53" r="2.8" fill="#E69F68" />
+            </g>
+
+            <!-- Bushing 3 (Front-Right) -->
+            <g id="hv-bushing-3" transform="translate(942, 496)">
+              <ellipse class="ink-thin" cx="0" cy="0" rx="7.5" ry="4" fill="#64748B" />
+              <rect class="ink-thin" x="-3.5" y="-44" width="7" height="44" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-8" rx="7.2" ry="3.2" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-16" rx="6.8" ry="3" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-24" rx="6.3" ry="2.8" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-32" rx="5.8" ry="2.6" fill="url(#ceramic-v)" />
+              <ellipse class="ink-thin" cx="0" cy="-40" rx="5.2" ry="2.4" fill="url(#ceramic-v)" />
+              <rect class="ink-thin" x="-2.4" y="-50" width="4.8" height="7" rx="1.5" fill="url(#copper-cyl-v)" />
+              <circle class="ink-thin" cx="0" cy="-51" r="2.8" fill="#E69F68" />
+            </g>
+
+            <!-- Cylindrical Steel Conservator Expansion Tank on Brackets (Upper-Right) -->
+            <g id="tx-conservator">
+              <!-- Support brackets -->
+              <polyline class="ink" fill="none" points="958,484 964,468 972,465" />
+              <polyline class="ink" fill="none" points="984,492 990,478 996,474" />
+              <!-- Conservator cylinder body -->
+              <path
+                class="ink"
+                d="M 960 456 L 998 437 C 1005 434 1013 443 1011 452 C 1010 456 1007 458 1005 459 L 967 478 C 960 481 953 472 955 463 C 956 459 958 457 960 456 Z"
+                fill="url(#steel-cyl-y)"
+              />
+              <!-- Front end cap -->
+              <ellipse
+                class="ink"
+                cx="963"
+                cy="467"
+                rx="8.5"
+                ry="12"
+                transform="rotate(-24 963 467)"
+                fill="#CBD5E1"
+              />
+              <circle class="ink-thin" cx="963" cy="467" r="3.2" fill="#64748B" />
+            </g>
+
+            <!-- Animated Golden-Amber Electrical Energy Pulse Rings along the 3 HV Bushings -->
+            <g id="bushing-pulses" filter="url(#energy-glow)" pointer-events="none"></g>
+          </g>
+        </g>
+
+        <!-- =======================================================================
+             LAYER 7 — HOUSING FRONT (FOREGROUND PLINTH BEVEL & CRISP RIM ACCENT)
+             ======================================================================= -->
+        <g id="part-housing-front" class="mirvo-part" data-part="housing" pointer-events="none">
+          <!-- Crisp sunlit highlight bevel along the front-most plinth edges -->
+          <polyline
+            fill="none"
+            stroke="#FFFFFF"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            points="257,622 745,867 1366,548"
+            opacity="0.85"
+          />
+          <polyline
+            class="ink"
+            fill="none"
+            points="255,644 745,890 1368,570"
+          />
+          <line class="ink" x1="745" y1="868" x2="745" y2="890" />
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* =========================================================================
+         1. DEVICE METADATA & CAMERA PRESETS
+         ========================================================================= */
+      const DEVICE_ID = "gaes_120_station";
+
+      const PARTS = [
+        { id: "upper_basin", nameUz: "Yuqori suv ombori" },
+        { id: "penstock", nameUz: "Bosimli suv quvuri" },
+        { id: "reversible_turbine", nameUz: "Reversiv turbina-nasos agregati" },
+        { id: "transformer", nameUz: "Kuch transformatori" },
+        { id: "lower_basin", nameUz: "Quyi suv ombori" }
+      ];
+
+      const PART_MAP = Object.fromEntries(PARTS.map((p) => [p.id, p]));
+
+      const CAMERA_TARGETS = {
+        full: { x: 800, y: 450, zoom: 1.0 },
+        upper_basin: { x: 995, y: 195, zoom: 1.85 },
+        penstock: { x: 860, y: 380, zoom: 2.05 },
+        reversible_turbine: { x: 715, y: 545, zoom: 2.25 },
+        transformer: { x: 935, y: 530, zoom: 2.35 },
+        lower_basin: { x: 580, y: 660, zoom: 1.78 }
+      };
+
+      const EXPLODE_VECTORS = {
+        upper_basin: { x: 0, y: -64 },
+        penstock: { x: -44, y: -32 },
+        reversible_turbine: { x: -46, y: 18 },
+        transformer: { x: 74, y: -14 },
+        lower_basin: { x: -52, y: 52 }
+      };
+
+      const TOUR_SEQUENCE = [
+        "full",
+        "upper_basin",
+        "penstock",
+        "reversible_turbine",
+        "transformer",
+        "lower_basin"
+      ];
+
+      const TOUR_DURATION_FULL_MS = 2500;
+      const TOUR_DURATION_PART_MS = 3500;
+
+      const prefersReducedMotion =
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* =========================================================================
+         2. DOM REFERENCES
+         ========================================================================= */
+      const stageEl = document.getElementById("mirvo-stage");
+      const viewportEl = document.getElementById("mirvo-viewport");
+      const svgEl = document.getElementById("mirvo-svg");
+      const allPartEls = Array.from(document.querySelectorAll(".mirvo-part"));
+
+      const explodeWraps = {
+        upper_basin: document.getElementById("explode-upper_basin"),
+        penstock: document.getElementById("explode-penstock"),
+        reversible_turbine: document.getElementById("explode-reversible_turbine"),
+        transformer: document.getElementById("explode-transformer"),
+        lower_basin: document.getElementById("explode-lower_basin")
+      };
+
+      // Dynamic animated SVG nodes
+      const upperWaterGroup = document.getElementById("upper-water-group");
+      const lowerWaterGroup = document.getElementById("lower-water-group");
+      const upperWave1 = document.getElementById("upper-wave-1");
+      const upperWave2 = document.getElementById("upper-wave-2");
+      const upperWave3 = document.getElementById("upper-wave-3");
+      const vortexRing1 = document.getElementById("vortex-ring-1");
+      const vortexRing2 = document.getElementById("vortex-ring-2");
+      const vortexSwirl = document.getElementById("vortex-swirl");
+
+      const lowerWave1 = document.getElementById("lower-wave-1");
+      const lowerWave2 = document.getElementById("lower-wave-2");
+      const plumeGlow = document.getElementById("plume-glow");
+      const plumeRing1 = document.getElementById("plume-ring-1");
+      const plumeRing2 = document.getElementById("plume-ring-2");
+      const plumeRing3 = document.getElementById("plume-ring-3");
+
+      const penstockStreams = document.getElementById("penstock-streams");
+      const penstockChevronsEl = document.getElementById("penstock-chevrons");
+      const penstockBubblesEl = document.getElementById("penstock-bubbles");
+
+      const runnerWheelEl = document.getElementById("runner-wheel");
+      const scrollWaterSwirlEl = document.getElementById("scroll-water-swirl");
+      const draftFlowLinesEl = document.getElementById("draft-flow-lines");
+      const draftBubblesEl = document.getElementById("draft-bubbles");
+
+      const generatorEmGlow = document.getElementById("generator-em-glow");
+      const transformerFluxGlow = document.getElementById("transformer-flux-glow");
+      const busbarPulsesEl = document.getElementById("busbar-pulses");
+      const bushingPulsesEl = document.getElementById("bushing-pulses");
+
+      /* =========================================================================
+         3. PROCEDURAL PARTICLE POOL CREATION (ZERO DOM THRASHING AT 60 FPS)
+         ========================================================================= */
+      const SVG_NS = "http://www.w3.org/2000/svg";
+
+      function createSvgEl(tag, attrs = {}) {
+        const el = document.createElementNS(SVG_NS, tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          el.setAttribute(k, String(v));
+        }
+        return el;
+      }
+
+      // Penstock chevrons (7 crisp hydrodynamic direction markers)
+      const chevronPool = [];
+      for (let i = 0; i < 7; i++) {
+        const path = createSvgEl("path", { d: "M -6 -7 L 3 0 L -6 7" });
+        penstockChevronsEl.appendChild(path);
+        chevronPool.push({ el: path, offset: i / 7 });
+      }
+
+      // Penstock micro-bubbles (14 pressurized water bubbles)
+      const penstockBubblePool = [];
+      for (let i = 0; i < 14; i++) {
+        const r = 1.4 + (i % 3) * 0.8;
+        const y = -14 + ((i * 17) % 24);
+        const circle = createSvgEl("circle", { r: r.toFixed(1), cy: y.toFixed(1), opacity: "0.75" });
+        penstockBubblesEl.appendChild(circle);
+        penstockBubblePool.push({
+          el: circle,
+          offset: i / 14,
+          baseY: y,
+          speedScale: 0.85 + (i % 4) * 0.12,
+          phase: i * 1.1
+        });
+      }
+
+      // Draft tube vertical flow streaks (3 parallel streams)
+      const draftLines = [
+        createSvgEl("line", { x1: "762", y1: "648", x2: "761", y2: "696", "stroke-width": "2.2", "stroke-dasharray": "10 8" }),
+        createSvgEl("line", { x1: "772", y1: "648", x2: "772", y2: "698", "stroke-width": "2.8", "stroke-dasharray": "12 9" }),
+        createSvgEl("line", { x1: "782", y1: "648", x2: "783", y2: "696", "stroke-width": "2.0", "stroke-dasharray": "9 8" })
+      ];
+      draftLines.forEach((l) => draftFlowLinesEl.appendChild(l));
+
+      // Draft tube underwater bubbles (8 bubbles)
+      const draftBubblePool = [];
+      for (let i = 0; i < 8; i++) {
+        const circle = createSvgEl("circle", {
+          r: (1.6 + (i % 3) * 0.7).toFixed(1),
+          opacity: "0.78"
+        });
+        draftBubblesEl.appendChild(circle);
+        draftBubblePool.push({
+          el: circle,
+          offset: i / 8,
+          laneX: 759 + ((i * 9) % 26),
+          phase: i * 0.9
+        });
+      }
+
+      // Busbar electrical energy pulses (5 golden-amber orbs)
+      const busbarPulsePool = [];
+      for (let i = 0; i < 5; i++) {
+        const orb = createSvgEl("circle", {
+          r: "4.2",
+          fill: "#FEF3C7",
+          stroke: "#F59E0B",
+          "stroke-width": "1.6"
+        });
+        busbarPulsesEl.appendChild(orb);
+        busbarPulsePool.push({ el: orb, offset: i / 5 });
+      }
+
+      // HV Bushing electrical pulse rings (2 rings per bushing = 6 total)
+      const BUSHING_COORDS = [
+        { x: 894, baseY: 472, topY: 416 },
+        { x: 918, baseY: 484, topY: 426 },
+        { x: 942, baseY: 496, topY: 440 }
+      ];
+      const bushingPulsePool = [];
+      BUSHING_COORDS.forEach((b, bi) => {
+        for (let k = 0; k < 2; k++) {
+          const ring = createSvgEl("ellipse", {
+            cx: b.x,
+            rx: "9",
+            ry: "4",
+            fill: "none",
+            stroke: "#FBBF24",
+            "stroke-width": "2.2"
+          });
+          bushingPulsesEl.appendChild(ring);
+          bushingPulsePool.push({
+            el: ring,
+            bushing: b,
+            offset: (k * 0.5 + bi * 0.16) % 1
+          });
+        }
+      });
+
+      /* =========================================================================
+         4. APPLICATION STATE
+         ========================================================================= */
+      const state = {
+        playing: true,
+        phaseMode: "auto", // "auto" | "generate" | "pump"
+        simTime: 0,
+        flowVelocity: 0.0, // smooth range [-1, +1]; +1 = generate (down), -1 = pump (up)
+        waterLevel: 0.45, // +1 = upper full / lower low, -1 = upper low / lower full
+        flowDistance: 0,
+        runnerAngle: 0,
+        scrollAngle: 0,
+        energyDistance: 0,
+        explodeTarget: 0,
+        explodeCurrent: 0,
+        focusedPart: null, // null = full
+        autoTourEnabled: true,
+        tourIndex: 0,
+        tourTimerId: null
+      };
+
+      /* =========================================================================
+         5. CAMERA, HIGHLIGHT & EXPLODED VIEW CONTROLLERS
+         ========================================================================= */
+      function applyCamera(target) {
+        try {
+          let cam = CAMERA_TARGETS.full;
+          if (typeof target === "string") {
+            cam = CAMERA_TARGETS[target] || CAMERA_TARGETS.full;
+          } else if (target && typeof target === "object") {
+            const x = Number.isFinite(target.x) ? target.x : 800;
+            const y = Number.isFinite(target.y) ? target.y : 450;
+            const zoom = Number.isFinite(target.zoom) ? Math.max(0.5, Math.min(3.5, target.zoom)) : 1.0;
+            cam = { x, y, zoom };
+          }
+
+          if (prefersReducedMotion && state.autoTourEnabled) {
+            stageEl.style.transform = "scale(1) translate(0%, 0%)";
+            return;
+          }
+
+          const dx = ((800 - cam.x) / 1600) * 100;
+          const dy = ((450 - cam.y) / 900) * 100;
+          stageEl.style.transform = `scale(${cam.zoom.toFixed(4)}) translate(${dx.toFixed(3)}%, ${dy.toFixed(3)}%)`;
+        } catch (err) {
+          console.error("Camera update error:", err);
+        }
+      }
+
+      function applyHighlight(partId) {
+        try {
+          const validPart = partId && PART_MAP[partId] ? partId : null;
+          state.focusedPart = validPart;
+
+          allPartEls.forEach((el) => {
+            const dp = el.getAttribute("data-part");
+            if (!validPart) {
+              el.classList.remove("is-dimmed", "is-focused");
+            } else if (dp === validPart) {
+              el.classList.remove("is-dimmed");
+              el.classList.add("is-focused");
+            } else {
+              el.classList.remove("is-focused");
+              el.classList.add("is-dimmed");
+            }
+          });
+        } catch (err) {
+          console.error("Highlight update error:", err);
+        }
+      }
+
+      function applyExplodeTransforms(amount) {
+        for (const [partId, wrap] of Object.entries(explodeWraps)) {
+          if (!wrap) continue;
+          const vec = EXPLODE_VECTORS[partId];
+          const tx = (vec.x * amount).toFixed(2);
+          const ty = (vec.y * amount).toFixed(2);
+          wrap.setAttribute("transform", `translate(${tx}, ${ty})`);
+        }
+      }
+
+      /* =========================================================================
+         6. SEQUENTIAL AUTO-SPOTLIGHT TOUR ENGINE
+         ========================================================================= */
+      function clearTourTimer() {
+        if (state.tourTimerId !== null) {
+          window.clearTimeout(state.tourTimerId);
+          state.tourTimerId = null;
+        }
+      }
+
+      function scheduleNextTourStep() {
+        clearTourTimer();
+        if (!state.autoTourEnabled) return;
+
+        const currentTarget = TOUR_SEQUENCE[state.tourIndex];
+        const delay = currentTarget === "full" ? TOUR_DURATION_FULL_MS : TOUR_DURATION_PART_MS;
+
+        state.tourTimerId = window.setTimeout(() => {
+          if (!state.autoTourEnabled) return;
+          state.tourIndex = (state.tourIndex + 1) % TOUR_SEQUENCE.length;
+          const nextTarget = TOUR_SEQUENCE[state.tourIndex];
+          if (nextTarget === "full") {
+            applyCamera("full");
+            applyHighlight(null);
+          } else {
+            applyCamera(nextTarget);
+            applyHighlight(nextTarget);
+          }
+          scheduleNextTourStep();
+        }, delay);
+      }
+
+      function startAutoTour(fromStart = false) {
+        state.autoTourEnabled = true;
+        if (fromStart) {
+          state.tourIndex = 0;
+          applyCamera("full");
+          applyHighlight(null);
+        }
+        scheduleNextTourStep();
+      }
+
+      function stopAutoTour() {
+        state.autoTourEnabled = false;
+        clearTourTimer();
+      }
+
+      /* =========================================================================
+         7. 60 FPS SMOOTH REVERSIBLE GAES PHYSICS ENGINE
+         ========================================================================= */
+      function computeTargetVelocity(simTime, mode) {
+        if (mode === "generate") return 1.0;
+        if (mode === "pump") return -1.0;
+
+        // "auto" mode: 20s full cycle — 10s Generation (+1), 10s Pumping (-1)
+        // Smooth cubic-sine easing through 0 over ~2s at each transition
+        const cyclePeriod = 20.0;
+        const phase = (simTime % cyclePeriod) / cyclePeriod; // 0..1
+        // Use a flattened sine wave for steady flow plateaus and silky transitions
+        const rawSin = Math.sin(phase * Math.PI * 2);
+        const shaped = Math.tanh(rawSin * 3.1) / Math.tanh(3.1);
+        return shaped;
+      }
+
+      function updatePhysics(dt) {
+        // Smoothly interpolate explode amount even if physics is paused
+        const explodeDiff = state.explodeTarget - state.explodeCurrent;
+        if (Math.abs(explodeDiff) > 0.0005) {
+          state.explodeCurrent += explodeDiff * Math.min(1, dt * 7.5);
+          applyExplodeTransforms(state.explodeCurrent);
+        } else if (state.explodeCurrent !== state.explodeTarget) {
+          state.explodeCurrent = state.explodeTarget;
+          applyExplodeTransforms(state.explodeCurrent);
+        }
+
+        if (!state.playing) return;
+
+        state.simTime += dt;
+
+        // Smooth velocity easing (zero snaps when switching modes)
+        const targetVel = computeTargetVelocity(state.simTime, state.phaseMode);
+        state.flowVelocity += (targetVel - state.flowVelocity) * Math.min(1, dt * 3.2);
+
+        const v = state.flowVelocity;
+        const absV = Math.abs(v);
+        const t = state.simTime;
+
+        // Water level transfer: inverse upper/lower movement
+        if (state.phaseMode === "auto") {
+          // Smooth integral of generation/pumping cycle
+          state.waterLevel -= v * dt * 0.16;
+          state.waterLevel = Math.max(-0.95, Math.min(0.95, state.waterLevel));
+        } else if (state.phaseMode === "generate") {
+          // Gentle continuous breathing around mid-low upper level while generating
+          const drift = -0.35 + Math.sin(t * 0.45) * 0.35;
+          state.waterLevel += (drift - state.waterLevel) * Math.min(1, dt * 0.6);
+        } else {
+          // Gentle continuous breathing around high upper level while pumping
+          const drift = 0.45 + Math.sin(t * 0.45) * 0.35;
+          state.waterLevel += (drift - state.waterLevel) * Math.min(1, dt * 0.6);
+        }
+
+        // Accumulate continuous distances & rotations
+        state.flowDistance += v * dt * 115;
+        state.runnerAngle = (state.runnerAngle + v * dt * 290) % 360;
+        state.scrollAngle = (state.scrollAngle + v * dt * 175) % 360;
+        state.energyDistance += v * dt * 0.72;
+
+        // ----- A. UPPER & LOWER BASIN WATER LEVELS & RIPPLES -----
+        const upperShiftY = (0.4 - state.waterLevel) * 7.5; // + = lower water, - = higher water
+        const lowerShiftY = (state.waterLevel - 0.1) * 7.2; // inverse movement
+
+        upperWaterGroup.setAttribute("transform", `translate(0, ${upperShiftY.toFixed(2)})`);
+        lowerWaterGroup.setAttribute("transform", `translate(0, ${lowerShiftY.toFixed(2)})`);
+
+        // Subtle surface wave shimmer
+        const uw1 = Math.sin(t * 2.1) * 3.5;
+        const uw2 = Math.cos(t * 1.7 + 1.1) * 4.0;
+        upperWave1.setAttribute("transform", `translate(${uw1.toFixed(2)}, ${(uw1 * 0.35).toFixed(2)})`);
+        upperWave2.setAttribute("transform", `translate(${(-uw2).toFixed(2)}, ${(uw2 * 0.3).toFixed(2)})`);
+        upperWave3.setAttribute("transform", `translate(${(uw2 * 0.7).toFixed(2)}, ${(-uw1 * 0.25).toFixed(2)})`);
+
+        const lw1 = Math.sin(t * 1.9 + 0.5) * 4.2;
+        const lw2 = Math.cos(t * 1.5 + 2.0) * 3.8;
+        lowerWave1.setAttribute("transform", `translate(${lw1.toFixed(2)}, ${(lw1 * 0.4).toFixed(2)})`);
+        lowerWave2.setAttribute("transform", `translate(${(-lw2).toFixed(2)}, ${(lw2 * 0.35).toFixed(2)})`);
+
+        // Upper basin intake vortex (contracts inward on generation, expands outward on pumping)
+        const vortexPhase = ((t * 0.85 * (v >= 0 ? -1 : 1)) % 1 + 1) % 1;
+        const vr1 = 10 + vortexPhase * 22;
+        const vr2 = 10 + ((vortexPhase + 0.5) % 1) * 22;
+        vortexRing1.setAttribute("rx", vr1.toFixed(1));
+        vortexRing1.setAttribute("ry", (vr1 * 0.45).toFixed(1));
+        vortexRing1.setAttribute("opacity", (Math.sin(vortexPhase * Math.PI) * 0.72 * (0.25 + absV * 0.75)).toFixed(2));
+        vortexRing2.setAttribute("rx", vr2.toFixed(1));
+        vortexRing2.setAttribute("ry", (vr2 * 0.45).toFixed(1));
+        vortexRing2.setAttribute("opacity", (Math.sin(((vortexPhase + 0.5) % 1) * Math.PI) * 0.72 * (0.25 + absV * 0.75)).toFixed(2));
+        vortexSwirl.setAttribute("transform", `rotate(${(state.scrollAngle * 0.9).toFixed(1)})`);
+
+        // Lower basin draft-tube plume ripples (expands on generation, draws inward on pumping)
+        const plumeDir = v >= 0 ? 1 : -1;
+        const p1 = ((t * 0.75 * plumeDir) % 1 + 1) % 1;
+        const p2 = (p1 + 0.333) % 1;
+        const p3 = (p1 + 0.666) % 1;
+        const plumeBoost = 0.25 + absV * 0.75;
+
+        [
+          [plumeRing1, p1],
+          [plumeRing2, p2],
+          [plumeRing3, p3]
+        ].forEach(([ring, p]) => {
+          const rx = 14 + p * 44;
+          ring.setAttribute("rx", rx.toFixed(1));
+          ring.setAttribute("ry", (rx * 0.48).toFixed(1));
+          ring.setAttribute("opacity", (Math.sin(p * Math.PI) * 0.8 * plumeBoost).toFixed(2));
+        });
+        plumeGlow.setAttribute("opacity", (0.22 + absV * 0.36 + Math.sin(t * 5.2) * 0.06).toFixed(2));
+
+        // ----- B. PENSTOCK PRESSURIZED WATER FLOW -----
+        // Dash-offset on parallel cyan streams
+        const streamLines = penstockStreams.children;
+        const dashOffset = -state.flowDistance;
+        streamLines[0].setAttribute("stroke-dashoffset", dashOffset.toFixed(1));
+        streamLines[1].setAttribute("stroke-dashoffset", (dashOffset * 1.22).toFixed(1));
+        streamLines[2].setAttribute("stroke-dashoffset", (dashOffset * 0.86).toFixed(1));
+
+        // Directional hydro chevrons smoothly flip orientation when crossing v = 0
+        const chevDirScale = v >= 0 ? 1 : -1;
+        const chevOpacity = Math.min(0.92, absV * 1.35);
+        penstockChevronsEl.setAttribute("opacity", chevOpacity.toFixed(2));
+        const spanMin = -132;
+        const spanLen = 256;
+        for (let i = 0; i < chevronPool.length; i++) {
+          const item = chevronPool[i];
+          const prog = (((item.offset + state.flowDistance / spanLen) % 1) + 1) % 1;
+          const x = spanMin + prog * spanLen;
+          item.el.setAttribute("transform", `translate(${x.toFixed(1)}, -4) scale(${chevDirScale}, 1)`);
+        }
+
+        // Pressurized micro-bubbles
+        for (let i = 0; i < penstockBubblePool.length; i++) {
+          const b = penstockBubblePool[i];
+          const prog = (((b.offset + (state.flowDistance * b.speedScale) / spanLen) % 1) + 1) % 1;
+          const x = spanMin + prog * spanLen;
+          const y = b.baseY + Math.sin(t * 4.5 + b.phase) * 1.6;
+          b.el.setAttribute("cx", x.toFixed(1));
+          b.el.setAttribute("cy", y.toFixed(1));
+          b.el.setAttribute("opacity", (0.3 + absV * 0.55).toFixed(2));
+        }
+
+        // ----- C. REVERSIBLE FRANCIS RUNNER, SCROLL SWIRL & DRAFT TUBE -----
+        runnerWheelEl.setAttribute("transform", `rotate(${state.runnerAngle.toFixed(2)})`);
+        scrollWaterSwirlEl.setAttribute("transform", `rotate(${state.scrollAngle.toFixed(2)})`);
+
+        const draftDash = -state.flowDistance * 0.55;
+        draftLines[0].setAttribute("stroke-dashoffset", draftDash.toFixed(1));
+        draftLines[1].setAttribute("stroke-dashoffset", (draftDash * 1.18).toFixed(1));
+        draftLines[2].setAttribute("stroke-dashoffset", (draftDash * 0.88).toFixed(1));
+
+        for (let i = 0; i < draftBubblePool.length; i++) {
+          const b = draftBubblePool[i];
+          const prog = (((b.offset + state.flowDistance / 110) % 1) + 1) % 1;
+          const y = 648 + prog * 48;
+          const x = b.laneX + Math.sin(t * 4.8 + b.phase) * 2.2;
+          b.el.setAttribute("cx", x.toFixed(1));
+          b.el.setAttribute("cy", y.toFixed(1));
+          b.el.setAttribute("opacity", (Math.sin(prog * Math.PI) * (0.28 + absV * 0.62)).toFixed(2));
+        }
+
+        // ----- D. ELECTROMAGNETIC GLOW & ELECTRICAL POWER PULSES -----
+        const acShimmer = 0.5 + 0.5 * Math.sin(t * 11.5);
+        const powerIntensity = absV * (0.62 + 0.38 * acShimmer);
+
+        generatorEmGlow.setAttribute("opacity", (0.12 + powerIntensity * 0.68).toFixed(2));
+        transformerFluxGlow.setAttribute("opacity", (0.14 + powerIntensity * 0.72).toFixed(2));
+
+        // Busbar pulses: Generation -> Generator (752,510) to Transformer (876,548); Pumping -> reverse
+        for (let i = 0; i < busbarPulsePool.length; i++) {
+          const p = busbarPulsePool[i];
+          const prog = (((p.offset + state.energyDistance) % 1) + 1) % 1;
+          const x = 752 + prog * (876 - 752);
+          const y = 510 + prog * (548 - 510);
+          p.el.setAttribute("cx", x.toFixed(1));
+          p.el.setAttribute("cy", y.toFixed(1));
+          const edgeFade = Math.sin(prog * Math.PI);
+          p.el.setAttribute("opacity", (edgeFade * Math.min(1, absV * 1.3)).toFixed(2));
+        }
+
+        // HV Bushing rings: Generation -> rise UP to grid; Pumping -> descend DOWN from grid
+        for (let i = 0; i < bushingPulsePool.length; i++) {
+          const p = bushingPulsePool[i];
+          const prog = (((p.offset + state.energyDistance * 1.1) % 1) + 1) % 1;
+          // prog 0 -> baseY, prog 1 -> topY (moves upward when v > 0, downward when v < 0)
+          const y = p.bushing.baseY - prog * (p.bushing.baseY - p.bushing.topY);
+          const rx = 6.5 + Math.sin(prog * Math.PI) * 4.5;
+          p.el.setAttribute("cy", y.toFixed(1));
+          p.el.setAttribute("rx", rx.toFixed(1));
+          p.el.setAttribute("ry", (rx * 0.44).toFixed(1));
+          const edgeFade = Math.sin(prog * Math.PI);
+          p.el.setAttribute("opacity", (edgeFade * Math.min(0.95, absV * 1.35)).toFixed(2));
+        }
+      }
+
+      /* =========================================================================
+         8. MAIN 60 FPS ANIMATION LOOP
+         ========================================================================= */
+      let lastTimestamp = performance.now();
+
+      function frameLoop(now) {
+        const dt = Math.min((now - lastTimestamp) / 1000, 0.05);
+        lastTimestamp = now;
+        updatePhysics(dt);
+        window.requestAnimationFrame(frameLoop);
+      }
+
+      /* =========================================================================
+         9. PUBLIC MIRVO SCENE API & POSTMESSAGE BRIDGE
+         ========================================================================= */
+      const MirvoScene = {
+        deviceId: DEVICE_ID,
+        parts: PARTS.map((p) => ({ ...p })),
+
+        focus(target) {
+          try {
+            applyCamera(target);
+          } catch (err) {
+            console.error("MirvoScene.focus error:", err);
+          }
+        },
+
+        highlight(partId) {
+          try {
+            applyHighlight(partId);
+          } catch (err) {
+            console.error("MirvoScene.highlight error:", err);
+          }
+        },
+
+        setStep(index) {
+          try {
+            const idx = Math.max(0, Math.min(TOUR_SEQUENCE.length - 1, Math.round(Number(index) || 0)));
+            stopAutoTour();
+            state.tourIndex = idx;
+            const target = TOUR_SEQUENCE[idx];
+            if (target === "full") {
+              applyCamera("full");
+              applyHighlight(null);
+            } else {
+              applyCamera(target);
+              applyHighlight(target);
+            }
+          } catch (err) {
+            console.error("MirvoScene.setStep error:", err);
+          }
+        },
+
+        setAutoTour(enabled) {
+          try {
+            if (Boolean(enabled)) {
+              startAutoTour(false);
+            } else {
+              stopAutoTour();
+            }
+          } catch (err) {
+            console.error("MirvoScene.setAutoTour error:", err);
+          }
+        },
+
+        setExploded(amount) {
+          try {
+            const clamped = Math.max(0, Math.min(1, Number(amount) || 0));
+            state.explodeTarget = clamped;
+          } catch (err) {
+            console.error("MirvoScene.setExploded error:", err);
+          }
+        },
+
+        setPhase(mode) {
+          try {
+            if (mode === "auto" || mode === "generate" || mode === "pump") {
+              state.phaseMode = mode;
+            }
+          } catch (err) {
+            console.error("MirvoScene.setPhase error:", err);
+          }
+        },
+
+        setPlaying(playing) {
+          try {
+            state.playing = Boolean(playing);
+          } catch (err) {
+            console.error("MirvoScene.setPlaying error:", err);
+          }
+        },
+
+        reset() {
+          try {
+            state.explodeTarget = 0;
+            state.phaseMode = "auto";
+            state.playing = true;
+            startAutoTour(true);
+          } catch (err) {
+            console.error("MirvoScene.reset error:", err);
+          }
+        }
+      };
+
+      window.MirvoScene = MirvoScene;
+
+      window.addEventListener("message", (event) => {
+        try {
+          const msg = event && event.data;
+          if (!msg || typeof msg !== "object" || typeof msg.type !== "string") return;
+
+          switch (msg.type) {
+            case "FOCUS":
+              stopAutoTour();
+              MirvoScene.focus(msg.target);
+              break;
+            case "HIGHLIGHT":
+              MirvoScene.highlight(msg.partId ?? null);
+              break;
+            case "SET_STEP":
+              MirvoScene.setStep(msg.index);
+              break;
+            case "SET_AUTO_TOUR":
+              MirvoScene.setAutoTour(msg.enabled);
+              break;
+            case "EXPLODE":
+              MirvoScene.setExploded(msg.amount);
+              break;
+            case "SET_PHASE":
+              MirvoScene.setPhase(msg.mode);
+              break;
+            case "SET_PLAYING":
+              MirvoScene.setPlaying(msg.playing);
+              break;
+            case "RESET":
+              MirvoScene.reset();
+              break;
+            default:
+              break;
+          }
+        } catch (err) {
+          console.error("postMessage handler error:", err);
+        }
+      });
+
+      /* =========================================================================
+         10. DIRECT USER INTERACTIONS (CLICK, DOUBLE-CLICK, KEYBOARD)
+         ========================================================================= */
+      function emitPartClick(partId) {
+        const meta = PART_MAP[partId];
+        if (!meta) return;
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage(
+              {
+                type: "PART_CLICK",
+                deviceId: DEVICE_ID,
+                partId: meta.id,
+                nameUz: meta.nameUz
+              },
+              "*"
+            );
+          }
+        } catch (err) {
+          console.error("PART_CLICK postMessage error:", err);
+        }
+      }
+
+      svgEl.addEventListener("click", (e) => {
+        const partGroup = e.target.closest(".mirvo-part");
+        const partId = partGroup ? partGroup.getAttribute("data-part") : null;
+
+        if (partId && PART_MAP[partId]) {
+          stopAutoTour();
+          const stepIdx = TOUR_SEQUENCE.indexOf(partId);
+          if (stepIdx !== -1) state.tourIndex = stepIdx;
+          applyCamera(partId);
+          applyHighlight(partId);
+          emitPartClick(partId);
+        } else {
+          // Clicking empty white space or housing resets view & resumes auto-tour
+          MirvoScene.reset();
+        }
+      });
+
+      viewportEl.addEventListener("click", (e) => {
+        if (e.target === viewportEl || e.target === stageEl) {
+          MirvoScene.reset();
+        }
+      });
+
+      // Double-click anywhere smoothly toggles Exploded View
+      viewportEl.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+      });
+
+      // Keyboard shortcuts: R / Escape -> Reset, E -> Toggle Exploded View
+      window.addEventListener("keydown", (e) => {
+        const key = e.key;
+        if (key === "Escape" || key === "r" || key === "R") {
+          MirvoScene.reset();
+        } else if (key === "e" || key === "E") {
+          MirvoScene.setExploded(state.explodeTarget > 0.5 ? 0 : 1);
+        }
+      });
+
+      /* =========================================================================
+         11. BOOTSTRAP ON LOAD
+         ========================================================================= */
+      window.addEventListener("load", () => {
+        applyCamera("full");
+        applyHighlight(null);
+        startAutoTour(true);
+        lastTimestamp = performance.now();
+        window.requestAnimationFrame(frameLoop);
+      });
+    })();
+  </script>
+</body>
+</html>
