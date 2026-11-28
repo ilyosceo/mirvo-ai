@@ -66,7 +66,11 @@ ${stripImportsAndExports(tubeRaw)}
   })();
 
   window.ANATOMY = { k, G, T };
-})();`;
+})();`.replace(/<\/(script)/gi, '<\\/$1');
+
+if (/<\/script/i.test(runtimeJs)) {
+  throw new Error('Found unescaped </script inside runtimeJs!');
+}
 
 // Verify bundle executes cleanly in an isolated VM-like Function before writing!
 const sandboxWin = {};

@@ -155,7 +155,7 @@ window.buildMirvoAnatomyScene = function({ k, G, T }) {
     { id: "part_4", nameUz: "O‘zbekcha 4-qism nomi", focusAt: [72, 24, 64], zoom: 2.10, explode: [32, 22, 30] }
   ];
 
-  // 4. Exactly ${safeSteps} concise Uzbek spoken lesson steps (NO raw math symbols like =, *, /, ^ in textUz — write formulas in natural spoken Uzbek words so TTS reads smoothly!)
+  // 4. Exactly ${safeSteps} concise Uzbek spoken lesson steps (keep explode: 0 so the assembled machine runs coherently; NO raw math symbols like =, *, /, ^ in textUz — write formulas in natural spoken Uzbek words so TTS reads smoothly!)
   const steps = [
     { titleUz: "Umumiy tuzilish", focusPart: "full", explode: 0, textUz: "..." },
     { titleUz: "...", focusPart: "part_1", explode: 0, textUz: "..." },
@@ -289,7 +289,9 @@ export function validateAndAssembleAnatomyHtml(
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-  const safeInlineSceneJs = cleanJs.replace(/<\/script>/gi, '<\\/script>');
+  const safeInlineRuntimeJs = ANATOMY_RUNTIME_JS.replace(/<\/(script)/gi, '<\\/$1');
+  const safeInlineSceneJs = cleanJs.replace(/<\/(script)/gi, '<\\/$1');
+  const safeInlineCss = ANATOMY_ISO_CSS.replace(/<\/(style)/gi, '<\\/$1');
 
   const html = `<!DOCTYPE html>
 <html lang="uz">
@@ -298,7 +300,7 @@ export function validateAndAssembleAnatomyHtml(
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>${escapedTitle}</title>
   <style>
-${ANATOMY_ISO_CSS}
+${safeInlineCss}
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 100%;
@@ -342,7 +344,7 @@ ${ANATOMY_ISO_CSS}
   </div>
 
   <script>
-${ANATOMY_RUNTIME_JS}
+${safeInlineRuntimeJs}
   </script>
   <script id="mirvo-scene-script">
 ${safeInlineSceneJs}
