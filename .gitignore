@@ -14,3 +14,8 @@ tts-cache/
 
 .DS_Store
 Thumbs.db
+
+# Heavy sample renders/fonts inside local skill docs (kept on disk, ignored in git)
+.claude/skills/anatomy/examples/**/*.pdf
+.claude/skills/anatomy/examples/**/*.html
+.claude/skills/canvas-design/canvas-fonts/

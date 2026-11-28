@@ -1041,7 +1041,7 @@ export function isSpecificSceneQuestion(
   return leftoverTokens.length >= 1;
 }
 
-const GENERATED_HTML_STORAGE_KEY = 'mirvo_generated_html_models_v1';
+const GENERATED_HTML_STORAGE_KEY = 'mirvo_generated_html_models_anatomy_v2';
 
 export function loadGeneratedHtmlCache(): GeneratedHtmlCacheItem[] {
   if (typeof window === 'undefined') return [];

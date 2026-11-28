@@ -290,11 +290,13 @@ MODE 2: "svg_addon"
 Choose "svg_addon" ONLY when the user explicitly asks about an EXTERNAL / UPSTREAM / DOWNSTREAM object NOT in the existing parts list (for example: "GESga daryo va to'g'on nega kerak?" -> add "river_dam" connected to the left penstock inlet; "Transformatorga elektr liniyasi (LEP) / iste'molchi qanday ulanadi?" -> add transmission tower/load on right; "IESda gradirnya (sovutish minorasi) nega kerak?" -> add cooling tower on right; "Quyosh stansiyasi uyga qanday tok beradi?" -> add isometric house/meter on right).
 Rules for "svg_addon":
 1. Create 1 (at most 2) modular addon part(s) in "addonParts" placed in the open white margin specified in SPATIAL LAYOUT so it connects cleanly to the existing machine WITHOUT covering the center unit!
-2. Match the EXACT Mirvo Anatomy visual style:
-   - Crisp dark technical strokes: class="ink" (stroke="#222933", stroke-width="1.55") and class="ink-seam" (stroke="#222933", stroke-width="1.05").
-   - Rich 3-tone / 4-tone isometric surfaces (brightest top face, medium left face, shaded right face, soft ground shadow ellipse fill="#cbd5e1" opacity="0.45") + linearGradients in "defsSvg" with unique IDs prefixed by "addon_".
+2. Match the EXACT "anatomy" CAD skill visual craft (SKILL.md + craft.md — STRICT):
+   - Build the addon like a real multi-part physical assembly (12–25 crisp sub-shapes: stepped foundation/pad, soft ground shadow ellipse fill="#cbd5e1" opacity="0.45", beveled structural body, ribs/creases, bolted flange collar or terminal insulator bushings where it meets the main plant!).
+   - Crisp dark technical strokes: class="ink" (stroke="#222933", stroke-width="1.55", stroke-linejoin="round") for outer silhouettes and class="ink-seam" (stroke="#222933", stroke-width="1.0") for inner bevels/creases.
+   - Rich 4-tone isometric surfaces (brightest top face, lit left face, medium shade face, deep shadow face) + linearGradients in "defsSvg" with unique IDs prefixed by "addon_".
+   - NEVER leave pipes, channels, or wires ending in mid-air: every pipe/penstock/cable must terminate on a bolted flange, valve port, or insulator terminal dot!
    - Include at least one animated flow path with class="mirvo-addon-flow" (fill="none", stroke="#38bdf8" or "#facc15", stroke-width="3.5", stroke-dasharray="16 14", stroke-linecap="round") showing water/steam/electricity flowing between your addon and the template's connection point!
-   - Do NOT add messy floating text labels inside SVG — keep pure architectural cutaway visual craft!
+   - Do NOT add messy floating text labels, callout balloons, or cartoon boxes inside SVG — keep pure architectural cutaway visual craft!
 3. Set accurate "svgX" (0..1600), "svgY" (0..900), and "zoom" (1.45..2.0) at the visual center of your new addon part so the camera zooms smoothly onto it!
 4. Write ${stepCount} Uzbek steps in "steps": start with "full" overview or your new addon part, explain directly WHY it is needed (with natural spoken Uzbek — write formulas in words for TTS, no raw LaTeX symbols in textUz), and step through the connected existing template parts!
 

@@ -1097,7 +1097,7 @@ export default function App() {
         active: true,
         mode: 'full-html',
         topicTitle: cleanTitle,
-        statusMessage: 'Qwen 4 Max izometrik HTML kodini 0 dan yozmoqda...',
+        statusMessage: 'Qwen 4 Max + Anatomy CAD skill orqali 3D izometrik qurilma yaratilmoqda...',
         pass: 1,
         totalLines: 0,
         totalChars: 0,
@@ -1208,10 +1208,20 @@ export default function App() {
                   throw new Error('Qwen bo‘sh yoki tugallanmagan HTML qaytardi.');
                 }
 
+                const finalKind: 'mirvo-scene' | 'self-contained' =
+                  payload.kind === 'mirvo-scene' &&
+                  Array.isArray(payload.steps) &&
+                  payload.steps.length > 0
+                    ? 'mirvo-scene'
+                    : 'self-contained';
+
                 saveGeneratedHtmlCache({
                   key: normalizeHtmlTopicQuery(q) || q.toLowerCase(),
                   topicTitle: cleanTitle,
                   html: finalHtml,
+                  kind: finalKind,
+                  steps: payload.steps,
+                  parts: payload.parts,
                   model: modelUsed,
                   createdAt: new Date().toISOString(),
                   tokens: {
@@ -1228,8 +1238,11 @@ export default function App() {
                 );
                 setActiveHtmlLesson({
                   topicTitle: cleanTitle,
+                  kind: finalKind,
                   sourceLabel: 'qwen-generated',
                   htmlContent: finalHtml,
+                  steps: payload.steps,
+                  parts: payload.parts,
                   modelUsed,
                   tokenUsage: accumulatedUsage,
                 });

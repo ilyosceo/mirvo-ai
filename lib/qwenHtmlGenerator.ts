@@ -1,6 +1,16 @@
 import type { Response } from 'express';
+import { cleanTopicTitleUz } from '../data/htmlModelsLibrary.js';
 import type { TokenUsageInfo } from '../types/tutor.js';
-import { usageFromDashScope, type DashScopeUsageLike } from './tokenUsage.js';
+import {
+  buildAnatomySkillSystemPrompt,
+  SCENE_END_MARKER,
+  validateAndAssembleAnatomyHtml,
+} from './qwenAnatomySkillPack.js';
+import {
+  mergeTokenUsage,
+  usageFromDashScope,
+  type DashScopeUsageLike,
+} from './tokenUsage.js';
 
 const DASHSCOPE_ENDPOINTS = [
   'https://dashscope-intl.aliyuncs.com/compatible-mode/v1',
@@ -94,8 +104,14 @@ export function cleanStreamedHtml(raw: string): string {
 function stitchHtmlContinuation(prev: string, rawDelta: string): string {
   if (!prev) return rawDelta;
   let delta = rawDelta.replace(/^```(?:html|javascript|js|css)?\s*\r?\n?/i, '');
-  // If model ignored continuation and restarted an entire complete document, use the fresh complete doc
+  // If model ignored continuation and restarted an entire complete document or complete Anatomy scene, use the fresh complete output
   if (/^\s*<!doctype\s+html/i.test(delta) && /<\/html>/i.test(delta)) {
+    return delta;
+  }
+  if (
+    /^\s*window\.buildMirvoAnatomyScene\s*=/.test(delta) &&
+    delta.includes(SCENE_END_MARKER)
+  ) {
     return delta;
   }
   // Remove accidental overlap between the tail of prev and the head of delta (up to 400 chars)
@@ -107,6 +123,64 @@ function stitchHtmlContinuation(prev: string, rawDelta: string): string {
     }
   }
   return prev + delta;
+}
+
+async function repairAnatomySceneOnce(opts: {
+  baseUrl: string;
+  cleanKey: string;
+  modelName: string;
+  systemPrompt: string;
+  userPrompt: string;
+  brokenJs: string;
+  errorMessage: string;
+  timeoutMs: number;
+}): Promise<{ fixedJs: string; usage: TokenUsageInfo } | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), opts.timeoutMs);
+  try {
+    const isOmni = opts.modelName.toLowerCase().includes('omni');
+    const body: Record<string, unknown> = {
+      model: opts.modelName,
+      messages: [
+        { role: 'system', content: opts.systemPrompt },
+        { role: 'user', content: opts.userPrompt },
+        { role: 'assistant', content: opts.brokenJs },
+        {
+          role: 'user',
+          content: `Your JavaScript scene threw this runtime error during ANATOMY sandbox validation:\n${opts.errorMessage}\n\nFix the bug and output the COMPLETE corrected JavaScript starting with window.buildMirvoAnatomyScene = function({ k, G, T }) { and ending with ${SCENE_END_MARKER}. Do NOT wrap in markdown fences.`,
+        },
+      ],
+      stream: false,
+      temperature: 0.15,
+      max_tokens: 12000,
+      enable_thinking: false,
+    };
+    if (isOmni) body.modalities = ['text'];
+
+    const resp = await fetch(`${opts.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${opts.cleanKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    if (!resp.ok) return null;
+    const json = (await resp.json()) as {
+      model?: string;
+      choices?: Array<{ message?: { content?: string } }>;
+      usage?: DashScopeUsageLike;
+    };
+    const content = json.choices?.[0]?.message?.content || '';
+    if (!content.includes('buildMirvoAnatomyScene')) return null;
+    const usage = usageFromDashScope(json.usage || null, json.model || opts.modelName);
+    return { fixedJs: content, usage };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export interface StreamHtmlParams {
@@ -158,18 +232,39 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
     res.flushHeaders();
   }
 
-  const systemPrompt = buildGoldStandardHtmlSystemPrompt(stepCount);
-  const userPrompt = `Mavzu / Qurilma: "${query}". Aynan shu qurilmaning haqiqiy ichki mexanizmlari ko'rinadigan 30° izometrik 2D SVG kesma modeli, 60 FPS jonli fizik animatsiyasi, ${stepCount} bosqichli smooth viewBox zum kamera tushuntirishi va o'zbekcha ovozli darsini 0 dan to'liq bitta standalone HTML fayl sifatida yarat. Kodni ixcham protsedurali JS funksiyalar (~18-28 KB) bilan yoz, hech qanday qisqartirish yoki placeholder qo'yma va </html> bilan to'liq yakunla!`;
+  const cleanTitle = cleanTopicTitleUz(query);
+  const systemPrompt = buildAnatomySkillSystemPrompt(stepCount);
+  const userPrompt = `Mavzu / Tushuncha / Qurilma: "${query}".
+"anatomy" CAD dvigateli (window.ANATOMY = { k, G, T }) qoidalariga qat'iy amal qilib, ushbu mavzuni tushuntiruvchi 40–75 ta aniq 3D detaldan iborat haqiqiy izometrik kesma qurilma yoki laboratoriya stendini yarat:
+1) Neytral asos plitasi (k.haloOf, 4 ta oyoqcha, faskali k.slabOf, perimetr ariqchasi, burchak vintlari va shkalali o'lchov chizg'ichi k.topTicks);
+2) Mavzuning haqiqiy ishlash fizikasini ko'rsatuvchi burama mexanizmlar (G.frameAlong + G.solidOf / G.lathe / G.disc / G.ringBand / G.sphereOf), sovutish qovurg'alari (G.ribsOf), flanes murvatlari (G.dotsOf), prujina yoki mis chulg'amlar (k.coil — orqa va old qismini ajratib), silliq 3D quvurlar (G.fillet + T.tubePieces + T.tubeSvg) hamda jonli analog o'lchov pribori (k.radialTicks + strelka) va oqim chiziqlari (flow: true);
+3) 4 yoki 5 ta rangli interaktiv uzel (<g class="mirvo-part" data-part="..." data-mat="cobalt|copper|bronze|water|steel|amber|emerald|dark">), aniq "parts" metama'lumotlari (focusAt va explode vektorlari bilan), aynan ${stepCount} ta tabiiy o'zbekcha ovozli dars qadami ("steps") va 60 FPS "onTick(tSec, activeStepIdx)" fizik animatsiyasi.
+Faqat toza JavaScript kodini (window.buildMirvoAnatomyScene = function({ k, G, T }) { ... };) chiqar va oxirini ${SCENE_END_MARKER} bilan yakunla!`;
 
-  const isContinuation = continueFrom.trim().length > 0;
+  const repairMarkerMatch = continueFrom.match(/\/\*\s*MIRVO_REPAIR_ERROR:\s*([\s\S]*?)\s*\*\/\s*$/);
+  const isRepairPass = Boolean(repairMarkerMatch);
+  const rawContinueBody = isRepairPass
+    ? continueFrom.replace(/\/\*\s*MIRVO_REPAIR_ERROR:[\s\S]*?\*\/\s*$/, '').trim()
+    : continueFrom;
+  const isContinuation = rawContinueBody.trim().length > 0 && !isRepairPass;
   const fullPrefix =
-    continueFrom.length > 90_000 ? continueFrom.slice(-90_000) : continueFrom;
+    rawContinueBody.length > 90_000 ? rawContinueBody.slice(-90_000) : rawContinueBody;
 
   type ChatMsg = { role: string; content: string; partial?: boolean };
-  const baseMessages: ChatMsg[] = [
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt },
-  ];
+  const baseMessages: ChatMsg[] = isRepairPass
+    ? [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+        { role: 'assistant', content: fullPrefix },
+        {
+          role: 'user',
+          content: `Your JavaScript scene threw this runtime error during ANATOMY sandbox validation:\n${repairMarkerMatch?.[1] || 'Runtime error'}\n\nFix the bug and output the COMPLETE corrected JavaScript starting with window.buildMirvoAnatomyScene = function({ k, G, T }) { and ending with ${SCENE_END_MARKER}. Do NOT wrap in markdown fences.`,
+        },
+      ]
+    : [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ];
 
   const partialMessages: ChatMsg[] = isContinuation
     ? [...baseMessages, { role: 'assistant', content: fullPrefix, partial: true }]
@@ -182,9 +277,9 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
         {
           role: 'user',
           content:
-            pass >= 5
-              ? 'Continue strictly from the EXACT last character of your assistant message above without repeating anything, finish the remaining STEPS + audio player concisely, and close with </script></body></html>.'
-              : 'Continue strictly from the EXACT last character of your assistant message above. Output ONLY the remaining raw HTML/JS characters to finish through </html>. Do NOT restart from <!DOCTYPE html>, do NOT repeat any code, and do NOT wrap in ``` fences.',
+            pass >= 4
+              ? `Continue strictly from the EXACT last character of your assistant message above without repeating anything, finish parts, steps, onTick, and return { P, W, H, staticSvg, parts, steps, onTick }; then close with ${SCENE_END_MARKER}.`
+              : `Continue strictly from the EXACT last character of your assistant message above. Output ONLY the remaining raw JavaScript characters to finish window.buildMirvoAnatomyScene through ${SCENE_END_MARKER}. Do NOT restart from the beginning, do NOT repeat any code, and do NOT wrap in \`\`\` fences.`,
         },
       ]
     : baseMessages;
@@ -192,8 +287,8 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
   sendSse(res, 'status', {
     message:
       pass > 1
-        ? `HTML kodi uzluksiz davom ettirilmoqda (${pass}-bosqich)...`
-        : 'Qwen 4 Max izometrik HTML kodini 0 dan yozmoqda...',
+        ? `Anatomy 3D CAD sahnasi davom ettirilmoqda (${pass}-bosqich)...`
+        : 'Qwen 4 Max + Anatomy CAD skill orqali 3D izometrik qurilma yaratilmoqda...',
     pass,
   });
 
@@ -309,8 +404,8 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
           sendSse(res, 'status', {
             message:
               pass > 1
-                ? `${modelName} kodni davom ettirmoqda (${pass}-bosqich)...`
-                : `${modelName} orqali jonli HTML generatsiya qilinmoqda...`,
+                ? `${modelName} Anatomy CAD kodini davom ettirmoqda (${pass}-bosqich)...`
+                : `${modelName} + Anatomy CAD skill orqali sahna chizilmoqda...`,
             model: modelName,
             pass,
           });
@@ -385,7 +480,7 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
                     if (!announcedWriting) {
                       announcedWriting = true;
                       sendSse(res, 'status', {
-                        message: `${actualModel} izometrik HTML kodini yozmoqda (${pass}-bosqich)...`,
+                        message: `${actualModel} Anatomy 3D CAD detallarini yig‘moqda (${pass}-bosqich)...`,
                         model: actualModel,
                         pass,
                       });
@@ -429,9 +524,18 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
             });
           }
 
-          const combinedRaw = stitchHtmlContinuation(continueFrom, deltaAccum);
+          const combinedRaw = isRepairPass
+            ? deltaAccum
+            : stitchHtmlContinuation(rawContinueBody, deltaAccum);
+          const hasAnatomyMarker = combinedRaw.includes(SCENE_END_MARKER);
+          const looksCompleteAnatomy =
+            hasAnatomyMarker ||
+            (finishedNormally &&
+              !timedOutSoft &&
+              combinedRaw.includes('buildMirvoAnatomyScene') &&
+              /return\s*\{[\s\S]*staticSvg[\s\S]*\}[\s\S]*\};?\s*$/.test(combinedRaw.trim()));
           const hasClosingHtml = /<\/html>/i.test(combinedRaw);
-          const tokenUsage: TokenUsageInfo = finalUsage
+          let totalUsage: TokenUsageInfo = finalUsage
             ? usageFromDashScope(finalUsage, actualModel)
             : usageFromDashScope(
                 {
@@ -443,23 +547,92 @@ export async function streamQwenHtmlLesson(params: StreamHtmlParams): Promise<vo
                 actualModel
               );
 
+          if (looksCompleteAnatomy) {
+            try {
+              const assembled = validateAndAssembleAnatomyHtml(cleanTitle, combinedRaw);
+              sendSse(res, 'done', {
+                html: assembled.html,
+                kind: 'mirvo-scene',
+                parts: assembled.parts,
+                steps: assembled.steps,
+                model: actualModel,
+                token_usage: totalUsage,
+                elapsedMs: Date.now() - startTime,
+              });
+              res.end();
+              return;
+            } catch (valErr: unknown) {
+              const errMsg = valErr instanceof Error ? valErr.message : String(valErr);
+              const leftMs = maxRunMs - (Date.now() - startTime);
+              if (leftMs >= 14_000) {
+                sendSse(res, 'status', {
+                  message: `${actualModel} Anatomy CAD geometriyadagi xatoni avtomatik tuzatmoqda...`,
+                  model: actualModel,
+                  pass,
+                });
+                const repaired = await repairAnatomySceneOnce({
+                  baseUrl,
+                  cleanKey,
+                  modelName: actualModel,
+                  systemPrompt,
+                  userPrompt,
+                  brokenJs: combinedRaw,
+                  errorMessage: errMsg,
+                  timeoutMs: leftMs - 1500,
+                });
+                if (repaired) {
+                  totalUsage = mergeTokenUsage(totalUsage, repaired.usage);
+                  const assembled = validateAndAssembleAnatomyHtml(cleanTitle, repaired.fixedJs);
+                  sendSse(res, 'done', {
+                    html: assembled.html,
+                    kind: 'mirvo-scene',
+                    parts: assembled.parts,
+                    steps: assembled.steps,
+                    model: actualModel,
+                    token_usage: totalUsage,
+                    elapsedMs: Date.now() - startTime,
+                  });
+                  res.end();
+                  return;
+                }
+              } else if (pass <= 3) {
+                sendSse(res, 'partial', {
+                  htmlSoFar: `${combinedRaw}\n/* MIRVO_REPAIR_ERROR: ${errMsg.replace(/\*\//g, '')} */`,
+                  model: actualModel,
+                  token_usage: totalUsage,
+                  pass,
+                  deltaChars: deltaAccum.length,
+                });
+                res.end();
+                return;
+              }
+              lastErrMsg = `Anatomy CAD tekshiruvi xatosi: ${errMsg}`;
+              break;
+            }
+          }
+
           if (hasClosingHtml) {
             const cleanHtml = cleanStreamedHtml(combinedRaw);
             sendSse(res, 'done', {
               html: cleanHtml,
+              kind: 'self-contained',
               model: actualModel,
-              token_usage: tokenUsage,
+              token_usage: totalUsage,
               elapsedMs: Date.now() - startTime,
             });
             res.end();
             return;
           }
 
-          if (deltaAccum.length > 20 && (timedOutSoft || finishedNormally)) {
+          if (
+            deltaAccum.length > 20 &&
+            !looksCompleteAnatomy &&
+            (timedOutSoft || finishedNormally)
+          ) {
             sendSse(res, 'partial', {
-              htmlSoFar: combinedRaw.replace(/^```(?:html)?\s*/i, ''),
+              htmlSoFar: combinedRaw.replace(/^```(?:html|javascript|js)?\s*/i, ''),
               model: actualModel,
-              token_usage: tokenUsage,
+              token_usage: totalUsage,
               pass,
               deltaChars: deltaAccum.length,
             });

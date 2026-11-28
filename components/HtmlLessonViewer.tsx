@@ -79,29 +79,35 @@ function detectBuildPhase(
 ): number {
   const tail = codeTail.toLowerCase();
   if (
-    tail.includes('speechsynthesis') ||
     tail.includes('const steps') ||
+    tail.includes('mirvo_scene_end') ||
+    tail.includes('function ontick') ||
+    tail.includes('speechsynthesis') ||
     tail.includes('</html>') ||
-    totalChars > 16000 ||
-    totalLines > 420
+    totalChars > 8200 ||
+    totalLines > 210
   ) {
     return 4;
   }
   if (
+    tail.includes('const parts') ||
+    tail.includes('tubepieces') ||
+    tail.includes('radialticks') ||
     tail.includes('requestanimationframe') ||
     tail.includes('renderdynamic') ||
-    tail.includes('animate(') ||
-    totalChars > 9500 ||
-    totalLines > 260
+    totalChars > 5200 ||
+    totalLines > 135
   ) {
     return 3;
   }
   if (
+    tail.includes('mirvo-part') ||
+    tail.includes('solidof') ||
+    tail.includes('framealong') ||
     tail.includes('isobox') ||
-    tail.includes('isocylinder') ||
     tail.includes('<svg') ||
-    totalChars > 3000 ||
-    totalLines > 90
+    totalChars > 1800 ||
+    totalLines > 50
   ) {
     return 2;
   }
@@ -157,6 +163,7 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
       if (!isMirvoScene || !steps[idx]) return;
       const s = steps[idx];
       postToScene({ type: 'SET_AUTO_TOUR', enabled: false });
+      postToScene({ type: 'STEP', stepIdx: idx });
 
       if (typeof s.explode === 'number') {
         const shouldExplode = s.explode > 0.3;
@@ -571,10 +578,10 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
                 <>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11.5px]">
                     {[
-                      { id: 1, label: '1. Dizayn va CSS' },
-                      { id: 2, label: '2. Izometrik SVG' },
-                      { id: 3, label: '3. 60 FPS animatsiya' },
-                      { id: 4, label: '4. 5 qadam va ovoz' },
+                      { id: 1, label: '1. Asos va proyeksiya' },
+                      { id: 2, label: '2. Anatomy 3D detallar' },
+                      { id: 3, label: '3. Quvur va priborlar' },
+                      { id: 4, label: '4. 60 FPS va ovoz' },
                     ].map((step) => {
                       const done = activePhase > step.id;
                       const current = activePhase === step.id;
@@ -610,8 +617,9 @@ export const HtmlLessonViewer: React.FC<HtmlLessonViewerProps> = ({
                   )}
 
                   <p className="m-0 text-xs text-[#6B7280] leading-relaxed">
-                    Yangi qurilma uchun izometrik animatsiyali HTML kod yaratilmoqda — murakkab
-                    qurilmalar uchun 2–4 daqiqa vaqt olishi mumkin. Tayyor bo‘lishi bilan
+                    <strong>Qwen 4 Max + Anatomy 3D CAD skill</strong> dvigateli yordamida burama
+                    silindrlar, faskali plitalar, prujinalar, 3D quvurlar va jonli priborlardan
+                    iborat kesma model yig‘ilmoqda (~25–50 soniya). Tayyor bo‘lishi bilan
                     brauzeringizga saqlanadi.
                   </p>
                 </>
